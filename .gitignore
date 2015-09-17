@@ -1,0 +1,12 @@
+*.pdf
+.DS_Store
+*.aux
+*.log
+*.snm
+*.toc
+*.nav
+*.out
+*.bak
+*.gz
+*.txt~
+*.meteor
