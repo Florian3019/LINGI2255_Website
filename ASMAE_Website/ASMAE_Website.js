@@ -1,19 +1,6 @@
 if (Meteor.isClient) {
-  // counter starts at 0
-  Session.setDefault('counter', 0);
-
-  Template.hello.helpers({
-    counter: function () {
-      return Session.get('counter');
-    }
-  });
-
-  Template.hello.events({
-    'click button': function () {
-      // increment the counter when button is clicked
-      Session.set('counter', Session.get('counter') + 1);
-    }
-  });
+  
+  
 }
 
 if (Meteor.isServer) {
@@ -21,3 +8,22 @@ if (Meteor.isServer) {
     // code to run on server at startup
   });
 }
+
+Router.route('/', {
+    template: 'home',
+    name: 'home'
+});
+
+Router.configure({
+    layoutTemplate: 'index'
+});
+
+Router.route('/Contacts');
+Router.route('/Pictures');
+Router.route('/Rules');
+Router.route('/TournamentRegistration');
+Router.route('/SiteRegistration');
+Router.route('/CourtRegistration');
+Router.route('/CourtInfo');
+Router.route('/PlayersInfo');
+Router.route('/StaffManagement');
