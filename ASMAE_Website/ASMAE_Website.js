@@ -1,4 +1,29 @@
+UserList = new Mongo.Collection('userlist');
+
 if (Meteor.isClient) {
+  Template.SiteRegistration.events({
+    
+    'submit form':function(){
+      event.preventDefault();
+        var lastname = event.target.lastname.value;
+        var firstname = event.target.firstname.value;
+        var email = event.target.email.value;
+        var phone = event.target.phone.value;
+        var sex = event.target.sex.value;
+        var password = event.target.password.value;
+        
+        UserList.insert({
+        lastname : lastname,
+        firstname : firstname,
+        email : email,
+        phone : phone,
+        sex : sex,
+        password : password
+    });  
+    Router.go('home');
+   }
+   });    
+   
   
   
 }
