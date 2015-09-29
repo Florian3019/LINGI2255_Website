@@ -10,7 +10,6 @@ iron:router
 houston:admin
 tinytest
 accounts-google
-<<<<<<< HEAD
 standard-minifiers
 meteor-base
 mobile-experience
@@ -27,6 +26,3 @@ spacebars
 check
 accounts-facebook
 accounts-ui-unstyled
-=======
-accounts-ui
->>>>>>> 0a65c880fe792c7e55dde3172e7bb1a77877175c
