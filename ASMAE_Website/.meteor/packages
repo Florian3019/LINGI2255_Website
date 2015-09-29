@@ -9,3 +9,5 @@ autopublish
 insecure
 iron:router
 houston:admin
+accounts-google
+accounts-ui
