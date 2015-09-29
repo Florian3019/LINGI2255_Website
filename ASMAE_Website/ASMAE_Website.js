@@ -2,6 +2,16 @@ UserList = new Mongo.Collection('userlist');
 Courts = new Mongo.Collection('Courts');
 
 if (Meteor.isClient) {
+
+
+  Meteor.loginWithGoogle({
+    // forceApprovalPrompt: true, //this is what you want, to rerequest approval each time that prompts the google login prompt
+    // loginStyle         : "redirect", //or not, depending on your need
+    requestPermissions : ['profile', 'email'],
+    // requestOfflineToken: true
+  });
+
+
   Template.SiteRegistration.events({
     
     'submit form':function(){
@@ -53,3 +63,4 @@ Router.route('/CourtRegistration');
 Router.route('/CourtInfo');
 Router.route('/PlayersInfo');
 Router.route('/StaffManagement');
+// Router.route('/Login');

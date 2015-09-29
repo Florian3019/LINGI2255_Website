@@ -9,3 +9,6 @@ autopublish
 insecure
 iron:router
 houston:admin
+tinytest
+accounts-google
+accounts-ui
