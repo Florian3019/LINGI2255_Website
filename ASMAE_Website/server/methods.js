@@ -25,7 +25,7 @@ Meteor.methods({
        		courtNumber
        		zone
        		mapNumber
-       		lendThisYear
+       		lendThisYear (ou alors noter l'id du tournoi (ou l'année du dernier tournoi où il était prêté), sinon je ne sais pas quand on pourra le remettre à 'false' après le tournoi)
        		availability
        		staffComment
        		
