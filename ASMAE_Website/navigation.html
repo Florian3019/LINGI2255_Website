@@ -35,13 +35,17 @@
         </li>        
         
           </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <!--  -->
-            <li>{{> loginButtons}}</li>
-          </ul>
+          <div class="nav navbar-nav navbar-right">
+            {{> loginButtons}}
+          </div>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
    
+</template>
+
+<!-- Edit profile button only visible when logged in -->
+<template name="_loginButtonsAdditionalLoggedInDropdownActions">
+  <button class="btn btn-default btn-block" id="login-buttons-edit-profile">Modifier mon profil</button>
 </template>
