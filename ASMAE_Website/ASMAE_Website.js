@@ -1,4 +1,5 @@
 UserList = new Mongo.Collection('userlist');
+Courts = new Mongo.Collection('Courts');
 
 if (Meteor.isClient) {
   Template.SiteRegistration.events({
