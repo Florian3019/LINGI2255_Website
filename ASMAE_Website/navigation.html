@@ -24,7 +24,7 @@
         <li><a href="{{pathFor route='Pictures'}}">Photos</a></li>
         <li><a href="{{pathFor route='Rules'}}">Règlement</a></li>
         <li><a href="{{pathFor route='Contacts'}}">Contacts</a></li>
-        
+
         <!-- <li><a href="{{pathFor route='Login'}}">Login</a></li> -->
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="{{pathFor route='SiteRegistration'}}">Inscription <span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -33,10 +33,11 @@
             <li><a href="{{pathFor route='CourtRegistration'}}">Inscription d'un terrain</a></li>
           </ul>
         </li>        
-        {{> loginButtons}}
+        
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Login</a></li>
+            <!--  -->
+            <li>{{> loginButtons}}</li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
