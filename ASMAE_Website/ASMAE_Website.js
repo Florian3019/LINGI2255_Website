@@ -182,3 +182,4 @@ Router.route('/CourtInfo');
 Router.route('/PlayersInfo');
 Router.route('/StaffManagement');
 Router.route('/ProfileEdit');
+Router.route('/Brackets');
