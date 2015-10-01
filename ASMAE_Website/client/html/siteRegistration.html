@@ -1,0 +1,111 @@
+<template name="SiteRegistration">
+  <div class="container">
+  <h2>Vertical (basic) form</h2>
+  <form role="form-group">
+    
+    <div class="form-group">
+      <label for="text">Nom</label>
+      <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Demesmaeker"><br>
+      
+      <label for="text">Prénom</label>
+      <input type="text" class="form-control" id="firstname" placeholder="Florian" name="firstname">
+    </div>
+    
+    <div class="form-group">
+    <label for="email">Email address:</label>
+    <input type="email" class="form-control" id="email" placeholder="florian@manager.com" name="email">
+    </div>
+     
+     <div class="form-group">
+     <label for="text">Numéro de téléphone</label>
+     <input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" name="phone">
+     </div>
+
+     <div class="form-group">
+      <label for="date">Date de naissance</label>
+      <input type="date" id="birth" class="form-control" name="date de naissance">
+    </div>
+  
+    
+     <div class="form-group">
+     <label for="homme">Homme</label>
+     <input type="radio" name="sex" id="male" value="homme">
+     <label for="femme">Femme</label>
+     <input type="radio" name="sex" id="female" value="femme"><br>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-6">
+    <div class="form-group">
+      <label for="pwd">Mot de passe</label>
+      <input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
+    </div>
+    </div>
+    
+    <div class="col-md-6">
+    <div class="form-group">
+      <label for="pwd">Confirmez votre mot de passe</label>
+      <input type="password" class="form-control" id="passwordbis" placeholder="Enter password">
+    </div>
+    </div>
+    </div>
+   
+    
+    <div class="row">
+      <div class="col-md-6">
+   	  <div class="form-group">
+             <label for="text">Adresse</label>
+             <input type="text" class="form-control" id="adress" placeholder="Rue des 2 chapelles" name="adress">
+          </div>   
+      </div>
+      <div class="col-md-2">
+       <div class="form-group">
+         <label for="text">Numéro</label>
+         <input type="text" class="form-control" id="adressnumber" placeholder="20" name="adressnumber">
+        </div>
+      </div>
+      
+      
+      <div class="col-md-2">
+       <div class="form-group">
+         <label for="text">Boite</label>
+         <input type="text" class="form-control" id="box" placeholder="105b" name="boxnumber">
+        </div>
+      </div>
+
+    </div>
+    
+    <div class="row">
+      <div class="col-md-2">
+      	<div class="form-group">
+         <label for="text">Code Postal</label>
+         <input type="text" class="form-control" id="zipcode" placeholder="6230" name="zipcode">
+        </div>
+
+      </div>
+    <div class="col-md-3">
+      	<div class="form-group">
+         <label for="text">Localité</label>
+         <input type="text" class="form-control" id="city" placeholder="Obaix" name="city">
+        </div>
+
+      </div>
+    <div class="col-md-3">
+      	<div class="form-group">
+         <label for="text">Pays</label>
+         <input type="text" class="form-control" id="country" placeholder="Belgique" name="country">
+        </div>
+
+      </div>
+    
+    
+    
+    </div>
+    
+    <button type="submit" class="btn btn-default" value="Inscrire">Submit</button>
+  </form>
+  
+</div>
+
+
+</template>

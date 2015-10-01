@@ -1,0 +1,58 @@
+<template name="TournamentRegistration">
+<div>
+	<h2>Enregistrement au tournoi -- <span style="color:red">design basique, to be modified</span></h2>
+	<form role="form">
+
+		<div class="form-group">
+			<label for="playerRank">Rang:</label>
+			<select name="rank" id="rank">
+				<option value="NC">NC</option>
+				<option value="C30.5 ">C30.5</option>
+				<option value="C30.4">C30.4</option>
+				<option value="C30.3">C30.3</option>
+				<option value="C30.2">C30.2</option>
+				<option value="C30.1">C30.1</option>
+				<option value="C30">C30</option>
+				<option value="C15.5">C15.5</option>
+				<option value="C15.4">C15.4</option>
+				<option value="C15.3">C15.3</option>
+				<option value="C15.2">C15.2</option>
+				<option value="C15.1">C15.1</option>
+				<option value="C15">C15</option>
+				<option value="B+4/6">B+4/6</option>
+				<option value="B+2/6">B+2/6</option>
+				<option value="B0">B0</option>
+				<option value="moreRank">plus</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label for="dateMatch">S'incrire pour le tournoi du:</label>
+			<select name="dateMatch" id="dateMatch">
+				<option value="Samedi">Samedi</option>
+				<option value="Dimanche">Dimanche</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label for="number">Nombre d'inscriptions pour le barbecue (15€):</label>
+      		<input type="number" id="BBQ" name="BBQ" min="0" placeholder=0>
+      		<p style="font-size:100%">Dimanche de 12h30 à 15h (boissons non comprises)</p>
+		</div>
+
+		<div class="form-group">
+  			<label for="playerWishes">Souhaits:</label>
+       		<textarea name="playerWishes" id="playerWishes" class="form-control"></textarea>
+  		</div>
+
+  		<div class="form-group">
+  			<label for="playerConstraints">Contraintes:</label>
+       		<textarea name="playerConstraints" id="playerConstraints" class="form-control"></textarea>
+  		</div>
+
+  		<button type="submit" class="btn btn-default">Enregistrer</button>
+
+	</form>
+
+</div>
+</template>

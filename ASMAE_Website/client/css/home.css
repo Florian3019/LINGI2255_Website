@@ -1,0 +1,10 @@
+/* CSS declarations go here */
+
+/* 
+	Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris
+*/
+.dropdown:hover .dropdown-menu {
+display: block;
+}
+
+

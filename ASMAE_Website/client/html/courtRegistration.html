@@ -1,0 +1,49 @@
+<template name="CourtRegistration">
+ <div>    
+  <h2>Enregistrement de terrain -- <span style="color:red">design basique, to be modified</span></h2>
+  <form role="form">
+
+  	<fieldset class="form-group">
+  		<h4>Adresse du terrain:</h4>
+  		<label for="street">Rue:</label>
+      	<input type="text" name="street" id="street">
+      	<label for="addressNumber">Numéro:</label>
+      	<input type="text" name="addressNumber" id="addressNumber">
+      	<label for="box">Boîte:</label>
+      	<input type="text" name="box" id="box"><br />
+      	<label for="zipCode">Code postal:</label>
+      	<input type="text" name="zipCode" id="zipCode">
+      	<label for="city">Ville:</label>
+      	<input type="text" name="city" id="city">
+  	</fieldset>
+  	<div class="form-group">
+  		<label for="surface">Surface:</label>
+  		<select name="surface" id="surface">
+           <option value="A">A</option>
+           <option value="B">B</option>
+           <option value="C">C</option>
+       </select>
+  	</div>
+  	<div class="form-group">
+  		<h4>Type:</h4>
+  		<div class="radio">
+  			<label><input type="radio" name="courtType" value="private"/>Privé</label><br />
+  		</div>
+  		<div class="radio">
+        	<label><input type="radio" name="courtType" value="club"/>Club</label>
+        </div>
+  	</div>
+  	<div class="form-group">
+  		<label for="instructions">Instructions d'accès au terrain:</label>
+       	<textarea name="instructions" id="instructions" class="form-control"></textarea>
+  	</div>
+  	<div class="form-group">
+  		<label for="ownerComment">Commentaires:</label>
+       	<textarea name="ownerComment" id="ownerComment" class="form-control"></textarea>
+  	</div>
+
+    <button type="submit" class="btn btn-default">Enregistrer</button>
+  </form>
+  
+  </div >
+</template>
