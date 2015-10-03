@@ -100,6 +100,8 @@
         var phone = event.target.phone.value;
         var sex = event.target.sex.value;
         var password = event.target.password.value;
+        var date = event.target.date.value;
+
         
         UserList.insert({
         lastname : lastname,
@@ -107,7 +109,8 @@
         email : email,
         phone : phone,
         sex : sex,
-        password : password
+        password : password,
+        date : date
     });  
     Router.go('home');
    }
