@@ -5,39 +5,39 @@
 
 		<div class="form-group">
       		<label for="text">Nom</label>
-      		<input type="text" class="form-control" id="lastname" name="lastname" placeholder="Demesmaeker" ><br>
+      		<input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" placeholder="Demesmaeker" ><br>
       
       		<label for="text">Prénom</label>
-      		<input type="text" class="form-control" id="firstname" placeholder="Florian" name="firstname">
+      		<input type="text" class="form-control" id="firstname" placeholder="Florian" value="{{firstname}}" name="firstname">
     	</div>
     
     	<div class="form-group">
     		<label for="email">Email address:</label>
-    		<input type="email" class="form-control" id="email" placeholder="florian@manager.com" name="email">
+    		<input type="email" class="form-control" id="email" placeholder="florian@manager.com" value="{{email}}" name="email">
     	</div>
      
     	 <div class="form-group">
      		<label for="text">Numéro de téléphone</label>
-     		<input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" name="phone">
+     		<input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" value="{{phone}}" name="phone">
      	</div>
 
      	<div class="form-group">
       		<label for="date">Date de naissance</label>
-      		<input type="date" id="birth" class="form-control" placeholder="dd/mm/yyyy" name="date de naissance">
+      		<input type="date" id="birth" class="form-control" placeholder="1990-01-01" value="{{date}}" name="date de naissance">
     	</div>
 
     	<div class="row">
       		<div class="col-md-6">
    	  			<div class="form-group">
              		<label for="text">Adresse</label>
-             		<input type="text" class="form-control" id="adress" placeholder="Rue des 2 chapelles" name="adress">
+             		<input type="text" class="form-control" id="adress" placeholder="Rue des 2 chapelles" value="{{address}}" name="adress">
           		</div>   
       		</div>
       		
       		<div class="col-md-2">
        			<div class="form-group">
         			 <label for="text">Numéro</label>
-        		 	<input type="text" class="form-control" id="adressnumber" placeholder="20" name="adressnumber">
+        		 	<input type="text" class="form-control" id="adressnumber" placeholder="20" value="{{adressnumber}}" name="adressnumber">
        		 	</div>
      		 </div>
       
@@ -45,7 +45,7 @@
       		<div class="col-md-2">
        			<div class="form-group">
          			<label for="text">Boite</label>
-         			<input type="text" class="form-control" id="box" placeholder="105b" name="boxnumber">
+         			<input type="text" class="form-control" id="box" placeholder="105b" value="{{boxnumber}}" name="boxnumber">
        		 	</div>
       		</div>
 
@@ -55,7 +55,7 @@
       		<div class="col-md-2">
       			<div class="form-group">
       		  		 <label for="text">Code Postal</label>
-      		 		  <input type="text" class="form-control" id="zipcode" placeholder="6230" name="zipcode">
+      		 		  <input type="text" class="form-control" id="zipcode" placeholder="6230" value="{{zipcode}}" name="zipcode">
       			</div>
 
       		</div>
@@ -63,7 +63,7 @@
     		<div class="col-md-3">
       			<div class="form-group">
         			<label for="text">Localité</label>
-        			 <input type="text" class="form-control" id="city" placeholder="Obaix" name="city">
+        			 <input type="text" class="form-control" id="city" placeholder="Obaix" value="{{city}}" name="city">
        			</div>
 
       		</div>
@@ -71,7 +71,7 @@
     		<div class="col-md-3">
      		 	<div class="form-group">
      			    <label for="text">Pays</label>
-     			    <input type="text" class="form-control" id="country" placeholder="Belgique" name="country">
+     			    <input type="text" class="form-control" id="country" placeholder="Belgique" value="{{country}}" name="country">
      		   	</div>
 
      		 </div>
