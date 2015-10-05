@@ -1,67 +1,58 @@
 <template name="CourtInfo">
-<h1>Informations du terrain</h1>
-<section>
-<div class="row">
-  <table>
-    <tr>
-      <td>
-  <table>
-    <tr>
-        <td> Rue : </td>
-        <td> {{rue}} </td>
-    </tr>
-    <tr>
-        <td> Numéro : </td>
-        <td> {{num}} </td>
-    </tr>
-    <tr>
-        <td> Boite : </td>
-        <td> {{box}} </td>
-    </tr>
-    <tr>
-        <td> Code postal : </td>
-        <td> {{zipcode}} </td>
-    </tr>
-    <tr>
-        <td> Ville : </td>
-        <td> {{city}} </td>
-    </tr>
-    <tr>
-        <td> Surface : </td>
-        <td> {{surface}} </td>
-    </tr>
-    <tr>
-        <td> Type : </td>
-        <td> {{ttype}} </td>
-    </tr>
-    <tr>
-        <td> Instructions : </td>
-        <td> {{instructions}} </td>
-    </tr>
-    <tr>
-        <td> Commentaires : </td>
-        <td> {{commentaire}} </td>
-    </tr>
-  </table >
-</td>
-<td align="right"> <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2528.7058548150453!2d4.61493379999999!3d50.669721700000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c17e77c77ee3f7%3A0xfa60a1ea8f163970!2sUniversit%C3%A9+catholique+de+Louvain!5e0!3m2!1sfr!2sbe!4v1443628192528" width="600" height="450" frameborder="1" style="border:0" allowfullscreen></iframe> </td>
-
-</tr>
-</table>
-
+  <!--
+    Snippet inspiré de http://bootsnipp.com/snippets/featured/simple-user-profile
+  -->
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Informations des courts</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://www.constructiondetennis.com/wp-content/themes/tennis/images/court-de-tennis.png" class="img-circle img-responsive"> </div>
+                <div class=" col-md-9 col-lg-9 ">
+                  <table class="table table-user-information">
+                    <tbody>
+                      <tr>
+                        <td>Rue</td>
+                        <td>{{rue}}</td>
+                      </tr>
+                      <tr>
+                        <td>Numéro</td>
+                        <td>{{num}}</td>
+                      </tr>
+                      <tr>
+                        <td>Boite</td>
+                        <td>{{box}}</td>
+                      </tr>
+                     <tr>
+                        <td>Code Postal</td>
+                        <td>{{zipCode}}</td>
+                      </tr>
+                        <tr>
+                        <td>Ville</td>
+                        <td>{{city}}</td>
+                      </tr>
+                      <tr>
+                        <td>Surface</td>
+                        <td>{{surface}}</td>
+                      </tr>
+                      <tr>
+                        <td>Type</td>
+                        <td>{{ttype}}</td>
+                      </tr>
+                      <tr>
+                        <td>Instructions</td>
+                        <td>{{instructions}}</td>
+                      </tr>
+                      <tr>
+                        <td>Commentaire</td>
+                        <td>{{commentaire}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
 </div>
-</section>
-
-<section>
-  <form role="morecomment">
-  <fieldset class="form-group">
-    <label for="street">Ajouter un commentaire:</label>
-      <input type="text" name="comment" id="comment">
-  </fieldset>
-  <button type="submit" class="btn btn-default">Enregistrer</button>
-</form>
-</section>
-
-
 
 </template>

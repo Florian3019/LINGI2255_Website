@@ -49,7 +49,7 @@ Template.CourtInfo.helpers({
   'surface': function(){
     var court = Courts.find({surface : "A"}).fetch();
     if (court==null) {
-      return "ZZ";
+      return "Tarmac";
     }
     else {
       return court[0].surface
@@ -58,7 +58,7 @@ Template.CourtInfo.helpers({
   'ttype' : function(){
     var court = Courts.find({surface : "A"}).fetch();
     if (court==null) {
-      return "Tarmac";
+      return "Privé";
     }
     else {
       return court[0].courtType
