@@ -1,14 +1,37 @@
-Template.brackets.events({
-  "click button":function(event, template){
-  	
-  		function myFunction(win, doc, $){
-			
+<!-- <!DOCTYPE HTML> -->
+<template name="brackets">
+<!-- <html lang="en-US"> -->
+	<!-- basic styles -->
+	<style type="text/css">
+		.g_gracket { width: 9999px; padding: 55px 15px 5px; line-height: 100%; position: relative; overflow: hidden;}
+		.g_round { float: left; margin-right: 70px; }
+		.g_game { position: relative; margin-bottom: 15px; }
+		.g_gracket h3 { margin: 0; padding: 10px 8px 8px; font-size: 18px; font-weight: normal; color: #fff}
+		.g_team { background: #3597AE; }
+		.g_team:last-child {  background: #FCB821; }
+		.g_round:last-child { margin-right: 20px; }
+		.g_winner { background: #444; }
+		.g_winner .g_team { background: none; }
+		.g_current { cursor: pointer; background: #A0B43C!important; }
+		.g_round_label { top: -5px; font-weight: normal; color: #CCC; text-align: center; font-size: 18px; }
+	</style>
+
+	<!-- empty gracket element -->
+	<div class="my_gracket"></div>
+
+	<script type="text/javascript">
+
+	// ################################################
+
+
+		 function myFunction(win, doc, $){
+
 			console.warn("Make sure the min-width of the .gracket_h3 element is set to width of the largest name/player. Gracket needs to build its canvas based on the width of the largest element. We do this my giving it a min width. I'd like to change that!");
 
 			// Fake Data
 			win.TestData = [
 				[
-					[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "displaySeed": "D1", "score" : 47 }, {"name" : "Andrew Miller", "id" : "andrew-miller", "seed" : 2} ],
+					[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "displaySeed": "1", "score" : 47 }, {"name" : "Andrew Miller", "id" : "andrew-miller", "seed" : 2} ],
 					[ {"name" : "James Coutry", "id" : "james-coutry", "seed" : 3}, {"name" : "Sam Merrill", "id" : "sam-merrill", "seed" : 4}],
 					[ {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5}, {"name" : "Everett Zettersten", "id" : "everett-zettersten", "seed" : 6} ],
 					[ {"name" : "John Scott", "id" : "john-scott", "seed" : 7}, {"name" : "Teddy Koufus", "id" : "teddy-koufus", "seed" : 8}],
@@ -35,11 +58,24 @@ Template.brackets.events({
 				]
 			];
 
-			// initializer
-			$(".my_gracket").gracket({ src : win.TestData });
+			// Load script (script HAS TO BE in the public folder)
+			$.getScript( "javascript/jquery.gracket.js" )
+  				.done(function( script, textStatus ) {
+    				// console.log( textStatus );
+    				// initializer
+					$(".my_gracket").gracket({ src : win.TestData });
+  				})
+ 			 	.fail(function( jqxhr, settings, exception ) {
+ 			 		console.error("Error loading jquery.gracket :" + exception);
+				})
+			;
 
-		}
+		}; // end my function
 
-		myFunction(window, document, jQuery);
-  }
-});
+
+
+		jQuery(myFunction(window, document, jQuery));
+
+	</script>
+<!-- </html> -->
+</template>

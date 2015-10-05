@@ -27,13 +27,16 @@
         <li><a href="{{pathFor route='Brackets'}}">Brackets</a></li>
 
         <!-- <li><a href="{{pathFor route='Login'}}">Login</a></li> -->
+
+        {{#if currentUser}}
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="{{pathFor route='SiteRegistration'}}">Inscription <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{{pathFor route='SiteRegistration'}}">Inscription au site</a></li>
             <li><a href="{{pathFor route='TournamentRegistration'}}">Inscription au tournoi</a></li>
             <li><a href="{{pathFor route='CourtRegistration'}}">Inscription d'un terrain</a></li>
           </ul>
-        </li>        
+        </li>    
+        {{/if}}    
         
           </ul>
           <div class="nav navbar-nav navbar-right">

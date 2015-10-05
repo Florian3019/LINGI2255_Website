@@ -21,7 +21,7 @@
       cornerRadius : 15,
       canvasId : "g_canvas",
       canvasClass : "g_canvas",
-      canvasLineColor : "#eee",
+      canvasLineColor : "#00CC00",
       canvasLineCap : "round",
       canvasLineWidth : 2,
       canvasLineGap : 15,
@@ -135,11 +135,11 @@
       build : {
         team : function(data, node){
           var html = [
-            '<h3'+ ((typeof data.score === "undefined") ? "" : " title=\"Score: " + data.score + "\"") +'>',
+            '<h3' +((typeof data.score === "undefined") ? "" : " title=\"Score: " + data.score + "\"") +'>',
               '<span class="' + node.seedClass + '">',
                 ((typeof data.displaySeed === "undefined") ? data.seed : data.displaySeed),
               '</span>',
-              '&nbsp;' + data.name + '&nbsp;',
+              '&nbsp;' + data.name + '&nbsp;',              
               '<small>',
                 ((typeof data.score === "undefined") ? "" : data.score),
               '</small>',
