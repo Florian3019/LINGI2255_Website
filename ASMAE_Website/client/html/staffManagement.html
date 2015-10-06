@@ -1,3 +1,27 @@
 <template name="staffManagement">
-Staff Management
+<br>
+<table class="table table-bordered">
+    <thead>
+	<tr>
+		<th>Nom</th>
+		<th>Prénom</th>
+		<th>Email</th>
+		<th>Question</th>
+		<th>Date</th>
+		<th>Déja traité</th>
+	</tr>
+	</thead>
+	<tbody>
+{{#each ShowStaff}}
+	<tr>
+	<td>{{lastname}}</td>
+	<td>{{firstname}}</td>
+	<td>{{email}}</td>
+	<td>{{question}}</td>
+	<td>{{date}}</td>
+	<td>{{isProcessed}}</td>
+	</tr>
+{{/each}}
+	</tbody>
+</table>
 </template>
