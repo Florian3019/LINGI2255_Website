@@ -212,7 +212,7 @@ Template.tournamentRegistration.events({
         console.log(addressData);
 
 
-        Meteor.call('updateAddress', addressData, data._id);
+        Meteor.call('updateAddress', addressData, data._id, null);
         Meteor.call('updateUser', data);
       	Router.go('home');
     }

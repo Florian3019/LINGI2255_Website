@@ -7,13 +7,12 @@
 display: block;
 }
 
-.navbar-brand,
+/*.navbar-brand,
 .navbar-nav li a {
     line-height: 42px;
     height: 60px;
     padding-top: 8px;
 }
-/*.navbar .container { height: 5em; }*/
 body {
   padding-top: 80px;
 }
@@ -21,6 +20,10 @@ body {
   body {
     padding-top: 0px;
   }
-}
+}*/
+
+/*.dropdown-menu li {
+	line-height: 6px;
+}*/
 
 
