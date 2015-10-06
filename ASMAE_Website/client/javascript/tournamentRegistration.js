@@ -103,7 +103,7 @@ Template.tournamentRegistration.events({
         // var password = event.target.password.value;
         var birthDate = event.target.birth.value;
 
-        // TODO : store address info
+        // TODO : store address info 
         var address = event.target.address.value;
         var addressNumber = event.target.addressnumber.value;
         var boxNumber = event.target.box.value;
