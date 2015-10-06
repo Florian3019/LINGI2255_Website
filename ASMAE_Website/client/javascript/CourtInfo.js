@@ -1,4 +1,4 @@
-Template.CourtInfo.helpers({
+Template.courtInfo.helpers({
   'rue': function(){
     var court = Courts.find({surface : "A"}).fetch();
     var addr = Addresses.find({ _id : court[0].addressID}).fetch();

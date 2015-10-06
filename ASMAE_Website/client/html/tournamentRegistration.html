@@ -1,4 +1,4 @@
-<template name="TournamentRegistration">
+<template name="tournamentRegistration">
 <div>
 	<h2>Enregistrement au tournoi</h2>
 	<form role="form">
@@ -26,18 +26,25 @@
       		<input type="date" id="birth" class="form-control" placeholder="1990-01-01" value="{{date}}" name="date de naissance">
     	</div>
 
+      <div class="form-group">
+         <label for="homme">Homme</label>
+         <input type="radio" name="sex" id="male" value="homme">
+         <label for="femme">Femme</label>
+         <input type="radio" name="sex" id="female" value="femme"><br>
+      </div>
+
     	<div class="row">
       		<div class="col-md-6">
    	  			<div class="form-group">
              		<label for="text">Adresse</label>
-             		<input type="text" class="form-control" id="adress" placeholder="Rue des 2 chapelles" value="{{address}}" name="adress">
+             		<input type="text" class="form-control" id="address" placeholder="Rue des 2 chapelles" value="{{address}}" name="address">
           		</div>   
       		</div>
       		
       		<div class="col-md-2">
        			<div class="form-group">
         			 <label for="text">Numéro</label>
-        		 	<input type="text" class="form-control" id="adressnumber" placeholder="20" value="{{adressnumber}}" name="adressnumber">
+        		 	<input type="text" class="form-control" id="addressnumber" placeholder="20" value="{{adressnumber}}" name="adressNumber">
        		 	</div>
      		 </div>
       
@@ -45,7 +52,7 @@
       		<div class="col-md-2">
        			<div class="form-group">
          			<label for="text">Boite</label>
-         			<input type="text" class="form-control" id="box" placeholder="105b" value="{{boxnumber}}" name="boxnumber">
+         			<input type="text" class="form-control" id="box" placeholder="105b" value="{{boxnumber}}" name="boxNumber">
        		 	</div>
       		</div>
 

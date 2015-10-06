@@ -96,51 +96,51 @@
           REGISTRATION SETTINGS
     #################################*/
 
-  Template.SiteRegistration.events({
+  // Template.siteRegistration.events({
 
-    'submit form':function(){
-      event.preventDefault();
-        var lastname = event.target.lastname.value;
-        var firstname = event.target.firstname.value;
-        var email = event.target.email.value;
-        var phone = event.target.phone.value;
-        var sex = event.target.sex.value;
-        // var password = event.target.password.value;
-        var birthDate = event.target.date.value;
+  //   'submit form':function(){
+  //     event.preventDefault();
+  //       var lastname = event.target.lastname.value;
+  //       var firstname = event.target.firstname.value;
+  //       var email = event.target.email.value;
+  //       var phone = event.target.phone.value;
+  //       var sex = event.target.sex.value;
+  //       // var password = event.target.password.value;
+  //       var birthDate = event.target.date.value;
 
         
-        data = { 
-          profile:{
-            _id: Meteor.userId(),
-            lastName : lastname,
-            firstName : firstname,
-            email : [{"address": email, "verified":false}],
-            phone : phone,
-            gender : sex,
-            birthDate : birthDate
-          }
-        };
+  //       data = { 
+  //         profile:{
+  //           _id: Meteor.userId(),
+  //           lastName : lastname,
+  //           firstName : firstname,
+  //           emails : [{"address": email, "verified":false}],
+  //           phone : phone,
+  //           gender : sex,
+  //           birthDate : birthDate
+  //         }
+  //       };
 
-        Meteor.call('updateUser', data);
-      Router.go('home');
-    }
+  //       Meteor.call('updateUser', data);
+  //     Router.go('home');
+  //   }
 
 
-  }); 
+  // }); 
    
-  Template.SiteRegistration.helpers({
-    // TODO
+  // Template.SiteRegistration.helpers({
+  //   // TODO
 
-    'getLastName':function(){
-      // Must setup publish/subscribe
-      var res = UserList.find({ _id: Meteor.userId()}, {profile: {lastName:1}});
-      var myDoc = res.fetch();
-      console.log(myDoc);
-      return res;
-    }
+  //   'getLastName':function(){
+  //     // Must setup publish/subscribe
+  //     var res = UserList.find({ _id: Meteor.userId()}, {profile: {lastName:1}});
+  //     var myDoc = res.fetch();
+  //     console.log(myDoc);
+  //     return res;
+  //   }
 
 
-  }); 
+  // }); 
 
   // Additional button to allow profile editing when the user is logged in
   Template._loginButtonsLoggedInDropdown.events({

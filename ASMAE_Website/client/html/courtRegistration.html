@@ -1,73 +1,73 @@
-<template name="CourtRegistration">
- <div class="container">    
-  <form role="form">
-  	<br><br>
-	<div class="form-group">
-  	
-	  	<h2>Informations sur le terrain:</h2>
-	  	<br>
-	  	<div class="row">
-		  	<div class="col-sm-12">
-			  	<label for="street">Rue:</label>
-			      	<input type="text" name="street" id="street" class="form-control">
-		      	</div>
-		      	
-	      	</div>
-	      	<br>
-	      	<div class ="row">
-	      		<div class = "col-sm-2">
-			      	<label for="addressNumber">Numéro:</label>
-			      	<input type="text" name="addressNumber" id="addressNumber" class="form-control">
-		      	</div>
-		      	<div class="col-sm-2">
-			      	<label for="box">Boîte:</label>
-			      	<input type="text" name="box" id="box" class="form-control"><br />
-		      	</div>
-		      	<div class="col-sm-3">
-			      	<label for="zipCode">Code postal:</label>
-			      	<input type="text" name="zipCode" id="zipCode" class="form-control">
-		      	</div>
-		      	<div class="col-sm-5">
-			      	<label for="city">Ville:</label>
-			      	<input type="text" name="city" id="city" class="form-control">
-		  	</div>
-		  </div>
-			  	<div class="form-group">
-			  		<label for="surface">Surface:</label>
-			  		<select name="surface" id="surface" class="form-control" selected = " ">
-			  		<option value="NoType"> </option>
-				    <option value="Terre_Battue">Terre Battue</option>
-				    <option value="Gazon">Gazon</option>
-				    <option value="Synthetique">Synthétique</option>
-				    <option value="Beton">Beton</option>
-				</select>
-	  			</div>
-	  		
-	  	
-	  	<div class="form-group">
-	  		<h4><b>Type:</b></h4>
-	  		<div class="radio">
-	  			<label><input type="radio" name="courtType" value="private" class=/>Privé</label><br />
-	  		</div>
-	  		<div class="radio">
-		 		<label><input type="radio" name="courtType" value="club" />Club</label>
-		 	</div>
-	  	</div>
-	  	<div class="form-group">
-	  		<label for="instructions">Instructions d'accès au terrain:</label>
-			<textarea name="instructions" id="instructions" class="form-control"></textarea>
-	  	</div>
-	  	<div class="form-group">
-	  		<label for="ownerComment">Commentaires:</label>
-			<textarea name="ownerComment" id="ownerComment" class="form-control"></textarea>
-	  	</div>
+<template name="courtRegistration">
+	<div class="container">    
+		<form role="form">
+			<br><br>
+			<div class="form-group">
 
-	    <button type="submit" class="btn btn-default">Enregistrer</button>
-	  </div>
-	  
-  </form>
-  
-  </div>
-  
-  
+				<h2>Informations sur le terrain:</h2>
+				<br>
+				<div class="row">
+					<div class="col-sm-12">
+						<label for="street">Rue:</label>
+						<input type="text" name="street" id="street" class="form-control">
+					</div>
+
+				</div>
+				<br>
+				<div class ="row">
+					<div class = "col-sm-2">
+						<label for="addressNumber">Numéro:</label>
+						<input type="text" name="addressNumber" id="addressNumber" class="form-control">
+					</div>
+					<div class="col-sm-2">
+						<label for="box">Boîte:</label>
+						<input type="text" name="box" id="box" class="form-control"><br />
+					</div>
+					<div class="col-sm-3">
+						<label for="zipCode">Code postal:</label>
+						<input type="text" name="zipCode" id="zipCode" class="form-control">
+					</div>
+					<div class="col-sm-5">
+						<label for="city">Ville:</label>
+						<input type="text" name="city" id="city" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="surface">Surface:</label>
+					<select name="surface" id="surface" class="form-control" style="width: 15%; display: inline" selected="Synthetique">
+						<option value="NoType">Autre</option>
+						<option value="Terre_Battue">Terre Battue</option>
+						<option value="Gazon">Gazon</option>
+						<option value="Synthetique">Synthétique</option>
+						<option value="Beton">Béton</option>
+					</select>
+				</div>
+
+
+				<div class="form-group">
+					<h4><b>Type:</b></h4>
+					<div class="radio">
+						<label><input type="radio" name="courtType" value="private" class=/>Privé</label><br />
+					</div>
+					<div class="radio">
+						<label><input type="radio" name="courtType" value="club" />Club</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="instructions">Instructions d'accès au terrain:</label>
+					<textarea name="instructions" id="instructions" class="form-control"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="ownerComment">Commentaires:</label>
+					<textarea name="ownerComment" id="ownerComment" class="form-control"></textarea>
+				</div>
+
+				<button type="submit" class="btn btn-default">Enregistrer</button>
+			</div>
+
+		</form>
+
+	</div>
+
+
 </template>

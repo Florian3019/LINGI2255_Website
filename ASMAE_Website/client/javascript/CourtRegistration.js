@@ -1,4 +1,4 @@
-Template.CourtRegistration.events({
+Template.courtRegistration.events({
     'submit form': function(event){
         event.preventDefault();
         var courtData = {

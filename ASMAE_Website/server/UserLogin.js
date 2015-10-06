@@ -169,10 +169,6 @@ Accounts.onCreateUser(function (options, user) {
                     // user is signing in by email, we need to set it to the existing user
                     existingUser.emails = user.emails;
                 }
-                // If user has logged via facebook but already had a google account OR user logged via google but already has a facebook account
-                if(existingFacebookUser && service == 'google' || existingGoogleUser && service == 'facebook'){
-                    existingUser.services.service = user.services.service; // Add that service to the user profile
-                }
             }
         }
 
@@ -187,7 +183,7 @@ Accounts.onCreateUser(function (options, user) {
         // }
 
         // copy accross new service info
-        // existingUser.services[service] = user.services[service];
+        existingUser.services[service] = user.services[service];
         // existingUser.services.resume.loginTokens.push(
         //     user.services.resume.loginTokens[0]
         // );
@@ -199,7 +195,7 @@ Accounts.onCreateUser(function (options, user) {
         return existingUser;                  // record is re-inserted
     }
 
-    return addDefaultFields(user);;
+    return addDefaultFields(user);
 
 
 });

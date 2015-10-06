@@ -75,17 +75,18 @@ Meteor.methods({
 		The function will return false.
 	*/
 	'updateUser' : function(userData){
+
 		if(!userData._id){
 			console.error("updateUser : Must provide user id to update the user !");
 			return;
 		}
 
+		
 		// existingUser = UserList.find({ _id: userData._id });
 
 		var profile = userData.profile;
 
-		var data = {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, profile:{}};
-		var dataProfile = data.profile;
+		var data = {};
 		data._id = userData._id; // Always add the id
 
 		if(userData.createdAt){
@@ -100,50 +101,48 @@ Meteor.methods({
 			data.emails = userData.emails; // Array of {address:"...@...com", verified:"true or false"}
 		}
 
-
-
-
 		if(profile.name){
-			dataProfile.name = profile.name;
+			data["profile.name"] = profile.name;
 		}
 
 		if(profile.title){
-			dataProfile.title = profile.title;
+			data["profile.title"] = profile.title;
 		}
 		if(profile.firstName){
-			dataProfile.firstName = profile.firstName;
+			console.log("Here");
+			data["profile.firstName"] = profile.firstName;
 		}
 		if(profile.lastName){
-			dataProfile.lastName = profile.lastName;
+			data["profile.lastName"] = profile.lastName;
 		}
 
 		if(profile.gender){
-			dataProfile.gender = profile.gender;
+			data["profile.gender"] = profile.gender;
 		}
 
 		if(profile.addressID){
-			dataProfile.addressID = profile.addressID;
+			data["profile.addressID"] = profile.addressID;
 		}
 		if(profile.phone){
-			dataProfile.phone = profile.phone;
+			data["profile.phone"] = profile.phone;
 		}
 		if(profile.birthDate){
-			dataProfile.birthDate = profile.birthDate;
+			data["profile.birthDate"] = profile.birthDate;
 		}
 		if(profile.AFT){
-			dataProfile.AFT = profile.AFT;
+			data["profile.AFT"] = profile.AFT;
 		}
 
 		if(profile.isStaff){
-			dataProfile.isStaff = profile.isStaff;
+			data["profile.isStaff"] = profile.isStaff;
 		}
 
 		if(profile.isAdmin){
-			dataProfile.isAdmin = profile.isAdmin;
+			data["profile.isAdmin"] = profile.isAdmin;
 		}
 
 		// Write data on the DB
-		writeResult = UserList.update({_id: data._id} , {$set: data}, {upsert: true});
+		writeResult = Meteor.users.update({_id: data._id} , {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, $set: data}, {upsert: true});
 		if(writeResult.writeConcernError){
 			console.error('updateUser : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;
@@ -153,5 +152,20 @@ Meteor.methods({
 		}
 
 		return false;
+	},
+
+	
+	'insertQuestion' : function(Question){
+		var data ={
+			lastname : Question.lastname,
+			firstname: Question.firstname,
+			email : Question.email,
+			question : Question.question,
+			date : Question.date,
+			processed : false
+		}
+		return Questions.insert(data)
 	}
+
+
 });

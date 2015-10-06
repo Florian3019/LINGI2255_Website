@@ -16,24 +16,24 @@
             <li class="active"><a href="{{pathFor route='home'}}">Home</a></li>
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Staff <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="{{pathFor route='StaffManagement'}}">Staff management</a></li>
-            <li><a href="{{pathFor route='PlayersInfo'}}">Players info</a></li>
-            <li><a href="{{pathFor route='CourtInfo'}}">Courts info</a></li>
+            <li><a href="{{pathFor route='staffManagement'}}">Staff management</a></li>
+            <li><a href="{{pathFor route='playersInfo'}}">Players info</a></li>
+            <li><a href="{{pathFor route='courtInfo'}}">Courts info</a></li>
           </ul>
         </li>
-        <li><a href="{{pathFor route='Pictures'}}">Photos</a></li>
-        <li><a href="{{pathFor route='Rules'}}">Règlement</a></li>
-        <li><a href="{{pathFor route='Contacts'}}">Contacts</a></li>
-        <li><a href="{{pathFor route='Brackets'}}">Brackets</a></li>
+        <li><a href="{{pathFor route='pictures'}}">Photos</a></li>
+        <li><a href="{{pathFor route='rules'}}">Règlement</a></li>
+        <li><a href="{{pathFor route='contacts'}}">Contacts</a></li>
+        <li><a href="{{pathFor route='brackets'}}">Brackets</a></li>
 
         <!-- <li><a href="{{pathFor route='Login'}}">Login</a></li> -->
 
         {{#if currentUser}}
-        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="{{pathFor route='SiteRegistration'}}">Inscription <span class="caret"></span></a>
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="{{pathFor route='siteRegistration'}}">Inscription <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="{{pathFor route='SiteRegistration'}}">Inscription au site</a></li>
-            <li><a href="{{pathFor route='TournamentRegistration'}}">Inscription au tournoi</a></li>
-            <li><a href="{{pathFor route='CourtRegistration'}}">Inscription d'un terrain</a></li>
+            <li><a href="{{pathFor route='siteRegistration'}}">Inscription au site</a></li>
+            <li><a href="{{pathFor route='tournamentRegistration'}}">Inscription au tournoi</a></li>
+            <li><a href="{{pathFor route='courtRegistration'}}">Inscription d'un terrain</a></li>
           </ul>
         </li>    
         {{/if}}    

@@ -1,4 +1,4 @@
-Template.PlayersInfo.helpers({
+Template.playersInfo.helpers({
   //Don't work
   'nom': function(){
     var player = users.find({username : "Amalingreau"}).fetch();
