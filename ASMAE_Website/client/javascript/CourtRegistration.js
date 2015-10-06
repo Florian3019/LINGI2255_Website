@@ -7,6 +7,7 @@ Template.courtRegistration.events({
             box : $('[name=box]').val(),
             city : $('[name=city]').val(),
             zipCode : $('[name=zipCode]').val(),
+            country : $('[name=country]').val()
         };
         var courtData = {
             ownerID: Meteor.userId(),
