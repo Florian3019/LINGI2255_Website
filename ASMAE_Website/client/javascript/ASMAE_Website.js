@@ -4,8 +4,8 @@
 
   Accounts.ui.config({
     requestPermissions: {
-      facebook: ['public_profile','email'],
-      googe: ['profile', 'email']
+      facebook: ['public_profile','email'], // 'user_birthday' --> requires app review from facebook
+      googe: ['profile', 'email','user_birthday']
     },
     /*
       If true, forces the user to approve the 
@@ -75,6 +75,12 @@
       // Disallow the user to change its password 
       // (which would be inexistant) if he logged in via google or facebook
       var user = Meteor.user();
+      if(!user){
+        return false;
+      }
+      if(!user.services){
+        return false;
+      }
       return !(user.services.google || user.services.facebook);
     }
   });
@@ -99,23 +105,43 @@
         var email = event.target.email.value;
         var phone = event.target.phone.value;
         var sex = event.target.sex.value;
-        var password = event.target.password.value;
-        var date = event.target.date.value;
+        // var password = event.target.password.value;
+        var birthDate = event.target.date.value;
 
         
-        UserList.insert({
-        lastname : lastname,
-        firstname : firstname,
-        email : email,
-        phone : phone,
-        sex : sex,
-        password : password,
-        date : date
-    });  
-    Router.go('home');
-   }
-  });    
+        data = { 
+          profile:{
+            _id: Meteor.userId(),
+            lastName : lastname,
+            firstName : firstname,
+            email : [{"address": email, "verified":false}],
+            phone : phone,
+            gender : sex,
+            birthDate : birthDate
+          }
+        };
+
+        Meteor.call('updateUser', data);
+      Router.go('home');
+    }
+
+
+  }); 
    
+  Template.SiteRegistration.helpers({
+    // TODO
+
+    'getLastName':function(){
+      // Must setup publish/subscribe
+      var res = UserList.find({ _id: Meteor.userId()}, {profile: {lastName:1}});
+      var myDoc = res.fetch();
+      console.log(myDoc);
+      return res;
+    }
+
+
+  }); 
+
   // Additional button to allow profile editing when the user is logged in
   Template._loginButtonsLoggedInDropdown.events({
     'click #login-buttons-edit-profile': function(event) {

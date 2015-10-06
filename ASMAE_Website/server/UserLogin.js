@@ -51,6 +51,67 @@ if (isProdEnv()) {
 */
 Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false}); 
 
+/*
+    @param 
+*/
+useServiceInfo = function(user){
+    var services = user.services;
+
+    // BirthDate
+    if(!user.profile.birthDate)
+        if(services.google && services.google.birth_date){
+            user.profile.birthDate = service.google.birth_date;
+        }
+        else if(services.facebook && services.facebook.birth_date){
+            user.profile.birthDate = service.facebook.birth_date;    
+        }
+
+    // First name
+    if(!user.profile.firstName)
+        if(services.google){
+            user.profile.firstName = services.google.given_name; 
+        }
+        else if(services.facebook){
+            user.profile.firstName = services.facebook.first_name;
+        }
+
+    // Last name
+    if(!user.profile.lastName)
+        if(services.google){
+            user.profile.lastName = services.google.family_name;
+        }
+        else if(services.facebook){ 
+            user.profile.lastName = services.facebook.last_name;
+        }
+
+    // Gender
+    if(!user.profile.gender)
+        if(services.google){
+            user.profile.gender = services.google.gender;
+        } 
+        else if(services.facebook){
+            user.profile.gender = services.facebook.gender;
+        }
+    
+    // Emails
+    if(!user.profile.emails)
+        if(services.google){
+            user.emails = [{"address":services.google.email, "verified":services.google.verified_email}];
+        } 
+        else if(services.facebook){
+            user.emails = [{"address":services.facebook.email, "verified":true}];
+
+        }
+
+    return user;
+}
+
+
+addDefaultFields = function(user){
+    user.profile.isStaff = false;
+    user.profile.isAdmin = false;
+    return user;
+}
 
 /*
     Define what happens when the user logs in. Mainly merges the accounts if he logged in via google/facebook
@@ -60,12 +121,16 @@ Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false
     facebook information is discarded (but the user is logged in on its google account).
 */
 Accounts.onCreateUser(function (options, user) {
- console.log("onCreateUser");
+    // Check if the user logged in via a service (google or facebook)
     if (user.services) {
         if (options.profile) {
             user.profile = options.profile
         }
+
+        // Get the service name
         var service = _.keys(user.services)[0];
+
+        // Get the service's email address
         var email = user.services[service].email;
         if (!email) {
             if (user.emails) {
@@ -77,7 +142,8 @@ Accounts.onCreateUser(function (options, user) {
         }
         if (!email) {
             // if email is not set, there is no way to link it with other accounts
-            return user;
+            user = addDefaultFields(user)
+            return useServiceInfo(user);
         }
 
         // see if any existing user has this email address, otherwise create new
@@ -88,18 +154,29 @@ Accounts.onCreateUser(function (options, user) {
             var existingFacebookUser = Meteor.users.findOne({'services.facebook.email': email});
             var doesntExist = !existingGoogleUser && !existingFacebookUser;
             if (doesntExist) {
+                // User doesn't have an email address in google or facebook.
+
                 // return the user as it came, because there he doesn't exist in the DB yet
-                return user;
-            } else {
-                existingUser = existingGoogleUser || existingFacebookUser;
-                if (existingUser) {
-                    if (user.emails) {
-                        // user is signing in by email, we need to set it to the existing user
-                        existingUser.emails = user.emails;
-                    }
+                
+                return useServiceInfo(addDefaultFields(user));
+            } 
+            else {
+
+                existingUser = existingGoogleUser ? existingGoogleUser : existingFacebookUser;
+
+                // User has already an account under google or facebook
+                if (user.emails) {
+                    // user is signing in by email, we need to set it to the existing user
+                    existingUser.emails = user.emails;
+                }
+                // If user has logged via facebook but already had a google account OR user logged via google but already has a facebook account
+                if(existingFacebookUser && service == 'google' || existingGoogleUser && service == 'facebook'){
+                    existingUser.services.service = user.services.service; // Add that service to the user profile
                 }
             }
         }
+
+        // At this point, we know that the user is already in the DB
 
         /*
             Had to remove this part as it was making the site crash, don't know exactly what it did either
@@ -117,6 +194,12 @@ Accounts.onCreateUser(function (options, user) {
 
         // even worse hackery
         Meteor.users.remove({_id: existingUser._id}); // remove existing record
+        
+        existingUser = useServiceInfo(existingUser);
         return existingUser;                  // record is re-inserted
     }
+
+    return addDefaultFields(user);;
+
+
 });

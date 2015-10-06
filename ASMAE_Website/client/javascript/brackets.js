@@ -1,5 +1,10 @@
 Template.brackets.events({
 
+"click":function(event,template){
+  	console.log("click");
+  	// Meteor.call('updateUser', {firstName : 'guillaume'});
+  },
+
 	// Do something when the user clicks on a player
   "click .g_team":function(event, template){
   	// console.log(event);
@@ -22,4 +27,5 @@ Template.brackets.events({
   	// TODO : redirect to player profile ?
 
   }
+
 });
