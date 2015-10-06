@@ -2,11 +2,14 @@
       <!-- Example row of columns -->
       <div class="row">
 		  <div class="col-md-4">
-      		<img src="logo.jpg" width = "100%" />
+      		<img src="tennis1-min.jpg" width = "100%" />
   		</div>
 		<div class="col-md-4">
 	  		<img src="logo_old.jpg" width = "100%">
 		</div>
+    <div class="col-md-4">
+        <img src="tennis2-min.jpg" width = "100%">
+    </div>
       </div>
       
       <div class="row">
@@ -21,12 +24,12 @@
         <div class="col-md-4">
           <h2>Inscris-toi</h2>
           <p>Clique ici pour t'inscrire sur le site web et puis t'inscrire au tournoi !</p>
-          <p><a class="btn btn-default" href="{{pathFor route='siteRegistration'}}" role="button">Inscription &raquo;</a></p>
+          <p><a class="btn btn-default" href="{{pathFor route='tournamentRegistration'}}" role="button">Inscription &raquo;</a></p>
        </div>
         <div class="col-md-4">
           <h2>Court user</h2>
           <p>Clique ici si tu es un propriétaire de terrain intéressé par notre tournoi</p>
-          <p><a class="btn btn-default" href="#" role="button">Inscris ton terrain &raquo;</a></p>
+          <p><a class="btn btn-default" href="{{pathFor route='courtRegistration'}}" role="button">Inscris ton terrain &raquo;</a></p>
         </div>
       </div>
       

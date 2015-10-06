@@ -149,5 +149,4 @@
     }
 });
 
-
 Meteor.subscribe("addresses");

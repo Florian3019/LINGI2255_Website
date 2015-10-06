@@ -7,4 +7,20 @@
 display: block;
 }
 
+.navbar-brand,
+.navbar-nav li a {
+    line-height: 42px;
+    height: 60px;
+    padding-top: 8px;
+}
+/*.navbar .container { height: 5em; }*/
+body {
+  padding-top: 80px;
+}
+@media (max-width: 979px) {
+  body {
+    padding-top: 0px;
+  }
+}
+
 
