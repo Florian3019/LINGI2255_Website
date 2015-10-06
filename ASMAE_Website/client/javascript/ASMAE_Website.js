@@ -148,3 +148,6 @@
         Router.go('ProfileEdit');
     }
 });
+
+
+Meteor.subscribe("addresses");

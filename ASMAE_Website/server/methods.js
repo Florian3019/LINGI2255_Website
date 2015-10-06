@@ -67,7 +67,7 @@ Meteor.methods({
 		}
 
 		If the _id is not already in the DB, this will add that _id and all other fields of userData to the DB (creating a new user).
-		Missing fields will be set to undefined (except for admin and staff which default to false).
+		Missing fields will not be included (except for admin and staff which default to false).
 		The function will return true.
 		
 		If the _id is already in the DB, this will update the fields of the existing in regard of the fields in userData. 
@@ -100,49 +100,51 @@ Meteor.methods({
 		if(userData.emails){
 			data.emails = userData.emails; // Array of {address:"...@...com", verified:"true or false"}
 		}
+		console.log('userProfile');
+		console.log(profile);
+		if(profile){
+			if(profile.name){
+				data["profile.name"] = profile.name;
+			}
+			if(profile.title){
+				data["profile.title"] = profile.title;
+			}
+			if(profile.firstName){
+				data["profile.firstName"] = profile.firstName;
+			}
+			if(profile.lastName){
+				data["profile.lastName"] = profile.lastName;
+			}
 
-		if(profile.name){
-			data["profile.name"] = profile.name;
-		}
+			if(profile.gender){
+				data["profile.gender"] = profile.gender;
+			}
 
-		if(profile.title){
-			data["profile.title"] = profile.title;
-		}
-		if(profile.firstName){
-			console.log("Here");
-			data["profile.firstName"] = profile.firstName;
-		}
-		if(profile.lastName){
-			data["profile.lastName"] = profile.lastName;
-		}
+			if(profile.addressID){
+				console.log("addressId updateUser");
+				data["profile.addressID"] = profile.addressID;
+			}
+			if(profile.phone){
+				data["profile.phone"] = profile.phone;
+			}
+			if(profile.birthDate){
+				data["profile.birthDate"] = profile.birthDate;
+			}
+			if(profile.AFT){
+				data["profile.AFT"] = profile.AFT;
+			}
 
-		if(profile.gender){
-			data["profile.gender"] = profile.gender;
-		}
+			if(profile.isStaff){
+				data["profile.isStaff"] = profile.isStaff;
+			}
 
-		if(profile.addressID){
-			data["profile.addressID"] = profile.addressID;
-		}
-		if(profile.phone){
-			data["profile.phone"] = profile.phone;
-		}
-		if(profile.birthDate){
-			data["profile.birthDate"] = profile.birthDate;
-		}
-		if(profile.AFT){
-			data["profile.AFT"] = profile.AFT;
-		}
-
-		if(profile.isStaff){
-			data["profile.isStaff"] = profile.isStaff;
-		}
-
-		if(profile.isAdmin){
-			data["profile.isAdmin"] = profile.isAdmin;
+			if(profile.isAdmin){
+				data["profile.isAdmin"] = profile.isAdmin;
+			}
 		}
 
 		// Write data on the DB
-		writeResult = Meteor.users.update({_id: data._id} , {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, $set: data}, {upsert: true});
+		var writeResult = Meteor.users.update({_id: data._id} , {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, $set: data}, {upsert: true});
 		if(writeResult.writeConcernError){
 			console.error('updateUser : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;
@@ -152,6 +154,85 @@ Meteor.methods({
 		}
 
 		return false;
+	},
+
+
+	/*
+		Updates the address of the user with id userId. If addressData does not contain a field _id, this will
+		create a new address for the user (removing the reference to the previous one if there was one) and link its
+		_id to the profile.addressID field of the user.
+
+		The addressData structure is as follows :
+		{
+			._id:<id>, // Ommit this if you want to create a new address, this will be auto-generated
+			.street:<street>,
+			.number:<number>,
+			.box:<box>,
+			.city:<city>,
+			.zipCode:<zipCode>,
+			.country:<country>
+		}
+
+		If some fields are missing, they will be left untouched.
+	
+	*/
+	'updateAddress' : function(addressData, userId){
+		console.log('updateAddress');
+		if(!userId){
+			console.error("updateAddress : Must provide user id to update the address !");
+			return;
+		}
+
+		var data = {};
+		if(addressData.street){
+			data.street = addressData.street;
+		}
+		if(addressData.box){
+			data.box = addressData.box;
+		}
+		if(addressData.number){
+			data.number = addressData.number;
+		}
+		if(addressData.city){
+			data.city = addressData.city;
+		}
+		if(addressData.zipCode){
+			data.zipCode = addressData.zipCode;
+		}
+		if(addressData.country){
+			data.country = addressData.country;
+		}
+
+		if(!addressData._id){
+			console.log("here");
+			Addresses.insert(data, function(err, addrId){
+				if(err){
+					console.error('updateAddress error');
+					console.error(err);
+					return;
+				} 	
+				// Update addressID in the user
+        		Meteor.call('updateUser', {_id:userId, profile:{addressID:addrId}});
+			});
+			// Done with new insert
+			return;
+		}
+		data._id = addressData._id; // set the address data
+
+
+		// Add the address in the DB
+		var writeResult = Addresses.update({_id: data._id} , {$set: data});
+		if(writeResult.writeConcernError){
+			console.error('updateAddress : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
+			return;
+		}
+
+		Meteor.call('updateUser', {_id:userId, "profile.addressID":id}); // link address to the user
+
+		if(writeResult.nUpserted >0){
+			return true;
+		}
+
 	},
 
 	
