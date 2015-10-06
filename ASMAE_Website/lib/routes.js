@@ -7,14 +7,21 @@ Router.route('/', {
     name: 'home'
 });
 
-Router.route('/Contacts');
-Router.route('/Pictures');
-Router.route('/Rules');
-Router.route('/TournamentRegistration');
-Router.route('/SiteRegistration');
-Router.route('/CourtRegistration', {
-	name: 'CourtRegistration',
-	template: 'CourtRegistration',
+Router.route('/contacts', {
+	name: 'contacts',
+	template: 'contacts',
+});
+Router.route('/pictures', {
+	name: 'pictures',
+	template: 'pictures',
+});
+Router.route('/rules', {
+	name: 'rules',
+	template: 'rules',
+});
+Router.route('/tournament-registration',  {
+	name: 'tournamentRegistration',
+	template: 'tournamentRegistration',
 	onBeforeAction: function(){
         var currentUser = Meteor.userId();
         if(currentUser){
@@ -24,8 +31,39 @@ Router.route('/CourtRegistration', {
         }
     }
 });
-Router.route('/CourtInfo');
-Router.route('/PlayersInfo');
-Router.route('/StaffManagement');
-Router.route('/ProfileEdit');
-Router.route('/Brackets');
+Router.route('/site-registration', {
+	name: 'siteRegistration',
+	template: 'siteRegistration',
+});
+Router.route('/court-registration', {
+	name: 'courtRegistration',
+	template: 'courtRegistration',
+	onBeforeAction: function(){
+        var currentUser = Meteor.userId();
+        if(currentUser){
+            this.next();
+        } else {
+            this.render("login");
+        }
+    }
+});
+Router.route('/court-info', {
+	name: 'courtInfo',
+	template: 'courtInfo',
+});
+Router.route('/players-info', {
+	name: 'playersInfo',
+	template: 'playersInfo',
+});
+Router.route('/staff-management', {
+	name: 'staffManagement',
+	template: 'staffManagement',
+});
+Router.route('/profile-edit', {
+	name: 'profileEdit',
+	template: 'profileEdit',
+});
+Router.route('/brackets', {
+	name: 'brackets',
+	template: 'brackets',
+});

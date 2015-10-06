@@ -1,4 +1,4 @@
-Template.TournamentRegistration.helpers({
+Template.tournamentRegistration.helpers({
 
 	'lastname': function(){
 	

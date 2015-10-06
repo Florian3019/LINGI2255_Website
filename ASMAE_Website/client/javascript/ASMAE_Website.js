@@ -90,7 +90,7 @@
           REGISTRATION SETTINGS
     #################################*/
 
-  Template.SiteRegistration.events({
+  Template.siteRegistration.events({
 
     'submit form':function(){
       event.preventDefault();
