@@ -124,7 +124,8 @@ Template.tournamentRegistration.events({
             firstName : firstname,
             phone : phone,
             gender : sex,
-            birthDate : birthDate
+            birthDate : birthDate,
+            AFT : AFT
           }
         };
 
