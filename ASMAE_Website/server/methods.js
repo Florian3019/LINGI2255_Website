@@ -41,7 +41,8 @@ Meteor.methods({
 			firstname: Question.firstname,
 			email : Question.email,
 			question : Question.question,
-			date : Question.date
+			date : Question.date,
+			processed : false
 		}
 		return Questions.insert(data)
 	}
