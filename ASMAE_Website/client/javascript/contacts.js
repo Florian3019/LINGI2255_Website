@@ -19,3 +19,4 @@ var datetime =    currentdate.getDate() + "/"
         Meteor.call('insertQuestion', Question);
     }
 });
+
