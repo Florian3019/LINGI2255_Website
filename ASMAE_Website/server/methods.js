@@ -33,6 +33,18 @@ Meteor.methods({
 		}
 
 		return Courts.insert(data);
+	},
+	
+	'insertQuestion' : function(Question){
+		var data ={
+			lastname : Question.lastname,
+			firstname: Question.firstname,
+			email : Question.email,
+			question : Question.question,
+			date : Question.date
+		}
+		return Questions.insert(data)
 	}
+
 
 });
