@@ -20,6 +20,8 @@ Meteor.methods({
 		(fields can be missing, if the _id field is missing, a new address will be linked to this court, 
 		erasing reference to previous addressID if existing). Can be null.
 
+		This function does a check to prevent a user from adding a new court with an existing court address (preventing duplicates)
+
 		A court structure is as follows :
 		{
 			_id:<courtId>,
@@ -114,8 +116,6 @@ Meteor.methods({
 				return;
 			}
 			if(address){
-				console.log("before address update");
-				console.log(courtId);
 				Meteor.call('updateAddress', addrData, null, courtId);
 			}
 		}
@@ -134,8 +134,6 @@ Meteor.methods({
 				courtId = addrId; // remember the court id
 
 				if(address){
-					console.log("before address update");
-					console.log(courtId);
 					Meteor.call('updateAddress', addrData, null, courtId);
 				}
 
@@ -206,8 +204,7 @@ Meteor.methods({
 		if(userData.emails){
 			data.emails = userData.emails; // Array of {address:"...@...com", verified:"true or false"}
 		}
-		console.log('userProfile');
-		console.log(profile);
+
 		if(profile){
 			if(profile.name){
 				data["profile.name"] = profile.name;
@@ -227,7 +224,6 @@ Meteor.methods({
 			}
 
 			if(profile.addressID){
-				console.log("addressId updateUser");
 				data["profile.addressID"] = profile.addressID;
 			}
 			if(profile.phone){
@@ -284,7 +280,6 @@ Meteor.methods({
 	
 	*/
 	'updateAddress' : function(addressData, userId, courtId){
-		console.log('updateAddress');
 		if(!userId && !courtId){
 			console.error("updateAddress : Must provide user id or courtId to update the address !");
 			return;
