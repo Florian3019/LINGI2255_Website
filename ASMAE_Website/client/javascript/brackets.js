@@ -2,7 +2,7 @@ Template.brackets.events({
 
 "click":function(event,template){
   	console.log("click");
-  	// Meteor.call('updateUser', {firstName : 'guillaume'});
+    console.log(Meteor.users.find({},{profile:1}).fetch());	
   },
 
 	// Do something when the user clicks on a player

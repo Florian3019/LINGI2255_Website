@@ -7,5 +7,10 @@ Meteor.startup(function () {
 		}
     	
   	});
+
+	Meteor.publish("users", function () {
+		var res = Meteor.users.find({},{fields:{profile:1}});
+		return res;
+  	});  	
 // code to run on server at startup
 });
