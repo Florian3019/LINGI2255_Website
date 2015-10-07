@@ -51,6 +51,11 @@ Meteor.methods({
 			return;
 		}
 
+		var u = Meteor.users.findOne({_id:courtData.ownerID});
+		if(!u){
+			console.error('updateCourt : owner does not exist !');
+			return;
+		}
 
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
@@ -69,32 +74,6 @@ Meteor.methods({
        		mapNumber
        		lendThisYear (ou alors noter l'id du tournoi (ou l'année du dernier tournoi où il était prêté), sinon je ne sais pas quand on pourra le remettre à 'false' après le tournoi)      		
        		*/
-
-		var addrData = {};
-		if(address){
-			if(address._id){
-				addrData._id = address._id;
-			}
-			if(address.street){
-				addrData.street = address.street;
-			}
-			if(address.box){
-				addrData.box = address.box;
-			}
-			if(address.number){
-				addrData.number = address.number;
-			}
-			if(address.city){
-				addrData.city = address.city;
-			}
-			if(address.zipCode){
-				addrData.zipCode = address.zipCode;
-			}
-			if(address.country){
-				addrData.country = address.country;
-			}
-		}
-
 
 		var courtId = courtData._id;
 		var data = {};
@@ -138,12 +117,12 @@ Meteor.methods({
 				return;
 			}
 			if(address){
-				Meteor.call('updateAddress', addrData, courtData.ownerID, courtId);
+				Meteor.call('updateAddress', address, courtData.ownerID, courtId);
 			}
 		}
 		else{
 			// Check that a court with that address does not already exist :
-			if(address && Meteor.call('addressExists', addrData)) return;
+			if(address && Meteor.call('addressExists', address)) return;
 
 			// Create a new court
 			Courts.insert(data, function(err, addrId){
@@ -156,7 +135,7 @@ Meteor.methods({
 				courtId = addrId; // remember the court id
 
 				if(address){
-					Meteor.call('updateAddress', addrData, courtData.ownerID, courtId);
+					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
 				}
 
 			});
@@ -255,6 +234,11 @@ Meteor.methods({
 			}
 
 			if(profile.addressID){
+				var a = Addresses.findOne({_id:profile.addressID});
+				if(!a){
+					console.error('updateUsers : addressID provided does not exist !');
+					return;
+				}
 				data["profile.addressID"] = profile.addressID;
 			}
 			if(profile.phone){
@@ -295,8 +279,8 @@ Meteor.methods({
 				If courtId is provided, updates the court address (userId is then the owner's id).
 				userId must be provided.
 		@param AddressData : if it does not contain a field _id, this will
-		create a new address for the user (removing the reference to the previous one if there was one) and link its
-		_id to the profile.addressID field of the user.
+		create a new address for the user or court (removing the reference to the previous one if there was one) and link its
+		_id to the profile.addressID field of the user or the .addressID field of the court.
 
 		The addressData structure is as follows :
 		{
@@ -321,6 +305,34 @@ Meteor.methods({
 			console.error("updateAddress : must provide the userId of the person trying to make the request if trying to modify a court!");
 			return;	
 		}
+
+		var u = Meteor.users.findOne({_id:userId});
+		if(!u){
+			console.error('updateAddress : that user doesn\'t exist !');
+			return;
+		}
+
+		if(courtId){
+			// Check that that courtId really exists :
+			var c = Courts.findOne({_id:courtId});
+			if(!c){
+				console.error('updateAddress : that court doesn\'t exist !');
+				return;
+			}
+			// If an address id is provided, make sure that addressId is the one from the court
+			if(addressData._id && c.addressID!=addressData._id){
+				console.error('updateAddress : trying to update an address not belonging to the court provided!');
+				return;
+			}
+		}
+		else{
+			if(addressData._id && u.profile && u.profile.addressID && u.profile.addressID != addressData._id){
+				console.error('updateAddress : trying to update an address not belonging to the user provided!');
+				return;
+			}	
+		}
+
+		
 
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
@@ -389,21 +401,204 @@ Meteor.methods({
 			console.error('updateAddress : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;
 		}
-
-		if(userId){
-			Meteor.call('updateUser', {_id:userId, "profile.addressID":id}); // link address to the user
-		}
-		if(courtId){
-			Meteor.call('updateCourt', {_id:courtId, ownerID:userId, addressID:addrId});
-		}
-
-		if(writeResult.nUpserted >0){
-			return true;
-		}
-
 	},
 
-	
+	/*
+		If a wish(es) is specified, it(they) must be in an array and will be appended to the list of existing wishes.
+
+		A pair is structured as follows:
+		{
+			_id:<id>,
+			year:<year>,
+			day:<day,
+			category:<category>,
+			player1:<userId>,
+			player2:<userId>,
+			extras:{
+				BBQ:<bbq>
+			},
+			wishes:[<wish1>, <wish2>, ...],
+			paymentID:{
+				player1:<paymentID>, //these can be the same
+				player2:<paymentID>  // ^
+			}
+		}
+
+		@return : the pair id
+	*/
+	'updatePairs' : function(pairData){
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
+		const userIsOwner = pairData.player1 == Meteor.userId() || pairData.player2 == Meteor.userId();
+		
+		if(!(userIsOwner || isAdmin || isStaff)){
+			console.error("updatePairs : You don't have the required permissions!");
+			return;
+		}
+
+		var data = {};
+		if(pairData.year){
+			data.year = pairData.year;
+		}
+		if(pairData.category){
+			data.category = pairData.category;
+		}
+		if(pairData.day){
+			data.day = pairData.day;
+		}
+		if(pairData.player1){
+			var u = Meteor.users.findOne({_id:pairData.player1});
+			if(!u){
+				console.error('updatePairs : player1 doesn\'t exist !');
+				return;
+			}
+			data.player1 = pairData.player1;
+		}
+		if(pairData.player2){
+			var u = Meteor.users.findOne({_id:pairData.player2});
+			if(!u){
+				console.error('updatePairs : player2 doesn\'t exist !');
+				return;
+			}
+			data.player2 = pairData.player2;
+		}
+		if(pairData.extras){
+			if(pairData.extras.BBQ){
+				data["extras.BBQ"] = pairData.extras.BBQ;
+			}
+		}
+		if(pairData.wishes){
+			data["$push"] = {wishes: {$each: pairData.wishes}};
+		}
+		if((isStaff || isAdmin) && pairData.paymentID){
+			if(pairData.paymentID.player1){
+				var p = Payments.findOne({_id:pairData.paymentID.player1});
+				if(!p){
+					console.error('updatePairs : Trying to update the payment of player 1, but that payment does not exist');
+				}
+				data["paymentID.player1"] = pairData.paymentID.player1;
+			}
+			if(pairData.paymentID.player2){
+				var p = Payments.findOne({_id:pairData.paymentID.player2});
+				if(!p){
+					console.error('updatePairs : Trying to update the payment of player 2, but that payment does not exist');
+				}
+				data["paymentID.player2"] = pairData.paymentID.player2;
+			}
+
+		}
+
+		if(!pairData._id){
+			var id;
+			Pairs.insert(data, function(err, pairId){
+				if(err){
+					console.error('updatePairs error');
+					console.error(err);
+					return;
+				}
+				id = pairId;
+			});
+			// Done with new insert
+			return id;
+		}
+
+		// Add the address in the DB
+		var writeResult = Addresses.update({_id: pairData._id} , {$set: data});
+		if(writeResult.writeConcernError){
+			console.error('updatePairs : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
+			return;
+		}
+		return pairData._id;
+	},
+
+
+	/*
+		A payment is structured as follows :
+		{
+			_id:<id>,
+			status:<status>, // paid or pending
+			balance:<balance>,
+			date:<data>,
+			method:<method>, // Cash, Visa or Banknumber
+		}
+
+		player : can either be player1 or player2
+	*/
+	'updatePayment' : function(paymentData, pairId, player){
+		if(!pairId){
+			console.error('updatePayment : you must provide the pairId');
+			return;
+		}
+		if(player!="player1" || player!="player2"){
+			console.error('updatePayment : player is not recognized');
+			return;
+		}
+
+		// Check that that pair really exists :
+		var p = Pairs.findOne({_id:pairId});
+		if(!p){
+			console.error('updatePayment : that pair doesn\'t exist !');
+			return;
+		}
+
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
+		
+		if(!(isAdmin || isStaff)){
+			console.error("updatePairs : You don't have the required permissions!");
+			return;
+		}
+
+		var data = {};
+		if(paymentData._id){
+			var str = "paymentID.";
+			var str2 = str.concat(player);
+			if(p[str.concat(player)] && paymentData._id != p[str2]){
+				console.error('updatePayment : trying to update a payment not belonging to the pair provided !');
+				return;
+			}
+			data._id = paymentData._id;
+		}
+		if(paymentData.status){
+			data.status = paymentData.status;
+		}
+		if(paymentData.balance){
+			data.payment = paymentData.balance;
+		}
+		if(paymentData.date){
+			data.date = paymentData.date;
+		}
+		if(paymentData.method){
+			data.method = paymentData.method;
+		}
+
+		if(!paymentData._id){
+			Payments.insert(data, function(err, paymId){
+				if(err){
+					console.error('updatePayment error');
+					console.error(err);
+					return;
+				} 	
+				var str = "paymentID.";
+				var str2 = str.concat(player);
+				// Update paymentID in the pair
+				var upd = {};
+				upd["_id"] = pairId;
+				upd[str2] = paymId;
+        		Meteor.call('updatePair', upd);
+			});
+			// Done with new insert
+			return;
+		}
+
+		var writeResult = Payments.update({_id: paymentData._id} , {$set: data});
+		if(writeResult.writeConcernError){
+			console.error('updatePayment : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
+			return;
+		}
+	},
+
+
 	'insertQuestion' : function(Question){
 		var data ={
 			lastname : Question.lastname,

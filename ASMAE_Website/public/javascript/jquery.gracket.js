@@ -25,6 +25,7 @@
       canvasLineCap : "round",
       canvasLineWidth : 2,
       canvasLineGap : 15,
+      scoreColor : "#1919FF",
       roundLabels : [],
       src : []
     };
@@ -140,9 +141,9 @@
                 ((typeof data.displaySeed === "undefined") ? data.seed : data.displaySeed),
               '</span>',
               '&nbsp;' + data.name + '&nbsp;',              
-              '<small>',
+              '<font size=2 color=\"' + node.scoreColor + '\">',
                 ((typeof data.score === "undefined") ? "" : data.score),
-              '</small>',
+              '</font>',
             '</h3>'
           ].join("");
           return team = $("<div />", {
