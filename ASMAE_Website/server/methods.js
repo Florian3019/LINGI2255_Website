@@ -13,9 +13,19 @@ Meteor.methods({
 		return false;
 	},
 
+	'isAdmin' : function(){
+		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isAdmin":1});
+		return res ? res.profile.isAdmin : false;
+	},
+
+	'isStaff' : function(){
+		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isStaff":1});
+		return res ? res.profile.isStaff : false;
+	},
+
 	/*
 		@param courtData is structured as a court, if _id is missing, 
-		a new court will be created and linked to the owner. OwnerID or _id must be provided.
+		a new court will be created and linked to the owner. OwnerID must be provided.
 		@param address is structured as an address
 		(fields can be missing, if the _id field is missing, a new address will be linked to this court, 
 		erasing reference to previous addressID if existing). Can be null.
@@ -36,8 +46,18 @@ Meteor.methods({
 		}
 	*/
 	'updateCourt' : function(courtData, address){
-		if(!(courtData.ownerID || courtData._id)){
-			console.error("updateUser : Must provide user id to update the court !");
+		if(!courtData.ownerID){
+			console.error("updateCourt : Must provide owner id to update the court !");
+			return;
+		}
+
+
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
+		const userIsOwner = courtData.ownerID == Meteor.userId();
+
+		if(! (userIsOwner || isAdmin || isStaff) ){
+			console.error("updateCourt : You don't have the permissions to update a court !");
 			return;
 		}
 
@@ -101,9 +121,11 @@ Meteor.methods({
 		if(courtData.ownerComment){
 			data.ownerComment = courtData.ownerComment;
 		}
-		if(courtData.staffComment){
+		
+		if((isStaff||isAdmin) && courtData.staffComment){
 			data.staffComment = courtData.staffComment;
 		}
+		
 		if(courtData.availability){
 			data.availability = courtData.availability;
 		}
@@ -116,7 +138,7 @@ Meteor.methods({
 				return;
 			}
 			if(address){
-				Meteor.call('updateAddress', addrData, null, courtId);
+				Meteor.call('updateAddress', addrData, courtData.ownerID, courtId);
 			}
 		}
 		else{
@@ -134,7 +156,7 @@ Meteor.methods({
 				courtId = addrId; // remember the court id
 
 				if(address){
-					Meteor.call('updateAddress', addrData, null, courtId);
+					Meteor.call('updateAddress', addrData, courtData.ownerID, courtId);
 				}
 
 			});
@@ -182,9 +204,18 @@ Meteor.methods({
 		The function will return false.
 	*/
 	'updateUser' : function(userData){
-
 		if(!userData._id){
 			console.error("updateUser : Must provide user id to update the user !");
+			return;
+		}
+
+
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
+		const userIsOwner = userData._id == Meteor.userId();
+
+		if(!(userIsOwner || isAdmin || isStaff)){
+			console.error("updateUser : You don't have the required permissions!");
 			return;
 		}
 
@@ -236,11 +267,11 @@ Meteor.methods({
 				data["profile.AFT"] = profile.AFT;
 			}
 
-			if(profile.isStaff){
+			if(isAdmin && profile.isStaff){
 				data["profile.isStaff"] = profile.isStaff;
 			}
 
-			if(profile.isAdmin){
+			if(isAdmin && profile.isAdmin){
 				data["profile.isAdmin"] = profile.isAdmin;
 			}
 		}
@@ -260,7 +291,9 @@ Meteor.methods({
 
 
 	/*
-		@param userID : Updates the address of the user with id userId. 
+		@param userId : Updates the address of the user with id userId. 
+				If courtId is provided, updates the court address (userId is then the owner's id).
+				userId must be provided.
 		@param AddressData : if it does not contain a field _id, this will
 		create a new address for the user (removing the reference to the previous one if there was one) and link its
 		_id to the profile.addressID field of the user.
@@ -284,9 +317,18 @@ Meteor.methods({
 			console.error("updateAddress : Must provide user id or courtId to update the address !");
 			return;
 		}
-		if(userId && courtId){
-			console.error("updateAddress : userId and courtId can't be set at the same time !");
+		if(courtId && !userId){
+			console.error("updateAddress : must provide the userId of the person trying to make the request if trying to modify a court!");
 			return;	
+		}
+
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
+		const userIsOwner = userId == Meteor.userId();
+		
+		if(!(userIsOwner || isAdmin || isStaff)){
+			console.error("updateUser : You don't have the required permissions!");
+			return;
 		}
 
 		var data = {};
@@ -311,7 +353,7 @@ Meteor.methods({
 
 		if(!addressData._id){
 
-			if(userId){
+			if(userId && !courtId){
 				Addresses.insert(data, function(err, addrId){
 					if(err){
 						console.error('updateAddress error');
@@ -332,7 +374,7 @@ Meteor.methods({
 						return;
 					} 	
 					// Update addressID in the user
-	        		Meteor.call('updateCourt', {_id:courtId, addressID:addrId});
+	        		Meteor.call('updateCourt', {_id:courtId, ownerID:userId, addressID:addrId});
 				});
 				// Done with new insert
 				return;
@@ -352,7 +394,7 @@ Meteor.methods({
 			Meteor.call('updateUser', {_id:userId, "profile.addressID":id}); // link address to the user
 		}
 		if(courtId){
-			Meteor.call('updateCourt', {_id:courtId, addressID:addrId});
+			Meteor.call('updateCourt', {_id:courtId, ownerID:userId, addressID:addrId});
 		}
 
 		if(writeResult.nUpserted >0){
