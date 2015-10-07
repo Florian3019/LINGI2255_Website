@@ -158,6 +158,16 @@ Template.tournamentRegistration.helpers({
 
 Template.tournamentRegistration.events({
 
+	"change .checkboxAlone input": function (event) {
+		console.log("checked");
+		var e = document.getElementById("emailPlayer");
+		if(event.target.checked){
+			e.setAttribute("disabled","true");
+		}else{
+			e.removeAttribute("disabled","false");
+		}
+    },
+
     'submit form':function(){
     	// console.log(event);
 
@@ -182,19 +192,25 @@ Template.tournamentRegistration.events({
 				e.style.display = 'block';  	
 		}
 
+		document.getElementById("emailPlayerDiv").removeAttribute("class", "has-success has-error");
+		document.getElementById("emailPlayerError").style.display = 'none'
+		document.getElementById("emailPlayerOK").style.display = 'none'
+		
 		var errors = new Array();
 		var hasError = false;
 
-
-    	var email = event.target.emailPlayer.value;
-    	// Check that we know that email
-    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
-    	if(!u){
-    		errors.push({id:"emailPlayer", error:true});
-			hasError = true;
-    	}
-    	else{
-    		errors.push({id:"emailPlayer", error:false});
+		var alone = event.target.alone.checked;
+		if(!alone){
+	    	var email = event.target.emailPlayer.value;
+	    	// Check that we know that email
+	    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
+	    	if(!u){
+	    		errors.push({id:"emailPlayer", error:true});
+				hasError = true;
+	    	}
+	    	else{
+	    		errors.push({id:"emailPlayer", error:false});
+	    	}
     	}
     	// Check that that email is not already in a pair
     	var currentYear = 2015;

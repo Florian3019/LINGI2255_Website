@@ -31,8 +31,11 @@
 
     	 <div class="form-group">
      		<label for="text">Numéro de téléphone</label>
-     		<input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" value="{{phone}}" name="phone">
-     	</div>
+        <div class="input-group">
+          <span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
+       		<input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" value="{{phone}}" name="phone">
+     	  </div>
+      </div>
 
      	<div class="form-group has-feedback" id="birthDiv">
       		<label for="date">Date de naissance</label>
@@ -225,8 +228,12 @@
        		<textarea name="playerConstraints" id="playerConstraints" class="form-control"></textarea>
   		</div>
 
+      <div class="checkboxAlone">
+        <label><input type="checkbox" value="" id="alone">   Je veux m'inscrire seul</label>
+      </div>
+
       <div class="form-group has-feedback" id="emailPlayerDiv">
-        <label class="control-label" for="inputGroupSuccess1">Email of your pair: </label>
+        <label class="control-label" for="inputGroupSuccess1">Addresse email de votre coéquipier: </label>
         <div class="input-group">
           <span class="input-group-addon">@</span>
           <input type="text" class="form-control" id="emailPlayer"> <!-- aria-describedby="inputGroupSuccess1Status"> -->
