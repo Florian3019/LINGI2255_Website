@@ -94,8 +94,8 @@ Meteor.methods({
 		if(courtData.surface){
 			data.surface = courtData.surface;
 		}
-		if(courtData.type){
-			data.type = courtData.type;
+		if(courtData.courtType){
+			data.courtType = courtData.courtType;
 		}
 		if(courtData.instructions){
 			data.instructions = courtData.instructions;

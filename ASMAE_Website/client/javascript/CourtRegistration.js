@@ -12,7 +12,7 @@ Template.courtRegistration.events({
         var courtData = {
             ownerID: Meteor.userId(),
             surface : $('[name=surface]').val(),
-        	type : $('[name=courtType]').val(),
+        	courtType : $('[name=courtType]').val(),
         	instructions : $('[name=instructions]').val(),
         	ownerComment : $('[name=ownerComment]').val()
         };
