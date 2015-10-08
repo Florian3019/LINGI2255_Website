@@ -1,6 +1,6 @@
 Template.courtInfo.helpers({
   'rue': function(){
-    var court = Courts.find({surface : "A"}).fetch();
+    var court = Courts.find({surface : "Beton"}).fetch();
     var addr = Addresses.find({ _id : court[0].addressID}).fetch();
     if (addr==null) {
       return "Rue des chatons";
@@ -10,7 +10,7 @@ Template.courtInfo.helpers({
     }
   },
   'num': function(){
-    var court = Courts.find({surface : "A"}).fetch();
+    var court = Courts.find({surface : "Beton"}).fetch();
     var addr = Addresses.find({ _id : court[0].addressID}).fetch();
     if (addr==null) {
       return "4";
@@ -19,7 +19,7 @@ Template.courtInfo.helpers({
       return addr[0].number;
     }  },
   'box': function(){
-    var court = Courts.find({surface : "A"}).fetch();
+    var court = Courts.find({surface : "Beton"}).fetch();
     var addr = Addresses.find({ _id : court[0].addressID}).fetch();
     if (addr==null) {
       return "222";
@@ -29,7 +29,7 @@ Template.courtInfo.helpers({
     }
   },
   'zipcode': function(){
-    var court = Courts.find({surface : "A"}).fetch();
+    var court = Courts.find({surface : "Beton"}).fetch();
     var addr = Addresses.find({ _id : court[0].addressID}).fetch();
     if (addr==null) {
       return "1348";
@@ -38,7 +38,7 @@ Template.courtInfo.helpers({
       return addr[0].zipCode;
     }  },
   'city': function(){
-    var court = Courts.find({surface : "A"}).fetch();
+    var court = Courts.find({surface : "Beton"}).fetch();
     var addr = Addresses.find({ _id : court[0].addressID}).fetch();
     if (addr==null) {
       return "Louvain-La-Neuve";
@@ -47,7 +47,7 @@ Template.courtInfo.helpers({
       return addr[0].city;
     }  },
   'surface': function(){
-    var court = Courts.find({surface : "A"}).fetch();
+    var court = Courts.find({surface : "Beton"}).fetch();
     if (court==null) {
       return "Tarmac";
     }
@@ -56,7 +56,7 @@ Template.courtInfo.helpers({
     }
   },
   'ttype' : function(){
-    var court = Courts.find({surface : "A"}).fetch();
+    var court = Courts.find({surface : "Beton"}).fetch();
     if (court==null) {
       return "Privé";
     }
@@ -64,7 +64,7 @@ Template.courtInfo.helpers({
       return court[0].courtType
     }    },
   'instructions': function(){
-    var court = Courts.find({surface : "A"}).fetch();
+    var court = Courts.find({surface : "Beton"}).fetch();
     if (court==null) {
       return "Passez par derrière le chateau";
     }
@@ -72,7 +72,7 @@ Template.courtInfo.helpers({
       return court[0].instructions
     }    },
   'commentaire': function(){
-    var court = Courts.find({surface : "A"}).fetch();
+    var court = Courts.find({surface : "Beton"}).fetch();
     if (court==null) {
       return "Pas de chiens, mes chats en sont allergiques merci.";
     }

@@ -7,8 +7,11 @@ Meteor.methods({
 	'addressExists' : function(addr){
 		if(addr._id && Courts.find({addressID:addr._id})) return true;
 		if(addr.zipCode && addr.street && addr.number){
-			if(addr.box) if(Courts.find({zipCode:addr.zipCode, street:addr.street, number:addr.number, box:addr.box})) return true;
-			else if(Courts.find({zipCode:addr.zipCode, street:addr.street, number:addr.number})) return true;
+			if(addr.box)
+				if(Addresses.find({zipCode:addr.zipCode, street:addr.street, number:addr.number, box:addr.box}).count() > 0)
+					return true;
+			else
+				if(Addresses.find({zipCode:addr.zipCode, street:addr.street, number:addr.number}).count() > 0) return true;
 		}
 		return false;
 	},
@@ -78,9 +81,8 @@ Meteor.methods({
 		var courtId = courtData._id;
 		var data = {};
 
-		if(data.ownerID){
-			data.ownerID = courtData.ownerID;
-		}
+		data.ownerID = courtData.ownerID;
+		
 		// Fill in court info
 		if(courtData._id){
 			data._id = courtData._id;
@@ -344,6 +346,8 @@ Meteor.methods({
 		}
 
 		var data = {};
+		data.userID = userId;
+
 		if(addressData.street){
 			data.street = addressData.street;
 		}

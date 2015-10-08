@@ -151,6 +151,5 @@
 
 
 Tracker.autorun(function () {
-  Meteor.subscribe("addresses");
   Meteor.subscribe("users");
 });
