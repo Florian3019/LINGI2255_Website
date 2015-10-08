@@ -9,15 +9,15 @@ Router.route('/', {
 
 Router.route('/contacts', {
 	name: 'contacts',
-	template: 'contacts',
+	template: 'contacts'
 });
 Router.route('/pictures', {
 	name: 'pictures',
-	template: 'pictures',
+	template: 'pictures'
 });
 Router.route('/rules', {
 	name: 'rules',
-	template: 'rules',
+	template: 'rules'
 });
 Router.route('/tournament-registration',  {
 	name: 'tournamentRegistration',
@@ -46,20 +46,24 @@ Router.route('/court-registration', {
 Router.route('/court-info', {
 	name: 'courtInfo',
 	template: 'courtInfo',
+
+	subscriptions: function(){
+        return [ Meteor.subscribe('courts'), Meteor.subscribe('addresses') ]
+    }
 });
 Router.route('/players-info', {
 	name: 'playersInfo',
-	template: 'playersInfo',
+	template: 'playersInfo'
 });
 Router.route('/staff-management', {
 	name: 'staffManagement',
-	template: 'staffManagement',
+	template: 'staffManagement'
 });
 Router.route('/profile-edit', {
 	name: 'profileEdit',
-	template: 'profileEdit',
+	template: 'profileEdit'
 });
 Router.route('/brackets', {
 	name: 'brackets',
-	template: 'brackets',
+	template: 'brackets'
 });
