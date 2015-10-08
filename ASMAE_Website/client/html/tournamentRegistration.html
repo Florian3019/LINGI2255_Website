@@ -163,8 +163,8 @@
 
 		<div class="form-group has-feedback" id="AFTDiv">
 			<label for="playerRank">Rang:</label>
-			<select name="rank" id="rank">
-        <option value=""></option>
+			<select name="rank" id="rank"  class="form-control" style="width: 15%; display: inline">
+        <option value="" disabled="" selected="" hidden></option>
 				<option value="NC">NC</option>
 				<option value="C30.5 ">C30.5</option>
 				<option value="C30.4">C30.4</option>
@@ -196,8 +196,8 @@
 
 		<div class="form-group has-feedback" id="dateMatchDiv">
 			<label for="dateMatch">S'incrire pour le tournoi du:</label>
-			<select name="dateMatch" id="dateMatch">
-        <option value=""></option>
+			<select name="dateMatch" id="dateMatch"  class="form-control" style="width: 15%; display: inline">
+        <option value="" disabled="" selected="" hidden></option>
 				<option value="Samedi">Samedi</option>
 				<option value="Dimanche">Dimanche</option>
 			</select>
@@ -214,7 +214,7 @@
 
 		<div class="form-group">
 			<label for="number">Nombre d'inscriptions pour le barbecue (15€):</label>
-      		<input type="number" id="BBQ" name="BBQ" min="0" placeholder=0>
+      		<input type="number" id="BBQ" name="BBQ" min="0" placeholder=0  class="form-control" style="width: 15%; display: inline">
       		<p style="font-size:100%">Dimanche de 12h30 à 15h (boissons non comprises)</p>
 		</div>
 
@@ -231,6 +231,38 @@
       <div class="checkboxAlone">
         <label><input type="checkbox" value="" id="alone">   Je veux m'inscrire seul</label>
       </div>
+
+      <div class="panel panel-default" id="tableAlone" hidden>
+          <!-- Default panel contents -->
+          <div class="panel-heading">Liste des joueurs en attente de partenaire</div>
+
+          <!-- Table -->
+          <div class="table-responsive active">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Age</th>
+                <th>Ville</th>
+                <th>Rang</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+              {{#each alonePlayers}}
+                <tr>
+                  <td> {{profile.lastName}} </td>
+                  <td> {{profile.firstName}} </td>
+                  <td> Birth </td>
+                  <td> City </td>
+                  <td> {{profile.AFT}} </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+          </div>
+        </div>
 
       <div class="form-group has-feedback" id="emailPlayerDiv">
         <label class="control-label" for="inputGroupSuccess1">Addresse email de votre coéquipier: </label>
