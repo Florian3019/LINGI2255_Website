@@ -240,8 +240,14 @@ Template.tournamentRegistration.events({
 			var e = document.getElementById(id.concat(error));
 			if(!errorVisible){
 				e.style.display = 'none';
+				if(id=='emailPlayer'){
+					document.getElementById("emailPlayerErrorMessage").style.display = 'none';
+				}
 				document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
 			}else{
+				if(id=='emailPlayer'){
+					document.getElementById("emailPlayerErrorMessage").style.display = 'block';
+				}
 				e.style.display = 'block';
 				document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
 			}
@@ -255,8 +261,9 @@ Template.tournamentRegistration.events({
 
 		// Reset the email error status
 		document.getElementById("emailPlayerDiv").removeAttribute("class", "has-success has-error");
-		document.getElementById("emailPlayerError").style.display = 'none'
-		document.getElementById("emailPlayerOK").style.display = 'none'
+		document.getElementById("emailPlayerError").style.display = 'none';
+		document.getElementById("emailPlayerOK").style.display = 'none';
+		document.getElementById("emailPlayerErrorMessage").style.display = 'none';
 		
 		// Array containing the errors/success to display
 		var errors = new Array();
