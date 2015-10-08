@@ -9,7 +9,9 @@ Meteor.startup(function () {
   	});
 
 	Meteor.publish("users", function () {
-		var res = Meteor.users.find({},{});
+		//var res = Meteor.users.find({},{});
+		var res = Meteor.users.find({});
+
 		return res;
   	});
 

@@ -403,7 +403,7 @@ Template.tournamentRegistration.events({
 		var user = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
 		if(user){
 			addressData._id = user.profile.addressID;
-			console.log("found existing address !");
+			//console.log("found existing address !");
 		}
 
 

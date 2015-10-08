@@ -1,0 +1,62 @@
+<template name="playerInfoPage">
+ <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">{{firstName}} {{lastName}}</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://babyinfoforyou.com/wp-content/uploads/2014/10/avatar-300x300.png" class="img-circle img-responsive"> </div>
+                <div class=" col-md-9 col-lg-9 ">
+                  <table class="table table-user-information">
+                    <tbody>
+                      <tr>
+                        <td>Addresse email</td>
+                        <td>{{emails}}</td>
+                      </tr>
+                      <tr>
+                        <td>Numéro de téléphone</td>
+                        <td>{{phone}}</td>
+                      </tr>
+                      <tr>
+                        <td>Date de naissance</td>
+                        <td>{{birdth}}</td>
+                      </tr>
+                     <tr>
+                        <td>Genre</td>
+                        <td>{{genre}}</td>
+                      </tr>
+                        <tr>
+                        <td>Rue</td>
+                        <td>{{street}}</td>
+                      </tr>
+                      <tr>
+                      <td>Numéro</td>
+                      <td>{{number}}</td>
+                      </tr>
+                      <tr>
+                      <td>Boite</td>
+                      <td>{{boite}}</td>
+                    </tr>
+                      <tr>
+                        <td>Code postal</td>
+                        <td>{{postal}}</td>
+                      </tr>
+                      <tr>
+                      <td>Ville</td>
+                      <td>{{city}}</td>
+                    </tr>
+                    <tr>
+                    <td>Pays</td>
+                    <td>{{land}}</td>
+                  </tr>
+                   <tr>
+                    <td>Classement</td>
+                    <td>{{rank}}</td>
+                  </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+</div>
+</template>
