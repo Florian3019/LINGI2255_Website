@@ -226,6 +226,12 @@ Template.tournamentRegistration.events({
 
     'submit form':function(){
 
+      	event.preventDefault();
+
+    	/**
+			This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
+			If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
+    	*/
     	function set_error(id,errorVisible) {
     		const error = "Error";
     		const OK = "OK";
@@ -247,16 +253,21 @@ Template.tournamentRegistration.events({
 				e.style.display = 'block';  	
 		}
 
+		// Reset the email error status
 		document.getElementById("emailPlayerDiv").removeAttribute("class", "has-success has-error");
 		document.getElementById("emailPlayerError").style.display = 'none'
 		document.getElementById("emailPlayerOK").style.display = 'none'
 		
+		// Array containing the errors/success to display
 		var errors = new Array();
 		var hasError = false;
 
-		var alone = event.target.alone.checked;
+
+
+		var alone = event.target.alone.checked; // True if the player tries to register alone
 		var player2ID;
 		if(!alone){
+			// User wants to register a pair, collect the partner's id from his email.
 	    	var email = event.target.emailPlayer.value;
 	    	// Check that we know that email
 	    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
@@ -270,7 +281,11 @@ Template.tournamentRegistration.events({
 	    	}
     	}
 
-      	event.preventDefault();
+
+    	/*
+			Get all the fields and check if they are filled, 
+			display error or success according to that
+    	*/
         var lastname = event.target.lastname.value;
         if(!lastname){
         	errors.push({id:"lastname", error:true});
@@ -354,7 +369,7 @@ Template.tournamentRegistration.events({
         else{
         	errors.push({id:"country", error:false});
         }
-        // TODO : store these in the DB
+
         var dateMatch = event.target.dateMatch.value;
         if(!dateMatch){
         	errors.push({id:"dateMatch", error:true});
@@ -364,6 +379,10 @@ Template.tournamentRegistration.events({
         	errors.push({id:"dateMatch", error:false});
         }
 
+
+        /*
+			Create the address object
+        */
 		addressData = {
 			street : street,
 			box : boxNumber,
@@ -380,9 +399,12 @@ Template.tournamentRegistration.events({
 			console.log("found existing address !");
 		}
 
-        player1Data = { 
+
+		/*
+			Create the object with the informations about the user
+		*/
+        curUserData = { 
           _id: Meteor.userId(),
-          // emails : [{"address": email, "verified":false}],
           profile:{
             lastName : lastname,
             firstName : firstname,
@@ -393,15 +415,21 @@ Template.tournamentRegistration.events({
           }
         };
 
-        // Check that that email is not already in a pair
+
     	var currentYear = 2015;
 
+    	/*
+			Collect player wishes/constraints
+    	*/
 		var playerWishes = event.target.playerWishes.value;
 		var playerConstraints = event.target.playerConstraints.value;
 		var BBQval = event.target.BBQ.value;
 
-		var later = event.target.later.checked;
+		var later = event.target.later.checked; // True if the user wants to waits for another user to chose him as partner
 
+		/*
+			Create the object containing the player specific informations
+		*/
 		var playerData = {
 			_id:Meteor.userId(),
 			extras:{
@@ -412,7 +440,9 @@ Template.tournamentRegistration.events({
 			// paymentID:<paymentID>
 		};
 
-
+		/*
+			Depending if user wants to register alone or with a pair, choose appropriate action
+		*/
 		var pairData;
 		if(alone && !later){
     		// Player wants to register alone but chose a partner in the list
@@ -450,16 +480,23 @@ Template.tournamentRegistration.events({
 		    	};
 		    }
     	}
- 
+ 	
+
+ 		/*
+			Display all errors
+ 		*/
         for(var i in errors){
         	var d = errors[i];
         	set_error(d.id, d.error);
         }
-        if(hasError) return false;
+        if(hasError) return false; // Cancel form submission if errors occured
 
+        /*
+			Update the db !
+        */
 
         Meteor.call('updateAddress', addressData, Meteor.userId(), null);
-        Meteor.call('updateUser', player1Data);
+        Meteor.call('updateUser', curUserData);
         Meteor.call('updatePairs', pairData);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
       	Router.go('home');
