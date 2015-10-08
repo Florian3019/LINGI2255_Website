@@ -418,13 +418,10 @@ Template.tournamentRegistration.events({
     		// Player wants to register alone but chose a partner in the list
 
     		var player1_pairID = Session.get('aloneSelected'); // The player's 1 pair id, from the selected item in the list
-    		// if(!player1_pairID){
-    		// 	errors.push({id:"checkboxAlone", error:true});
-      //   		hasError = true;
-    		// }
-    		// else{
-    		// 	errors.push({id:"checkboxAlone", error:false});
-    		// }
+    		if(!player1_pairID){
+    			// errors.push({id:"checkboxAlone", error:true});
+        		hasError = true;
+        	}
     		pairData = {
     			_id:player1_pairID,
 				player2:playerData
