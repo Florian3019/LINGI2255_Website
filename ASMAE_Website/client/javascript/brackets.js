@@ -1,10 +1,5 @@
 Template.brackets.events({
 
-"click":function(event,template){
-  	console.log("click");
-    console.log(Meteor.users.find({},{profile:1}).fetch());	
-  },
-
 	// Do something when the user clicks on a player
   "click .g_team":function(event, template){
   	// console.log(event);
