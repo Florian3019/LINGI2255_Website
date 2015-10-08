@@ -412,15 +412,23 @@ Meteor.methods({
 			year:<year>,
 			day:<day,
 			category:<category>,
-			player1:<userId>,
-			player2:<userId>,
-			extras:{
-				BBQ:<bbq>
-			},
-			wishes:[<wish1>, <wish2>, ...],
-			paymentID:{
-				player1:<paymentID>, //these can be the same
-				player2:<paymentID>  // ^
+			player1:{
+				_id:<userID>,
+				extras:{
+					BBQ:<bbq>
+				},
+				wish:<wish>,
+				constraint:<constraint>,
+				paymentID:<paymentID>
+			}
+			player2:{
+				_id:<userID>,
+				extras:{
+					BBQ:<bbq>
+				},
+				wish:<wish>,
+				constraint:<constraint>,
+				paymentID:<paymentID>
 			}
 		}
 
@@ -429,8 +437,8 @@ Meteor.methods({
 	'updatePairs' : function(pairData){
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
-		const userIsOwner = pairData.player1 == Meteor.userId() || pairData.player2 == Meteor.userId();
-		
+		const userIsOwner = pairData.player1._id == Meteor.userId() || pairData.player2._id == Meteor.userId();
+		console.log(pairData.player1._id);
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updatePairs : You don't have the required permissions!");
 			return;
@@ -443,50 +451,87 @@ Meteor.methods({
 		if(pairData.category){
 			data.category = pairData.category;
 		}
+
+
 		if(pairData.day){
 			data.day = pairData.day;
 		}
-		if(pairData.player1){
-			var u = Meteor.users.findOne({_id:pairData.player1});
-			if(!u){
-				console.error('updatePairs : player1 doesn\'t exist !');
-				return;
-			}
-			data.player1 = pairData.player1;
-		}
+		
+		ID = {};
+		P1_id= pairData.player1._id;
+		ID['player1'] = P1_id;
 		if(pairData.player2){
-			var u = Meteor.users.findOne({_id:pairData.player2});
+			P2_id = pairData.player2._id;
+			ID['player2'] = P2_id;
+		}
+
+		var p1_1 = Pairs.findOne({player1:P1_id},{_id:1});
+		var p1_2 = Pairs.findOne({player2:P1_id},{_id:1});
+		var p2_1;
+		var p2_2;
+		if(ID['player2']){
+			p2_1 = Pairs.findOne({player1:ID['player2']},{_id:1});
+			p2_2 = Pairs.findOne({player2:ID['player2']},{_id:1});
+		}
+		var err1 = p1_1 && p2_1 ? p1_1!=p2_1 : false;
+		var err2 = p1_1 && p2_2 ? p1_1!=p2_2 : false;
+		var err3 = p1_2 && p2_1 ? p1_2!=p2_1 : false;
+		var err4 = p1_2 && p2_2 ? p1_2!=p2_2 : false;
+		if(p1_1 && p1_2 || p2_1 && p2_1 || err1 || err2 || err3 || err4){
+			console.error("updatePairs : impossible configuration");
+			return;
+		}
+
+		if(p1_1){
+			pairData['_id'] = p1_1;	
+		}
+		else if(p1_2){
+			pairData['_id'] = p1_2;	
+		}
+		else if(p2_1){
+			pairData['_id'] = p2_1;	
+		}
+		else if(p2_2){
+			pairData['_id'] = p2_2;	
+		}
+
+
+		// Player = player1 or player2
+		setPlayerData = function(player){
+			if(!pairData[player]) return;
+			
+			var p ={};
+
+			var u = Meteor.users.findOne({_id:ID[player]});
 			if(!u){
-				console.error('updatePairs : player2 doesn\'t exist !');
+				console.error('updatePairs : player doesn\'t exist !');
 				return;
 			}
-			data.player2 = pairData.player2;
-		}
-		if(pairData.extras){
-			if(pairData.extras.BBQ){
-				data["extras.BBQ"] = pairData.extras.BBQ;
-			}
-		}
-		if(pairData.wishes){
-			data["$push"] = {wishes: {$each: pairData.wishes}};
-		}
-		if((isStaff || isAdmin) && pairData.paymentID){
-			if(pairData.paymentID.player1){
-				var p = Payments.findOne({_id:pairData.paymentID.player1});
-				if(!p){
-					console.error('updatePairs : Trying to update the payment of player 1, but that payment does not exist');
+			
+			p['_id'] = ID[player];
+			pData = pairData[player];
+			
+			if(pData['paymentID']) p['paymentID'] = pData['paymentID'];
+			if(pData['wish']) p['wish'] = pData['wish'];
+			if(pData['constraint']) p['constraint'] = pData['constraint'];
+			if(pData['extras']){
+				extr = {};
+				var count = 0;
+				var dataExtras = pData['extras'];
+				if(dataExtras['BBQ']){
+					extr['BBQ'] = dataExtras['BBQ'];
+					count = count+1;
 				}
-				data["paymentID.player1"] = pairData.paymentID.player1;
-			}
-			if(pairData.paymentID.player2){
-				var p = Payments.findOne({_id:pairData.paymentID.player2});
-				if(!p){
-					console.error('updatePairs : Trying to update the payment of player 2, but that payment does not exist');
+				if(count>0){
+					p['extras'] = extr;
 				}
-				data["paymentID.player2"] = pairData.paymentID.player2;
-			}
+			} 
+			data[player] = p;
+		}
 
-		}
+		setPlayerData("player1");
+		setPlayerData("player2");
+		// }
 
 		if(!pairData._id){
 			var id;
@@ -503,7 +548,7 @@ Meteor.methods({
 		}
 
 		// Add the address in the DB
-		var writeResult = Addresses.update({_id: pairData._id} , {$set: data});
+		var writeResult = Addresses.update({_id: pairData['_id']} , {$set: data});
 		if(writeResult.writeConcernError){
 			console.error('updatePairs : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;

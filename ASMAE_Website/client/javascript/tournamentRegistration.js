@@ -1,4 +1,12 @@
 Template.tournamentRegistration.helpers({
+	'alonePlayers' : function(){
+		return Meteor.users.find({},{profile:1});
+	},
+
+	'getCity' :function(addressID){
+		var res = Addresses.find({_id:addressID});
+		return res;
+	},
 
 	'lastname': function(){
 	
@@ -24,6 +32,24 @@ Template.tournamentRegistration.helpers({
 			return userData ? userData.profile.firstName : "";
 		}
 	},
+	'setGender' : function(male){
+		var user=Meteor.user();
+
+		if(user==null){
+			return "";
+		}
+		else{
+			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.gender':1});
+
+			if(userData.profile.gender=="homme" && male=='true'){
+				return "checked";
+			}
+			else if(userData.profile.gender=="femme" && male=='false'){
+				return "checked";
+			}
+		}
+	},
+
 	'phone': function(){
 		var user=Meteor.user();
 
@@ -109,8 +135,8 @@ Template.tournamentRegistration.helpers({
 				return "";
 			}
 			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID},{'zipcode':1});
-				return addressData ? addressData.zipcode : "";
+				addressData = Addresses.findOne({_id:userData.profile.addressID},{'zipCode':1});
+				return addressData ? addressData.zipCode : "";
 			}
 		}
 	},
@@ -159,11 +185,13 @@ Template.tournamentRegistration.helpers({
 Template.tournamentRegistration.events({
 
 	"change .checkboxAlone input": function (event) {
-		console.log("checked");
 		var e = document.getElementById("emailPlayer");
+		var table = document.getElementById("tableAlone");
 		if(event.target.checked){
+			table.style.display = 'block';
 			e.setAttribute("disabled","true");
 		}else{
+			table.style.display = 'none';
 			e.removeAttribute("disabled","false");
 		}
     },
@@ -200,10 +228,12 @@ Template.tournamentRegistration.events({
 		var hasError = false;
 
 		var alone = event.target.alone.checked;
+		var player2ID;
 		if(!alone){
 	    	var email = event.target.emailPlayer.value;
 	    	// Check that we know that email
 	    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
+	    	player2ID = u._id;
 	    	if(!u){
 	    		errors.push({id:"emailPlayer", error:true});
 				hasError = true;
@@ -212,8 +242,6 @@ Template.tournamentRegistration.events({
 	    		errors.push({id:"emailPlayer", error:false});
 	    	}
     	}
-    	// Check that that email is not already in a pair
-    	var currentYear = 2015;
 
 
       	event.preventDefault();
@@ -309,14 +337,12 @@ Template.tournamentRegistration.events({
         else{
         	errors.push({id:"dateMatch", error:false});
         }
-		var playerWishes = event.target.playerWishes.value;
-		var playerConstraints = event.target.playerConstraints.value;
 
 		addressData = {
 			street : street,
 			box : boxNumber,
 			number : addressNumber,
-			zipcode : zipcode,
+			zipCode : zipcode,
 			city : city,
 			country : country
 		};
@@ -328,7 +354,7 @@ Template.tournamentRegistration.events({
 			console.log("found existing address !");
 		}
 
-        data = { 
+        player1Data = { 
           _id: Meteor.userId(),
           // emails : [{"address": email, "verified":false}],
           profile:{
@@ -341,8 +367,31 @@ Template.tournamentRegistration.events({
           }
         };
 
-        // console.log(addressData);
-        console.log(errors);
+        // Check that that email is not already in a pair
+    	var currentYear = 2015;
+
+		var playerWishes = event.target.playerWishes.value;
+		var playerConstraints = event.target.playerConstraints.value;
+		var BBQval = event.target.BBQ.value;
+
+    	pairData = {
+    		year:currentYear,
+			day: dateMatch,
+			//category:<category>, TODO
+			player1:{
+				_id:Meteor.userId(),
+				extras:{
+					BBQ:BBQval
+				},
+				wish:playerWishes,
+				constraint:playerConstraints
+				// paymentID:<paymentID>
+			}
+    	}
+    	if(!alone){
+    		pairData["player2._id"] = player2ID;
+    	}
+
         for(var i in errors){
         	var d = errors[i];
         	set_error(d.id, d.error);
@@ -350,8 +399,9 @@ Template.tournamentRegistration.events({
         if(hasError) return false;
 
 
-        Meteor.call('updateAddress', addressData, data._id, null);
-        Meteor.call('updateUser', data);
+        Meteor.call('updateAddress', addressData, Meteor.userId(), null);
+        Meteor.call('updateUser', player1Data);
+        Meteor.call('updatePairs', pairData);
       	Router.go('home');
     }
 
