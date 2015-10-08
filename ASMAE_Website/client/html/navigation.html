@@ -13,7 +13,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <!-- <li class="active"><a href="{{pathFor route='home'}}">Home</a></li> -->
+
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Staff <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{{pathFor route='staffManagement'}}">Staff management</a></li>
@@ -21,15 +21,14 @@
             <li><a href="{{pathFor route='courtInfo'}}">Courts info</a></li>
           </ul>
         </li>
+        
         <li><a href="{{pathFor route='pictures'}}">Photos</a></li>
         <li><a href="{{pathFor route='rules'}}">Règlement</a></li>
         <li><a href="{{pathFor route='contacts'}}">Contacts</a></li>
         <li><a href="{{pathFor route='brackets'}}">Brackets</a></li>
-
-        <!-- <li><a href="{{pathFor route='Login'}}">Login</a></li> -->
-
+        
         {{#if currentUser}}
-        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="{{pathFor route='siteRegistration'}}">Inscription <span class="caret"></span></a>
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="{{pathFor route='tournamentRegistration'}}">Inscription <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{{pathFor route='tournamentRegistration'}}">Inscription au tournoi</a></li>
             <li><a href="{{pathFor route='courtRegistration'}}">Inscription d'un terrain</a></li>

@@ -22,6 +22,7 @@ Meteor.methods({
 	},
 
 	'isStaff' : function(){
+		console.log("staff");
 		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isStaff":1});
 		return res ? res.profile.isStaff : false;
 	},
