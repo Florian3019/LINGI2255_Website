@@ -1,6 +1,11 @@
 Template.tournamentRegistration.helpers({
 	'alonePlayers' : function(){
-		return Meteor.users.find({},{profile:1});
+		var res = Pairs.find({player2:{$exists:false}});
+		return res;
+	},
+
+	'getPlayer' : function(userId){
+		return Meteor.users.find({_id:userId},{profile:1});
 	},
 
 	'getCity' :function(addressID){
@@ -184,20 +189,42 @@ Template.tournamentRegistration.helpers({
 
 Template.tournamentRegistration.events({
 
-	"change .checkboxAlone input": function (event) {
+	"change .checkboxAloneDiv input": function (event) {
 		var e = document.getElementById("emailPlayer");
 		var table = document.getElementById("tableAlone");
+		var later = document.getElementById("checkboxLater");
+		document.getElementById("later").checked = false; // reset "later" checkbox
 		if(event.target.checked){
+			later.style.display = 'block';
 			table.style.display = 'block';
 			e.setAttribute("disabled","true");
 		}else{
+			later.style.display = 'none';
 			table.style.display = 'none';
 			e.removeAttribute("disabled","false");
 		}
     },
 
+    "change .checkboxLater input": function (event) {
+		var table = document.getElementById("tableAlone");
+		if(event.target.checked){
+			table.style.display = 'none';
+		}else{
+			table.style.display = 'block';
+		}
+    },
+
+    "click .aloneRow" : function (event){
+    	var previousId = Session.get('aloneSelected');
+    	if(previousId){
+    		document.getElementById(previousId).className = "aloneRow";
+    	}
+    	var newId = event.target.parentElement.id;
+    	document.getElementById(newId).setAttribute("class", "aloneRow success");
+    	Session.set('aloneSelected', newId); // Set the player's id in the session variable aloneSelected
+    },
+
     'submit form':function(){
-    	// console.log(event);
 
     	function set_error(id,errorVisible) {
     		const error = "Error";
@@ -233,16 +260,15 @@ Template.tournamentRegistration.events({
 	    	var email = event.target.emailPlayer.value;
 	    	// Check that we know that email
 	    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
-	    	player2ID = u._id;
 	    	if(!u){
 	    		errors.push({id:"emailPlayer", error:true});
 				hasError = true;
 	    	}
 	    	else{
+	    		player2ID = u._id;
 	    		errors.push({id:"emailPlayer", error:false});
 	    	}
     	}
-
 
       	event.preventDefault();
         var lastname = event.target.lastname.value;
@@ -374,24 +400,60 @@ Template.tournamentRegistration.events({
 		var playerConstraints = event.target.playerConstraints.value;
 		var BBQval = event.target.BBQ.value;
 
-    	pairData = {
-    		year:currentYear,
-			day: dateMatch,
-			//category:<category>, TODO
-			player1:{
-				_id:Meteor.userId(),
-				extras:{
-					BBQ:BBQval
-				},
-				wish:playerWishes,
-				constraint:playerConstraints
-				// paymentID:<paymentID>
-			}
-    	}
-    	if(!alone){
-    		pairData["player2._id"] = player2ID;
-    	}
+		var later = event.target.later.checked;
 
+		var playerData = {
+			_id:Meteor.userId(),
+			extras:{
+				BBQ:BBQval
+			},
+			wish:playerWishes,
+			constraint:playerConstraints
+			// paymentID:<paymentID>
+		};
+
+
+		var pairData;
+		if(alone && !later){
+    		// Player wants to register alone but chose a partner in the list
+
+    		var player1_pairID = Session.get('aloneSelected'); // The player's 1 pair id, from the selected item in the list
+    		// if(!player1_pairID){
+    		// 	errors.push({id:"checkboxAlone", error:true});
+      //   		hasError = true;
+    		// }
+    		// else{
+    		// 	errors.push({id:"checkboxAlone", error:false});
+    		// }
+    		pairData = {
+    			_id:player1_pairID,
+				player2:playerData
+		    };
+
+    	}
+    	else{
+
+    		if(alone){
+    			// Player wants to register alone but wants to wait for another to join on him
+	    		pairData = {
+		    		year:currentYear,
+					day: dateMatch,
+					//category:<category>, TODO
+					player1:playerData
+		    	};
+    		}
+    		else{
+    			// Player registers a pair
+		    	pairData = {
+		    		year:currentYear,
+					day: dateMatch,
+					//category:<category>, TODO
+					player1:playerData,
+					player2:{_id:player2ID} // TODO--> give all player info
+		    	};
+		    }
+    	}
+ 
         for(var i in errors){
         	var d = errors[i];
         	set_error(d.id, d.error);
@@ -402,6 +464,7 @@ Template.tournamentRegistration.events({
         Meteor.call('updateAddress', addressData, Meteor.userId(), null);
         Meteor.call('updateUser', player1Data);
         Meteor.call('updatePairs', pairData);
+        Session.set('aloneSelected',null); // To avoid bugs if trying to register again
       	Router.go('home');
     }
 

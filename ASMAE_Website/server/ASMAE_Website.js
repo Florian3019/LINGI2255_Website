@@ -11,6 +11,12 @@ Meteor.startup(function () {
 	Meteor.publish("users", function () {
 		var res = Meteor.users.find({},{fields:{profile:1}});
 		return res;
-  	});  	
+  	});
+
+  	Meteor.publish("pairs", function () {
+		var res = Pairs.find({},{});
+		return res;
+  	});
+
 // code to run on server at startup
 });
