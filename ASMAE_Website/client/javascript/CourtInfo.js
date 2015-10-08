@@ -1,7 +1,7 @@
 Template.courtInfo.helpers({
 
   'court': function(){
-    return Courts.findOne({surface: "Synthetique"});
+    return Courts.findOne();
   },
 
   'courtAddress': function(addressID){

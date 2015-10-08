@@ -1,4 +1,11 @@
 Template.playerInfoPage.helpers({
+  /*'player': function(){
+    return user.findOne();
+  },
+
+  'playerAddress': function(){
+    return Addresses.findOne({_id= addressID});
+  }*/
 'firstName': function(){
 return Session.get('selected').profile.firstName;
 },
