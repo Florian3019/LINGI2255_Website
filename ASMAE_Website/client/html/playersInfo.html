@@ -1,63 +1,34 @@
 <template name="playersInfo">
-  <!--
-    Snippet inspiré de http://bootsnipp.com/snippets/featured/simple-user-profile
-  -->
-          <div class="panel panel-info">
-            <div class="panel-heading">
-              <h3 class="panel-title">nom prénom</h3>
-            </div>
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://babyinfoforyou.com/wp-content/uploads/2014/10/avatar-300x300.png" class="img-circle img-responsive"> </div>
-                <div class=" col-md-9 col-lg-9 ">
-                  <table class="table table-user-information">
-                    <tbody>
-                      <tr>
-                        <td>Email address</td>
-                        <td>florian@manager.com</td>
-                      </tr>
-                      <tr>
-                        <td>Numéro de téléphone</td>
-                        <td>0473/38.333</td>
-                      </tr>
-                      <tr>
-                        <td>Date de naissance</td>
-                        <td>01/24/1988</td>
-                      </tr>
-                     <tr>
-                        <td>Genre</td>
-                        <td>Mâle</td>
-                      </tr>
-                        <tr>
-                        <td>Rue</td>
-                        <td>Union Européenne</td>
-                      </tr>
-                      <tr>
-                      <td>Numéro</td>
-                      <td>4</td>
-                      </tr>
-                      <tr>
-                      <td>Boite</td>
-                      <td>393</td>
-                    </tr>
-                      <tr>
-                        <td>Code postal</td>
-                        <td>1338</td>
-                      </tr>
-                      <tr>
-                      <td>Ville</td>
-                      <td>Louvain-La-Neuve</td>
-                    </tr>
-                    <tr>
-                    <td>Pays</td>
-                    <td>Russie</td>
-                  </tr>
-
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+  <div class="container">   
+    <form role="form">
+      <h2>Chercher un joueur:</h2>
+      <form role="form-group">
+        <div class="form-group">
+          <label for="text">Nom:</label>
+          <input type="text" class="form-control" id="lastname" name="lastname">
+          <label for="text">Prénom:</label>
+          <input type="text" class="form-control" id="firstname" name="firstname">
+          <label for="email">Addresse email:</label>
+          <input type="email" class="form-control" id="email" name="email">
+        </div>
+        <div class="form-group">
+          <h4><b>Sexe:</b></h4>
+          <div class="radio">
+            <label><input type="radio" name="sex" id="male" value="homme" class=/>Homme</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="sex" id="female" value="femme" />Femme</label>
+        </div>
+      </div>
+      <button type="submit">Chercher</button>
+    </form>
+</form>
+<div>
+  <ul>
+    {{#each player}}
+      <li>{{profile.lastName}}, {{profile.firstName}}</li>
+    {{/each}}
+  </ul>
 </div>
-
+</div>
 </template>
