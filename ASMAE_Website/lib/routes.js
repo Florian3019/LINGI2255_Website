@@ -31,10 +31,6 @@ Router.route('/tournament-registration',  {
         }
     }
 });
-Router.route('/site-registration', {
-	name: 'siteRegistration',
-	template: 'siteRegistration',
-});
 Router.route('/court-registration', {
 	name: 'courtRegistration',
 	template: 'courtRegistration',

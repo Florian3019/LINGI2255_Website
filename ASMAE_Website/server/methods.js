@@ -441,8 +441,19 @@ Meteor.methods({
 	'updatePairs' : function(pairData){
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
-		const userIsOwner = pairData.player1._id == Meteor.userId() || pairData.player2._id == Meteor.userId();
-		console.log(pairData.player1._id);
+		console.log(pairData);
+		ID = {};
+		if(pairData.player1){
+			P1_id= pairData.player1._id;
+			ID['player1'] = P1_id;
+		}
+		if(pairData.player2){
+			P2_id = pairData.player2._id;
+			ID['player2'] = P2_id;
+		}
+
+		const userIsOwner = ID['player1'] == Meteor.userId() || ID['player2'] == Meteor.userId();
+		
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updatePairs : You don't have the required permissions!");
 			return;
@@ -460,44 +471,46 @@ Meteor.methods({
 		if(pairData.day){
 			data.day = pairData.day;
 		}
-		
-		ID = {};
-		P1_id= pairData.player1._id;
-		ID['player1'] = P1_id;
-		if(pairData.player2){
-			P2_id = pairData.player2._id;
-			ID['player2'] = P2_id;
+			
+
+		if(pairData._id){
+			data._id = pairData._id;
 		}
 
-		var p1_1 = Pairs.findOne({player1:P1_id},{_id:1});
-		var p1_2 = Pairs.findOne({player2:P1_id},{_id:1});
-		var p2_1;
-		var p2_2;
-		if(ID['player2']){
-			p2_1 = Pairs.findOne({player1:ID['player2']},{_id:1});
-			p2_2 = Pairs.findOne({player2:ID['player2']},{_id:1});
-		}
-		var err1 = p1_1 && p2_1 ? p1_1!=p2_1 : false;
-		var err2 = p1_1 && p2_2 ? p1_1!=p2_2 : false;
-		var err3 = p1_2 && p2_1 ? p1_2!=p2_1 : false;
-		var err4 = p1_2 && p2_2 ? p1_2!=p2_2 : false;
-		if(p1_1 && p1_2 || p2_1 && p2_1 || err1 || err2 || err3 || err4){
-			console.error("updatePairs : impossible configuration");
-			return;
-		}
+		// var p1_1;
+		// var p1_2;
+		// var p2_1;
+		// var p2_2;
+		// if(ID['player1']){
+		// 	p1_1 = Pairs.findOne({player1:P1_id},{_id:1});
+		// 	p1_2 = Pairs.findOne({player2:P1_id},{_id:1});
+		// }
 
-		if(p1_1){
-			pairData['_id'] = p1_1;	
-		}
-		else if(p1_2){
-			pairData['_id'] = p1_2;	
-		}
-		else if(p2_1){
-			pairData['_id'] = p2_1;	
-		}
-		else if(p2_2){
-			pairData['_id'] = p2_2;	
-		}
+		// if(ID['player2']){
+		// 	p2_1 = Pairs.findOne({player1:ID['player2']},{_id:1});
+		// 	p2_2 = Pairs.findOne({player2:ID['player2']},{_id:1});
+		// }
+		// var err1 = p1_1 && p2_1 ? p1_1!=p2_1 : false;
+		// var err2 = p1_1 && p2_2 ? p1_1!=p2_2 : false;
+		// var err3 = p1_2 && p2_1 ? p1_2!=p2_1 : false;
+		// var err4 = p1_2 && p2_2 ? p1_2!=p2_2 : false;
+		// if(p1_1 && p1_2 || p2_1 && p2_1 || err1 || err2 || err3 || err4){
+		// 	console.error("updatePairs : impossible configuration");
+		// 	return;
+		// }
+
+		// if(p1_1){
+		// 	pairData['_id'] = p1_1;	
+		// }
+		// else if(p1_2){
+		// 	pairData['_id'] = p1_2;	
+		// }
+		// else if(p2_1){
+		// 	pairData['_id'] = p2_1;	
+		// }
+		// else if(p2_2){
+		// 	pairData['_id'] = p2_2;	
+		// }
 
 
 		// Player = player1 or player2
@@ -535,7 +548,10 @@ Meteor.methods({
 
 		setPlayerData("player1");
 		setPlayerData("player2");
-		// }
+		
+
+
+		console.log(data);
 
 		if(!pairData._id){
 			var id;
@@ -552,7 +568,7 @@ Meteor.methods({
 		}
 
 		// Add the address in the DB
-		var writeResult = Addresses.update({_id: pairData['_id']} , {$set: data});
+		var writeResult = Pairs.update({_id: pairData['_id']} , {$set: data});
 		if(writeResult.writeConcernError){
 			console.error('updatePairs : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;
