@@ -10,15 +10,17 @@
               <div class="row">
                 <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://www.constructiondetennis.com/wp-content/themes/tennis/images/court-de-tennis.png" class="img-circle img-responsive"> </div>
                 <div class=" col-md-9 col-lg-9 ">
+                  {{#with court}}
                   <table class="table table-user-information">
                     <tbody>
+                      {{#with courtAddress addressID}}
                       <tr>
                         <td>Rue</td>
-                        <td>{{rue}}</td>
+                        <td>{{street}}</td>
                       </tr>
                       <tr>
                         <td>Numéro</td>
-                        <td>{{num}}</td>
+                        <td>{{number}}</td>
                       </tr>
                       <tr>
                         <td>Boite</td>
@@ -32,13 +34,14 @@
                         <td>Ville</td>
                         <td>{{city}}</td>
                       </tr>
+                      {{/with}}
                       <tr>
                         <td>Surface</td>
                         <td>{{surface}}</td>
                       </tr>
                       <tr>
                         <td>Type</td>
-                        <td>{{ttype}}</td>
+                        <td>{{courtType}}</td>
                       </tr>
                       <tr>
                         <td>Instructions</td>
@@ -46,10 +49,11 @@
                       </tr>
                       <tr>
                         <td>Commentaire</td>
-                        <td>{{commentaire}}</td>
+                        <td>{{ownerComment}}</td>
                       </tr>
                     </tbody>
                   </table>
+                  {{/with}}
                 </div>
               </div>
             </div>

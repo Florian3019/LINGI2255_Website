@@ -1,6 +1,18 @@
 Template.courtInfo.helpers({
+
+  'court': function(){
+    return Courts.findOne({surface: "Synthetique"});
+  },
+
+  'courtAddress': function(addressID){
+      return Addresses.findOne({_id: addressID});
+  }
+
+  /*
   'rue': function(){
     var court = Courts.find({surface : "Beton"}).fetch();
+    console.log("Table : ");
+    console.table(Courts.find().fetch());
     var addr = Addresses.find({ _id : court[0].addressID}).fetch();
     if (addr==null) {
       return "Rue des chatons";
@@ -61,7 +73,7 @@ Template.courtInfo.helpers({
       return "Privé";
     }
     else {
-      return court[0].courtType
+      return court[0].type;
     }    },
   'instructions': function(){
     var court = Courts.find({surface : "Beton"}).fetch();
@@ -79,4 +91,6 @@ Template.courtInfo.helpers({
     else {
       return court[0].ownerComment
     }    }
+
+    */
 });
