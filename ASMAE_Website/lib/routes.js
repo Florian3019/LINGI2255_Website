@@ -67,3 +67,7 @@ Router.route('/brackets', {
 	name: 'brackets',
 	template: 'brackets'
 });
+Router.route('/confirmation_registration_player', {
+	name: 'confirmation_registration_player',
+	template: 'confirmation_registration_player'
+});
