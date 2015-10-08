@@ -55,6 +55,10 @@ Router.route('/players-info', {
 	name: 'playersInfo',
 	template: 'playersInfo'
 });
+Router.route('/player-info-page', {
+	name: 'playerInfoPage',
+	template: 'playerInfoPage',
+});
 Router.route('/staff-management', {
 	name: 'staffManagement',
 	template: 'staffManagement'

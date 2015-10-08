@@ -1,4 +1,3 @@
-var cursor;
 Template.playersInfo.events({
    'submit form': function(){
       event.preventDefault();
@@ -6,19 +5,21 @@ Template.playersInfo.events({
         var firstName = event.target.firstname.value;
         var email = event.target.email.value;
         var sex = event.target.sex.value;
+        var rank = event.target.rank.value;
         var query = {};
         if(lastName){query["profile.lastName"] = lastName;}
         if(firstName){query["profile.firstName"] = firstName;}
-        if(email){query["profile.emails"] = email;}
+        if(email){query["emails[0].address"] = email;}
         if(sex) {query["profile.gender"] = sex;}
+        if(rank) {query["profile.AFT"] = rank;}
         cursor = Meteor.users.find(query).fetch();
-        console.log(cursor);
         Session.set('cursor', cursor);
         return false;
-        //Router.go('courtInfo');
     },  
-    'click li': function(){
-        console.log("You clicked an li element");
+    'click li': function() {
+        Session.set('selected', this);
+        Session.set('address', Addresses.find({_id: this.profile.addressID}).fetch()[0]);
+        Router.go('playerInfoPage');
     }
 });
 Template.playersInfo.helpers({
