@@ -1,6 +1,6 @@
 Template.tournamentRegistration.helpers({
 	'alonePlayers' : function(){
-		var res = Pairs.find({player2:{$exists:false}});
+		var res = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}} ]});
 		return res;
 	},
 
