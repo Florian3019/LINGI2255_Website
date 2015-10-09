@@ -5,7 +5,8 @@ Router.configure({
 // onStop hook is executed whenever we LEAVE a route
 Router.onStop(function(){
   // register the previous route location in a session variable
-  Session.set("previousLocationPath",Router.current().route.getName());
+  Session.set("previousLocationPath", Router.current().route.getName());
+  console.log(Router.current().route.getName());
 });
 
 Router.route('/', {
@@ -123,6 +124,36 @@ Router.route('/brackets', {
 Router.route('/confirmation_registration_player', {
 	name: 'confirmation_registration_player',
 	template: 'confirmation_registration_player',
+	
+	data: function(){
+		var lastName = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.lastName':1})).profile.lastName;
+		var firstName = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.firstName':1})).profile.firstName;
+		var date = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1})).profile.birthDate;
+		date = date.substring(8,10) + "/" + date.substring(5,7) + "/" + date.substring(0,4);
+		var phone = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.phone':1})).profile.phone;
+		phone = phone.substring(0,4) + "/" + phone.substring(4,6) + "." + phone.substring(6,8) + "." + phone.substring(8,10);
+		var gender = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.gender':1})).profile.gender;
+		var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
+		var addr = Addresses.findOne({_id:userData.profile.addressID});
+		if (addr.box) {
+			address = addr.number + ", " + addr.street + ". Boite " + addr.box;
+		}
+		else {
+			address = addr.number + ", " + addr.street;
+		}
+		var city = addr.zipCode + " " + addr.city;
+		
+		var data = {};
+		data.lastName = lastName;
+		data.firstName = firstName;
+		data.birthDate = date;
+		data.phone = phone;
+		data.address = address;
+		data.city = city;
+		data.gender = gender;
+		return data;
+    },
+	
 	onBeforeAction: function() {
 		var previousLocationPath=Session.get("previousLocationPath");
 		// Redirect to Home if we are not coming from the tournament registration page
@@ -131,4 +162,31 @@ Router.route('/confirmation_registration_player', {
 		}
 		this.next();
 	}
+});
+
+Router.route('/confirmation_registration_court/:_id', {
+	name: 'confirmation_registration_court',
+	template: 'confirmation_registration_court',
+	
+	data: function(){
+		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
+		console.log(court);
+		var owner = Meteor.users.findOne({_id: court.ownerID});
+		var address = Addresses.findOne({_id: court.addressID});
+		var data = {};
+		data.court = court;
+		data.owner = owner;
+		data.address = address;
+		return data;
+    },
+	
+	/*
+	onBeforeAction: function() {
+		var previousLocationPath=Session.get("previousLocationPath");
+		// Redirect to Home if we are not coming from the tournament registration page
+		if(previousLocationPath!="courtRegistration"){
+			this.redirect("/")
+		}
+		this.next();
+	}*/
 });

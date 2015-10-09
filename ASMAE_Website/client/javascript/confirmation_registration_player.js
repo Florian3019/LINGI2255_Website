@@ -1,3 +1,4 @@
+/*
 Template.confirmation_registration_player.helpers({
 	
 	'user': function() {
@@ -38,3 +39,4 @@ Template.confirmation_registration_player.helpers({
 		return c.city
 	},
 });
+*/

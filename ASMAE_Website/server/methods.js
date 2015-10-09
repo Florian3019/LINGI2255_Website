@@ -130,7 +130,7 @@ Meteor.methods({
 			data.lendThisYear = true;
 
 			// Create a new court
-			Courts.insert(data, function(err, addrId){
+			var id = Courts.insert(data, function(err, addrId){
 				if(err){
 					console.error('updateCourt error');
 					console.error(err);
@@ -144,6 +144,8 @@ Meteor.methods({
 				}
 
 			});
+			console.log("id retourne par insert : "+id);
+			return id;
 		}
 
 	},

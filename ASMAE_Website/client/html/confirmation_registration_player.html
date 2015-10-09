@@ -4,7 +4,7 @@
 	  -->
 	          <div class="panel panel-info">
 	            <div class="panel-heading">
-	              <h3 class="panel-title">Confirmation de votre inscription au tournoi</h3>
+	              <h2 class="panel-title">Confirmation de votre inscription au tournoi</h2>
 	            </div>
 	            <div class="panel-body">
 	              <div class="row">
@@ -12,39 +12,33 @@
 	                <div class=" col-md-6 col-lg-6 ">
 	                  <table class="table table-user-information">
 	                    <tbody>
-							{{#with user}}
 	                      <tr>
 	                        <td class="item">Nom</td>
-	                        <td>{{profile.lastName}}</td>
+	                        <td>{{lastName}}</td>
 						  </tr>
 						  <tr>
 	                        <td class="item">Prénom</td>
-	                        <td> {{profile.firstName}} </td>
+	                        <td> {{firstName}} </td>
 	                      </tr>
 	                      <tr>
 	                        <td class="item">Sexe</td>
-	                        <td> {{profile.gender}} </td>
+	                        <td> {{gender}} </td>
 	                      </tr>
-						  {{/with}}
 	                      <tr>
 	                        <td class="item">Date de naissance</td>
 	                        <td> {{birthDate}} </td>
 	                      </tr>
 	                     <tr>
 	                        <td class="item">Numéro de téléphone</td>
-	                        <td> {{phoneNbr}} </td>
+	                        <td> {{phone}} </td>
 	                      </tr>
 	                      <tr>
 	                        <td class="item">Adresse</td>
 	                        <td> {{address}} </td>
 	                      </tr>
 	                      <tr>
-	                        <td class="item"> Ville</td>
+	                        <td class="item">Ville</td>
 	                        <td> {{city}} </td>
-	                      </tr>
-	                      <tr>
-	                        <td class="item">Code postal</td>
-	                        <td> {{zip}} </td>
 	                      </tr>
 	                      <tr>
 	                        <td class="item">Jour du tournoi</td>
