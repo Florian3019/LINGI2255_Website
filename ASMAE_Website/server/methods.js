@@ -410,7 +410,7 @@ Meteor.methods({
 
 	/*
 		If a wish(es) is specified, it(they) must be in an array and will be appended to the list of existing wishes.
-
+		
 		A pair is structured as follows:
 		{
 			_id:<id>,
@@ -437,7 +437,7 @@ Meteor.methods({
 			}
 		}
 
-		@return : the pair id
+		@return : the pair id is successful, otherwise returns false
 	*/
 	'updatePairs' : function(pairData){
 		const isAdmin = Meteor.call('isAdmin');
@@ -457,7 +457,7 @@ Meteor.methods({
 		
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updatePairs : You don't have the required permissions!");
-			return;
+			return false;
 		}
 
 		var data = {};
@@ -516,14 +516,14 @@ Meteor.methods({
 
 		// Player = player1 or player2
 		setPlayerData = function(player){
-			if(!pairData[player]) return;
+			if(!pairData[player]) return; // Don't return false
 			
 			var p ={};
 
 			var u = Meteor.users.findOne({_id:ID[player]});
 			if(!u){
 				console.error('updatePairs : player doesn\'t exist !');
-				return;
+				return false;
 			}
 			
 			p['_id'] = ID[player];
@@ -547,8 +547,8 @@ Meteor.methods({
 			data[player] = p;
 		}
 
-		setPlayerData("player1");
-		setPlayerData("player2");
+		if(setPlayerData("player1") == false) return false;
+		if(setPlayerData("player2") == false) return false;
 		
 
 
@@ -560,7 +560,7 @@ Meteor.methods({
 				if(err){
 					console.error('updatePairs error');
 					console.error(err);
-					return;
+					return false;
 				}
 				id = pairId;
 			});
@@ -572,7 +572,7 @@ Meteor.methods({
 		var writeResult = Pairs.update({_id: pairData['_id']} , {$set: data});
 		if(writeResult.writeConcernError){
 			console.error('updatePairs : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
-			return;
+			return false;
 		}
 		return pairData._id;
 	},
@@ -664,6 +664,9 @@ Meteor.methods({
 		}
 	},
 
+	'removePair' : function(pairId){
+		Pairs.remove({_id:pairId});
+	},
 
 	'insertQuestion' : function(Question){
 		var data ={

@@ -259,6 +259,21 @@ Template.tournamentRegistration.events({
 				e.style.display = 'block';  	
 		}
 
+
+
+		/*
+			Returns the pair if userId is already in a pair. Else, returns false.
+		*/
+		function getPairId(userId){
+
+			var res = Pairs.findOne({$or: [{"player1._id":userId},{"player2._id":userId}]}, {_id:1});
+			if(res){
+				return res;
+			}
+			return false;
+
+		}
+
 		// Reset the email error status
 		document.getElementById("emailPlayerDiv").removeAttribute("class", "has-success has-error");
 		document.getElementById("emailPlayerError").style.display = 'none';
@@ -447,11 +462,34 @@ Template.tournamentRegistration.events({
 			// paymentID:<paymentID>
 		};
 
+		var remove; // By default, this is undefine. If it is defined, contains the id of a pair to remove
+
 		/*
 			Depending if user wants to register alone or with a pair, choose appropriate action
 		*/
 		var pairData;
 		if(alone && !later){
+			var pair = getPairId(Meteor.userId() ); // != false if the user is already in a pair
+			if( pair!=false ){
+				// User is already in a pair
+
+				// Check if he is player1 or player2:
+				var player;
+				if(!pair.player2){
+					// User is trying to register again (he was alone) but with a pair this time
+					// We need to remove the existing pair with him.
+					remove = pair._id;
+				}
+				else{
+					// User is trying to register, but he is already in a pair !
+					document.getElementById("alreadyRegisteredErrorMessage").style.display = 'block';
+					document.getElementById("checkboxAloneDiv").className = "form-group col-md-3 checkboxAloneDiv has-error";
+					console.error("User is already registered in a pair");// TODO display notification
+					hasError = true;
+				}
+			}
+
+
     		// Player wants to register alone but chose a partner in the list
 
     		var player1_pairID = Session.get('aloneSelected'); // The player's 1 pair id, from the selected item in the list
@@ -502,9 +540,18 @@ Template.tournamentRegistration.events({
 			Update the db !
         */
 
+
+
         Meteor.call('updateAddress', addressData, Meteor.userId(), null);
         Meteor.call('updateUser', curUserData);
-        Meteor.call('updatePairs', pairData);
+        if(Meteor.call('updatePairs', pairData)!=false){
+        	// Success
+        	if(remove) Meteor.call('removePair',remove);
+        }
+        else{
+        	return false;
+        }
+
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
       	Router.go('/confirmation_registration_player');
     }

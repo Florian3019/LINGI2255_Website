@@ -251,6 +251,9 @@
       <div class="row">
         <div class="form-group col-md-3 checkboxAloneDiv" id="checkboxAloneDiv">
           <label class="checkbox-inline"><input type="checkbox" value="" id="alone">   Je veux m'inscrire seul</label>
+          <div id="alreadyRegisteredErrorMessage" hidden>
+            <span class="help-block alreadyRegisteredError" >Vous êtes déjà inscrit !</span>
+          </div>
         </div>
 
 
@@ -297,7 +300,7 @@
 
 
       <div class="form-group has-feedback" id="emailPlayerDiv">
-        <label class="control-label" for="inputGroupSuccess1">Addresse email de votre coéquipier: </label>
+        <label class="control-label" for="inputGroupSuccess1">Adresse email de votre coéquipier: </label>
         <div class="input-group">
           <span class="input-group-addon">@</span>
           <input type="text" class="form-control" id="emailPlayer"> <!-- aria-describedby="inputGroupSuccess1Status"> -->
