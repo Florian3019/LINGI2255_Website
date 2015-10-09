@@ -24,10 +24,11 @@
 {{/if}}
         <li><a href="{{pathFor route='pictures'}}">Photos</a></li>
         <li><a href="{{pathFor route='rules'}}">Règlement</a></li>
-        <li><a href="{{pathFor route='contacts'}}">Contact</a></li>
         <li><a href="{{pathFor route='brackets'}}">Brackets</a></li>
 
         {{#if currentUser}}
+        
+        <li><a href="{{pathFor route='contacts'}}">Contact</a></li>
         <li><a href="{{pathFor route='myCourts'}}">Mes terrains</a></li>
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Inscription <span class="caret"></span></a>
           <ul class="dropdown-menu">
