@@ -19,6 +19,10 @@ Router.route('/rules', {
 	name: 'rules',
 	template: 'rules'
 });
+Router.route('/myRegistration', {
+	name: 'myRegistration',
+	template: 'myRegistration'
+});
 Router.route('/tournament-registration',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
@@ -59,6 +63,10 @@ Router.route('/player-info-page', {
 	name: 'playerInfoPage',
 	template: 'playerInfoPage',
 });
+Router.route('/player-info-template', {
+	name: 'playerInfoTemplate',
+	template: 'playerInfoTemplate',
+});
 Router.route('/court-info-page', {
 	name: 'courtInfoPage',
 	template: 'courtInfoPage',
@@ -67,15 +75,11 @@ Router.route('/staff-management', {
 	name: 'staffManagement',
 	template: 'staffManagement'
 });
-Router.route('/profile-edit', {
+Router.route('/profileEdit', {
 	name: 'profileEdit',
 	template: 'profileEdit'
 });
 Router.route('/brackets', {
 	name: 'brackets',
 	template: 'brackets'
-});
-Router.route('/confirmation_registration_player', {
-	name: 'confirmation_registration_player',
-	template: 'confirmation_registration_player'
 });

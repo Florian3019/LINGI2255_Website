@@ -553,7 +553,7 @@ Template.tournamentRegistration.events({
         }
 
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
-      	Router.go('/confirmation_registration_player');
+      	Router.go('/myRegistration');
     }
 
 

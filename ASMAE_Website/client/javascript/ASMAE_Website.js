@@ -145,7 +145,7 @@
   // Additional button to allow profile editing when the user is logged in
   Template._loginButtonsLoggedInDropdown.events({
     'click #login-buttons-edit-profile': function(event) {
-        Router.go('ProfileEdit');
+        Router.go('profileEdit');
     }
 });
 
