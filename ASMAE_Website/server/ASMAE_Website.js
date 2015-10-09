@@ -24,5 +24,9 @@ Meteor.startup(function () {
 		var res = couts.find({},{});
 		return res;
   	});
+  	
+  	Meteor.publish("Questions",function(){
+  		return Questions.find();
+  	});
 // code to run on server at startup
 });
