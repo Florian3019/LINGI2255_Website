@@ -63,19 +63,23 @@ Template.courtInfo.events({
         }
         Session.set('answer', answer[0]);
         return false;
-    },  
+    }
+    /*
+    ,  
     'click li': function() {
         Session.set('answerT', this);
         var userC = Meteor.users.find({_id: this.ownerID}).fetch()[0];
         Session.set('userC',userC);
-        Session.set('addressC',Addresses.find({_id: userC.profile.addressID}).fetch()[0]);
+        Session.set('addressC', Addresses.find({_id: userC.profile.addressID}).fetch()[0]);
         Router.go('courtInfoPage');
     }
+    */
 });
+
 Template.courtInfo.helpers({
-      'court': function(){
-    return Courts.findOne();
-  },
+    'court': function(){
+        return Courts.findOne();
+    },
     'player': function(){
         return Session.get('answer');
     }

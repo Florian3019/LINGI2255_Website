@@ -1,14 +1,14 @@
-<template name="courtInfoPage">
+<template name="confirmation_registration_court">
   <!--
     Snippet inspiré de http://bootsnipp.com/snippets/featured/simple-user-profile
   -->
           <div class="panel panel-info">
             <div class="panel-heading">
-              <h3 class="panel-title">Informations sur le terrain</h3>
+              <h2 class="panel-title">Confirmation de l'enregistrement de votre terrain</h2>
             </div>
             <div class="panel-body">
               <div class="row">
-                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://www.constructiondetennis.com/wp-content/themes/tennis/images/court-de-tennis.png" class="img-circle img-responsive"> </div>
+                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="https://t2.ftcdn.net/jpg/00/39/71/55/160_F_39715596_eMCV5BSxS9eDjpAYW8hkUC5rFs3NyamS.jpg" class="img-circle img-responsive"> </div>
                 <div class=" col-md-9 col-lg-9 ">
                   <table class="table table-user-information">
                     <tbody>
@@ -31,39 +31,39 @@
                       {{/if}}
                     -->
                       <tr>
-                        <td>Rue</td>
+                        <td class="item">Rue</td>
                         <td>{{address.street}}</td>
                       </tr>
                       <tr>
-                        <td>Numéro</td>
+                        <td class="item">Numéro</td>
                         <td>{{address.number}}</td>
                       </tr>
                       <tr>
-                        <td>Boite</td>
+                        <td class="item">Boite</td>
                         <td>{{address.box}}</td>
                       </tr>
                      <tr>
-                        <td>Code Postal</td>
+                        <td class="item">Code Postal</td>
                         <td>{{address.zipCode}}</td>
                       </tr>
                         <tr>
-                        <td>Ville</td>
+                        <td class="item">Ville</td>
                         <td>{{address.city}}</td>
                       </tr>
                       <tr>
-                        <td>Surface</td>
+                        <td class="item">Surface</td>
                         <td>{{court.surface}}</td>
                       </tr>
                       <tr>
-                        <td>Type</td>
+                        <td class="item">Type</td>
                         <td>{{court.courtType}}</td>
                       </tr>
                       <tr>
-                        <td>Instructions</td>
+                        <td class="item">Instructions</td>
                         <td>{{court.instructions}}</td>
                       </tr>
                       <tr>
-                        <td>Commentaire</td>
+                        <td class="item">Commentaires</td>
                         <td>{{court.ownerComment}}</td>
                       </tr>
                     </tbody>

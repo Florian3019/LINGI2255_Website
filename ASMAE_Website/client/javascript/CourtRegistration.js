@@ -16,7 +16,14 @@ Template.courtRegistration.events({
         	instructions : $('[name=instructions]').val(),
         	ownerComment : $('[name=ownerComment]').val()
         };
-        Meteor.call('updateCourt', courtData, address);
-        Router.go('home');
+		
+		Meteor.call('updateCourt', courtData, address, function(error, results){
+			if(error){
+	            console.log(error.reason);
+	        } else {
+				console.log("les results : "+results);
+	            Router.go('confirmation_registration_court', {_id: results});
+	        }
+	    });
     }
 });

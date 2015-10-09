@@ -1,3 +1,4 @@
+/*
 Template.courtInfoPage.helpers({
 'firstName': function(){
 	return Session.get('userC').profile.firstName;
@@ -39,3 +40,4 @@ return Session.get('answerT').instructions;
 return Session.get('answerT').ownerComment;
 }
 });
+*/

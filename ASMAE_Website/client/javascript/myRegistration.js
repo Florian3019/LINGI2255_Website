@@ -1,13 +1,10 @@
 
-Template.registerHelper("checkedIf",function(value){
-  return value?"checked":"";
-});
-
 Template.myRegistration.helpers({
 
 'setCurrentPlayer': function(){
 	var user = Meteor.users.findOne({_id:Meteor.userId()});
   // console.log(user);
+  if(!user) return;
   var addrID = user.profile.addressID;
 	var addr = Addresses.findOne({_id:addrID});
 	
@@ -149,5 +146,3 @@ Template.myRegistration.helpers({
 
 });
 
-
-// Template.myRegistration.rendered = function () {
