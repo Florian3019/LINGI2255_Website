@@ -2,6 +2,12 @@ Router.configure({
     layoutTemplate: 'index'
 });
 
+// onStop hook is executed whenever we LEAVE a route
+Router.onStop(function(){
+  // register the previous route location in a session variable
+  Session.set("previousLocationPath",Router.current().route.getName());
+});
+
 Router.route('/', {
     template: 'home',
     name: 'home'
@@ -75,7 +81,16 @@ Router.route('/brackets', {
 	name: 'brackets',
 	template: 'brackets'
 });
+
 Router.route('/confirmation_registration_player', {
 	name: 'confirmation_registration_player',
-	template: 'confirmation_registration_player'
+	template: 'confirmation_registration_player',
+	onBeforeAction: function() {
+		var previousLocationPath=Session.get("previousLocationPath");
+		// Redirect to Home if we are not coming from the tournament registration page
+		if(previousLocationPath!="tournamentRegistration"){
+			this.redirect("/")
+		}
+		this.next();
+	}
 });
