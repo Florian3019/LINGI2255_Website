@@ -1,4 +1,11 @@
 Template.playerInfoPage.helpers({
+  /*'player': function(){
+    return user.findOne();
+  },
+
+  'playerAddress': function(){
+    return Addresses.findOne({_id= addressID});
+  }*/
 'firstName': function(){
 return Session.get('selected').profile.firstName;
 },
@@ -24,7 +31,7 @@ return Session.get('address').street;
 return Session.get('address').number;
 },
 'boite': function(){
-return Session.get('address').boite;
+return Session.get('address').box;
 },
 'postal': function(){
 return Session.get('address').zipCode;

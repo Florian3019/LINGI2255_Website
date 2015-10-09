@@ -506,7 +506,7 @@ Template.tournamentRegistration.events({
         Meteor.call('updateUser', curUserData);
         Meteor.call('updatePairs', pairData);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
-      	Router.go('home');
+      	Router.go('/confirmation_registration_player');
     }
 
 

@@ -150,6 +150,7 @@
 });
 
 Tracker.autorun(function () {
+  Meteor.subscribe("courts");
   Meteor.subscribe("addresses");
   Meteor.subscribe("users");
   Meteor.subscribe("pairs");
