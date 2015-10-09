@@ -25,6 +25,7 @@ Router.route('/rules', {
 	name: 'rules',
 	template: 'rules'
 });
+
 Router.route('/tournament-registration',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
@@ -37,37 +38,74 @@ Router.route('/tournament-registration',  {
         }
     }
 });
+
 Router.route('/court-registration', {
 	name: 'courtRegistration',
 	template: 'courtRegistration',
 	onBeforeAction: function(){
-        var currentUser = Meteor.userId();
-        if(currentUser){
+        if(Meteor.userId()){
             this.next();
         } else {
             this.render("login");
         }
     }
 });
+
 Router.route('/court-info', {
 	name: 'courtInfo',
 	template: 'courtInfo',
+	onBeforeAction: function(){
+        if(Meteor.userId()){
+            this.next();
+        } else {
+            this.render("login");
+        }
+    }
+});
 
+Router.route('/court/:_id', {
+	name: 'courtInfoPage',
+	template: 'courtInfoPage',
+	data: function(){
+		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
+		console.log(court);
+		var owner = Meteor.users.findOne({_id: court.ownerID});
+		console.log(owner);
+		var address = Addresses.findOne({_id: court.addressID});
+		console.log(address);
+		var data = {};
+		data.court = court;
+		data.owner = owner;
+		data.address = address;
+		return data;
+    },
+	onBeforeAction: function(){
+        if(Meteor.userId()){
+            this.next();
+        } else {
+            this.render("login");
+        }
+    }
+
+	/*
 	subscriptions: function(){
         return [ Meteor.subscribe('courts'), Meteor.subscribe('addresses') ]
     }
+    */
 });
+
+Router.route('/my-courts', {
+	name: 'myCourts',
+	template: 'myCourts'
+});
+
 Router.route('/players-info', {
 	name: 'playersInfo',
 	template: 'playersInfo'
 });
 Router.route('/player-info-page', {
 	name: 'playerInfoPage',
-	template: 'playerInfoPage',
-});
-Router.route('/court-info-page', {
-	name: 'courtInfoPage',
-	template: 'courtInfoPage',
+	template: 'playerInfoPage'
 });
 Router.route('/staff-management', {
 	name: 'staffManagement',
