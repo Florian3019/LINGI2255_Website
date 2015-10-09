@@ -1,10 +1,22 @@
 <template name="myCourts">
-	<h3>Mes terrains:</h3>
-	<ul>
-		{{#each court}}
-		<li><a href="{{pathFor route='courtInfoPage'}}">{{_id}}</a></li>
-		{{/each}}
-	</ul>
+	<h3>Mes terrains</h3>
+	<table class="table">
+		<thead>
+      		<tr>
+        	<th>Terrain</th>
+        	<th>Loué</th>
+      		</tr>
+    	</thead>
+    	<tbody>
+    		{{#each court}}
+    		<tr>
+    			<td><a href="{{pathFor route='courtInfoPage'}}">{{_id}}</a></td>
+    			<td><span class="glyphicon {{checked}}"></span></td>
+    		</tr>
+    		{{/each}}
+    	</tbody>
+	</table>
+
 	<br />
-	<a class="btn btn-default" href="{{pathFor route='courtRegistration'}}">Rajouter un terrain</a>
+	<center><a class="btn btn-default" href="{{pathFor route='courtRegistration'}}">Rajouter un terrain</a></center>
 </template>

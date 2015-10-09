@@ -127,6 +127,8 @@ Meteor.methods({
 			// Check that a court with that address does not already exist :
 			if(address && Meteor.call('addressExists', address)) return;
 
+			data.lendThisYear = true;
+
 			// Create a new court
 			Courts.insert(data, function(err, addrId){
 				if(err){
