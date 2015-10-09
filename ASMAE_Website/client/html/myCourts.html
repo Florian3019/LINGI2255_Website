@@ -1,0 +1,10 @@
+<template name="myCourts">
+	<h3>Mes terrains:</h3>
+	<ul>
+		{{#each court}}
+		<li><a href="{{pathFor route='courtInfoPage'}}">{{_id}}</a></li>
+		{{/each}}
+	</ul>
+	<br />
+	<a class="btn btn-default" href="{{pathFor route='courtRegistration'}}">Rajouter un terrain</a>
+</template>
