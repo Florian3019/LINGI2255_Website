@@ -31,7 +31,7 @@ return Session.get('address').street;
 return Session.get('address').number;
 },
 'boite': function(){
-return Session.get('address').boite;
+return Session.get('address').box;
 },
 'postal': function(){
 return Session.get('address').zipCode;

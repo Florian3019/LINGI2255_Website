@@ -2,61 +2,82 @@
   <!--
     Snippet inspiré de http://bootsnipp.com/snippets/featured/simple-user-profile
   -->
-          <div class="panel panel-info">
-            <div class="panel-heading">
-              <h2 class="panel-title">Informations des terrains</h2>
+<div class="container">    
+    <form role="form">
+
+      <div class="form-group">
+
+        <h2>Recherche d'un terrain:</h2>
+        <div class="row">
+          <div class="col-sm-12">
+            <label for="text">Nom du propriétaire:</label>
+          <input type="text" class="form-control" id="lastname" name="lastname">
+          <label for="text">Prénom du propriétaire:</label>
+          <input type="text" class="form-control" id="firstname" name="firstname">
+            <label for="street">Rue:</label>
+            <input type="text" name="street" id="street"  class="form-control">
+          </div>
+
+        </div>
+        <br>
+        <div class ="row">
+          <div class = "col-sm-2">
+            <label for="addressNumber">Numéro:</label>
+            <input type="text" name="addressNumber" id="addressNumber" class="form-control">
+          </div>
+          <div class="col-sm-2">
+            <label for="box">Boîte:</label>
+            <input type="text" name="box" id="box"  class="form-control"><br />
+          </div>
+          <div class="col-sm-3">
+            <label for="zipCode">Code postal:</label>
+            <input type="text" name="zipCode" id="zipCode"  class="form-control">
+          </div>
+        </div>
+
+        <div class ="row">
+          <div class="col-sm-4">
+              <label for="city">Ville:</label>
+              <input type="text" name="city" id="city"  class="form-control">
             </div>
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://www.constructiondetennis.com/wp-content/themes/tennis/images/court-de-tennis.png" class="img-circle img-responsive"> </div>
-                <div class=" col-md-9 col-lg-9 ">
-                  {{#with court}}
-                  <table class="table table-user-information">
-                    <tbody>
-                      {{#with courtAddress addressID}}
-                      <tr>
-                        <td>Rue</td>
-                        <td>{{street}}</td>
-                      </tr>
-                      <tr>
-                        <td>Numéro</td>
-                        <td>{{number}}</td>
-                      </tr>
-                      <tr>
-                        <td>Boite</td>
-                        <td>{{box}}</td>
-                      </tr>
-                     <tr>
-                        <td>Code Postal</td>
-                        <td>{{zipCode}}</td>
-                      </tr>
-                        <tr>
-                        <td>Ville</td>
-                        <td>{{city}}</td>
-                      </tr>
-                      {{/with}}
-                      <tr>
-                        <td>Surface</td>
-                        <td>{{surface}}</td>
-                      </tr>
-                      <tr>
-                        <td>Type</td>
-                        <td>{{courtType}}</td>
-                      </tr>
-                      <tr>
-                        <td>Instructions</td>
-                        <td>{{instructions}}</td>
-                      </tr>
-                      <tr>
-                        <td>Commentaire</td>
-                        <td>{{ownerComment}}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  {{/with}}
-                </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+                <label for="text">Pays</label>
+                <input type="text" class="form-control" id="country" name="country">
               </div>
             </div>
-</div>
+          </div>
 
+        <div class="form-group">
+          <label for="surface">Surface:</label>
+          <select name="surface" id="surface" class="form-control custom-inline-radio" style="width: 15%; display: inline" selected="Synthetique">
+            <option value="NoType">Autre</option>
+            <option value="Terre_Battue">Terre Battue</option>
+            <option value="Gazon">Gazon</option>
+            <option value="Synthetique">Synthétique</option>
+            <option value="Beton">Béton</option>
+          </select>
+        </div>
+
+
+        <div class="form-group">
+          <h4><b>Type:</b></h4>
+          <div class="radio">
+            <label><input type="radio" name="courtType" value="private" class=/>Privé</label><br />
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="courtType" value="club" />Club</label>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-default">Enregistrer</button>
+      </div>
+
+    </form>
+    <ul>
+    {{#each player}}
+      <li> {{surface}}   </li>
+    {{/each}}
+  </ul>
+  </div>
 </template>

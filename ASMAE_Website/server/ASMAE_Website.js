@@ -5,7 +5,7 @@ Meteor.startup(function () {
 		if(res){
 			return Addresses.find({_id:res.profile.addressID});	
 		}
-    	
+
   	});
 
 	Meteor.publish("users", function () {
@@ -20,5 +20,9 @@ Meteor.startup(function () {
 		return res;
   	});
 
+  	Meteor.publish("courts", function () {
+		var res = couts.find({},{});
+		return res;
+  	});
 // code to run on server at startup
 });

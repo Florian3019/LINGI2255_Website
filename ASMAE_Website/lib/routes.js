@@ -59,6 +59,10 @@ Router.route('/player-info-page', {
 	name: 'playerInfoPage',
 	template: 'playerInfoPage',
 });
+Router.route('/court-info-page', {
+	name: 'courtInfoPage',
+	template: 'courtInfoPage',
+});
 Router.route('/staff-management', {
 	name: 'staffManagement',
 	template: 'staffManagement'
