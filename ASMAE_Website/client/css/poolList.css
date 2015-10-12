@@ -1,0 +1,70 @@
+/* dragula-specific example page styles */
+.wrapper {
+  display: table;
+  min-height: 400px;
+  min-width: 200px;
+  vertical-align: top;
+}
+
+*, *:before, *:after {
+  -webkit-box-sizing: inherit;
+  -moz-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+.__slackin {
+  float: right;
+  margin-left: 10px;
+  vertical-align: top;
+}
+
+.poolContainer {
+  display: table-cell;
+  /*background-color: rgba(255, 255, 255, 0.2);*/
+  width: 50%;
+  min-height: 400px;
+}
+.poolContainer:nth-child(odd) {
+  background-color: rgba(51, 153, 255, 0.5);
+  /*background-color: rgba(0.3,0.2,1,0.2);*/
+}
+/*
+ * note that styling gu-mirror directly is a bad practice because it's too generic.
+ * you're better off giving the draggable elements a unique class and styling that directly!
+ */
+.poolContainer > div,
+.gu-mirror {
+  margin: 10px;
+  /*padding: 10px;*/
+  /*background-color: rgba(0, 0, 0, 0.2);*/
+  transition: opacity 0.4s ease-in-out;
+}
+.poolContainer > div {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+.gu-mirror {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+.poolContainer .ex-moved {
+  background-color: #e74c3c;
+}
+.poolContainer.ex-over {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.handle {
+  padding: 0 5px;
+  margin-right: 5px;
+  background-color: rgba(0, 0, 0, 0.4);
+  cursor: move;
+}
+.image-thing {
+  margin: 20px 0;
+  display: block;
+  text-align: center;
+}

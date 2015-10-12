@@ -27,6 +27,40 @@ Meteor.methods({
 		return res ? res.profile.isStaff : false;
 	},
 
+	'getAge' : function(birthDate){
+		var birthdate = new Date(birthdate);
+		var cur = new Date();
+		var diff = cur-birthdate; // This is the difference in milliseconds
+		var age = Math.floor(diff/31536000000); // Divide by 1000*60*60*24*365
+		return age;
+	},
+
+	'getCategory' : function(birthDate, family){
+		var age = Meteor.call('getAge', birthDate);
+
+		if(9 <= age && age <= 10){
+			return "PreMinimes";
+		}
+		else if(11 <= age && age <= 12){
+			return "Minimes";
+		}
+		else if(13 <= age && age <= 14){
+			return "Cadet";
+		}
+		else if(15 <= age && age <= 16){
+			return "Scolaire";
+		}
+		else if(17 <= age && age <= 19){
+			return "Junior";
+		}
+		else if(20 <= age && age <= 40){
+			return "Seniors";
+		}
+		else{
+			return "Elites";
+		}
+	},
+
 	/*
 		@param courtData is structured as a court, if _id is missing, 
 		a new court will be created and linked to the owner. OwnerID must be provided.
@@ -414,6 +448,9 @@ Meteor.methods({
 
 	/*
 		If a wish(es) is specified, it(they) must be in an array and will be appended to the list of existing wishes.
+		If you supply the category (and no player), make sure it fits the category of both players --> not checked.
+		The category will be automatically checked and set if you provide at least a player.
+		The update fails if both players are not of the same category or if the supplied category does not fit the player.
 		
 		A pair is structured as follows:
 		{
@@ -530,6 +567,23 @@ Meteor.methods({
 				return false;
 			}
 			
+			/*
+				Set or verify the category
+			*/
+			if(u.profile.birthDate){
+				cat = Meteor.call('getCategory', u.profile.birthDate);
+				if(!data.category){
+					// Set the category to that of the player
+					data['category'] = cat;
+				}
+				else if(data.category != cat){
+					console.error("The category doesn't correspond to the player's age !");
+					return false;
+				}
+			}
+
+
+
 			p['_id'] = ID[player];
 			pData = pairData[player];
 			
@@ -668,6 +722,142 @@ Meteor.methods({
 		}
 	},
 
+
+	/*
+		If no _id is provided, creates a new match. Else, updates it.
+
+		A match is structured as follows :
+		{
+			_id:<id>
+			pair1:<pairID>,
+			pair2:<pairID>,
+			result:{
+					pair1Points:<points>, 
+					pair2Points:<points>
+					},
+			court:<courtID>
+		}
+
+		@return the _id of the match
+
+	*/
+	'updateMatch' : function(matchData){
+		data = {};
+
+		if(matchData.pair1){
+			data.pair1 = matchData.pair1;
+		}
+		if(matchData.pair2){
+			data.pair2 = matchData.pair2;
+		}
+		if(matchData.result){
+			var count = 0;
+			var res = {};
+			if(matchData.result.pair1Points){
+				res['pair1Points'] = matchData.result.pair1Points;
+				count = count+1;
+			}
+			if(matchData.result.pair2Points){
+				res['pair2Points'] = matchData.result.pair2Points;
+				count = count+1;
+			}
+			if(count>0){
+				data['result'] = res;
+			}
+		}
+		if(matchData.court){
+			data.court = matchData.court;
+		}
+
+
+		if(!matchData._id){
+			var match_id;
+			Matches.insert(data, function(err, matchId){
+				if(err){
+					console.error('updateMatch error');
+					console.error(err);
+					return;
+				} 
+				match_id = matchId;
+			});
+			// Done with new insert
+			return match_id;
+		}
+
+		var writeResult = Matches.update({_id: matchData._id} , {$set: data});
+		if(writeResult.writeConcernError){
+			console.error('updateMatch : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
+			return;
+		}
+
+		return matchData._id;
+	},
+
+	/*
+		A pool is structured as follows:
+		{
+			_id:<id>,
+			year:<year>,
+			category:<category>,
+			court:<court>,
+			pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
+			leader:<userId>,
+			matches:[<matchID>, ...], // Will append matches to existing array (no duplicates possible)
+			court:<courtID>,
+			winners:[<pairID>, ...] // Will append winners to existing array (no duplicates possible)
+		}
+
+		@return the pool id
+	*/
+	'updatePool' : function(poolData){
+		var data = {$set:{}, $addToSet:{}};
+
+		if(poolData.year){
+			data["$set.year"] = poolData.year;
+		}
+		if(poolData.category){
+			data["$set.category"] = poolData.category;
+		}
+		if(poolData.court){
+			data["$set.court"] = poolData.court;
+		}
+		if(poolData.leader){
+			data["$set.leader"] = poolData.leader;
+		}
+
+		if(poolData.pairs){
+			data["$addToSet.pairs"] = poolData.pairs;
+		}
+		if(poolData.matches){
+			data["$addToSet.matches"] = poolData.matches;
+		}
+		if(poolData.winners){
+			data["$addToSet.winners"] = poolData.winners;
+		}
+
+		if(!poolData._id){
+			var match_id;
+			Pools.insert(data, function(err, matchId){
+				if(err){
+					console.error('updateMatch error');
+					console.error(err);
+					return;
+				} 
+				match_id = matchId;
+			});
+			// Done with new insert
+			return match_id;
+		}
+
+		var writeResult = Pools.update({_id: poolData._id} , data);
+		if(writeResult.writeConcernError){
+			console.error('updateMatch : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
+			return;
+		}
+		return poolData._id;
+
+	},
+
 	'removePair' : function(pairId){
 		Pairs.remove({_id:pairId});
 	},
@@ -683,6 +873,4 @@ Meteor.methods({
 		}
 		return Questions.insert(data)
 	}
-
-
 });

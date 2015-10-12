@@ -1,0 +1,88 @@
+<template name="poolList">
+
+<form class="table form-inline" role="form">
+  <div class="form-group">
+    <label for="PoolCategory">Catégorie:</label>
+    <select class="form-control PoolCategory" id="PoolCategory">
+      <option value="" disabled="" selected="" hidden></option>
+      <option value="PreMinimes">Pré Minimes</option>
+      <option value="Minimes">Minimes</option>
+      <option value="Cadet">Cadet</option>
+      <option value="Scolaire">Scolaire</option>
+      <option value="Junior">Junior</option>
+      <option value="Seniors">Seniors</option>
+      <option value="Elites">Elites</option>
+    </select>
+
+    <label for="PoolType">Type:</label>
+    <select class="form-control PoolType" id="PoolType">
+      <option value="" disabled="" selected="" hidden></option>
+      <option value="Men">Homme</option>
+      <option value="Women">Femme</option>
+      <option value="Mix">Mixte</option>
+    </select>
+
+    <label for="PoolDay">Jour:</label>
+    <select class="form-control PoolDay" id="PoolDay">
+      <option value="" disabled="" selected="" hidden></option>
+      <option value="Sunday">Dimanche</option>
+      <option value="Saturday">Samedi</option>
+    </select>
+  </div>
+</form>
+
+<table id='poolTable' class='table'>
+
+{{#each getPools}}
+  {{#if equals Day getCurDay}}
+    
+    {{#each PoolType}}
+      {{#if equals Type getCurType}}
+
+        {{#each PoolCategories}}
+          {{#if equals Category getCurCategory}}
+            {{resetDrake}}
+            {{#each Pools}}
+
+              <td>
+                <div class='parent'>
+                  <h3> 
+                    <label class='label label-primary' for='hy'>{{PoolName}}</label>  
+                  </h3>
+                  <div class='wrapper'>
+                    <div class='poolContainer' id='{{PoolId}}'>
+                      {{#each Pairs}}
+                        {{>poolItem Dat=this ID=../PoolId}}
+                      {{/each}}
+                    </div>
+                  </div>
+                </div>
+              </td>
+            {{/each}}
+          {{/if}}
+        {{/each}}
+      {{/if}}
+    {{/each}}
+  {{/if}}
+{{/each}}
+</table>
+
+<button type="button" id="save" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Star
+</button>
+
+</template>
+
+
+<template name="poolItem">
+  <div id="{{Dat.PairId}}" class="Pairs">
+    <a href="#" data-toggle="tooltip" title=
+    "P1W: {{Dat.Player1.Wish}}
+    P2W:{{Dat.Player2.Wish}}">
+      <ul class="list-group">
+        <li class="list-group-item">{{Dat.Player1.Name}}</li>
+        <li class="list-group-item">{{Dat.Player2.Name}}</li>
+      </ul>
+    </a>
+  </div>
+</template>

@@ -43,6 +43,11 @@ Router.route('/tournament-registration',  {
     }
 });
 
+Router.route('/poolList', {
+	name: 'poolList',
+	template: 'poolList'
+});
+
 Router.route('/court-registration', {
 	name: 'courtRegistration',
 	template: 'courtRegistration',
