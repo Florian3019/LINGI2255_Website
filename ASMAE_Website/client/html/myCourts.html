@@ -4,13 +4,15 @@
 		<thead>
       		<tr>
         	<th>Terrain</th>
+            <th>Surface</th>
         	<th>Loué</th>
       		</tr>
     	</thead>
     	<tbody>
     		{{#each court}}
     		<tr>
-    			<td><a href="{{pathFor route='courtInfoPage'}}">{{_id}}</a></td>
+    			<td><a href="{{pathFor route='courtInfoPage'}}">{{courtAddress addressID}}</a></td>
+                <td>{{surface}}</td>
     			<td><span class="glyphicon {{checked}}"></span></td>
     		</tr>
     		{{/each}}
