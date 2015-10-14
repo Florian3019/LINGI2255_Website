@@ -1,8 +1,57 @@
 <template name="login">
-    <h2>Login</h2>
+    
+	<!--  
+	<h2>Login</h2>
     <form class="login">
         <p>Email: <input type="email" name="email"></p>
         <p>Password: <input type="password" name="password"></p>
-        <p><input type="submit" value="Login"></p>
+        <p><input type="submit" value="Login"
     </form>
-</template>
+	-->
+	
+	<center> 
+		<div class="jumbotron">
+			<h1>Veuillez vous connecter avant de poursuivre l'inscription</h1>  
+		</div> 
+	</center>
+	
+	<div class="row">
+		<div class="col-md-4">
+			<form class="login">
+				<h2 class="login-heading">Connection</h2>
+				
+				<label for="inputEmail" class="sr-only">Addresse mail</label>
+				<input type="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+				
+				<p> </p> <!-- Espace -->
+				
+				<label for="inputPassword" class="sr-only">Mot de passe</label>
+				<input type="password" name="password" class="form-control" placeholder="Password" required>
+				
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" value="remember-me"> Se souvenir de moi
+					</label>
+				</div>
+				<p><input class="btn btn-lg btn-primary btn-block" type="submit" value="Connexion"></p>
+			</form>
+        </div>
+		
+        <div class="col-md-4">
+          <h2>Connection avec Google</h2>
+          <p>Mettre bouton google ici. </p>
+          <p><a class="btn" href="#">View details &raquo;</a></p>
+       </div>
+	   
+        <div class="col-md-4">
+          <h2>Connection avec Facebook</h2>
+          <p> Mettre bouton facebook ici.</p>
+          <p><a class="btn" href="#">View details &raquo;</a></p>
+        </div>
+      </div>
+	  
+	<center> 
+		<p class="lead">Pas encore inscrit ? </p> 
+		<a class="btn btn-large btn-success" href="#">S'inscrire</a>
+	</center>
+</template>	
