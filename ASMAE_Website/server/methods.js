@@ -141,9 +141,17 @@ Meteor.methods({
 		if((isStaff||isAdmin) && courtData.staffComment){
 			data.staffComment = courtData.staffComment;
 		}
-		
-		if(courtData.availability){
-			data.availability = courtData.availability;
+
+		if(courtData.lendThisYear)
+		{
+			data.lendThisYear = courtData.lendThisYear;
+		}
+
+		if(courtData.dispoSamedi){
+			data.dispoSamedi = courtData.dispoSamedi;
+		}
+		if(courtData.dispoDimanche){
+			data.dispoDimanche = courtData.dispoDimanche;
 		}
 
 		if(courtId){

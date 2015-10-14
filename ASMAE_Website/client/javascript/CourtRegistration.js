@@ -1,3 +1,19 @@
+Template.courtRegistration.helpers({
+    'availableThisDay': function(available){
+        if(typeof available === 'undefined'){
+            return true;
+        }
+        else
+        {
+            return available;
+        }
+    },
+
+    'selectedSurface': function(value, surfaceName){
+        return value === surfaceName ? 'selected' : '';
+    }
+});
+
 Template.courtRegistration.events({
     'submit form': function(event){
         event.preventDefault();
@@ -14,7 +30,9 @@ Template.courtRegistration.events({
             surface : $('[name=surface]').val(),
         	courtType : $('[name=courtType]').val(),
         	instructions : $('[name=instructions]').val(),
-        	ownerComment : $('[name=ownerComment]').val()
+        	ownerComment : $('[name=ownerComment]').val(),
+            dispoSamedi : $('[name=dispoSamedi]').val(),
+            dispoDimanche : $('[name=dispoDimanche]').val()
         };
 		
 		Meteor.call('updateCourt', courtData, address, function(error, results){

@@ -88,6 +88,7 @@ standard-minifiers@1.0.1
 stylus@2.511.0_2
 templating@1.1.4
 templating-tools@1.0.0
+themeteorchef:jquery-validation@1.14.0
 tinytest@1.0.6
 tmeasday:paginated-subscription@0.2.4
 tracker@1.0.9
