@@ -142,17 +142,27 @@ Meteor.methods({
 			data.staffComment = courtData.staffComment;
 		}
 
-		if(courtData.lendThisYear)
-		{
-			data.lendThisYear = courtData.lendThisYear;
-		}
+		
+		console.log("courtData samedi recu:" + courtData.dispoSamedi);
+		console.log("courtData dim recu:" + courtData.dispoDimanche);
 
-		if(courtData.dispoSamedi){
+		if(courtData.dispoSamedi !== null && typeof courtData.dispoSamedi !== 'undefined'){
 			data.dispoSamedi = courtData.dispoSamedi;
 		}
-		if(courtData.dispoDimanche){
+		if(courtData.dispoDimanche !== null && typeof courtData.dispoSamedi !== 'undefined'){
 			data.dispoDimanche = courtData.dispoDimanche;
 		}
+
+		if(typeof courtData.dispoSamedi !== 'undefined' && typeof courtData.dispoDimanche !== 'undefined')
+		{
+			if(courtData.dispoSamedi || courtData.dispoDimanche){
+				data.lendThisYear = true;
+			}
+			else{
+				data.lendThisYear = false;
+			}
+		}
+		
 
 		if(courtId){
 			// Court already exists, so just update it :
@@ -168,8 +178,6 @@ Meteor.methods({
 		else{
 			// Check that a court with that address does not already exist :
 			if(address && Meteor.call('addressExists', address)) return;
-
-			data.lendThisYear = true;
 
 			// Create a new court
 			var id = Courts.insert(data, function(err, addrId){

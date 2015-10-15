@@ -56,10 +56,10 @@
 				<div class="form-group">
 					<h5><b>Type:</b></h5>
 					<div class="radio">
-						<label><input type="radio" name="courtType" value="privé" />Privé</label><br />
+						<label><input type="radio" name="courtType" value="privé" {{isPrivate court.courtType}} />Privé</label><br />
 					</div>
 					<div class="radio">
-						<label><input type="radio" name="courtType" value="club" />Club</label>
+						<label><input type="radio" name="courtType" value="club" {{isClub court.courtType}} />Club</label>
 					</div>
 				</div>
 				<div class="form-group">
@@ -72,8 +72,8 @@
 				</div>
 				<div class="form-group">
 					<label class="control-label">Disponibilité du terrain:</label><br />
-					<label class="checkbox-inline"><input type="checkbox" checked="{{availableThisDay court.dispoSamedi}}" name="dispoSamedi" id="dispoSamedi" value="samedi"/>Samedi</label>
-					<label class="checkbox-inline"><input type="checkbox" checked="{{availableThisDay court.dispoDimanche}}" name="dispoDimanche" id="dispoDimanche" value="dimanche"/>Dimanche</label>
+					<label class="checkbox-inline"><input type="checkbox" {{availableThisDay court.dispoSamedi}} name="dispoSamedi" id="dispoSamedi" value="samedi"/>Samedi</label>
+					<label class="checkbox-inline"><input type="checkbox" {{availableThisDay court.dispoDimanche}} name="dispoDimanche" id="dispoDimanche" value="dimanche"/>Dimanche</label>
 				</div>
 
 				<button type="submit" class="btn btn-default">Enregistrer</button>

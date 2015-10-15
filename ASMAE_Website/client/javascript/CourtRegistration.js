@@ -1,16 +1,39 @@
 Template.courtRegistration.helpers({
     'availableThisDay': function(available){
-        if(typeof available === 'undefined'){
-            return true;
+        if(available === null){
+            return 'checked';
         }
         else
         {
-            return available;
+            if(available){
+                return 'checked';
+            }
+            else{
+                return '';
+            }
         }
     },
 
     'selectedSurface': function(value, surfaceName){
         return value === surfaceName ? 'selected' : '';
+    },
+
+    'isPrivate': function(value){
+        if(value === "privé"){
+            return 'checked';
+        }
+        else{
+            return '';
+        }
+    },
+    'isClub': function(value){
+        console.log(value);
+        if(value === "club"){
+            return 'checked';
+        }
+        else{
+            return '';
+        }
     }
 });
 
@@ -25,16 +48,25 @@ Template.courtRegistration.events({
             zipCode : $('[name=zipCode]').val(),
             country : $('[name=country]').val()
         };
+
+        var id; //Used for the update of a court
+        if(this.court){
+            id = this.court._id;
+        }
         var courtData = {
-            ownerID: Meteor.userId(),
+            _id : id,
+            ownerID : Meteor.userId(),
             surface : $('[name=surface]').val(),
-        	courtType : $('[name=courtType]').val(),
+        	courtType : $('[name=courtType]:checked').val(),
         	instructions : $('[name=instructions]').val(),
         	ownerComment : $('[name=ownerComment]').val(),
-            dispoSamedi : $('[name=dispoSamedi]').val(),
-            dispoDimanche : $('[name=dispoDimanche]').val()
+            dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
+            dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
-		
+
+        console.log("dans le submit: "+ courtData.dispoSamedi);
+        console.log("dans le submit: "+ courtData.dispoDimanche);
+
 		Meteor.call('updateCourt', courtData, address, function(error, results){
 			if(error){
 	            console.log(error.reason);
