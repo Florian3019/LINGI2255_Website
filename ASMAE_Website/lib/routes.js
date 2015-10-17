@@ -229,3 +229,9 @@ Router.route('/modify-court/:_id', {
     }	
 	
 });
+
+
+Router.route('/search-court', {
+	name: 'courtSearch',
+	template: 'courtSearch'
+});
