@@ -547,6 +547,9 @@ Template.tournamentRegistration.events({
         if(Meteor.call('updatePairs', pairData)!=false){
         	// Success
         	if(remove) Meteor.call('removePair',remove);
+			
+			// Update Pools, Types and Years table
+			
         }
         else{
         	return false;

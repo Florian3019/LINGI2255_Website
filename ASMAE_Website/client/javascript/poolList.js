@@ -1,5 +1,7 @@
+/* a priori useless
 Content = {};
 Content._dep = new Deps.Dependency;
+*/
 
 // Might be useful at some point :
 // https://developer.mozilla.org/en/docs/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces
@@ -41,6 +43,12 @@ Template.poolList.helpers({
 		// var typeSa = [{"Type":"Men", "Data":menSa}, {"Type":"Women", "Data":womenSa}];
 		var typeSu = [{"Type":"Men", "PoolCategories":menSu}];
 		var day = [{"Day":"Sunday", "PoolType":typeSu}];
+
+
+		var year = [{"year":2015, "type":{"mixt":<idType>, "men":<idType>}}]
+
+		var type = [{"_id":<idType>, "categories":{"minimes":[PouleID1, PouleID2, ...], "seniors":...}}]; //"PoolList":"ID de LA liste de poules de mixte"}]; // Mixte / Double M / Double F / Familles
+		var poule = [{"_id":"id", "pairsList":[pairID1, pairID2, ...], "courtID":courtID}]
 
 		return day;
 	},
@@ -99,15 +107,15 @@ Template.poolList.helpers({
 Template.poolList.events({
 	'click .PoolType':function(event){
 		Session.set('PoolType', event.target.value);
-		Content._dep.changed();
+		//Content._dep.changed();
 	},
 	'click .PoolCategory':function(event){
 		Session.set('PoolCategory', event.target.value);
-		Content._dep.changed();
+		//Content._dep.changed();
 	},
 	'click .PoolDay':function(event){
 		Session.set('PoolDay', event.target.value);
-		Content._dep.changed();
+		//Content._dep.changed();
 	},
 	'click #save':function(event){
 		var table = document.getElementById("poolTable");

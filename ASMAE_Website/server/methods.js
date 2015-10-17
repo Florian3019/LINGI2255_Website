@@ -1,6 +1,6 @@
 Meteor.methods({
-
-
+	
+	var maxNbrPairsInPool = 6;
 	/*
 		Returns true if the address addr is already a court address present in the DB.
 	*/
@@ -58,6 +58,112 @@ Meteor.methods({
 		}
 		else{
 			return "Elites";
+		}
+	},
+	
+	/**
+		@param yearDate is structured as a year.
+		This is the top-level structure in the database
+		One "table" year per year
+		
+		A year structure is as follows :
+		{
+			_id:<date>,
+			mixt:<typeID>,
+			men:<typeID>,
+			women:<typeID>,
+			family:<typeID>
+		}
+	*/
+	'updateYear' : function(yearData) {
+		
+		if (!yearData) {
+			console.error("updateYear : no yearData provided : "+yearData);
+			return;
+		}
+		if(!yearData._id) {
+			console.error("updateYear : please specify an ID (the year !).")
+			return;
+		}
+		
+		var data = {};
+		
+		if(yearData.mixt) {
+			data.mixt = yearData.mixt;
+		}
+		if(yearData.men) {
+			data.men = yearData.men;
+		}
+		if(yearData.women) {
+			data.women = yearData.women;
+		}
+		if(yearData.family) {
+			data.family = yearData.family;
+		}
+		
+		var writeResult = Years.update({_id: yearData._id} , {$set: data}, upsert:true);
+		if(writeResult.writeConcernError){
+			console.error('updateYear : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
+			return;
+		}
+
+		return yearData._id;
+	},
+	
+	/*
+		@param typeData is structured as a type
+		
+		A type structure is as follows :
+		{
+			_id:<typeID>
+			preminimes:<list of poolIDs>
+			minimes:<list of poolIDs>
+			cadets:<list of poolIDs>
+			scolars:<list of poolIDs>
+			juniors:<list of poolIDs>
+			seniors:<list of poolIDs>
+			elites:<list of poolIDs>
+			
+			NOTE : for the family tournament, only one list of pools :
+			list:<list of poolIDs>
+		}
+	*/
+	'updateType' : function(typeData) {
+		if (!typeData) {
+			console.error("updateType : no typeData provided : "+typeData);
+			return;
+		}
+		
+		var data = {};
+		data.preminimes = typeData.preminimes ? typeData.preminimes : [];
+		data.minimes = typeData.minimes ? typeData.minimes : [];
+		data.cadets = typeData.cadets ? typeData.cadets : [];
+		data.scolars = typeData.scolars ? typeData.scolars : [];
+		data.juniors = typeData.juniors ? typeData.juniors : [];
+		data.seniors = typeData.seniors ? typeData.seniors : [];
+		data.elites = typeData.elites ? typeData.elites : [];
+		data.list = typeData.list ? typeData.list : []; // family tournament case
+		
+		if(typeData._id) {
+			var writeResult = Types.update({_id: typeData._id} , {$set: data});
+			if(writeResult.writeConcernError){
+				console.error('updateTypes : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
+				return;
+			}
+			return typeData._id;
+		}
+		else {
+			var type_id;
+			Types.insert(data, function(err, typeId){
+				if(err){
+					console.error('updateType error while inserting');
+					console.error(err);
+					return;
+				} 
+				type_id = typeId;
+			});
+			// Done with new insert
+			return type_id;
 		}
 	},
 
@@ -159,7 +265,11 @@ Meteor.methods({
 		}
 		else{
 			// Check that a court with that address does not already exist :
-			if(address && Meteor.call('addressExists', address)) return;
+			if(address && Meteor.call('addressExists', address)){
+				console.log("Court already exists :");
+				console.log(address);
+				return;
+			}
 
 			data.lendThisYear = true;
 
@@ -478,7 +588,7 @@ Meteor.methods({
 			}
 		}
 
-		@return : the pair id is successful, otherwise returns false
+		@return : the pair id if successful, otherwise returns false
 	*/
 	'updatePairs' : function(pairData){
 		const isAdmin = Meteor.call('isAdmin');
@@ -797,8 +907,6 @@ Meteor.methods({
 		A pool is structured as follows:
 		{
 			_id:<id>,
-			year:<year>,
-			category:<category>,
 			court:<court>,
 			pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
 			leader:<userId>,
@@ -812,19 +920,13 @@ Meteor.methods({
 	'updatePool' : function(poolData){
 		var data = {$set:{}, $addToSet:{}};
 
-		if(poolData.year){
-			data["$set.year"] = poolData.year;
-		}
-		if(poolData.category){
-			data["$set.category"] = poolData.category;
-		}
 		if(poolData.court){
 			data["$set.court"] = poolData.court;
 		}
 		if(poolData.leader){
 			data["$set.leader"] = poolData.leader;
 		}
-
+		
 		if(poolData.pairs){
 			data["$addToSet.pairs"] = poolData.pairs;
 		}
@@ -836,26 +938,189 @@ Meteor.methods({
 		}
 
 		if(!poolData._id){
-			var match_id;
+			var pool_id;
 			Pools.insert(data, function(err, matchId){
 				if(err){
-					console.error('updateMatch error');
+					console.error('updatePool error');
 					console.error(err);
 					return;
 				} 
-				match_id = matchId;
+				pool_id = poolId;
 			});
 			// Done with new insert
-			return match_id;
+			return pool_id;
 		}
 
 		var writeResult = Pools.update({_id: poolData._id} , data);
 		if(writeResult.writeConcernError){
-			console.error('updateMatch : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
+			console.error('updatePool : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;
 		}
 		return poolData._id;
 
+	},
+	
+	/*
+		@param pairID a valid ID for a pair that is the Pairs table
+	
+		Adds the pair in the tournament on the right pool.
+	 */
+	'addPairsToTournament' : function(pairID) {
+		if(!pairID) {
+			console.error("Error addPairsToTournament : no pairID specified");
+			return undefined;
+		}
+		var pair = Pairs.findOne({_id:pairID});
+		var poolID = Meteor.call('getPoolToFill', pair.year, pair.type, pair.category);
+		var pool = Pools.findOne({_id:poolID});
+		var pairs = pool.pairs;
+		
+		pairs.push(pairID);
+		data = {};
+		data._id = poolID;
+		data.pairs = pairs;
+		Meteor.call('updatePool', data);
+	},
+	
+	/*
+		@param year is the year of the tournament to consider
+		@param type is the type of the tournament to consider (men, mixt, women or family)
+		@param category is the age category of the tournament : preminimes, minimes, cadets, scholars, juniors, seniors or elites
+		
+		Returns the ID of the current pool to fill.
+		The pools are filled one by one directly after a player has registered.
+		If the upper-level table does not exist (year or type), creates an empty one then adds the pair.
+	*/
+	'getPoolToFill' : function(year, type, category) {
+		if(!year || !type || !category) {
+			console.error("Error GetPoolToFill : no year and/or type and/or category specified");
+			return undefined;
+		}
+		
+		var yearTable = Years.findOne({_id:year});
+		if (!yearTable) {
+			console.log("getPoolToFill : no Year table found for year "+year+". Creating an empty one.");
+			yearTable = Meteor.call('updateYear', {_id:year});
+		}
+		
+		var typeID;
+		switch(type) {
+			case "mixt": typeID = yearTable.mixt;
+			break;
+			case "men": typeID = yearTable.men;
+			break;
+			case "women": typeID = yearTable.women;
+			break;
+			case "family": typeID = yearTable.family;
+			break;
+			default: console.error("Error GetPoolToFill : the type specified");
+			console.error("Type specified : "+type);
+			return undefined;
+		}
+		
+		var typeTable = Types.findOne({_id:typeID});
+		
+		// No type table for now
+		if (!typeTable) {
+			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
+			typeID = Meteor.call('updateType', {});
+			typeTable = Types.findOne({_id:typeID});
+		}
+		
+		return Meteor.call('getNextPoolInPoolList', typeTable, category);
+	},
+	
+	/*
+		@param typeTable an object stored in the table Types
+		@param category : minimes, seniors,...
+		
+		Helper of the *getPoolToFill* function
+		Returns the current pool on which a pair should be registered
+		This pool should be the first 'not full' pool it encounters while iterating over the list of pools
+		If all current pools are full, create a new pool, update the Types table and returns the poolID
+	*/
+	'getNextPoolInPoolList' : function(typeTable, category) {
+		
+		var poolList = Meteor.call('getPoolIDList', typeTable._id, category);
+		var i = 0;
+		var poolID = poolList[i];
+		
+		while(poolID) {
+			pool = Pools.findOne({_id:poolID});
+			if (!pool) {
+				console.error("getNextPoolInPollList : Error, no pool with ID "+poolID+" found in Pools table");
+				return undefined;
+			}
+			// Pool not full
+			if (! (pool.pairs.length > maxNbrPairsInPool)) {
+				return poolID;
+			}
+			i++;
+			poolID = poolList[i];
+		}
+		
+		// no 'not full' pool found, creating a new one
+		
+		poolID = Meteor.call('updatePool', {});
+		poolList.push(poolID);
+		data = {};
+		data._id = typeID;
+		
+		switch(category) {
+			case "preminimes": data.preminimes = poolList;
+			break;
+			case "minimes": data.minimes = poolList;
+			break;
+			case "cadets": data.cadets = poolList;
+			break;
+			case "scolars": data.scolars = poolList;
+			break;
+			case "juniors": data.juniors = poolList;
+			break;
+			case "seniors": data.seniors = poolList;
+			break;
+			case "elites": data.elites = poolList;
+			break;
+			case "none": data.list = poolList;
+			break;
+			default: console.error("category not defined : "+category);
+			return undefined;
+		}
+		
+		// Update the type table concerned with the new pool
+		Meteor.call('updateType', data);
+		
+		return poolID;
+	},
+	
+	/*
+		@param typeTable a typeTable in the Types table
+		@param category : minimes, seniors, ...
+	
+		Helper of the *getNextPoolInPoolList* function
+		returns the ID of the pool list corresponding to the category specified in the type table specified by typeID
+	*/
+	'getPoolIDList' : function(typeTable, category) {
+		switch(category) {
+			case "preminimes": return typeTable.preminimes;
+			break;
+			case "minimes": return typeTable.minimes;
+			break;
+			case "cadets": return typeTable.cadets;
+			break;
+			case "scolars": return typeTable.scolars;
+			break;
+			case "juniors": return typeTable.juniors;
+			break;
+			case "seniors": return typeTable.seniors;
+			break;
+			case "elites": return typeTable.elites;
+			break;
+			case "none": return typeTable.list;
+			break;
+			default: console.error("Error getPoolIDList : category "+category+" is not recognized.");
+			return undefined;
+		}
 	},
 
 	'removePair' : function(pairId){
@@ -873,4 +1138,6 @@ Meteor.methods({
 		}
 		return Questions.insert(data)
 	}
+	
+	
 });
