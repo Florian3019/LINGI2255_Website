@@ -247,10 +247,28 @@ Meteor.methods({
 		if((isStaff||isAdmin) && courtData.staffComment){
 			data.staffComment = courtData.staffComment;
 		}
+
 		
-		if(courtData.availability){
-			data.availability = courtData.availability;
+		console.log("courtData samedi recu:" + courtData.dispoSamedi);
+		console.log("courtData dim recu:" + courtData.dispoDimanche);
+
+		if(courtData.dispoSamedi !== null && typeof courtData.dispoSamedi !== 'undefined'){
+			data.dispoSamedi = courtData.dispoSamedi;
 		}
+		if(courtData.dispoDimanche !== null && typeof courtData.dispoSamedi !== 'undefined'){
+			data.dispoDimanche = courtData.dispoDimanche;
+		}
+
+		if(typeof courtData.dispoSamedi !== 'undefined' && typeof courtData.dispoDimanche !== 'undefined')
+		{
+			if(courtData.dispoSamedi || courtData.dispoDimanche){
+				data.lendThisYear = true;
+			}
+			else{
+				data.lendThisYear = false;
+			}
+		}
+		
 
 		if(courtId){
 			// Court already exists, so just update it :
@@ -270,8 +288,6 @@ Meteor.methods({
 				console.log(address);
 				return;
 			}
-
-			data.lendThisYear = true;
 
 			// Create a new court
 			var id = Courts.insert(data, function(err, addrId){

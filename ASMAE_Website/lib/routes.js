@@ -190,7 +190,7 @@ Router.route('/confirmation_registration_court/:_id', {
 		data.owner = owner;
 		data.address = address;
 		return data;
-    },
+    }
 	
 	/*
 	onBeforeAction: function() {
@@ -201,4 +201,31 @@ Router.route('/confirmation_registration_court/:_id', {
 		}
 		this.next();
 	}*/
+});
+
+Router.route('/modify-court/:_id', {
+	name: 'modifyCourt',
+	template: 'courtRegistration',
+	
+	data: function(){
+		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
+		var owner = Meteor.users.findOne({_id: court.ownerID});
+		var address = Addresses.findOne({_id: court.addressID});
+		var data = {};
+		data.court = court;
+		data.owner = owner;
+		data.address = address;
+		return data;
+    },
+	onBeforeAction: function(){
+        if(Meteor.userId()){
+            this.next();
+        } else {
+            this.render("login");
+        }
+    },
+    waitOn: function(){
+        return [ Meteor.subscribe('courts'), Meteor.subscribe('addresses') ]
+    }	
+	
 });
