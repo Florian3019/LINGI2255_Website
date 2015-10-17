@@ -10,48 +10,12 @@ var drake; // Draggable object
 
 Template.poolList.helpers({
 	'getPools' : function(){
-		// var res = Pools.find({},{});
-		// return res;
-
-		// var MenMinimesSa = [{"PairId":"mm1Sa"}, {"PairId":"mm2Sa"}];
-		var MM1 = [{"PairId":"mm1Su", "Player1":{"Name":"A"}, "Player2":{"Name":"B"}}, 
-					{"PairId":"mm2Su", "Player1":{"Name":"Jonathan", "Wish":"MOAR BEEER"}, "Player2":{"Name":"C"}}];
-
-		// var MenSeniorsSa = [{"PairId":"ms1Sa"}, {"PairId":"ms2Sa"}];
-		var MM2 = [{"PairId":"ms1Su", "Player1":{"Wish":"I'm the best", "Name":"Aurélien"}, "Player2":{"Name":"Florian"}}, 
-					{"PairId":"ms2Su", "Player1":{"Name":"Guillaume"}, "Player2":{"Name":"Romain", "Constraint":"8h c'est tot"}}];
-
-		// var WomenMinimesSa = [{"PairId":"wm1Sa"}, {"PairId":"wm2Sa"}];
-		var MM3 = [{"PairId":"wm1Su","Player1":{"Name":"D"}, "Player2":{"Name":"E"}},
-					{"PairId":"wm2Su", "Player1":{"Name":"F"}, "Player2":{"Name":"G"}}];
-
-		// var WomenSeniorsSa = [{"PairId":"ws1Sa"}, {"PairId":"ws2Sa"}];
-		var MM4 = [{"PairId":"ws1Su","Player1":{"Name":"I"}, "Player2":{"Name":"J"}},
-					{"PairId":"ws2Su", "Player1":{"Name":"K"}, "Player2":{"Name":"L"}}];
-
-		var menMinimesPoolSu = [
-			{"PoolName":"Pool 1", "Pairs":MM1, "PoolId":"pid1"}, 
-			{"PoolName":"Pool 2", "Pairs":MM2, "PoolId":"pid2"}, 
-			{"PoolName":"Pool 3", "Pairs":MM3, "PoolId":"pid3"}, 
-			{"PoolName":"Pool 4", "Pairs":MM4, "PoolId":"pid4"}
-		];
-		// var menSa = [{"Category":"Minimes", "Pairs":MenMinimesSa}, {"Category":"Seniors", "Pairs":MenSeniorsSa}];
-		// var womenSa = [{"Category":"Minimes", "Pairs":WomenMinimesSa}, {"Category":"Seniors", "Pairs":WomenSeniorsSa}];
-
-		var menSu = [{"Category":"Minimes", "Pools":menMinimesPoolSu}];
-
-		// var typeSa = [{"Type":"Men", "Data":menSa}, {"Type":"Women", "Data":womenSa}];
-		var typeSu = [{"Type":"Men", "PoolCategories":menSu}];
-		var day = [{"Day":"Sunday", "PoolType":typeSu}];
-
-
-		var year = [{"year":2015, "type":{"mixt":<idType>, "men":<idType>}}]
-
-		var type = [{"_id":<idType>, "categories":{"minimes":[PouleID1, PouleID2, ...], "seniors":...}}]; //"PoolList":"ID de LA liste de poules de mixte"}]; // Mixte / Double M / Double F / Familles
-		var poule = [{"_id":"id", "pairsList":[pairID1, pairID2, ...], "courtID":courtID}]
-
-		return day;
+		return Meteor.call('getPools');
 	},
+	
+	'getPoolList' : function(typeID) {
+		
+	}
 
 	'getArrayLength' : function(array){
 		return array.length;
@@ -76,6 +40,10 @@ Template.poolList.helpers({
 		}
 
 	},
+	
+	'getYear' : function() {
+		return Session.get('Year');
+	}
 
 	'getCurCategory' : function(){
 		return Session.get('PoolCategory');
@@ -113,8 +81,8 @@ Template.poolList.events({
 		Session.set('PoolCategory', event.target.value);
 		//Content._dep.changed();
 	},
-	'click .PoolDay':function(event){
-		Session.set('PoolDay', event.target.value);
+	'click .Year':function(event){
+		Session.set('Year', event.target.value);
 		//Content._dep.changed();
 	},
 	'click #save':function(event){
@@ -126,7 +94,7 @@ Template.poolList.events({
 
 			var category = Session.get('PoolCategory');
 			var type = Session.get('PoolType');
-			var day = Session.get('PoolDay');
+			var year = Session.get('Year');
 
 			c = cells[i];
 			var pairId = c.id;

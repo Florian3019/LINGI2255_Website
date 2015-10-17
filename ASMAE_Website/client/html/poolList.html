@@ -2,42 +2,37 @@
 
 <form class="table form-inline" role="form">
   <div class="form-group">
-    <label for="PoolCategory">Catégorie:</label>
+	  <label for="Year">Année</label>
+	  <select class="form-control Year" id="Year">
+		  <option value="2015"> 2015 </option>
+	  </select>
+	  
+    <label for="PoolCategory">Catégorie</label>
     <select class="form-control PoolCategory" id="PoolCategory">
       <option value="" disabled="" selected="" hidden></option>
-      <option value="PreMinimes">Pré Minimes</option>
-      <option value="Minimes">Minimes</option>
-      <option value="Cadet">Cadet</option>
-      <option value="Scolaire">Scolaire</option>
-      <option value="Junior">Junior</option>
-      <option value="Seniors">Seniors</option>
-      <option value="Elites">Elites</option>
+      <option value="preminimes">Pré Minimes</option>
+      <option value="minimes">Minimes</option>
+      <option value="cadets">Cadet</option>
+      <option value="scolars">Scolaire</option>
+      <option value="juniors">Junior</option>
+      <option value="seniors">Seniors</option>
+      <option value="elites">Elites</option>
     </select>
 
-    <label for="PoolType">Type:</label>
+    <label for="PoolType">Type</label>
     <select class="form-control PoolType" id="PoolType">
       <option value="" disabled="" selected="" hidden></option>
-      <option value="Men">Homme</option>
-      <option value="Women">Femme</option>
-      <option value="Mix">Mixte</option>
+      <option value="men">Homme</option>
+      <option value="women">Femme</option>
+      <option value="mixt">Mixte</option>
+	  <option value="family">Tournoi des familles</option>
     </select>
-
-
-TO DELETE
-    <label for="PoolDay">Jour:</label>
-    <select class="form-control PoolDay" id="PoolDay">
-      <option value="" disabled="" selected="" hidden></option>
-      <option value="Sunday">Dimanche</option>
-      <option value="Saturday">Samedi</option>
-    </select>
-/TO DELETE
   </div>
 </form>
 
 <table id='poolTable' class='table'>
 
 {{#each getPools}}
-  {{#if equals Day getCurDay}}
     
     {{#each PoolType}}
       {{#if equals Type getCurType}}
@@ -49,7 +44,7 @@ TO DELETE
 
               <td>
                 <div class='parent'>
-                  <h3> 
+                  <h3>
                     <label class='label label-primary' for='hy'>{{PoolName}}</label>  
                   </h3>
                   <div class='wrapper'>
@@ -66,7 +61,6 @@ TO DELETE
         {{/each}}
       {{/if}}
     {{/each}}
-  {{/if}}
 {{/each}}
 </table>
 

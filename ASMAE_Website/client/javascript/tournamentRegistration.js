@@ -540,16 +540,12 @@ Template.tournamentRegistration.events({
 			Update the db !
         */
 
-
-
         Meteor.call('updateAddress', addressData, Meteor.userId(), null);
         Meteor.call('updateUser', curUserData);
         if(Meteor.call('updatePairs', pairData)!=false){
         	// Success
         	if(remove) Meteor.call('removePair',remove);
-			
-			// Update Pools, Types and Years table
-			
+			Meteor.call('addPairsToTheTournament', pairData._id);
         }
         else{
         	return false;

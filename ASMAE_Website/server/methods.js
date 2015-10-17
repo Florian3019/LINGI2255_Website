@@ -1,6 +1,5 @@
 Meteor.methods({
 	
-	var maxNbrPairsInPool = 6;
 	/*
 		Returns true if the address addr is already a court address present in the DB.
 	*/
@@ -101,7 +100,7 @@ Meteor.methods({
 			data.family = yearData.family;
 		}
 		
-		var writeResult = Years.update({_id: yearData._id} , {$set: data}, upsert:true);
+		var writeResult = Years.update({_id: yearData._id} , {$set: data}, {upsert: true});
 		if(writeResult.writeConcernError){
 			console.error('updateYear : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;
@@ -578,12 +577,14 @@ Meteor.methods({
 		The category will be automatically checked and set if you provide at least a player.
 		The update fails if both players are not of the same category or if the supplied category does not fit the player.
 		
+		/!\ For a the family type tournament, the category should be "none"
+		
 		A pair is structured as follows:
 		{
 			_id:<id>,
 			year:<year>,
-			day:<day,
-			category:<category>,
+			type:<type>, (mixt, men, women or family)
+			category:<category>, (minimes, seniors, ...)
 			player1:{
 				_id:<userID>,
 				extras:{
@@ -636,8 +637,8 @@ Meteor.methods({
 		}
 
 
-		if(pairData.day){
-			data.day = pairData.day;
+		if(pairData.type){
+			data.type = pairData.type;
 		}
 			
 
@@ -1068,6 +1069,7 @@ Meteor.methods({
 				return undefined;
 			}
 			// Pool not full
+			var maxNbrPairsInPool = 6;
 			if (! (pool.pairs.length > maxNbrPairsInPool)) {
 				return poolID;
 			}
@@ -1137,6 +1139,16 @@ Meteor.methods({
 			default: console.error("Error getPoolIDList : category "+category+" is not recognized.");
 			return undefined;
 		}
+	},
+	
+	/*
+		Returns the list of the IDs of all the pools in the DB
+	 */
+	'getPools' : function() {
+		var list = []
+		Pools.find().forEach(function(data){
+			list.push(data._id);
+		})
 	},
 
 	'removePair' : function(pairId){
