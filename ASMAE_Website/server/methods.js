@@ -240,22 +240,21 @@ Meteor.methods({
 			console.error("updateType : no typeData provided : "+typeData);
 			return;
 		}
-		
-		var data = {};
-		data.preminimes = typeData.preminimes ? typeData.preminimes : [];
-		data.minimes = typeData.minimes ? typeData.minimes : [];
-		data.cadets = typeData.cadets ? typeData.cadets : [];
-		data.scolars = typeData.scolars ? typeData.scolars : [];
-		data.juniors = typeData.juniors ? typeData.juniors : [];
-		data.seniors = typeData.seniors ? typeData.seniors : [];
-		data.elites = typeData.elites ? typeData.elites : [];
-		data.list = typeData.list ? typeData.list : []; // family tournament case
-		
+
+		// list = family tournament case
+		cat = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites", "list"];
+
+		var data = {$addToSet:{}};
+		for (var i=0;i<cat.length;i++){
+			if(typeData[cat[i]]){
+				data.$addToSet[cat[i]] = {$each : typeData[cat[i]]};
+			}
+		}
 		if(!typeData._id){
 			return Types.insert(data);
 		}
 
-		Types.update({_id: typeData._id} , Meteor.call('objectIsEmpty', data) ? {} : {$set: data});
+		Types.update({_id: typeData._id} , Meteor.call('objectIsEmpty', data["$addToSet"]) ? {} : data);
 		return typeData._id;
 	},
 
@@ -701,7 +700,6 @@ Meteor.methods({
 	'updatePairs' : function(pairData){
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
-		console.log(pairData);
 		ID = {};
 		if(pairData.player1){
 			P1_id= pairData.player1._id;
@@ -767,8 +765,8 @@ Meteor.methods({
 		if(!pairData._id){
 			return Pairs.insert(data, function(err, res){
 				if(err){
-					console.log("updatePairs error");
-					console.log(err);
+					console.error("updatePairs error");
+					console.error(err);
 				}
 			});
 		}
@@ -1031,9 +1029,6 @@ Meteor.methods({
 		category = Meteor.call('getPairCategory', type, p1, p2);
 		if(!category) return false; // An error occured, detail of the error has already been displayed in console
 
-
-		console.log(category);
-
 		var pair = Pairs.findOne({_id:pairID});
 		poolID = Meteor.call('getPoolToFill', year, type, category);
 
@@ -1072,20 +1067,7 @@ Meteor.methods({
 			yearTable = Meteor.call('updateYear', {_id:year});
 		}
 		
-		var typeID;
-		switch(type) {
-			case "mixed": typeID = yearTable.mixed;
-			break;
-			case "men": typeID = yearTable.men;
-			break;
-			case "women": typeID = yearTable.women;
-			break;
-			case "family": typeID = yearTable.family;
-			break;
-			default: console.error("Error GetPoolToFill : the type specified");
-			console.error("Type specified : "+type);
-			return undefined;
-		}
+		var typeID = yearTable[type];
 		
 		var typeTable = Types.findOne({_id:typeID});
 		
@@ -1138,29 +1120,11 @@ Meteor.methods({
 		
 		// no 'not full' pool found, creating a new one
 		var poolID = Pools.insert({});
+		poolList = [poolID];
 		data = {};
 		data._id = typeTable._id;
 		
-		switch(category) {
-			case "preminimes": data.preminimes = poolList;
-			break;
-			case "minimes": data.minimes = poolList;
-			break;
-			case "cadets": data.cadets = poolList;
-			break;
-			case "scolars": data.scolars = poolList;
-			break;
-			case "juniors": data.juniors = poolList;
-			break;
-			case "seniors": data.seniors = poolList;
-			break;
-			case "elites": data.elites = poolList;
-			break;
-			case "none": data.list = poolList;
-			break;
-			default: console.error("category not defined : "+category);
-			return undefined;
-		}
+		data[category] = poolList;
 		
 		// Update the type table concerned with the new pool
 		Meteor.call('updateType', data);
