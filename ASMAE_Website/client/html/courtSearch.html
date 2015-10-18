@@ -1,0 +1,20 @@
+<template name="courtSearch">
+  <input type="text" id="search-box" placeholder="Search for a court" />
+  <div id='search-result'>
+      {{#if isLoading}}
+        searching ...
+      {{/if}}
+
+    {{#each getCourts}}
+    {{#with courtInfos this}}
+    <div class="oneCourt">
+      <h4><a href="{{pathFor route='courtInfoPage' _id=court._id }}" >{{{address.street}}}, {{{address.number}}}, {{{address.zipCode}}}, {{{address.city}}}</a></h4>
+      <div class="description">
+        Surface: {{court.surface}}<br />
+        Type: {{court.courtType}}
+      </div>
+    </div>
+    {{/with}}
+    {{/each}}
+  </div>
+</template>

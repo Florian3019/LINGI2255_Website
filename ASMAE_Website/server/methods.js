@@ -61,7 +61,7 @@ Meteor.methods({
 	},
 	
 	/**
-		@param yearDate is structured as a year.
+		@param yearData is structured as a year.
 		This is the top-level structure in the database
 		One "table" year per year
 		
@@ -973,7 +973,7 @@ Meteor.methods({
 
 		if(!poolData._id){
 			var pool_id;
-			Pools.insert(data, function(err, matchId){
+			Pools.insert(data, function(err, poolId){
 				if(err){
 					console.error('updatePool error');
 					console.error(err);

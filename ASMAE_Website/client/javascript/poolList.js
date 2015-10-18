@@ -1,21 +1,35 @@
-/* a priori useless
-Content = {};
-Content._dep = new Deps.Dependency;
-*/
-
 // Might be useful at some point :
 // https://developer.mozilla.org/en/docs/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces
 
 var drake; // Draggable object
 
 Template.poolList.helpers({
-	'getPools' : function(){
-		return Meteor.call('getPools');
+	
+	// Returns a yearData with id year
+	'getYear' : function(year){
+		return Years.findOne({_id:year});
 	},
 	
-	'getPoolList' : function(typeID) {
-		
-	}
+	// Returns a typeData
+	'getType' : function(typeID){
+		return Types.findOne({_id:typeID});
+	},
+
+	// Returns a table of pools corresponding to the table of pool ids (poolIDList)
+	'getCategory' : function(poolIDList){
+		list = [];
+		for(var i=0;i<poolIDList.length;i++){
+			list.push(Pools.findOne({_id:poolIDList[i]}));
+		}
+	},
+
+	'getPair' : function(pairID) {
+		return Pairs.findOne({_id:pairID});
+	},
+
+	'getPlayer' : function(playerID){
+		return Users.findOne({_id:playerID});
+	},
 
 	'getArrayLength' : function(array){
 		return array.length;
@@ -41,9 +55,9 @@ Template.poolList.helpers({
 
 	},
 	
-	'getYear' : function() {
+	'getCurYear' : function() {
 		return Session.get('Year');
-	}
+	},
 
 	'getCurCategory' : function(){
 		return Session.get('PoolCategory');
@@ -75,28 +89,37 @@ Template.poolList.helpers({
 Template.poolList.events({
 	'click .PoolType':function(event){
 		Session.set('PoolType', event.target.value);
-		//Content._dep.changed();
 	},
 	'click .PoolCategory':function(event){
 		Session.set('PoolCategory', event.target.value);
-		//Content._dep.changed();
 	},
 	'click .Year':function(event){
 		Session.set('Year', event.target.value);
-		//Content._dep.changed();
 	},
+
+	/*
+		Collects the state of the table of pools to save it into the db
+	*/
 	'click #save':function(event){
+			/*
+				
+				REDO this part to make it work with database changes 
+
+			*/
 		var table = document.getElementById("poolTable");
 		var cells = table.getElementsByClassName('Pairs');
 
 		// Get the pairs and their pools
 		for(var i=0, len=cells.length; i<len; i++){
 
+
 			var category = Session.get('PoolCategory');
 			var type = Session.get('PoolType');
 			var year = Session.get('Year');
 
 			c = cells[i];
+			console.log(c);
+			// Will probably have to change the path to the id, since we changed the html
 			var pairId = c.id;
 			var poolId = c.parentNode.id;
 			

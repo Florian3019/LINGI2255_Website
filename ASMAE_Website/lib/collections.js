@@ -6,5 +6,5 @@ Pairs = new Mongo.Collection('Pairs');
 Payments = new Mongo.Collection('Payments');
 Matches = new Mongo.Collection('Matches');
 Years = new Mongo.Collection('Years');
-Types = new Mongo.Collection("Types");
+Types = new Mongo.Collection('Types');
 Pools = new Mongo.Collection('Pools');
