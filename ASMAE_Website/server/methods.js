@@ -134,14 +134,31 @@ Meteor.methods({
 		}
 		
 		var data = {};
-		data.preminimes = typeData.preminimes ? typeData.preminimes : [];
-		data.minimes = typeData.minimes ? typeData.minimes : [];
-		data.cadets = typeData.cadets ? typeData.cadets : [];
-		data.scolars = typeData.scolars ? typeData.scolars : [];
-		data.juniors = typeData.juniors ? typeData.juniors : [];
-		data.seniors = typeData.seniors ? typeData.seniors : [];
-		data.elites = typeData.elites ? typeData.elites : [];
-		data.list = typeData.list ? typeData.list : []; // family tournament case
+		if (typeData.preminimes) {
+			data.preminimes = typeData.preminimes;
+		}
+		if (typeData.minimes) {
+			data.minimes = typeData.minimes;
+		}
+		if (typeData.cadets) {
+			data.cadets = typeData.cadets;
+		}
+		if (typeData.scolars) {
+			data.scolars = typeData.scolars;
+		}
+		if (typeData.juniors) {
+			data.juniors = typeData.juniors;
+		}
+		if (typeData.seniors) {
+			data.seniors = typeData.seniors;
+		}
+		if (typeData.elites) {
+			data.elites = typeData.elites;
+		}
+		// Family tournament case
+		if (typeData.list) {
+			data.list = typeData.list;
+		}
 		
 		if(typeData._id) {
 			var writeResult = Types.update({_id: typeData._id} , {$set: data});

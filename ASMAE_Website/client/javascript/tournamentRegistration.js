@@ -542,10 +542,11 @@ Template.tournamentRegistration.events({
 
         Meteor.call('updateAddress', addressData, Meteor.userId(), null);
         Meteor.call('updateUser', curUserData);
-        if(Meteor.call('updatePairs', pairData)!=false){
+		var pairID = Meteor.call('updatePairs', pairData);
+        if(pairID!=false){
         	// Success
         	if(remove) Meteor.call('removePair',remove);
-			Meteor.call('addPairsToTheTournament', pairData._id);
+			Meteor.call('addPairsToTheTournament', pairID);
         }
         else{
         	return false;
