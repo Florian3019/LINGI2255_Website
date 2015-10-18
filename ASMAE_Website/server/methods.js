@@ -1095,6 +1095,10 @@ Meteor.methods({
 			typeID = Types.insert({});
 			// typeID = Meteor.call('updateType', {});
 			typeTable = Types.findOne({_id:typeID});
+			
+			yearData =  {_id:year};
+			yearData[type] = typeID;
+			yearTable = Meteor.call('updateYear',yearData);
 		}
 		
 		return Meteor.call('getNextPoolInPoolList', typeTable, category);
