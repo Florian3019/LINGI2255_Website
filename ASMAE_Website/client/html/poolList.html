@@ -31,54 +31,58 @@
 </form>
 
 <table id='poolTable' class='table'>
+<td>
 
-{{#each getPools}}
+{{#with getYear getCurYear}} <!-- Returns a yearData -->
+  {{#with getType this.getCurType}} <!-- Returns a typeData -->
     
-    {{#each PoolType}}
-      {{#if equals Type getCurType}}
-
-        {{#each PoolCategories}}
-          {{#if equals Category getCurCategory}}
-            {{resetDrake}}
-            {{#each Pools}}
-
-              <td>
-                <div class='parent'>
-                  <h3>
-                    <label class='label label-primary' for='hy'>{{PoolName}}</label>  
-                  </h3>
-                  <div class='wrapper'>
-                    <div class='poolContainer' id='{{PoolId}}'>
-                      {{#each Pairs}}
-                        {{>poolItem Dat=this ID=../PoolId}}
-                      {{/each}}
-                    </div>
-                  </div>
-                </div>
-              </td>
-            {{/each}}
-          {{/if}}
-        {{/each}}
-      {{/if}}
+    {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
+    
+    {{#each getCategory this.getCurCategory}} <!-- Returns a list of poolData -->
+      <td>
+        <div class='parent'>
+          <h3>
+            <label class='label label-primary' for='hy'>Pool</label> <!-- TODO : set the pool name to the court address -->
+          </h3>
+          <div class='wrapper'>
+            <div class='poolContainer' id='{{_id}}'> <!-- _id is here the id of the pool -->
+              {{#each getPair this.pairs}} <!-- Returns a list of pairs that are in "this" pool -->
+                {{>poolItem Dat=this ID=../_id}} <!-- Set ID to the id of the pool, so that we can make it draggable -->
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </td>
     {{/each}}
-{{/each}}
+    
+  {{/with}}
+{{/with}}
+
+
+</td>
+
+
 </table>
 
 <button type="button" id="save" class="btn btn-default btn-lg">
-  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Star
+  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Save
 </button>
 
 </template>
 
 
 <template name="poolItem">
-  <div id="{{Dat.PairId}}" class="Pairs">
+  <div id="{{Dat._id}}" class="Pairs">
     <a href="#" data-toggle="tooltip" title=
-    "P1W: {{Dat.Player1.Wish}}
+    "P1W: {{getPlayer Dat.Wish}}
     P2W:{{Dat.Player2.Wish}}">
       <ul class="list-group">
-        <li class="list-group-item">{{Dat.Player1.Name}}</li>
-        <li class="list-group-item">{{Dat.Player2.Name}}</li>
+        {{#with getPlayer Dat.Player1._id}}
+        <li class="list-group-item">{{profile.lastName}} {{profile.firstName}}</li>
+        {{/with}}
+        {{#with getPlayer Dat.Player2._id}}
+        <li class="list-group-item">{{profile.lastName}} {{profile.firstName}}</li>
+        {{/with}}
       </ul>
     </a>
   </div>

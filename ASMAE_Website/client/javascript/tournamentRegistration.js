@@ -545,7 +545,7 @@ Template.tournamentRegistration.events({
         if(Meteor.call('updatePairs', pairData)!=false){
         	// Success
         	if(remove) Meteor.call('removePair',remove);
-			Meteor.call('addPairsToTheTournament', pairData._id);
+			Meteor.call('addPairsToTournament', pairData._id); // TODO : ERROR HERE : pairData._id is undefined when trying to register for the first time alone
         }
         else{
         	return false;

@@ -9,13 +9,32 @@ Content._dep = new Deps.Dependency;
 var drake; // Draggable object
 
 Template.poolList.helpers({
-	'getPools' : function(){
-		return Meteor.call('getPools');
+	
+	// Returns a yearData with id year
+	'getYear' : function(year){
+		return Years.findOne({_id:year});
 	},
 	
-	'getPoolList' : function(typeID) {
-		
-	}
+	// Returns a typeData
+	'getType' : function(typeID){
+		return Types.findOne({_id:typeID});
+	},
+
+	// Returns a table of pools corresponding to the table of pool ids (poolIDList)
+	'getCategory' : function(poolIDList){
+		list = [];
+		for(var i=0;i<poolIDList.length;i++){
+			list.push(Pools.findOne({_id:poolIDList[i]}));
+		}
+	},
+
+	'getPair' : function(pairID) {
+		return Pairs.findOne({_id:pairID});
+	},
+
+	'getPlayer' : function(playerID){
+		return Users.findOne({_id:playerID});
+	},
 
 	'getArrayLength' : function(array){
 		return array.length;
@@ -41,9 +60,9 @@ Template.poolList.helpers({
 
 	},
 	
-	'getYear' : function() {
+	'getCurYear' : function() {
 		return Session.get('Year');
-	}
+	},
 
 	'getCurCategory' : function(){
 		return Session.get('PoolCategory');

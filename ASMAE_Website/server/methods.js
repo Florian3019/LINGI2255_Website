@@ -61,7 +61,7 @@ Meteor.methods({
 	},
 	
 	/**
-		@param yearDate is structured as a year.
+		@param yearData is structured as a year.
 		This is the top-level structure in the database
 		One "table" year per year
 		
