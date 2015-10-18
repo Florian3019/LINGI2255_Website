@@ -956,7 +956,7 @@ Meteor.methods({
 
 		if(!poolData._id){
 			var pool_id;
-			Pools.insert(data, function(err, matchId){
+			Pools.insert(data, function(err, poolId){
 				if(err){
 					console.error('updatePool error');
 					console.error(err);
