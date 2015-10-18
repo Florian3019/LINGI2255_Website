@@ -31,10 +31,9 @@
 </form>
 
 <table id='poolTable' class='table'>
-<td>
 
 {{#with getYear getCurYear}} <!-- Returns a yearData -->
-  {{#with getType this.getCurType}} <!-- Returns a typeData -->
+  {{#with getType this.getCurType}} <!-- Returns a typeData "might not work since getCurType is a function" -->
     
     {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
     
@@ -59,9 +58,6 @@
 {{/with}}
 
 
-</td>
-
-
 </table>
 
 <button type="button" id="save" class="btn btn-default btn-lg">
@@ -72,10 +68,13 @@
 
 
 <template name="poolItem">
+
+ <!-- Did not check if this part was working -->
+
   <div id="{{Dat._id}}" class="Pairs">
     <a href="#" data-toggle="tooltip" title=
-    "P1W: {{getPlayer Dat.Wish}}
-    P2W:{{Dat.Player2.Wish}}">
+    "P1W: {{Dat.Player1.wish}}
+    P2W:{{Dat.Player2.wish}}">
       <ul class="list-group">
         {{#with getPlayer Dat.Player1._id}}
         <li class="list-group-item">{{profile.lastName}} {{profile.firstName}}</li>
