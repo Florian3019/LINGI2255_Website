@@ -37,17 +37,17 @@ Meteor.methods({
 	},
 
 	'getAge' : function(birthDate){
-		var birthdate = new Date(birthdate);
+		var birthdate = new Date(birthDate);
 		var cur = new Date();
-		var diff = cur-birthdate; // This is the difference in milliseconds
+		var diff = cur.getTime()-birthdate.getTime(); // This is the difference in milliseconds
 		var age = Math.floor(diff/31536000000); // Divide by 1000*60*60*24*365
 		return age;
 	},
 
 	'getCategory' : function(birthDate, family){
 		var age = Meteor.call('getAge', birthDate);
-
-		if(9 < age){
+		console.log(age);
+		if(age < 9){
 			return undefined;
 		}
 		if(9 <= age && age <= 10){
@@ -1032,7 +1032,7 @@ Meteor.methods({
 		if(!category) return false; // An error occured, detail of the error has already been displayed in console
 
 
-
+		console.log(category);
 
 		var pair = Pairs.findOne({_id:pairID});
 		poolID = Meteor.call('getPoolToFill', year, type, category);
