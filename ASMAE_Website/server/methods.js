@@ -1096,25 +1096,21 @@ Meteor.methods({
 		If all current pools are full, create a new pool, update the Types table and returns the poolID
 	*/
 	'getNextPoolInPoolList' : function(typeTable, category) {
-		
-		var poolList = Meteor.call('getPoolIDList', typeTable._id, category);
+		console.log(typeTable);
+		var poolList = typeTable[category];
+		console.log(poolList);
 		if(poolList){
-			var i = 0;
-			var poolID = poolList[i];
-			
-			while(poolID) {
-				pool = Pools.findOne({_id:poolID});
+			for(var i=0;i<poolList.length;i++){
+				pool = Pools.findOne({_id:poolList[i]});
 				if (!pool) {
-					console.error("getNextPoolInPollList : Error, no pool with ID "+poolID+" found in Pools table");
+					console.error("getNextPoolInPollList : Error, no pool with ID "+poolList[i]+" found in Pools table");
 					return undefined;
 				}
 				// Pool not full
-				var maxNbrPairsInPool = 6;
-				if (! (pool.pairs.length > maxNbrPairsInPool)) {
-					return poolID;
+				const maxNbrPairsInPool = 6;
+				if (pool.pairs.length < maxNbrPairsInPool) {
+					return poolList[i];
 				}
-				i++;
-				poolID = poolList[i];
 			}
 		}
 		
@@ -1131,36 +1127,6 @@ Meteor.methods({
 		return poolID;
 
 		// Meteor.call('updatePool', {}, thisCallback);
-	},
-	
-	/*
-		@param typeTable a typeTable in the Types table
-		@param category : minimes, seniors, ...
-	
-		Helper of the *getNextPoolInPoolList* function
-		returns the ID of the pool list corresponding to the category specified in the type table specified by typeID
-	*/
-	'getPoolIDList' : function(typeTable, category) {
-		switch(category) {
-			case "preminimes": return typeTable.preminimes;
-			break;
-			case "minimes": return typeTable.minimes;
-			break;
-			case "cadets": return typeTable.cadets;
-			break;
-			case "scolars": return typeTable.scolars;
-			break;
-			case "juniors": return typeTable.juniors;
-			break;
-			case "seniors": return typeTable.seniors;
-			break;
-			case "elites": return typeTable.elites;
-			break;
-			case "none": return typeTable.list;
-			break;
-			default: console.error("Error getPoolIDList : category "+category+" is not recognized.");
-			return undefined;
-		}
 	},
 	
 	/*
