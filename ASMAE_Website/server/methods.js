@@ -757,8 +757,10 @@ Meteor.methods({
 		console.log(data);
 
 		if(!pairData._id){
+			console.log("Pas de pairData.id !")
 			var id;
 			Pairs.insert(data, function(err, pairId){
+				console.log("Coucou je suis dans le callback de Pairs.insert dans updatePairs")
 				if(err){
 					console.error('updatePairs error');
 					console.error(err);
@@ -946,12 +948,12 @@ Meteor.methods({
 			leader:<userId>,
 			matches:[<matchID>, ...], // Will append matches to existing array (no duplicates possible)
 			court:<courtID>,
-			winners:[<pairID>, ...] // Will append winners to existing array (no duplicates possible)
 		}
 
 		@return the pool id
 	*/
 	'updatePool' : function(poolData){
+		console.log("Hey je suis dans updatePool !");
 		var data = {$set:{}, $addToSet:{}};
 
 		if(poolData.court){
@@ -967,13 +969,11 @@ Meteor.methods({
 		if(poolData.matches){
 			data["$addToSet.matches"] = poolData.matches;
 		}
-		if(poolData.winners){
-			data["$addToSet.winners"] = poolData.winners;
-		}
 
 		if(!poolData._id){
 			var pool_id;
 			Pools.insert(data, function(err, poolId){
+				console.log("je suis dans le callback !");
 				if(err){
 					console.error('updatePool error');
 					console.error(err);

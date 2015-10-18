@@ -547,7 +547,7 @@ Template.tournamentRegistration.events({
         	// Success
         	if(remove) Meteor.call('removePair',remove);
 			
-			Meteor.call('addPairsToTheTournament', pairID);
+			Meteor.call('addPairsToTournament', pairID);
         }
         else{
         	return false;
