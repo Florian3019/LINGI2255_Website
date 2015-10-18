@@ -67,13 +67,8 @@ Template.courtRegistration.events({
         console.log("dans le submit: "+ courtData.dispoSamedi);
         console.log("dans le submit: "+ courtData.dispoDimanche);
 
-		Meteor.call('updateCourt', courtData, address, function(error, results){
-			if(error){
-	            console.log(error.reason);
-	        } else {
-				console.log("les results : "+results);
-	            Router.go('confirmation_registration_court', {_id: results});
-	        }
+		Meteor.call('updateCourt', courtData, address, function(courtId){
+			Router.go('confirmation_registration_court', {_id: results});
 	    });
     }
 });

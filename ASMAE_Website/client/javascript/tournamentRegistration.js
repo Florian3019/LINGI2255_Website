@@ -542,19 +542,26 @@ Template.tournamentRegistration.events({
 
         Meteor.call('updateAddress', addressData, Meteor.userId(), null);
         Meteor.call('updateUser', curUserData);
-		var pairID = Meteor.call('updatePairs', pairData);
-        if(pairID!=false){
+
+        var callback = function(err, pairID){
+        	if(err){
+        		console.log("error callback updatePairs");
+        		console.log(err);
+        		return;
+        	}
+
         	// Success
-        	if(remove) Meteor.call('removePair',remove);
-			
-			Meteor.call('addPairsToTournament', pairID);
-        }
-        else{
-        	return false;
+        	console.log("tournamentRegistration pairID : " + pairID);
+        	if(remove){
+        		console.log("removing pair "+ remove);
+        		Meteor.call('removePair',remove);	
+        	}
+			Meteor.call('addPairsToTournament', pairID, currentYear, dateMatch);
         }
 
+        Meteor.call('updatePairs', pairData, callback);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
-      	Router.go('/myRegistration');
+    	Router.go('/myRegistration');
     }
 
 

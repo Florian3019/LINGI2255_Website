@@ -1,5 +1,15 @@
+// Useful link : http://stackoverflow.com/questions/16439055/retrieve-id-after-insert-in-a-meteor-method-call
+
 Meteor.methods({
 	
+	'objectIsEmpty' : function(obj) {
+	    for(var prop in obj) {
+	        if(obj.hasOwnProperty(prop))
+	            return false;
+	    }
+	    return true;
+	},
+
 	/*
 		Returns true if the address addr is already a court address present in the DB.
 	*/
@@ -37,45 +47,148 @@ Meteor.methods({
 	'getCategory' : function(birthDate, family){
 		var age = Meteor.call('getAge', birthDate);
 
+		if(9 < age){
+			return undefined;
+		}
 		if(9 <= age && age <= 10){
-			return "PreMinimes";
+			return "preMinimes";
 		}
-		else if(11 <= age && age <= 12){
-			return "Minimes";
+		if(11 <= age && age <= 12){
+			return "minimes";
 		}
-		else if(13 <= age && age <= 14){
-			return "Cadet";
+		if(13 <= age && age <= 14){
+			return "cadet";
 		}
-		else if(15 <= age && age <= 16){
-			return "Scolaire";
+		if(15 <= age && age <= 16){
+			return "scolaire";
 		}
-		else if(17 <= age && age <= 19){
-			return "Junior";
+		if(17 <= age && age <= 19){
+			return "junior";
 		}
-		else if(20 <= age && age <= 40){
-			return "Seniors";
+		if(20 <= age && age <= 40){
+			return "seniors";
 		}
-		else{
-			return "Elites";
-		}
+		return "elites";
 	},
 	
-	/**
-		@param yearData is structured as a year.
+	'getPairCategory' : function(type, p1, p2){
+		var category;
+		if(type=="family"){
+			return 'none';
+		}
+		else{
+			var cat1;
+			var cat2;
+
+			if(p1){
+				// We need the birthDate	
+				if(p1.profile.birthDate){
+					// Fetch the category corresponding to that date
+					cat1 = Meteor.call('getCategory', p1.profile.birthDate);
+					if(!cat1){
+						console.error("Player does not fit in any category (too young)");
+						return false;
+					}
+				}
+			}
+			if(p2){				
+				// We need the birthDate	
+				if(p2.profile.birthDate){
+					// Fetch the category corresponding to that date
+					cat2 = Meteor.call('getCategory', p2.profile.birthDate);
+					if(!cat2){
+						console.error("Player does not fit in any category (too young)");
+						return false;
+					}
+				}
+			}
+			if(cat1 && cat2){
+				// Both players are provided, check that the categories match !
+				if(cat1 != cat2){
+					console.error("addPairsToTournament : categories of the 2 players do not match !");
+					return false;
+				}
+				return cat1;
+			}
+			else if(cat1){
+				return cat1;
+			}
+			else if(cat2){
+				return cat2;
+			}
+			else{
+				// No way of knowing the category since no player is provided
+				console.error("addPairsToTournament : no way to know the category, no player provided !");
+				return false;
+			}
+		}
+	},
+
+	/*	
+		@param pair : the pair for which the type has to be chosen
+		@param matchDate : either "sunday", "saturday" or "family"
+		Returns the type of the pair, either mixed, family, men or women
+	*/
+	'getPairType' : function(dateMatch, p1, p2){
+		var type;
+
+		if(dateMatch == "family"){
+			return "family";
+		}
+
+		var gender1;
+		var gender2;
+
+		if(p1){
+			gender1 = p1.profile.gender;
+		}
+		if(p2){
+			gender2 = p2.profile.gender;
+		}
+
+		if(dateMatch == "sunday"){
+			if(gender1 && gender2 && gender1 != gender2){
+				console.error("Sunday is men or women only ! no mix allowed !");
+				return false;
+			}
+			if(!gender1 && !gender2){
+				console.warn("No information on the gender available !");
+				return false;
+			}
+			if(gender1){
+				return gender1=="homme" ? "men" : "women"; 
+			}
+			if(gender2){
+				return gender2=="homme" ? "men" : "women"; 
+			}
+		}
+		if(dateMatch == "saturday"){
+			if(gender1 && gender2 && gender1 == gender2){
+				console.error("Saturday is mixed only !");
+				return false;
+			}
+			if(!gender1 && !gender2){
+				console.warn("No information on the gender available, setting type to mixed");
+			}
+			return "mixed";
+		}
+	},
+
+	/**	
+		@param yearDate is structured as a year.
 		This is the top-level structure in the database
 		One "table" year per year
 		
 		A year structure is as follows :
 		{
 			_id:<date>,
-			mixt:<typeID>,
+			mixed:<typeID>,
 			men:<typeID>,
 			women:<typeID>,
 			family:<typeID>
 		}
 	*/
 	'updateYear' : function(yearData) {
-		
 		if (!yearData) {
 			console.error("updateYear : no yearData provided : "+yearData);
 			return;
@@ -87,8 +200,8 @@ Meteor.methods({
 		
 		var data = {};
 		
-		if(yearData.mixt) {
-			data.mixt = yearData.mixt;
+		if(yearData.mixed) {
+			data.mixed = yearData.mixed;
 		}
 		if(yearData.men) {
 			data.men = yearData.men;
@@ -100,16 +213,11 @@ Meteor.methods({
 			data.family = yearData.family;
 		}
 		
-		var writeResult = Years.update({_id: yearData._id} , {$set: data}, {upsert: true});
-		if(writeResult.writeConcernError){
-			console.error('updateYear : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
-			return;
-		}
-
+		Years.update({_id: yearData._id} , Meteor.call('objectIsEmpty', data) ? {} : {$set: data}, {upsert: true});
 		return yearData._id;
 	},
 	
-	/*
+	/*	
 		@param typeData is structured as a type
 		
 		A type structure is as follows :
@@ -134,56 +242,24 @@ Meteor.methods({
 		}
 		
 		var data = {};
-		if (typeData.preminimes) {
-			data.preminimes = typeData.preminimes;
-		}
-		if (typeData.minimes) {
-			data.minimes = typeData.minimes;
-		}
-		if (typeData.cadets) {
-			data.cadets = typeData.cadets;
-		}
-		if (typeData.scolars) {
-			data.scolars = typeData.scolars;
-		}
-		if (typeData.juniors) {
-			data.juniors = typeData.juniors;
-		}
-		if (typeData.seniors) {
-			data.seniors = typeData.seniors;
-		}
-		if (typeData.elites) {
-			data.elites = typeData.elites;
-		}
-		// Family tournament case
-		if (typeData.list) {
-			data.list = typeData.list;
-		}
+		data.preminimes = typeData.preminimes ? typeData.preminimes : [];
+		data.minimes = typeData.minimes ? typeData.minimes : [];
+		data.cadets = typeData.cadets ? typeData.cadets : [];
+		data.scolars = typeData.scolars ? typeData.scolars : [];
+		data.juniors = typeData.juniors ? typeData.juniors : [];
+		data.seniors = typeData.seniors ? typeData.seniors : [];
+		data.elites = typeData.elites ? typeData.elites : [];
+		data.list = typeData.list ? typeData.list : []; // family tournament case
 		
-		if(typeData._id) {
-			var writeResult = Types.update({_id: typeData._id} , {$set: data});
-			if(writeResult.writeConcernError){
-				console.error('updateTypes : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
-				return;
-			}
-			return typeData._id;
+		if(!typeData._id){
+			return Types.insert(data);
 		}
-		else {
-			var type_id;
-			Types.insert(data, function(err, typeId){
-				if(err){
-					console.error('updateType error while inserting');
-					console.error(err);
-					return;
-				} 
-				type_id = typeId;
-			});
-			// Done with new insert
-			return type_id;
-		}
+
+		Types.update({_id: typeData._id} , Meteor.call('objectIsEmpty', data) ? {} : {$set: data});
+		return typeData._id;
 	},
 
-	/*
+	/*	
 		@param courtData is structured as a court, if _id is missing, 
 		a new court will be created and linked to the owner. OwnerID must be provided.
 		@param address is structured as an address
@@ -205,16 +281,16 @@ Meteor.methods({
 			availability:<availability>
 		}
 	*/
-	'updateCourt' : function(courtData, address){
+	'updateCourt' : function(courtData, address, callback){
 		if(!courtData.ownerID){
 			console.error("updateCourt : Must provide owner id to update the court !");
-			return;
+			return false;
 		}
 
 		var u = Meteor.users.findOne({_id:courtData.ownerID});
 		if(!u){
 			console.error('updateCourt : owner does not exist !');
-			return;
+			return false;
 		}
 
 		const isAdmin = Meteor.call('isAdmin');
@@ -223,7 +299,7 @@ Meteor.methods({
 
 		if(! (userIsOwner || isAdmin || isStaff) ){
 			console.error("updateCourt : You don't have the permissions to update a court !");
-			return;
+			return false;
 		}
 
 
@@ -285,48 +361,44 @@ Meteor.methods({
 			}
 		}
 		
-
-		if(courtId){
-			// Court already exists, so just update it :
-			var writeResult = Courts.update({_id: courtId} , {$set: data});
-			if(writeResult.writeConcernError){
-				console.error('updateCourt : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
-				return;
-			}
-			if(address){
-				Meteor.call('updateAddress', address, courtData.ownerID, courtId);
-			}
-		}
-		else{
+		if(!courtId){
 			// Check that a court with that address does not already exist :
 			if(address && Meteor.call('addressExists', address)){
 				console.log("Court already exists :");
 				console.log(address);
-				return;
+				return false;
 			}
 
 			// Create a new court
-			var id = Courts.insert(data, function(err, addrId){
+			return Courts.insert(data, function(err, courtId){
 				if(err){
 					console.error('updateCourt error');
 					console.error(err);
-					return;
+					return callback(null);
 				}
-				// Update addressID in the user
-				courtId = addrId; // remember the court id
 
+				// Update addressID in the user
 				if(address){
 					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
 				}
-
 			});
-			console.log("id retourne par insert : "+id);
-			return id;
 		}
 
+		// Court already exists, so just update it :
+		Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
+			if(err){
+				console.error('updateCourt error');
+				console.error(err);
+				return callback(null);
+			}
+			if(address){
+				Meteor.call('updateAddress', address, courtData.ownerID, courtId);
+			}
+		});
+		return courtId;
 	},
 
-	/*
+	/*	
 		@param : userData : javascript object containing the fields of the user. It must include at least the _id field.
 		
 		User structure is as follows :
@@ -457,7 +529,7 @@ Meteor.methods({
 	},
 
 
-	/*
+	/*	
 		@param userId : Updates the address of the user with id userId. 
 				If courtId is provided, updates the court address (userId is then the owner's id).
 				userId must be provided.
@@ -477,22 +549,23 @@ Meteor.methods({
 		}
 
 		If some fields are missing, they will be left untouched.
+		Returns false on failure and true on success
 	
 	*/
 	'updateAddress' : function(addressData, userId, courtId){
 		if(!userId && !courtId){
 			console.error("updateAddress : Must provide user id or courtId to update the address !");
-			return;
+			return false;
 		}
 		if(courtId && !userId){
 			console.error("updateAddress : must provide the userId of the person trying to make the request if trying to modify a court!");
-			return;	
+			return false;	
 		}
 
 		var u = Meteor.users.findOne({_id:userId});
 		if(!u){
 			console.error('updateAddress : that user doesn\'t exist !');
-			return;
+			return false;
 		}
 
 		if(courtId){
@@ -500,18 +573,18 @@ Meteor.methods({
 			var c = Courts.findOne({_id:courtId});
 			if(!c){
 				console.error('updateAddress : that court doesn\'t exist !');
-				return;
+				return false;
 			}
 			// If an address id is provided, make sure that addressId is the one from the court
 			if(addressData._id && c.addressID!=addressData._id){
 				console.error('updateAddress : trying to update an address not belonging to the court provided!');
-				return;
+				return false;
 			}
 		}
 		else{
 			if(addressData._id && u.profile && u.profile.addressID && u.profile.addressID != addressData._id){
 				console.error('updateAddress : trying to update an address not belonging to the user provided!');
-				return;
+				return false;
 			}	
 		}
 
@@ -523,7 +596,7 @@ Meteor.methods({
 		
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updateUser : You don't have the required permissions!");
-			return;
+			return false;
 		}
 
 		var data = {};
@@ -555,40 +628,44 @@ Meteor.methods({
 					if(err){
 						console.error('updateAddress error');
 						console.error(err);
-						return;
+						return false;
 					} 	
 					// Update addressID in the user
 	        		Meteor.call('updateUser', {_id:userId, profile:{addressID:addrId}});
 				});
 				// Done with new insert
-				return;
+				return true;
 			}
 			if(courtId){
 				Addresses.insert(data, function(err, addrId){
 					if(err){
 						console.error('updateAddress error');
 						console.error(err);
-						return;
-					} 	
+						return false;
+					}
+
 					// Update addressID in the user
 	        		Meteor.call('updateCourt', {_id:courtId, ownerID:userId, addressID:addrId});
 				});
 				// Done with new insert
-				return;
+				return true;
 			}
 		}
 		data._id = addressData._id; // set the address data
 
 
 		// Add the address in the DB
-		var writeResult = Addresses.update({_id: data._id} , {$set: data});
-		if(writeResult.writeConcernError){
-			console.error('updateAddress : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
-			return;
-		}
+		var writeResult = Addresses.update({_id: data._id} , {$set: data}, function(err, count, status){
+			if(err){
+				console.error('updateAddress error');
+				console.error(err);
+				return false;
+			}
+		});
+		return true;
 	},
 
-	/*
+	/*	
 		If a wish(es) is specified, it(they) must be in an array and will be appended to the list of existing wishes.
 		If you supply the category (and no player), make sure it fits the category of both players --> not checked.
 		The category will be automatically checked and set if you provide at least a player.
@@ -599,9 +676,6 @@ Meteor.methods({
 		A pair is structured as follows:
 		{
 			_id:<id>,
-			year:<year>,
-			type:<type>, (mixt, men, women or family)
-			category:<category>, (minimes, seniors, ...)
 			player1:{
 				_id:<userID>,
 				extras:{
@@ -646,58 +720,9 @@ Meteor.methods({
 		}
 
 		var data = {};
-		if(pairData.year){
-			data.year = pairData.year;
-		}
-		if(pairData.category){
-			data.category = pairData.category;
-		}
-
-
-		if(pairData.type){
-			data.type = pairData.type;
-		}
-			
-
 		if(pairData._id){
 			data._id = pairData._id;
 		}
-
-		// var p1_1;
-		// var p1_2;
-		// var p2_1;
-		// var p2_2;
-		// if(ID['player1']){
-		// 	p1_1 = Pairs.findOne({player1:P1_id},{_id:1});
-		// 	p1_2 = Pairs.findOne({player2:P1_id},{_id:1});
-		// }
-
-		// if(ID['player2']){
-		// 	p2_1 = Pairs.findOne({player1:ID['player2']},{_id:1});
-		// 	p2_2 = Pairs.findOne({player2:ID['player2']},{_id:1});
-		// }
-		// var err1 = p1_1 && p2_1 ? p1_1!=p2_1 : false;
-		// var err2 = p1_1 && p2_2 ? p1_1!=p2_2 : false;
-		// var err3 = p1_2 && p2_1 ? p1_2!=p2_1 : false;
-		// var err4 = p1_2 && p2_2 ? p1_2!=p2_2 : false;
-		// if(p1_1 && p1_2 || p2_1 && p2_1 || err1 || err2 || err3 || err4){
-		// 	console.error("updatePairs : impossible configuration");
-		// 	return;
-		// }
-
-		// if(p1_1){
-		// 	pairData['_id'] = p1_1;	
-		// }
-		// else if(p1_2){
-		// 	pairData['_id'] = p1_2;	
-		// }
-		// else if(p2_1){
-		// 	pairData['_id'] = p2_1;	
-		// }
-		// else if(p2_2){
-		// 	pairData['_id'] = p2_2;	
-		// }
-
 
 		// Player = player1 or player2
 		setPlayerData = function(player){
@@ -710,23 +735,6 @@ Meteor.methods({
 				console.error('updatePairs : player doesn\'t exist !');
 				return false;
 			}
-			
-			/*
-				Set or verify the category
-			*/
-			if(u.profile.birthDate){
-				cat = Meteor.call('getCategory', u.profile.birthDate);
-				if(!data.category){
-					// Set the category to that of the player
-					data['category'] = cat;
-				}
-				else if(data.category != cat){
-					console.error("The category doesn't correspond to the player's age !");
-					return false;
-				}
-			}
-
-
 
 			p['_id'] = ID[player];
 			pData = pairData[player];
@@ -749,40 +757,32 @@ Meteor.methods({
 			data[player] = p;
 		}
 
-		if(setPlayerData("player1") == false) return false;
-		if(setPlayerData("player2") == false) return false;
-		
-
-
-		console.log(data);
+		var check1 = setPlayerData("player1");
+		var check2 = setPlayerData("player2");
+		if(check1 == false || check2 == false) return false;
+		if(!check1 && !check2){
+			console.warn("No data about any player was provided to updatePairs");
+		}
 
 		if(!pairData._id){
-			console.log("Pas de pairData.id !")
-			var id;
-			Pairs.insert(data, function(err, pairId){
-				console.log("Coucou je suis dans le callback de Pairs.insert dans updatePairs")
+			return Pairs.insert(data, function(err, res){
 				if(err){
-					console.error('updatePairs error');
-					console.error(err);
-					return false;
+					console.log("updatePairs error");
+					console.log(err);
 				}
-				id = pairId;
 			});
-			// Done with new insert
-			return id;
 		}
-
-		// Add the address in the DB
-		var writeResult = Pairs.update({_id: pairData['_id']} , {$set: data});
-		if(writeResult.writeConcernError){
-			console.error('updatePairs : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
-			return false;
-		}
-		return pairData._id;
+		Pairs.update({_id: pairData['_id']} , {$set: data},function(err, count, status){
+			if(err){
+				console.error('updatePairs error');
+				console.error(err);
+			}
+		});
+		return pairData['_id'];
 	},
 
 
-	/*
+	/*	
 		A payment is structured as follows :
 		{
 			_id:<id>,
@@ -797,18 +797,18 @@ Meteor.methods({
 	'updatePayment' : function(paymentData, pairId, player){
 		if(!pairId){
 			console.error('updatePayment : you must provide the pairId');
-			return;
+			return false;
 		}
 		if(player!="player1" || player!="player2"){
 			console.error('updatePayment : player is not recognized');
-			return;
+			return false;
 		}
 
 		// Check that that pair really exists :
 		var p = Pairs.findOne({_id:pairId});
 		if(!p){
 			console.error('updatePayment : that pair doesn\'t exist !');
-			return;
+			return false;
 		}
 
 		const isAdmin = Meteor.call('isAdmin');
@@ -816,7 +816,7 @@ Meteor.methods({
 		
 		if(!(isAdmin || isStaff)){
 			console.error("updatePairs : You don't have the required permissions!");
-			return;
+			return false;
 		}
 
 		var data = {};
@@ -825,7 +825,7 @@ Meteor.methods({
 			var str2 = str.concat(player);
 			if(p[str.concat(player)] && paymentData._id != p[str2]){
 				console.error('updatePayment : trying to update a payment not belonging to the pair provided !');
-				return;
+				return false;
 			}
 			data._id = paymentData._id;
 		}
@@ -843,12 +843,12 @@ Meteor.methods({
 		}
 
 		if(!paymentData._id){
-			Payments.insert(data, function(err, paymId){
+			return Payments.insert(data, function(err, paymId){
 				if(err){
 					console.error('updatePayment error');
 					console.error(err);
-					return;
-				} 	
+				} 
+
 				var str = "paymentID.";
 				var str2 = str.concat(player);
 				// Update paymentID in the pair
@@ -857,19 +857,19 @@ Meteor.methods({
 				upd[str2] = paymId;
         		Meteor.call('updatePair', upd);
 			});
-			// Done with new insert
-			return;
 		}
 
-		var writeResult = Payments.update({_id: paymentData._id} , {$set: data});
-		if(writeResult.writeConcernError){
-			console.error('updatePayment : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
-			return;
-		}
+		Payments.update({_id: paymentData._id} , {$set: data}, function(err, count, status){
+			if(err){
+				console.error('updatePayment error');
+				console.error(err);
+			}
+		});
+		return paymentData._id;
 	},
 
 
-	/*
+	/*	
 		If no _id is provided, creates a new match. Else, updates it.
 
 		A match is structured as follows :
@@ -884,8 +884,7 @@ Meteor.methods({
 			court:<courtID>
 		}
 
-		@return the _id of the match
-
+		@return match id on success
 	*/
 	'updateMatch' : function(matchData){
 		data = {};
@@ -917,29 +916,24 @@ Meteor.methods({
 
 
 		if(!matchData._id){
-			var match_id;
-			Matches.insert(data, function(err, matchId){
+			return Matches.insert(data, function(err, matchId){
 				if(err){
 					console.error('updateMatch error');
 					console.error(err);
-					return;
-				} 
-				match_id = matchId;
+				}
 			});
-			// Done with new insert
-			return match_id;
 		}
 
-		var writeResult = Matches.update({_id: matchData._id} , {$set: data});
-		if(writeResult.writeConcernError){
-			console.error('updateMatch : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
-			return;
-		}
-
+		Matches.update({_id: matchData._id} , {$set: data}, function(err, count, status){
+			if(err){
+				console.error('updateMatch error');
+				console.error(err);
+			}
+		});
 		return matchData._id;
 	},
 
-	/*
+	/*	
 		A pool is structured as follows:
 		{
 			_id:<id>,
@@ -950,75 +944,116 @@ Meteor.methods({
 			court:<courtID>,
 		}
 
-		@return the pool id
+		@return pool id on success
 	*/
 	'updatePool' : function(poolData){
-		console.log("Hey je suis dans updatePool !");
 		var data = {$set:{}, $addToSet:{}};
 
 		if(poolData.court){
-			data["$set.court"] = poolData.court;
+			data.$set["court"] = poolData.court;
 		}
 		if(poolData.leader){
-			data["$set.leader"] = poolData.leader;
+			data.$set["leader"] = poolData.leader;
 		}
 		
 		if(poolData.pairs){
-			data["$addToSet.pairs"] = poolData.pairs;
+			data.$addToSet["pairs"] = {$each: poolData.pairs};
 		}
 		if(poolData.matches){
-			data["$addToSet.matches"] = poolData.matches;
+			data.$addToSet["matches"] = {$each: poolData.matches};
 		}
 
 		if(!poolData._id){
-			var pool_id;
-			Pools.insert(data, function(err, poolId){
-				console.log("je suis dans le callback !");
+			return Pools.insert(data, function(err, poolID){
 				if(err){
 					console.error('updatePool error');
 					console.error(err);
-					return;
 				} 
-				pool_id = poolId;
 			});
-			// Done with new insert
-			return pool_id;
 		}
 
-		var writeResult = Pools.update({_id: poolData._id} , data);
-		if(writeResult.writeConcernError){
-			console.error('updatePool : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
-			return;
-		}
+		if(Meteor.call('objectIsEmpty', data["$set"])) delete data["$set"];
+		if(Meteor.call('objectIsEmpty', data["$addToSet"])) delete data["$addToSet"];
+
+		Pools.update({_id: poolData._id} , data, function(err, count, status){
+			if(err){
+				console.error('updatePool error ');
+				console.error(err);
+			}
+		});
 		return poolData._id;
 
 	},
 	
 	/*
 		@param pairID a valid ID for a pair that is the Pairs table
-	
+		
+		Category of the pair is automatically set
+		dateMatch : one of "saturday", "sunday", "family"
 		Adds the pair in the tournament on the right pool.
 	 */
-	'addPairsToTournament' : function(pairID) {
+	'addPairsToTournament' : function(pairID, year, dateMatch) {
 		if(!pairID) {
 			console.error("Error addPairsToTournament : no pairID specified");
 			return undefined;
 		}
+
+		pair = Pairs.findOne({_id:pairID});
+		if(!pair){
+			console.error("addPairsToTournament : invalid pairID");
+			return false;
+		}
+
+		var p1;
+		if(pair.player1){
+			p1 = Meteor.users.findOne({_id:pair.player1._id});
+			if(!p1){
+				console.error("addPairsToTournament : player1 does not exist !");
+				return false;
+			}
+		}
+
+		var p2;
+		if(pair.player2){
+			p2 = Meteor.users.findOne({_id:pair.player2._id});
+			if(!p2){
+				console.error("addPairsToTournament : player2 does not exist !");
+				return false;
+			}
+		}
+
+		/*
+				Set the category
+		*/
+		type = Meteor.call('getPairType', dateMatch, p1, p2);
+		if(!type) return false;
+		
+		category = Meteor.call('getPairCategory', type, p1, p2);
+		if(!category) return false; // An error occured, detail of the error has already been displayed in console
+
+
+
+
 		var pair = Pairs.findOne({_id:pairID});
-		var poolID = Meteor.call('getPoolToFill', pair.year, pair.type, pair.category);
+		poolID = Meteor.call('getPoolToFill', year, type, category);
+
 		var pool = Pools.findOne({_id:poolID});
 		var pairs = pool.pairs;
-		
+		if(!pairs){
+			pairs = [];
+		}
 		pairs.push(pairID);
 		data = {};
 		data._id = poolID;
 		data.pairs = pairs;
-		Meteor.call('updatePool', data);
+		Meteor.call('updatePool', data, function(err, poolId){
+			console.log("addPairsToTournament is done");
+		});
 	},
 	
 	/*
 		@param year is the year of the tournament to consider
-		@param type is the type of the tournament to consider (men, mixt, women or family)
+		@param type is the type of the tournament to consider (men, mixed, women or family)
 		@param category is the age category of the tournament : preminimes, minimes, cadets, scholars, juniors, seniors or elites
 		
 		Returns the ID of the current pool to fill.
@@ -1039,7 +1074,7 @@ Meteor.methods({
 		
 		var typeID;
 		switch(type) {
-			case "mixt": typeID = yearTable.mixt;
+			case "mixed": typeID = yearTable.mixed;
 			break;
 			case "men": typeID = yearTable.men;
 			break;
@@ -1057,14 +1092,15 @@ Meteor.methods({
 		// No type table for now
 		if (!typeTable) {
 			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
-			typeID = Meteor.call('updateType', {});
+			typeID = Types.insert({});
+			// typeID = Meteor.call('updateType', {});
 			typeTable = Types.findOne({_id:typeID});
 		}
 		
 		return Meteor.call('getNextPoolInPoolList', typeTable, category);
 	},
 	
-	/*
+	/*	
 		@param typeTable an object stored in the table Types
 		@param category : minimes, seniors,...
 		
@@ -1076,30 +1112,30 @@ Meteor.methods({
 	'getNextPoolInPoolList' : function(typeTable, category) {
 		
 		var poolList = Meteor.call('getPoolIDList', typeTable._id, category);
-		var i = 0;
-		var poolID = poolList[i];
-		
-		while(poolID) {
-			pool = Pools.findOne({_id:poolID});
-			if (!pool) {
-				console.error("getNextPoolInPollList : Error, no pool with ID "+poolID+" found in Pools table");
-				return undefined;
+		if(poolList){
+			var i = 0;
+			var poolID = poolList[i];
+			
+			while(poolID) {
+				pool = Pools.findOne({_id:poolID});
+				if (!pool) {
+					console.error("getNextPoolInPollList : Error, no pool with ID "+poolID+" found in Pools table");
+					return undefined;
+				}
+				// Pool not full
+				var maxNbrPairsInPool = 6;
+				if (! (pool.pairs.length > maxNbrPairsInPool)) {
+					return poolID;
+				}
+				i++;
+				poolID = poolList[i];
 			}
-			// Pool not full
-			var maxNbrPairsInPool = 6;
-			if (! (pool.pairs.length > maxNbrPairsInPool)) {
-				return poolID;
-			}
-			i++;
-			poolID = poolList[i];
 		}
 		
 		// no 'not full' pool found, creating a new one
-		
-		poolID = Meteor.call('updatePool', {});
-		poolList.push(poolID);
+		var poolID = Pools.insert({});
 		data = {};
-		data._id = typeID;
+		data._id = typeTable._id;
 		
 		switch(category) {
 			case "preminimes": data.preminimes = poolList;
@@ -1124,8 +1160,9 @@ Meteor.methods({
 		
 		// Update the type table concerned with the new pool
 		Meteor.call('updateType', data);
-		
 		return poolID;
+
+		// Meteor.call('updatePool', {}, thisCallback);
 	},
 	
 	/*
