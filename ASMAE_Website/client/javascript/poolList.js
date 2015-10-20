@@ -5,30 +5,31 @@ var drake; // Draggable object
 
 Template.poolList.helpers({
 	
-	// Returns a yearData with id year
-	'getYear' : function(year){
-		return Years.findOne({_id:year});
+	'log' : function(x, text){
+		console.log(text);
+		console.log(x);
+	},
+
+	// // Returns a yearData with id year
+	'getYear' : function(){
+		var year = Session.get('Year');
+		Meteor.call('getYearData', year, function(error, result){
+			Session.set('YearInfo', result);
+		});
 	},
 	
 	// Returns a typeData
-	'getType' : function(typeID){
-		return Types.findOne({_id:typeID});
+	'getType' : function(yearData, type){
+		Meteor.call('getTypeData', yearData, type, function(error, result){
+			Session.set('TypeInfo', result);
+		});
 	},
 
-	// Returns a table of pools corresponding to the table of pool ids (poolIDList)
-	'getCategory' : function(poolIDList){
-		list = [];
-		for(var i=0;i<poolIDList.length;i++){
-			list.push(Pools.findOne({_id:poolIDList[i]}));
-		}
-	},
-
-	'getPair' : function(pairID) {
-		return Pairs.findOne({_id:pairID});
-	},
-
-	'getPlayer' : function(playerID){
-		return Users.findOne({_id:playerID});
+	// Returns a list of poolData
+	'getPools' : function(typeData, category){
+		Meteor.call('getPoolsData', typeData, category, function(error, result){
+			Session.set('PoolsInfo', result);
+		});
 	},
 
 	'getArrayLength' : function(array){
@@ -55,8 +56,16 @@ Template.poolList.helpers({
 
 	},
 	
-	'getCurYear' : function() {
-		return Session.get('Year');
+	'getYearInfo' : function(){
+		return Session.get('YearInfo');
+	},
+
+	'getPoolsInfo' : function(){
+		return Session.get('PoolsInfo');
+	},
+
+	'getTypeInfo' : function(){
+		return Session.get('TypeInfo');
 	},
 
 	'getCurCategory' : function(){
@@ -83,6 +92,12 @@ Template.poolList.helpers({
 	  });
 	}
 
+});
+
+Template.poolList.onCreated(function() {
+	Session.set('PoolCategory', null);
+	Session.set('PoolType', null);
+	Session.set('PoolDay', null);
 });
 
 
@@ -128,10 +143,39 @@ Template.poolList.events({
 			console.log(poolId);
 		}
 		
+	},
+
+	'click #addPool':function(event){
+		// TODO
+		console.log("clicked add pool");
 	}
 
 });
 
+Template.poolItem.helpers({
+	'getPlayers' : function(player1, player2){
+		Meteor.call('getPlayerData', player1, function(error, result){
+			if(result)	document.getElementById ? document.getElementById(player1).innerHTML = result.profile.lastName + " " + result.profile.firstName : undefined;	
+		});
+		Meteor.call('getPlayerData', player2, function(error, result){
+			if(result) document.getElementById(player2) ? document.getElementById(player2).innerHTML = result.profile.lastName + " " + result.profile.firstName : undefined;
+		});
+	},
+
+
+	'getPair' : function(pairId) {
+		Meteor.call('getPairData', pairId, function(error, result){
+			Session.set('PairInfo', result);
+		});
+	},
+
+	'getPairInfo' : function(){
+		return Session.get('PairInfo');
+	},
+
+
+});
+
 Template.poolItem.onRendered(function(){
-  drake.containers.push(document.querySelector('#'+this.data.ID)); // Make the id this.data.ID draggable  
+  drake.containers.push(document.querySelector('#'+this.data.POOLID)); // Make the id this.data.ID draggable  
 });

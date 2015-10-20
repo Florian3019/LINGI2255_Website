@@ -438,7 +438,7 @@ Template.tournamentRegistration.events({
         };
 
 
-    	var currentYear = 2015;
+    	var currentYear = "2015"; // Has to be a string
 
     	/*
 			Collect player wishes/constraints

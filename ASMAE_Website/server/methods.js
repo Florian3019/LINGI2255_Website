@@ -1,5 +1,15 @@
 // Useful link : http://stackoverflow.com/questions/16439055/retrieve-id-after-insert-in-a-meteor-method-call
 
+/*
+
+	/!\		
+	On the client, Meteor.call is asynchronous - it returns undefined and its return value can only be accesses via a callback. 
+	Helpers, on the other hand, execute synchronously.
+	/!\
+
+*/
+
+
 Meteor.methods({
 	
 	'objectIsEmpty' : function(obj) {
@@ -8,6 +18,47 @@ Meteor.methods({
 	            return false;
 	    }
 	    return true;
+	},
+
+	/*
+		Used by poolList.js
+	*/
+	'getYearData' : function(year){
+		return Years.findOne({"_id":year});
+	},
+
+	/*
+		used by poolList.js
+	*/
+	'getTypeData' : function(yearData, type){
+		var y =Types.findOne({_id:yearData[type]});
+		return y;
+	},
+
+	'getPlayerData' : function(userId){
+		return Meteor.users.findOne({_id:userId});
+	},
+
+	/*
+		used by poolList.js
+		@return the list of pools that are in typeData with that category.
+	*/
+	'getPoolsData' : function(typeData, category){
+		poolIdList = typeData[category];
+		poolList = [];
+		for(var i=0;i<poolIdList.length;i++){
+			poolList.push(Pools.findOne({_id: poolIdList[i]}));
+		}
+		console.log("getPoolsData");
+		console.log(poolIdList);
+		return poolList;
+	},
+
+	/*
+		used by poolList.js
+	*/
+	'getPairData' : function(pairId){
+		return Pairs.findOne({_id: pairId});
 	},
 
 	/*

@@ -4,6 +4,7 @@
   <div class="form-group">
 	  <label for="Year">Année</label>
 	  <select class="form-control Year" id="Year">
+      <option value="" disabled="" selected="" hidden></option>
 		  <option value="2015"> 2015 </option>
 	  </select>
 	  
@@ -24,7 +25,7 @@
       <option value="" disabled="" selected="" hidden></option>
       <option value="men">Homme</option>
       <option value="women">Femme</option>
-      <option value="mixt">Mixte</option>
+      <option value="mixed">Mixte</option>
 	  <option value="family">Tournoi des familles</option>
     </select>
   </div>
@@ -32,30 +33,31 @@
 
 <table id='poolTable' class='table'>
 
-{{#with getYear getCurYear}} <!-- Returns a yearData -->
-  {{#with getType this.getCurType}} <!-- Returns a typeData "might not work since getCurType is a function" -->
-    
-    {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
-    
-    {{#each getCategory this.getCurCategory}} <!-- Returns a list of poolData -->
-      <td>
-        <div class='parent'>
-          <h3>
-            <label class='label label-primary' for='hy'>Pool</label> <!-- TODO : set the pool name to the court address -->
-          </h3>
-          <div class='wrapper'>
-            <div class='poolContainer' id='{{_id}}'> <!-- _id is here the id of the pool -->
-              {{#each getPair this.pairs}} <!-- Returns a list of pairs that are in "this" pool -->
-                {{>poolItem Dat=this ID=../_id}} <!-- Set ID to the id of the pool, so that we can make it draggable -->
-              {{/each}}
+  {{getYear}}
+  {{#with getYearInfo}} <!-- Returns a yearData -->
+    {{getType this getCurType}}
+      {{#with getTypeInfo}}
+
+      {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
+      {{getPools this getCurCategory}}    
+      {{#each getPoolsInfo}} <!-- Returns a list of poolData -->
+        <td>
+          <div class='parent'>
+            <h3>
+              <label class='label label-primary' for='hy'>Pool</label> <!-- TODO : set the pool name to the court address -->
+            </h3>
+            <div class='wrapper'>
+              <div class='poolContainer' id='{{_id}}'> <!-- _id is here the id of the pool -->
+                {{#each this.pairs}} <!-- For each pair id in the pool -->
+                  {{>poolItem PAIRID=this POOLID=../_id}} <!-- Set ID to the id of the pool, so that we can make it draggable -->
+                {{/each}}
+              </div>
             </div>
           </div>
-        </div>
-      </td>
-    {{/each}}
-    
+        </td>
+      {{/each}}
+    {{/with}}
   {{/with}}
-{{/with}}
 
 
 </table>
@@ -64,25 +66,30 @@
   <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Save
 </button>
 
+<button type="button" id="addPool" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Pool
+</button>
+
 </template>
 
-
+<!-- 
+  Takes 2 arguments :
+  - PAIRID : the id of this pair
+  - ID : the id of the pool of this pair 
+-->
 <template name="poolItem">
-
- <!-- Did not check if this part was working -->
-
-  <div id="{{Dat._id}}" class="Pairs">
-    <a href="#" data-toggle="tooltip" title=
-    "P1W: {{Dat.Player1.wish}}
-    P2W:{{Dat.Player2.wish}}">
-      <ul class="list-group">
-        {{#with getPlayer Dat.Player1._id}}
-        <li class="list-group-item">{{profile.lastName}} {{profile.firstName}}</li>
-        {{/with}}
-        {{#with getPlayer Dat.Player2._id}}
-        <li class="list-group-item">{{profile.lastName}} {{profile.firstName}}</li>
-        {{/with}}
-      </ul>
-    </a>
-  </div>
+{{getPair PAIRID}} <!-- get the pair data using its id -->
+  {{#with getPairInfo}}
+    <div id="{{../PAIRID}}" class="Pairs">
+      <a href="#" data-toggle="tooltip" title=
+      "P1W: {{this.player1.wish}}
+      P2W:{{this.player2.wish}}">
+        <ul class="list-group">
+          <li class="list-group-item" id="{{this.player1._id}}"></li>
+          <li class="list-group-item" id="{{this.player2._id}}"></li>
+        </ul>
+      </a>
+      {{getPlayers this.player1._id this.player2._id}}
+    </div>
+  {{/with}}
 </template>
