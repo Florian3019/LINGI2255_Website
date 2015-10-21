@@ -230,8 +230,25 @@ Router.route('/modify-court/:_id', {
 	
 });
 
-
 Router.route('/search-court', {
 	name: 'courtSearch',
 	template: 'courtSearch'
+});
+
+Router.route('/confirm_pair/:_id',{
+	name: 'confirmPair',
+	template: 'confirmPair',
+
+	data: function(){
+		var data = {};
+		data.idPair = this.params._id;
+		return data;
+	},
+	onBeforeAction: function(){
+        if(Meteor.userId()){
+            this.next();
+        } else {
+            this.render("login");
+        }
+    }
 });
