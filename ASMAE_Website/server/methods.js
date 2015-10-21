@@ -1,9 +1,10 @@
+
 // Useful link : http://stackoverflow.com/questions/16439055/retrieve-id-after-insert-in-a-meteor-method-call
 
 /*
 
-	/!\		
-	On the client, Meteor.call is asynchronous - it returns undefined and its return value can only be accesses via a callback. 
+	/!\
+	On the client, Meteor.call is asynchronous - it returns undefined and its return value can only be accesses via a callback.
 	Helpers, on the other hand, execute synchronously.
 	/!\
 
@@ -11,7 +12,7 @@
 
 
 Meteor.methods({
-	
+
 	'objectIsEmpty' : function(obj) {
 	    for(var prop in obj) {
 	        if(obj.hasOwnProperty(prop))
@@ -121,7 +122,7 @@ Meteor.methods({
 		}
 		return "elites";
 	},
-	
+
 	'getPairCategory' : function(type, p1, p2){
 		var category;
 		if(type=="family"){
@@ -132,7 +133,7 @@ Meteor.methods({
 			var cat2;
 
 			if(p1){
-				// We need the birthDate	
+				// We need the birthDate
 				if(p1.profile.birthDate){
 					// Fetch the category corresponding to that date
 					cat1 = Meteor.call('getCategory', p1.profile.birthDate);
@@ -142,8 +143,8 @@ Meteor.methods({
 					}
 				}
 			}
-			if(p2){				
-				// We need the birthDate	
+			if(p2){
+				// We need the birthDate
 				if(p2.profile.birthDate){
 					// Fetch the category corresponding to that date
 					cat2 = Meteor.call('getCategory', p2.profile.birthDate);
@@ -175,7 +176,7 @@ Meteor.methods({
 		}
 	},
 
-	/*	
+	/*
 		@param pair : the pair for which the type has to be chosen
 		@param matchDate : either "sunday", "saturday" or "family"
 		Returns the type of the pair, either mixed, family, men or women
@@ -207,10 +208,10 @@ Meteor.methods({
 				return false;
 			}
 			if(gender1){
-				return gender1=="homme" ? "men" : "women"; 
+				return gender1=="homme" ? "men" : "women";
 			}
 			if(gender2){
-				return gender2=="homme" ? "men" : "women"; 
+				return gender2=="homme" ? "men" : "women";
 			}
 		}
 		if(dateMatch == "saturday"){
@@ -225,11 +226,11 @@ Meteor.methods({
 		}
 	},
 
-	/**	
+	/**
 		@param yearDate is structured as a year.
 		This is the top-level structure in the database
 		One "table" year per year
-		
+
 		A year structure is as follows :
 		{
 			_id:<date>,
@@ -248,9 +249,9 @@ Meteor.methods({
 			console.error("updateYear : please specify an ID (the year !).")
 			return;
 		}
-		
+
 		var data = {};
-		
+
 		if(yearData.mixed) {
 			data.mixed = yearData.mixed;
 		}
@@ -263,14 +264,14 @@ Meteor.methods({
 		if(yearData.family) {
 			data.family = yearData.family;
 		}
-		
+
 		Years.update({_id: yearData._id} , Meteor.call('objectIsEmpty', data) ? {} : {$set: data}, {upsert: true});
 		return yearData._id;
 	},
-	
-	/*	
+
+	/*
 		@param typeData is structured as a type
-		
+
 		A type structure is as follows :
 		{
 			_id:<typeID>
@@ -281,7 +282,7 @@ Meteor.methods({
 			juniors:<list of poolIDs>
 			seniors:<list of poolIDs>
 			elites:<list of poolIDs>
-			
+
 			NOTE : for the family tournament, only one list of pools :
 			list:<list of poolIDs>
 		}
@@ -309,11 +310,11 @@ Meteor.methods({
 		return typeData._id;
 	},
 
-	/*	
-		@param courtData is structured as a court, if _id is missing, 
+	/*
+		@param courtData is structured as a court, if _id is missing,
 		a new court will be created and linked to the owner. OwnerID must be provided.
 		@param address is structured as an address
-		(fields can be missing, if the _id field is missing, a new address will be linked to this court, 
+		(fields can be missing, if the _id field is missing, a new address will be linked to this court,
 		erasing reference to previous addressID if existing). Can be null.
 
 		This function does a check to prevent a user from adding a new court with an existing court address (preventing duplicates)
@@ -336,7 +337,6 @@ Meteor.methods({
 			console.error("updateCourt : Must provide owner id to update the court !");
 			return false;
 		}
-
 		var u = Meteor.users.findOne({_id:courtData.ownerID});
 		if(!u){
 			console.error('updateCourt : owner does not exist !');
@@ -358,14 +358,14 @@ Meteor.methods({
        		courtNumber
        		zone
        		mapNumber
-       		lendThisYear (ou alors noter l'id du tournoi (ou l'année du dernier tournoi où il était prêté), sinon je ne sais pas quand on pourra le remettre à 'false' après le tournoi)      		
+       		lendThisYear (ou alors noter l'id du tournoi (ou l'année du dernier tournoi où il était prêté), sinon je ne sais pas quand on pourra le remettre à 'false' après le tournoi)
        		*/
 
 		var courtId = courtData._id;
 		var data = {};
 
 		data.ownerID = courtData.ownerID;
-		
+
 		// Fill in court info
 		if(courtData._id){
 			data._id = courtData._id;
@@ -385,12 +385,12 @@ Meteor.methods({
 		if(courtData.ownerComment){
 			data.ownerComment = courtData.ownerComment;
 		}
-		
+
 		if((isStaff||isAdmin) && courtData.staffComment){
 			data.staffComment = courtData.staffComment;
 		}
 
-		
+
 		console.log("courtData samedi recu:" + courtData.dispoSamedi);
 		console.log("courtData dim recu:" + courtData.dispoDimanche);
 
@@ -410,7 +410,7 @@ Meteor.methods({
 				data.lendThisYear = false;
 			}
 		}
-		
+
 		if(!courtId){
 			// Check that a court with that address does not already exist :
 			if(address && Meteor.call('addressExists', address)){
@@ -448,11 +448,11 @@ Meteor.methods({
 		return courtId;
 	},
 
-	/*	
+	/*
 		@param : userData : javascript object containing the fields of the user. It must include at least the _id field.
-		
+
 		User structure is as follows :
-		{	
+		{
 			createdAt:<createdAt>,
 			_id:<id>,
 			emails:[{ "address" : "<email1>", "verified" : false } , ...],
@@ -482,8 +482,8 @@ Meteor.methods({
 		If the _id is not already in the DB, this will add that _id and all other fields of userData to the DB (creating a new user).
 		Missing fields will not be included (except for admin and staff which default to false).
 		The function will return true.
-		
-		If the _id is already in the DB, this will update the fields of the existing in regard of the fields in userData. 
+
+		If the _id is already in the DB, this will update the fields of the existing in regard of the fields in userData.
 		Missing fields will be left as they were before.
 		The function will return false.
 	*/
@@ -579,8 +579,8 @@ Meteor.methods({
 	},
 
 
-	/*	
-		@param userId : Updates the address of the user with id userId. 
+	/*
+		@param userId : Updates the address of the user with id userId.
 				If courtId is provided, updates the court address (userId is then the owner's id).
 				userId must be provided.
 		@param AddressData : if it does not contain a field _id, this will
@@ -600,7 +600,7 @@ Meteor.methods({
 
 		If some fields are missing, they will be left untouched.
 		Returns false on failure and true on success
-	
+
 	*/
 	'updateAddress' : function(addressData, userId, courtId){
 		if(!userId && !courtId){
@@ -609,7 +609,7 @@ Meteor.methods({
 		}
 		if(courtId && !userId){
 			console.error("updateAddress : must provide the userId of the person trying to make the request if trying to modify a court!");
-			return false;	
+			return false;
 		}
 
 		var u = Meteor.users.findOne({_id:userId});
@@ -635,15 +635,15 @@ Meteor.methods({
 			if(addressData._id && u.profile && u.profile.addressID && u.profile.addressID != addressData._id){
 				console.error('updateAddress : trying to update an address not belonging to the user provided!');
 				return false;
-			}	
+			}
 		}
 
-		
+
 
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = userId == Meteor.userId();
-		
+
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updateUser : You don't have the required permissions!");
 			return false;
@@ -679,7 +679,7 @@ Meteor.methods({
 						console.error('updateAddress error');
 						console.error(err);
 						return false;
-					} 	
+					}
 					// Update addressID in the user
 	        		Meteor.call('updateUser', {_id:userId, profile:{addressID:addrId}});
 				});
@@ -715,14 +715,14 @@ Meteor.methods({
 		return true;
 	},
 
-	/*	
+	/*
 		If a wish(es) is specified, it(they) must be in an array and will be appended to the list of existing wishes.
 		If you supply the category (and no player), make sure it fits the category of both players --> not checked.
 		The category will be automatically checked and set if you provide at least a player.
 		The update fails if both players are not of the same category or if the supplied category does not fit the player.
-		
+
 		/!\ For a the family type tournament, the category should be "none"
-		
+
 		A pair is structured as follows:
 		{
 			_id:<id>,
@@ -762,7 +762,7 @@ Meteor.methods({
 		}
 
 		const userIsOwner = ID['player1'] == Meteor.userId() || ID['player2'] == Meteor.userId();
-		
+
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updatePairs : You don't have the required permissions!");
 			return false;
@@ -776,7 +776,7 @@ Meteor.methods({
 		// Player = player1 or player2
 		setPlayerData = function(player){
 			if(!pairData[player]) return; // Don't return false
-			
+
 			var p ={};
 
 			var u = Meteor.users.findOne({_id:ID[player]});
@@ -787,7 +787,7 @@ Meteor.methods({
 
 			p['_id'] = ID[player];
 			pData = pairData[player];
-			
+
 			if(pData['paymentID']) p['paymentID'] = pData['paymentID'];
 			if(pData['wish']) p['wish'] = pData['wish'];
 			if(pData['constraint']) p['constraint'] = pData['constraint'];
@@ -802,7 +802,7 @@ Meteor.methods({
 				if(count>0){
 					p['extras'] = extr;
 				}
-			} 
+			}
 			data[player] = p;
 		}
 
@@ -831,7 +831,7 @@ Meteor.methods({
 	},
 
 
-	/*	
+	/*
 		A payment is structured as follows :
 		{
 			_id:<id>,
@@ -862,7 +862,7 @@ Meteor.methods({
 
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
-		
+
 		if(!(isAdmin || isStaff)){
 			console.error("updatePairs : You don't have the required permissions!");
 			return false;
@@ -896,7 +896,7 @@ Meteor.methods({
 				if(err){
 					console.error('updatePayment error');
 					console.error(err);
-				} 
+				}
 
 				var str = "paymentID.";
 				var str2 = str.concat(player);
@@ -918,7 +918,7 @@ Meteor.methods({
 	},
 
 
-	/*	
+	/*
 		If no _id is provided, creates a new match. Else, updates it.
 
 		A match is structured as follows :
@@ -927,7 +927,7 @@ Meteor.methods({
 			pair1:<pairID>,
 			pair2:<pairID>,
 			result:{
-					pair1Points:<points>, 
+					pair1Points:<points>,
 					pair2Points:<points>
 					},
 			court:<courtID>
@@ -982,7 +982,7 @@ Meteor.methods({
 		return matchData._id;
 	},
 
-	/*	
+	/*
 		A pool is structured as follows:
 		{
 			_id:<id>,
@@ -1004,7 +1004,7 @@ Meteor.methods({
 		if(poolData.leader){
 			data.$set["leader"] = poolData.leader;
 		}
-		
+
 		if(poolData.pairs){
 			data.$addToSet["pairs"] = {$each: poolData.pairs};
 		}
@@ -1017,7 +1017,7 @@ Meteor.methods({
 				if(err){
 					console.error('updatePool error');
 					console.error(err);
-				} 
+				}
 			});
 		}
 
@@ -1033,10 +1033,10 @@ Meteor.methods({
 		return poolData._id;
 
 	},
-	
+
 	/*
 		@param pairID a valid ID for a pair that is the Pairs table
-		
+
 		Category of the pair is automatically set
 		dateMatch : one of "saturday", "sunday", "family"
 		Adds the pair in the tournament on the right pool.
@@ -1076,7 +1076,7 @@ Meteor.methods({
 		*/
 		type = Meteor.call('getPairType', dateMatch, p1, p2);
 		if(!type) return false;
-		
+
 		category = Meteor.call('getPairCategory', type, p1, p2);
 		if(!category) return false; // An error occured, detail of the error has already been displayed in console
 
@@ -1096,12 +1096,12 @@ Meteor.methods({
 			console.log("addPairsToTournament is done");
 		});
 	},
-	
+
 	/*
 		@param year is the year of the tournament to consider
 		@param type is the type of the tournament to consider (men, mixed, women or family)
 		@param category is the age category of the tournament : preminimes, minimes, cadets, scholars, juniors, seniors or elites
-		
+
 		Returns the ID of the current pool to fill.
 		The pools are filled one by one directly after a player has registered.
 		If the upper-level table does not exist (year or type), creates an empty one then adds the pair.
@@ -1111,36 +1111,36 @@ Meteor.methods({
 			console.error("Error GetPoolToFill : no year and/or type and/or category specified");
 			return undefined;
 		}
-		
+
 		var yearTable = Years.findOne({_id:year});
 		if (!yearTable) {
 			console.log("getPoolToFill : no Year table found for year "+year+". Creating an empty one.");
 			yearTable = Meteor.call('updateYear', {_id:year});
 		}
-		
+
 		var typeID = yearTable[type];
-		
+
 		var typeTable = Types.findOne({_id:typeID});
-		
+
 		// No type table for now
 		if (!typeTable) {
 			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
 			typeID = Types.insert({});
 			// typeID = Meteor.call('updateType', {});
 			typeTable = Types.findOne({_id:typeID});
-			
+
 			yearData =  {_id:year};
 			yearData[type] = typeID;
 			yearTable = Meteor.call('updateYear',yearData);
 		}
-		
+
 		return Meteor.call('getNextPoolInPoolList', typeTable, category);
 	},
-	
-	/*	
+
+	/*
 		@param typeTable an object stored in the table Types
 		@param category : minimes, seniors,...
-		
+
 		Helper of the *getPoolToFill* function
 		Returns the current pool on which a pair should be registered
 		This pool should be the first 'not full' pool it encounters while iterating over the list of pools
@@ -1164,22 +1164,22 @@ Meteor.methods({
 				}
 			}
 		}
-		
+
 		// no 'not full' pool found, creating a new one
 		var poolID = Pools.insert({});
 		poolList = [poolID];
 		data = {};
 		data._id = typeTable._id;
-		
+
 		data[category] = poolList;
-		
+
 		// Update the type table concerned with the new pool
 		Meteor.call('updateType', data);
 		return poolID;
 
 		// Meteor.call('updatePool', {}, thisCallback);
 	},
-	
+
 	/*
 		Returns the list of the IDs of all the pools in the DB
 	 */
@@ -1204,7 +1204,50 @@ Meteor.methods({
 			processed : false
 		}
 		return Questions.insert(data)
+	},
+
+
+	//You need to add the secrets.js file inside the server folder.
+	emailFeedback: function (to, subject, body, any_variable) {
+
+							// Don't wait for result
+							this.unblock();
+
+							// Define the settings
+							var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+							var options =   {
+								auth: "api:" + process.env.MAILGUN_API_KEY,
+									params: {
+										"from":"ingi2255groupf@asmae.com",
+										"to":to,
+										"subject": subject,
+										"html": body,
+									}
+								}
+								var onError = function(error, result) {
+									if(error) {console.log("Error: " + error)}
+								}
+
+								// Send the request
+								Meteor.http.post(postURL, options, onError);
 	}
-	
-	
+/* This one is for sending email with smtp and the MAIL_URL environment variable but i can't connect this one with google.
+	'sendEmail' : function(to, from, subject, text){
+		check([to, from, subject, text], [String]);
+
+		// Let other method calls from the same client start running,
+		// without waiting for the email sending to complete.
+		this.unblock();
+
+		Email.send({
+			to: to,
+			from: from,
+			subject: subject,
+			text: text
+		});
+	}
+	*/
+
+
+
 });

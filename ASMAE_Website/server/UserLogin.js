@@ -44,15 +44,15 @@ if (isProdEnv()) {
 }
 
 
-/* 
+/*
     Ask for email verification --> TODO, currently doesn't forbid the client
     from logging in if email is not verified (nor does it erase the account after some time has passed)
     See this link on some ideas on how to do that : http://stackoverflow.com/questions/15383273/force-email-validation-before-login-meteor
 */
-Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false}); 
+Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false});
 
 /*
-    @param 
+    @param
 */
 useServiceInfo = function(user){
     var services = user.services;
@@ -63,13 +63,13 @@ useServiceInfo = function(user){
             user.profile.birthDate = service.google.birth_date;
         }
         else if(services.facebook && services.facebook.birth_date){
-            user.profile.birthDate = service.facebook.birth_date;    
+            user.profile.birthDate = service.facebook.birth_date;
         }
 
     // First name
     if(!user.profile.firstName)
         if(services.google){
-            user.profile.firstName = services.google.given_name; 
+            user.profile.firstName = services.google.given_name;
         }
         else if(services.facebook){
             user.profile.firstName = services.facebook.first_name;
@@ -80,7 +80,7 @@ useServiceInfo = function(user){
         if(services.google){
             user.profile.lastName = services.google.family_name;
         }
-        else if(services.facebook){ 
+        else if(services.facebook){
             user.profile.lastName = services.facebook.last_name;
         }
 
@@ -88,16 +88,16 @@ useServiceInfo = function(user){
     if(!user.profile.gender)
         if(services.google){
             user.profile.gender = services.google.gender;
-        } 
+        }
         else if(services.facebook){
             user.profile.gender = services.facebook.gender;
         }
-    
+
     // Emails
     if(!user.profile.emails)
         if(services.google){
             user.emails = [{"address":services.google.email, "verified":services.google.verified_email}];
-        } 
+        }
         else if(services.facebook){
             user.emails = [{"address":services.facebook.email, "verified":true}];
 
@@ -120,6 +120,7 @@ addDefaultFields = function(user){
     Currently only keeps the first logging information : if user created account with google but logs in with facebook afterwards,
     facebook information is discarded (but the user is logged in on its google account).
 */
+
 Accounts.onCreateUser(function (options, user) {
     // Check if the user logged in via a service (google or facebook)
     if (user.services) {
@@ -157,9 +158,9 @@ Accounts.onCreateUser(function (options, user) {
                 // User doesn't have an email address in google or facebook.
 
                 // return the user as it came, because there he doesn't exist in the DB yet
-                
+
                 return useServiceInfo(addDefaultFields(user));
-            } 
+            }
             else {
 
                 existingUser = existingGoogleUser ? existingGoogleUser : existingFacebookUser;
@@ -190,7 +191,7 @@ Accounts.onCreateUser(function (options, user) {
 
         // even worse hackery
         Meteor.users.remove({_id: existingUser._id}); // remove existing record
-        
+
         existingUser = useServiceInfo(existingUser);
         return existingUser;                  // record is re-inserted
     }

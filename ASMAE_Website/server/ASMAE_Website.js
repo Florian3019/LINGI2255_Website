@@ -1,9 +1,12 @@
 Meteor.startup(function () {
 
+	//process.env.MAIL_URL = 'smtp://groupf.lingi2255%40gmail.com:FlorianD@smtp.gmail.com:465';
+
+
 	Meteor.publish("addresses", function () {
 		var res = Meteor.users.findOne({_id:this.userId},{"profile.addressID":1});
 		if(res){
-			return Addresses.find({_id:res.profile.addressID});	
+			return Addresses.find({_id:res.profile.addressID});
 		}
 
   	});
@@ -24,7 +27,7 @@ Meteor.startup(function () {
 		var res = couts.find({},{});
 		return res;
   	});
-  	
+
   	Meteor.publish("Questions",function(){
   		return Questions.find();
   	});
