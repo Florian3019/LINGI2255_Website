@@ -150,9 +150,12 @@
 });
 
 Tracker.autorun(function () {
-  Meteor.subscribe("courts");
-  Meteor.subscribe("addresses");
+  Meteor.subscribe("Courts");
+  Meteor.subscribe("Addresses");
   Meteor.subscribe("users");
-  Meteor.subscribe("pairs");
+  Meteor.subscribe("Pairs");
   Meteor.subscribe("Questions");
+  Meteor.subscribe("Pools");
+  Meteor.subscribe("Years");
+  Meteor.subscribe("Types");
 });

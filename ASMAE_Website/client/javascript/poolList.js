@@ -4,7 +4,6 @@
 var drake; // Draggable object
 
 Template.poolList.helpers({
-	
 	'log' : function(x, text){
 		console.log(text);
 		console.log(x);
@@ -13,23 +12,27 @@ Template.poolList.helpers({
 	// // Returns a yearData with id year
 	'getYear' : function(){
 		var year = Session.get('Year');
-		Meteor.call('getYearData', year, function(error, result){
-			Session.set('YearInfo', result);
-		});
+		var y = Years.findOne({_id:year});
+		return y;
 	},
 	
 	// Returns a typeData
-	'getType' : function(yearData, type){
-		Meteor.call('getTypeData', yearData, type, function(error, result){
-			Session.set('TypeInfo', result);
-		});
+	'getType' : function(yearData){
+		var type = Session.get('PoolType');
+		var t = Types.findOne({_id:yearData[type]});
+		return t;
 	},
 
 	// Returns a list of poolData
-	'getPools' : function(typeData, category){
-		Meteor.call('getPoolsData', typeData, category, function(error, result){
-			Session.set('PoolsInfo', result);
-		});
+	'getPools' : function(typeData){
+		category = Session.get('PoolCategory');
+		poolIdList = typeData[category];
+		poolList = [];
+		for(var i=0;i<poolIdList.length;i++){
+			pool = Pools.findOne({_id: poolIdList[i]});
+			poolList.push(pool);
+		}
+		return poolList;
 	},
 
 	'getArrayLength' : function(array){
@@ -55,30 +58,6 @@ Template.poolList.helpers({
 		}
 
 	},
-	
-	'getYearInfo' : function(){
-		return Session.get('YearInfo');
-	},
-
-	'getPoolsInfo' : function(){
-		return Session.get('PoolsInfo');
-	},
-
-	'getTypeInfo' : function(){
-		return Session.get('TypeInfo');
-	},
-
-	'getCurCategory' : function(){
-		return Session.get('PoolCategory');
-	},
-
-	'getCurType' : function(){
-		return Session.get('PoolType');
-	},
-
-	'getCurDay' : function(){
-		return Session.get('PoolDay');
-	},
 
 	'resetDrake' : function(){
 		drake = dragula().on('drag', function (el) {
@@ -100,7 +79,6 @@ Template.poolList.onCreated(function() {
 	Session.set('PoolDay', null);
 });
 
-
 Template.poolList.events({
 	'click .PoolType':function(event){
 		Session.set('PoolType', event.target.value);
@@ -116,66 +94,69 @@ Template.poolList.events({
 		Collects the state of the table of pools to save it into the db
 	*/
 	'click #save':function(event){
-			/*
-				
-				REDO this part to make it work with database changes 
-
-			*/
 		var table = document.getElementById("poolTable");
 		var cells = table.getElementsByClassName('Pairs');
 
 		// Get the pairs and their pools
 		for(var i=0, len=cells.length; i<len; i++){
-
-
 			var category = Session.get('PoolCategory');
 			var type = Session.get('PoolType');
 			var year = Session.get('Year');
 
 			c = cells[i];
-			console.log(c);
 			// Will probably have to change the path to the id, since we changed the html
 			var pairId = c.id;
-			var poolId = c.parentNode.id;
-			
-			// TODO save the data
-			console.log(pairId);
-			console.log(poolId);
+			var newPoolId = c.parentNode.id;
+			var previousPoolId = document.getElementById(pairId).getAttribute("data-startingpoolid");
+
+			if(previousPoolId!=newPoolId){
+				/*
+					Pair changed position
+				*/
+
+				// Remove that pair from the previous pool
+				Pools.update({_id:previousPoolId},{$pull : {pairs: pairId}});
+
+				// Add that pair to the new pool
+				Pools.update({_id:newPoolId}, {$push : {pairs: pairId}});
+
+				// Set the new pool id to that pair :
+				document.getElementById(pairId).setAttribute("data-startingpoolid", newPoolId);
+			}
 		}
 		
 	},
 
 	'click #addPool':function(event){
-		// TODO
-		console.log("clicked add pool");
-	}
+		var category = Session.get('PoolCategory');
+		var type = Session.get('PoolType');
+		var year = Session.get('Year');
 
+		if(! (category&&type&&year)){
+			return;
+		}
+
+		var yearData = Years.findOne({_id:year},{type:1});
+
+		var newPoolId = Pools.insert({"pairs":[]});
+		var data = {$push:{}}
+		data.$push[category] = newPoolId;
+		Types.update({_id:yearData[type]},data);
+	}
 });
 
 Template.poolItem.helpers({
-	'getPlayers' : function(player1, player2){
-		Meteor.call('getPlayerData', player1, function(error, result){
-			if(result)	document.getElementById ? document.getElementById(player1).innerHTML = result.profile.lastName + " " + result.profile.firstName : undefined;	
-		});
-		Meteor.call('getPlayerData', player2, function(error, result){
-			if(result) document.getElementById(player2) ? document.getElementById(player2).innerHTML = result.profile.lastName + " " + result.profile.firstName : undefined;
-		});
+	'getPlayer' : function(playerId){
+		return Meteor.users.findOne({_id:playerId});
 	},
 
 
 	'getPair' : function(pairId) {
-		Meteor.call('getPairData', pairId, function(error, result){
-			Session.set('PairInfo', result);
-		});
+		var pair = Pairs.findOne({_id:pairId})
+		return (pair.player1 && pair.player2) ? pair : undefined;
 	},
-
-	'getPairInfo' : function(){
-		return Session.get('PairInfo');
-	},
-
-
 });
 
-Template.poolItem.onRendered(function(){
-  drake.containers.push(document.querySelector('#'+this.data.POOLID)); // Make the id this.data.ID draggable  
+Template.poolContainerTemplate.onRendered(function(){
+  	drake.containers.push(document.querySelector('#'+this.data.POOL._id)); // Make the id this.data.ID draggable 
 });

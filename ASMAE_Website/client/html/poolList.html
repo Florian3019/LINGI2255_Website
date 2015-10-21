@@ -33,29 +33,13 @@
 
 <table id='poolTable' class='table'>
 
-  {{getYear}}
-  {{#with getYearInfo}} <!-- Returns a yearData -->
-    {{getType this getCurType}}
-      {{#with getTypeInfo}}
-
-      {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
-      {{getPools this getCurCategory}}    
-      {{#each getPoolsInfo}} <!-- Returns a list of poolData -->
-        <td>
-          <div class='parent'>
-            <h3>
-              <label class='label label-primary' for='hy'>Pool</label> <!-- TODO : set the pool name to the court address -->
-            </h3>
-            <div class='wrapper'>
-              <div class='poolContainer' id='{{_id}}'> <!-- _id is here the id of the pool -->
-                {{#each this.pairs}} <!-- For each pair id in the pool -->
-                  {{>poolItem PAIRID=this POOLID=../_id}} <!-- Set ID to the id of the pool, so that we can make it draggable -->
-                {{/each}}
-              </div>
-            </div>
-          </div>
-        </td>
-      {{/each}}
+  {{#with getYear}} <!-- Returns a yearData -->
+  {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->    
+      {{#with getType this}}
+          {{#each getPools this}} <!-- Returns a list of poolData -->
+            {{>poolContainerTemplate POOL=this}}
+          <!-- {{makeDraggable _id}} -->
+          {{/each}}
     {{/with}}
   {{/with}}
 
@@ -72,24 +56,44 @@
 
 </template>
 
+<!-- Takes 1 argument : the pool -->
+<template name="poolContainerTemplate">
+        <td>
+          <div class='parent'>
+            <h3>
+              <label class='label label-primary' for='hy'>Pool</label> <!-- TODO : set the pool name to the court address -->
+            </h3>
+            <div class='wrapper'>
+              <div class='poolContainer' id='{{POOL._id}}'> <!-- _id is here the id of the pool -->
+                {{#each POOL.pairs}} <!-- For each pair id in the pool -->
+                  {{>poolItem PAIRID=this POOLID=../POOL._id}} <!-- Set ID to the id of the pool, so that we can make it draggable -->
+                {{/each}}
+              </div>
+            </div>
+          </div>
+        </td>
+</template>
+
 <!-- 
   Takes 2 arguments :
   - PAIRID : the id of this pair
-  - ID : the id of the pool of this pair 
+  - POOLID : the id of the pool of this pair 
 -->
 <template name="poolItem">
-{{getPair PAIRID}} <!-- get the pair data using its id -->
-  {{#with getPairInfo}}
-    <div id="{{../PAIRID}}" class="Pairs">
+  {{#with getPair PAIRID}} <!-- get the pair data using its id -->
+    <div id="{{this._id}}" class="Pairs" data-startingPoolId="{{../POOLID}}">
       <a href="#" data-toggle="tooltip" title=
       "P1W: {{this.player1.wish}}
       P2W:{{this.player2.wish}}">
         <ul class="list-group">
-          <li class="list-group-item" id="{{this.player1._id}}"></li>
-          <li class="list-group-item" id="{{this.player2._id}}"></li>
+          {{#with getPlayer this.player1._id}}
+            <li class="list-group-item" id="{{this.player1._id}}">{{profile.firstName}} {{profile.lastName}}</li>
+          {{/with}}
+          {{#with getPlayer this.player2._id}}
+            <li class="list-group-item" id="{{this.player2._id}}">{{profile.firstName}} {{profile.lastName}}</li>
+          {{/with}}
         </ul>
       </a>
-      {{getPlayers this.player1._id this.player2._id}}
     </div>
   {{/with}}
 </template>
