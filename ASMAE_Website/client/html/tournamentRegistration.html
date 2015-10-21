@@ -1,6 +1,7 @@
 <template name="tournamentRegistration">
 <div>
-	<h2>Enregistrement au tournoi</h2>
+	<div id="titleDiv"> <h2>Enregistrement au tournoi</h2> </div>
+
 	<form role="form">
 
 		<div class="form-group has-feedback" id="lastnameDiv">
@@ -99,7 +100,7 @@
        			<div class="form-group has-feedback" id="numberDiv">
         			 <label for="text">Numéro</label>
         		 	  <div class="input-group">
-                <input type="number" class="form-control" id="addressnumber" placeholder="20" value="{{addressNumber}}" name="addressNumber">
+                <input type="number" min="0"  class="form-control" id="addressnumber" placeholder="20" value="{{addressNumber}}" name="addressNumber">
                 <div id="numberError" hidden>
                   <span class="help-block" >Merci d'entrer votre numéro</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -129,7 +130,7 @@
       			<div class="form-group has-feedback" id="zipcodeDiv">
       		  		<label for="text">Code Postal</label>
       		 		  <div class="input-group">
-                <input type="number" class="form-control" id="zipcode" placeholder="6230" value="{{zipcode}}" name="zipcode">
+                <input type="number" min="0"  class="form-control" id="zipcode" placeholder="6230" value="{{zipcode}}" name="zipcode">
                 <div id="zipcodeError" hidden>
                   <span class="help-block" >Merci d'entrer votre code postal</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -249,6 +250,7 @@
        		<textarea name="playerConstraints" id="playerConstraints" class="form-control"></textarea>
   		</div>
 
+
       <div class="row">
         <div class="form-group col-md-3 checkboxAloneDiv" id="checkboxAloneDiv">
           <label class="checkbox-inline"><input type="checkbox" value="" id="alone">   Je veux m'inscrire seul</label>
@@ -323,4 +325,6 @@
 	</form>
 
 </div>
+
 </template>
+

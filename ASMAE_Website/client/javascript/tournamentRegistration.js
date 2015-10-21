@@ -288,13 +288,14 @@ Template.tournamentRegistration.events({
 
 		var alone = event.target.alone.checked; // True if the player tries to register alone
 		var player2ID;
-		if(!alone){
+		if(!alone && $(emailPlayerDiv).is(":visible")){
 			// User wants to register a pair, collect the partner's id from his email.
 	    	var email = event.target.emailPlayer.value;
 	    	// Check that we know that email
 	    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
 	    	if(!u){
 	    		errors.push({id:"emailPlayer", error:true});
+	    		console.log("error");
 				hasError = true;
 	    	}
 	    	else{
@@ -462,13 +463,29 @@ Template.tournamentRegistration.events({
 			// paymentID:<paymentID>
 		};
 
-		var remove; // By default, this is undefine. If it is defined, contains the id of a pair to remove
+		if(!$(emailPlayerDiv).is(":visible")){
+			// the user wants to confirm his registration with a pair that already exists
+			
+			var pair = Session.get("pair");
 
-		/*
+			console.log(pair);
+
+			var pairData={
+					_id:pair._id,
+					player2:playerData
+				};
+			console.log(pairData);
+
+		}
+		else{
+
+			var remove; // By default, this is undefine. If it is defined, contains the id of a pair to remove
+
+			/*
 			Depending if user wants to register alone or with a pair, choose appropriate action
-		*/
-		var pairData;
-		if(alone && !later){
+			*/
+			var pairData;
+			if(alone && !later){
 			var pair = getPairId(Meteor.userId() ); // != false if the user is already in a pair
 			if( pair!=false ){
 				// User is already in a pair
@@ -490,42 +507,42 @@ Template.tournamentRegistration.events({
 			}
 
 
-    		// Player wants to register alone but chose a partner in the list
+			// Player wants to register alone but chose a partner in the list
 
-    		var player1_pairID = Session.get('aloneSelected'); // The player's 1 pair id, from the selected item in the list
-    		if(!player1_pairID){
-    			// errors.push({id:"checkboxAlone", error:true});
-        		hasError = true;
-        	}
-    		pairData = {
-    			_id:player1_pairID,
+			var player1_pairID = Session.get('aloneSelected'); // The player's 1 pair id, from the selected item in the list
+			if(!player1_pairID){
+				// errors.push({id:"checkboxAlone", error:true});
+				hasError = true;
+			}
+			pairData = {
+				_id:player1_pairID,
 				player2:playerData
-		    };
+			};
 
-    	}
-    	else{
+			}
+			else{
 
-    		if(alone){
-    			// Player wants to register alone but wants to wait for another to join on him
-	    		pairData = {
-		    		year:currentYear,
+			if(alone){
+				// Player wants to register alone but wants to wait for another to join on him
+				pairData = {
+					year:currentYear,
 					day: dateMatch,
 					//category:<category>, TODO
 					player1:playerData
-		    	};
-    		}
-    		else{
-    			// Player registers a pair
-		    	pairData = {
-		    		year:currentYear,
+				};
+			}
+			else{
+				// Player registers a pair
+				pairData = {
+					year:currentYear,
 					day: dateMatch,
 					//category:<category>, TODO
 					player1:playerData,
 					player2:{_id:player2ID} // TODO--> give all player info
-		    	};
-		    }
-    	}
- 	
+				};
+			}
+			}
+		}
 
  		/*
 			Display all errors
@@ -534,7 +551,10 @@ Template.tournamentRegistration.events({
         	var d = errors[i];
         	set_error(d.id, d.error);
         }
-        if(hasError) return false; // Cancel form submission if errors occured
+        if(hasError){
+        	console.log("An error occured");
+        	return false; // Cancel form submission if errors occured
+        }
 
         /*
 			Update the db !
