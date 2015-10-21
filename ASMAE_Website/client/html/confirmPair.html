@@ -1,0 +1,18 @@
+<template name="confirmPair">
+	<h2> Enregistrement au tournoi avec  {{getNameOtherPlayer idPair}}</h2>
+
+	<div class="container">
+		{{urlFor 'confirmPair' _id=idPair}}
+	</div>
+
+	{{>tournamentRegistration}}
+
+<script>
+
+    document.getElementById("emailPlayerDiv").style.display = "none";
+    document.getElementById("checkboxAloneDiv").style.display = "none";
+    document.getElementById("titleDiv").style.display = "none";
+</script>
+
+
+</template>
