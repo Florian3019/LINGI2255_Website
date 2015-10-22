@@ -167,10 +167,10 @@ Meteor.methods({
 				return false;
 			}
 			if(gender1){
-				return gender1=="homme" ? "men" : "women";
+				return gender1=="M" ? "men" : "women";
 			}
 			if(gender2){
-				return gender2=="homme" ? "men" : "women";
+				return gender2=="M" ? "men" : "women";
 			}
 		}
 		if(dateMatch == "saturday"){
@@ -1186,7 +1186,7 @@ Meteor.methods({
 		}
 		return Questions.insert(data)
 	},
-	
+
 	'updateQuestionStatus': function(nemail,nquestion,ndate){
 		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
         	$set: {processed: true}

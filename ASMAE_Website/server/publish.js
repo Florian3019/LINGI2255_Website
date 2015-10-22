@@ -1,10 +1,10 @@
 Meteor.publish('Courts', function(){
-    //TODO: si user dans le staff alors publier tous les courts 
+    //TODO: si user dans le staff alors publier tous les courts
     return Courts.find({ownerID: this.userId});
 });
 
 Meteor.publish('Addresses', function(){
-    //TODO: si user dans le staff alors publier tous les courts 
+    //TODO: si user dans le staff alors publier tous les courts
     return Addresses.find({userID: this.userId});
 });
 
@@ -24,13 +24,13 @@ Meteor.publish("Pairs", function () {
 	var res = Pairs.find({},{});
 	return res;
 });
- 
+
 	Pools.allow({
     	'insert': function (userId,doc) {
 	      	/* user and doc checks ,
 	      	return true to allow insert */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-	      		return true; 
+	      		return true;
 	  		}
 	  		else{
 	  			return false;
@@ -40,7 +40,7 @@ Meteor.publish("Pairs", function () {
 	      	/* user and doc checks ,
 	      	return true to allow insert */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-	      		return true; 
+	      		return true;
 	  		}
 	  		else{
 	  			return false;
@@ -50,7 +50,7 @@ Meteor.publish("Pairs", function () {
 	      	/* user and doc checks ,
 	      	return true to allow insert */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-	      		return true; 
+	      		return true;
 	  		}
 	  		else{
 	  			return false;
@@ -63,7 +63,7 @@ Meteor.publish("Pairs", function () {
 	      	/* user and doc checks ,
 	      	return true to allow insert */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-	      		return true; 
+	      		return true;
 	  		}
 	  		else{
 	  			return false;
@@ -73,7 +73,7 @@ Meteor.publish("Pairs", function () {
 	      	/* user and doc checks ,
 	      	return true to allow insert */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-	      		return true; 
+	      		return true;
 	  		}
 	  		else{
 	  			return false;
@@ -83,7 +83,7 @@ Meteor.publish("Pairs", function () {
 	      	/* user and doc checks ,
 	      	return true to allow insert */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-	      		return true; 
+	      		return true;
 	  		}
 	  		else{
 	  			return false;
@@ -96,7 +96,7 @@ Meteor.publish("Pairs", function () {
 	      	/* user and doc checks ,
 	      	return true to allow insert */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-	      		return true; 
+	      		return true;
 	  		}
 	  		else{
 	  			return false;
@@ -106,7 +106,7 @@ Meteor.publish("Pairs", function () {
 	      	/* user and doc checks ,
 	      	return true to allow insert */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-	      		return true; 
+	      		return true;
 	  		}
 	  		else{
 	  			return false;
@@ -116,7 +116,7 @@ Meteor.publish("Pairs", function () {
 	      	/* user and doc checks ,
 	      	return true to allow insert */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-	      		return true; 
+	      		return true;
 	  		}
 	  		else{
 	  			return false;
@@ -136,4 +136,55 @@ Meteor.publish("Pairs", function () {
 	Meteor.publish("Types", function(){
 		return Types.find({},{});
 	});
+
+
+    /*
+    * Only publish the pair needed. Publish nothing if player does not belong to the pair.
+    * Known uses : client/myRegistration
+    */
+    Meteor.publish("PairInfo", function(pairID){
+        var currentUser = this.userId;
+        pair = Pairs.findOne({_id:pairID});
+        if (!pair) {
+            console.error("Error publish PairInfo : no pair matching id "+pairID+" found in the DB.");
+            return undefined;
+        }
+        if (pair.player1._id != currentUser && pair.player2._id != currentUser) {
+            console.error("Error publish PairInfo : you do not belong to the pair with ID="+pairID);
+            return undefined;
+        }
+        return Pairs.find({_id:pairID});
+    });
+
+    /*
+    * Only publish the address of the partner. Publish nothing if player does not belong to the pair.
+    * Known uses : client/myRegistration
+    */
+    Meteor.publish("PartnerAdress", function(pairID) {
+        var currentUser = this.userId;
+        pair = Pairs.findOne({_id:pairID});
+        if (!pair) {
+            console.error("Error publish PartnerAdress : no pair matching id "+pairID+" found in the DB.");
+            return undefined;
+        }
+        if (pair.player1._id != currentUser && pair.player2._id != currentUser) {
+            console.error("Error publish PartnerAdress : you do not belong to the pair with ID="+pairID);
+            return undefined;
+        }
+        var user;
+        if(pair.player1._id != currentUser){
+          user = Meteor.users.findOne({_id:pair.player1._id});
+        }
+        else if(pair.player2 && pair.player2._id != currentUser){
+          user = Meteor.users.findOne({_id:pair.player2._id});
+        }
+        if(!user) {
+            console.error("Error publish PartnerAdress : you do not have a partner in this pair (ID="+pairID+")");
+            return undefined;
+        }
+        var addrID = user.profile.addressID;
+        return Addresses.find({_id:addrID});
+
+
+    });
 // }
