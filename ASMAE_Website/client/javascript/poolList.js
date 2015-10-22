@@ -212,3 +212,9 @@ Template.poolItem.helpers({
 Template.poolContainerTemplate.onRendered(function(){
   	drake.containers.push(document.querySelector('#'+this.data.POOL._id)); // Make the id this.data.ID draggable 
 });
+
+Template.poolContainerTemplate.helpers({
+	'moreThanOnePair' : function(pairs){
+		return pairs.length>0;
+	}
+});

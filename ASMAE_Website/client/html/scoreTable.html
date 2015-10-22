@@ -1,0 +1,75 @@
+
+<!-- Takes 1 parameter : the poolId for this score table-->
+<template name="scoreTable">
+
+
+<table id='scoreTable' class='table'>
+
+{{#with getPairs this._id}}
+  <tr>
+    <th>
+      <div class="page-header">
+        <h1><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> VS <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> </h1>
+      </div>
+    </th>
+      {{#each this}}
+        <th>
+          <ul class="list-group">
+          {{#with getPlayer this.player1._id}}
+            <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
+          {{/with}}
+          {{#with getPlayer this.player2._id}}
+            <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
+          {{/with}}
+          </ul>
+        </th>
+      {{/each}}
+  </tr>
+
+
+  {{#each this}}
+    <tr> 
+        <th>
+          <ul class="list-group">
+          {{#with getPlayer this.player1._id}}
+            <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
+          {{/with}}
+          {{#with getPlayer this.player2._id}}
+            <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
+          {{/with}}
+          </ul>
+        </th>
+
+        {{#each ..}}
+          {{#if equals this._id ../_id}}
+          <td class="selfMatch">
+            
+          </td>
+          {{else}}
+          <td>
+            <div class="input-group" display="inline">
+              <!-- {{#with getMatch ../_id this._id}} -->
+              <!-- {{#with 0}} -->
+              <input 
+                type="number"
+                min="0"
+                step="1" 
+                class="form-control points" 
+                data-matchid="{{this._id}}" 
+                placeholder="0"> 
+                <!-- value="{{#if equals ../_id this.pair1}} this.result.pair1Points {{else}} this.result.pair2Points {{/if}}"> --> <!-- The id is the id of the pair for which the points are entered -->
+              <!-- {{/with}} -->
+            </div>
+          </td>
+          {{/if}}
+        {{/each}}
+    </tr>
+  {{/each}}
+{{/with}}
+</table>
+
+
+<button type="button" id="save" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Save
+</button>
+</template>
