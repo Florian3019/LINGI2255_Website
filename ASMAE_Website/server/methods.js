@@ -993,6 +993,28 @@ Meteor.methods({
 
 	},
 
+	// Removes the pool and all its dependencies. Does not erase its pairs nor matches from the db.
+	'removePool' : function(poolId, year, type, category){
+		if(! (category&&type&&year)){
+			return;
+		}
+
+		dataY = {};
+		dataY[type] = 1;
+		// We need to find the type's id, since it's what contains the poolid
+		var yearData = Years.findOne({_id:year},dataY);
+		var typeId = yearData[type];
+
+		// Remove the poolId from the category of the type
+		var typeData = Types.findOne({_id:typeId});
+		var data = {$pull:{}};
+		data.$pull[category] = poolId;
+
+		// DB call
+		Types.update({_id:typeId}, data);
+		Pools.remove({_id:poolId});
+	},
+
 	/*
 		@param pairID a valid ID for a pair that is the Pairs table
 
