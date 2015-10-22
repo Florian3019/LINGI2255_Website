@@ -45,6 +45,16 @@ Meteor.publish("Pairs", function () {
 	  		else{
 	  			return false;
 	  		}
+    	},
+    	'remove': function (userId,doc) {
+	      	/* user and doc checks ,
+	      	return true to allow insert */
+	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+	      		return true; 
+	  		}
+	  		else{
+	  			return false;
+	  		}
     	}
   	});
 
@@ -68,8 +78,52 @@ Meteor.publish("Pairs", function () {
 	  		else{
 	  			return false;
 	  		}
+    	},
+    	'remove': function (userId,doc) {
+	      	/* user and doc checks ,
+	      	return true to allow insert */
+	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+	      		return true; 
+	  		}
+	  		else{
+	  			return false;
+	  		}
     	}
   	});
+
+	Pairs.allow({
+    	'insert': function (userId,doc) {
+	      	/* user and doc checks ,
+	      	return true to allow insert */
+	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+	      		return true; 
+	  		}
+	  		else{
+	  			return false;
+	  		}
+    	},
+    	'update': function (userId,doc) {
+	      	/* user and doc checks ,
+	      	return true to allow insert */
+	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+	      		return true; 
+	  		}
+	  		else{
+	  			return false;
+	  		}
+    	},
+    	'remove': function (userId,doc) {
+	      	/* user and doc checks ,
+	      	return true to allow insert */
+	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+	      		return true; 
+	  		}
+	  		else{
+	  			return false;
+	  		}
+    	}
+	});
+
 
 	Meteor.publish("Pools", function(){
 		return Pools.find({},{});

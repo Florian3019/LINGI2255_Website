@@ -28,9 +28,25 @@ Template.poolList.helpers({
 		category = Session.get('PoolCategory');
 		poolIdList = typeData[category];
 		poolList = [];
-		for(var i=0;i<poolIdList.length;i++){
-			pool = Pools.findOne({_id: poolIdList[i]});
-			poolList.push(pool);
+		
+		const MAXCOLUMNS = 3; // Change this value if needed
+		var k = 0;
+		var column = [];
+		if(poolIdList){
+			for(var i=0;i<poolIdList.length;i++){
+				pool = Pools.findOne({_id: poolIdList[i]});
+				
+				if(k>=MAXCOLUMNS){
+					poolList.push(column);
+					column = [];
+					k=0;
+				}
+				column.push(pool);
+				k++;
+			}
+			if(column.length>0){
+				poolList.push(column);
+			}
 		}
 		return poolList;
 	},
@@ -43,20 +59,8 @@ Template.poolList.helpers({
 		return x==y;
 	},
 
-	'newRow' : function(){
-
-		return false;
-
-		var colNumber = Session.get("ColNumber");
-		if(colNumber>= 1*2){
-			Session.set("ColNumber", 0);
-			return true;
-		}
-		else{
-			Session.set("ColNumber", colNumber+1);
-			return false;
-		}
-
+	'getRemovePool' : function(){
+		return {"_id":"toRemove", "pairs":[]}
 	},
 
 	'resetDrake' : function(){
@@ -71,6 +75,10 @@ Template.poolList.helpers({
 	  });
 	}
 
+});
+
+Template.pairsToRemoveContainerTemplate.onRendered(function(){
+  	drake.containers.push(document.querySelector('#pairstoremove'));
 });
 
 Template.poolList.onCreated(function() {
@@ -94,8 +102,12 @@ Template.poolList.events({
 		Collects the state of the table of pools to save it into the db
 	*/
 	'click #save':function(event){
+
+		/*
+			Move the pairs in their new pool
+		*/
 		var table = document.getElementById("poolTable");
-		var cells = table.getElementsByClassName('Pairs');
+		var cells = table.getElementsByClassName('pairs');
 
 		// Get the pairs and their pools
 		for(var i=0, len=cells.length; i<len; i++){
@@ -125,6 +137,45 @@ Template.poolList.events({
 			}
 		}
 		
+		/*
+			Remove from the db unwanted pairs
+		*/
+		var allTables = document.getElementById("allTables");
+		console.log(allTables);
+		var columnPairToRemove = allTables.rows[0];
+		console.log(columnPairToRemove);
+		console.log(columnPairToRemove.cells[1]);
+		var pairsToRemove = columnPairToRemove.cells[1].getElementsByClassName('pairs');
+
+
+		for(var i=0;i<pairsToRemove.length;i++){
+			var pairId = pairsToRemove[i].id;
+			var poolId = document.getElementById(pairId).getAttribute("data-startingpoolid"); // The pair's pool id
+
+			// Remove that pair from its pool
+			Pools.update({_id:poolId},{$pull : {pairs: pairId}});
+
+			// Remove that pair from the db
+			Pairs.remove({_id:pairId});
+		}
+	},
+
+	'click #removePool' : function(event){
+		var poolId = event.currentTarget.dataset.poolid;
+		var category = Session.get('PoolCategory');
+		var type = Session.get('PoolType');
+		var year = Session.get('Year');
+		/*
+			Move the pairs from that pool in the 'to remove pairs'
+		*/
+		// Start by finding the pool container of the pool we'd like to remove, and take the pairs inside it
+		var pairsToRemove = document.getElementById(poolId).children;
+		if(pairsToRemove.length != 0){
+			console.log("Can't remove a pool that is not empty");
+			return;
+		}
+
+		Meteor.call('removePool', poolId, year, type, category);
 	},
 
 	'click #addPool':function(event){
@@ -153,6 +204,7 @@ Template.poolItem.helpers({
 
 	'getPair' : function(pairId) {
 		var pair = Pairs.findOne({_id:pairId})
+		if(!pair) return undefined;
 		return (pair.player1 && pair.player2) ? pair : undefined;
 	},
 });

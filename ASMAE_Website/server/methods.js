@@ -20,7 +20,7 @@ Meteor.methods({
 	    }
 	    return true;
 	},
-	
+
 	/*
 		Returns true if the address addr is already a court address present in the DB.
 	*/
@@ -992,6 +992,28 @@ Meteor.methods({
 
 	},
 
+	// Removes the pool and all its dependencies. Does not erase its pairs nor matches from the db.
+	'removePool' : function(poolId, year, type, category){
+		if(! (category&&type&&year)){
+			return;
+		}
+
+		dataY = {};
+		dataY[type] = 1;
+		// We need to find the type's id, since it's what contains the poolid
+		var yearData = Years.findOne({_id:year},dataY);
+		var typeId = yearData[type];
+
+		// Remove the poolId from the category of the type
+		var typeData = Types.findOne({_id:typeId});
+		var data = {$pull:{}};
+		data.$pull[category] = poolId;
+
+		// DB call
+		Types.update({_id:typeId}, data);
+		Pools.remove({_id:poolId});
+	},
+
 	/*
 		@param pairID a valid ID for a pair that is the Pairs table
 
@@ -1163,10 +1185,24 @@ Meteor.methods({
 		}
 		return Questions.insert(data)
 	},
-
+	
+	'updateQuestionStatus': function(nemail,nquestion,ndate){
+		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
+        	$set: {processed: true}
+      		});
+	},
 
 	//You need to add the secrets.js file inside the server folder.
-	emailFeedback: function (to, subject, body, any_variable) {
+/*
+	@param to: is for the receiver email,
+	@param subject : is for the object of the mail,
+	@param data : var dataContext = {
+											intro:"Bonjour tdc,",
+											message:"j'aurais pu mettre un lorem..."
+										};
+	*/
+	'emailFeedback': function (to, subject, html) {
+
 
 							// Don't wait for result
 							this.unblock();
@@ -1179,7 +1215,7 @@ Meteor.methods({
 										"from":"ingi2255groupf@asmae.com",
 										"to":to,
 										"subject": subject,
-										"html": body,
+										"html": html,
 									}
 								}
 								var onError = function(error, result) {
@@ -1188,6 +1224,7 @@ Meteor.methods({
 
 								// Send the request
 								Meteor.http.post(postURL, options, onError);
+								console.log("Email sent");
 	}
 /* This one is for sending email with smtp and the MAIL_URL environment variable but i can't connect this one with google.
 	'sendEmail' : function(to, from, subject, text){
