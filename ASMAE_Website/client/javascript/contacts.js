@@ -17,7 +17,7 @@ var datetime =    currentdate.getDate() + "/"
             question : $('[name=question]').val(),
         	}
         
-    	if (confirm("Merci pour votre question ! \n\nEtes vous certain de vouloir soumettre cette ceci ? : \n\n Nom : "+Question.lastname+"\n\n Prénom : "+Question.firstname+"\n\n Email : "+Question.email+"\n\n Question : \n "+ Question.question+"\n\n") == true) {
+    	if (confirm("Merci pour votre question ! \n\nEtes vous certain de vouloir soumettre ceci ? : \n\n Nom : "+Question.lastname+"\n\n Prénom : "+Question.firstname+"\n\n Email : "+Question.email+"\n\n Question : \n "+ Question.question+"\n\n") == true) {
     	   	Meteor.call('insertQuestion', Question);
 		Router.go('home');
     
