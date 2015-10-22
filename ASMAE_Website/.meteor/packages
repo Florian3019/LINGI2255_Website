@@ -31,3 +31,5 @@ meteorhacks:search-source
 email
 http
 meteorhacks:ssr
+sanjo:jasmine
+velocity:html-reporter

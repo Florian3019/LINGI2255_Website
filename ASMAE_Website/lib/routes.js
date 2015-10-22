@@ -26,7 +26,7 @@ Router.route('/rules', {
 	name: 'rules',
 	template: 'rules'
 });
-Router.route('/myRegistration', {
+Router.route('/confirmation-inscription-tournoi', {
 	name: 'myRegistration',
 	template: 'myRegistration'
 });
@@ -46,6 +46,14 @@ Router.route('/tournament-registration',  {
 Router.route('/poolList', {
 	name: 'poolList',
 	template: 'poolList'
+});
+
+Router.route('/scoreTable/:poolId', {
+	name: 'scoreTable',
+	template: 'scoreTable',
+	data: function(){
+		return Pools.findOne({_id:this.params.poolId});
+    }
 });
 
 Router.route('/court-registration', {
@@ -190,7 +198,11 @@ Router.route('/confirmation_registration_court/:_id', {
 		data.owner = owner;
 		data.address = address;
 		return data;
-    }
+    },
+
+    waitOn: function(){
+        return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
+    }	
 	
 	/*
 	onBeforeAction: function() {
@@ -225,7 +237,7 @@ Router.route('/modify-court/:_id', {
         }
     },
     waitOn: function(){
-        return [ Meteor.subscribe('courts'), Meteor.subscribe('addresses') ]
+        return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses') ]
     }	
 	
 });
