@@ -1165,9 +1165,9 @@ Meteor.methods({
 		return Questions.insert(data)
 	},
 	
-	'updateQuestionStatus': function(nemail,nquestion,ndate){
+	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
 		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
-        	$set: {processed: true}
+        	$set: {processed: true,answer:nanswer}
       		});
 	},
 
