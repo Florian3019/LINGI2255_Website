@@ -16,7 +16,13 @@ var datetime =    currentdate.getDate() + "/"
             date : datetime,
             question : $('[name=question]').val(),
         	}
-        Meteor.call('insertQuestion', Question);
-
+        
+    	if (confirm("Merci pour votre question ! \n\nEtes vous certain de vouloir soumettre ceci ? : \n\n Nom : "+Question.lastname+"\n\n Prénom : "+Question.firstname+"\n\n Email : "+Question.email+"\n\n Question : \n "+ Question.question+"\n\n") == true) {
+    	   	Meteor.call('insertQuestion', Question);
+		Router.go('home');
+    
+    	} else {
+        	
+    	}
     }
 });
