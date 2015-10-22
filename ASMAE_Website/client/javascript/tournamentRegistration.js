@@ -581,7 +581,7 @@ Template.tournamentRegistration.events({
 
         Meteor.call('updatePairs', pairData, callback);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
-    	Router.go('/myRegistration');
+    	Router.go('myRegistration');
     }
 
 
