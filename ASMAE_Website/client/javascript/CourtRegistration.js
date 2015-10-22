@@ -64,9 +64,6 @@ Template.courtRegistration.events({
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
 
-        console.log("dans le submit: "+ courtData.dispoSamedi);
-        console.log("dans le submit: "+ courtData.dispoDimanche);
-
 		Meteor.call('updateCourt', courtData, address, function(error, result){
             if(error){
                 console.error('CourtRegistration error');
