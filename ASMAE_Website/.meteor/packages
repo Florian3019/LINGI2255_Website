@@ -30,3 +30,5 @@ themeteorchef:jquery-validation
 meteorhacks:search-source
 email
 http
+sanjo:jasmine@0.20.0
+velocity:html-reporter

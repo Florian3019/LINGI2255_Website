@@ -349,10 +349,6 @@ Meteor.methods({
 			data.staffComment = courtData.staffComment;
 		}
 
-
-		console.log("courtData samedi recu:" + courtData.dispoSamedi);
-		console.log("courtData dim recu:" + courtData.dispoDimanche);
-
 		if(courtData.dispoSamedi !== null && typeof courtData.dispoSamedi !== 'undefined'){
 			data.dispoSamedi = courtData.dispoSamedi;
 		}
@@ -375,11 +371,11 @@ Meteor.methods({
 			if(address && Meteor.call('addressExists', address)){
 				console.log("Court already exists :");
 				console.log(address);
-				return false;
+				return null;
 			}
 
 			// Create a new court
-			return Courts.insert(data, function(err, courtId){
+			var courtId = Courts.insert(data, function(err, courtId){
 				if(err){
 					console.error('updateCourt error');
 					console.error(err);
@@ -392,18 +388,21 @@ Meteor.methods({
 				}
 			});
 		}
-
-		// Court already exists, so just update it :
-		Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
-			if(err){
-				console.error('updateCourt error');
-				console.error(err);
-				return callback(null);
-			}
-			if(address){
-				Meteor.call('updateAddress', address, courtData.ownerID, courtId);
-			}
-		});
+		else
+		{
+			// Court already exists, so just update it :
+			Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
+				if(err){
+					console.error('updateCourt error');
+					console.error(err);
+					return callback(null);
+				}
+				if(address){
+					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
+				}
+			});
+		}
+		
 		return courtId;
 	},
 
