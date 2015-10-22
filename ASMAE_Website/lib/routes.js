@@ -85,11 +85,8 @@ Router.route('/court/:_id', {
 	template: 'courtInfoPage',
 	data: function(){
 		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
-		console.log(court);
 		var owner = Meteor.users.findOne({_id: court.ownerID});
-		console.log(owner);
 		var address = Addresses.findOne({_id: court.addressID});
-		console.log(address);
 		var data = {};
 		data.court = court;
 		data.owner = owner;
@@ -190,8 +187,8 @@ Router.route('/confirmation_registration_court/:_id', {
 	
 	data: function(){
 		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
-		console.log(court);
 		var owner = Meteor.users.findOne({_id: court.ownerID});
+		console.log(owner);
 		var address = Addresses.findOne({_id: court.addressID});
 		var data = {};
 		data.court = court;
@@ -237,7 +234,7 @@ Router.route('/modify-court/:_id', {
         }
     },
     waitOn: function(){
-        return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses') ]
+        return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
     }	
 	
 });

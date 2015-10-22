@@ -1,6 +1,14 @@
 Template.navigation.helpers({
 	'isStaff': function(){
-		return (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin);
+		if(Meteor.user())
+		{
+			return (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin);
+		}
+		else
+		{
+			return false;
+		}
+		
 	}
 });
 
