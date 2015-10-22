@@ -1,4 +1,4 @@
-
+SSR.compileTemplate("mailing", Assets.getText("mailing.html"));
 SSR.compileTemplate("verifMail", Assets.getText("verifmail.html"));
 
 Template.verifMail.helpers({
@@ -10,6 +10,24 @@ Template.verifMail.helpers({
 	}
 
 });
+
+
+Template.mailing.helpers({
+	introhtml: function(){
+		 return this.intro;
+	},
+	importanthtml: function(){
+		 return this.important;
+	},
+	texthtml: function(){
+		 return this.text;
+	},
+	encadrehtml : function(){
+		return this.encadre;
+	},
+});
+
+
 
 Accounts.emailTemplates.siteName="Le Charles de Lorraine";
 Accounts.emailTemplates.from = "Le Charles de Lorraine <staff@lecharlesdelorraine.com>";
