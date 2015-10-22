@@ -20,7 +20,7 @@ Meteor.methods({
 	    }
 	    return true;
 	},
-	
+
 	/*
 		Returns true if the address addr is already a court address present in the DB.
 	*/
@@ -1171,9 +1171,17 @@ Meteor.methods({
       		});
 	},
 
-
 	//You need to add the secrets.js file inside the server folder.
-	'emailFeedback': function (to, subject, body, any_variable) {
+/*
+	@param to: is for the receiver email,
+	@param subject : is for the object of the mail,
+	@param data : var dataContext = {
+											intro:"Bonjour tdc,",
+											message:"j'aurais pu mettre un lorem..."
+										};
+	*/
+	'emailFeedback': function (to, subject, html) {
+
 
 							// Don't wait for result
 							this.unblock();
@@ -1186,7 +1194,7 @@ Meteor.methods({
 										"from":"ingi2255groupf@asmae.com",
 										"to":to,
 										"subject": subject,
-										"html": body,
+										"html": html,
 									}
 								}
 								var onError = function(error, result) {
@@ -1195,6 +1203,7 @@ Meteor.methods({
 
 								// Send the request
 								Meteor.http.post(postURL, options, onError);
+								console.log("Email sent");
 	}
 /* This one is for sending email with smtp and the MAIL_URL environment variable but i can't connect this one with google.
 	'sendEmail' : function(to, from, subject, text){
