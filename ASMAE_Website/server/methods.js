@@ -1164,10 +1164,16 @@ Meteor.methods({
 		}
 		return Questions.insert(data)
 	},
+	
+	'updateQuestionStatus': function(nemail,nquestion,ndate){
+		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
+        	$set: {processed: true}
+      		});
+	},
 
 
 	//You need to add the secrets.js file inside the server folder.
-	emailFeedback: function (to, subject, body, any_variable) {
+	'emailFeedback': function (to, subject, body, any_variable) {
 
 							// Don't wait for result
 							this.unblock();
