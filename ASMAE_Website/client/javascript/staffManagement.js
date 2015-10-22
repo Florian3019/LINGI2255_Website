@@ -1,9 +1,18 @@
 Template.staffManagement.ShowStaff = function(){
 	return Questions.find()
 }
+var ison = false;
 Template.staffManagement.events({
 	'click .btn':function(){
-		Meteor.call('updateQuestionStatus',this.email,this.question,this.date);
+		if(this.processed)
+			alert(this.answer)
+		else
+			{
+				Meteor.call('emailFeedback',this.email,"Reponse à votre question",comment.value);
+				Meteor.call('updateQuestionStatus',this.email,this.question,this.date,comment.value);
+				Router.go('home');
+				alert("Votre message a bien été envoyé");
+			}
 	}
 	
 });
@@ -16,10 +25,18 @@ Template.staffManagement.helpers({
 	},
 	'showIt' : function(){
 		if(this.processed){
-			return "visibility:hidden";
+			return "display:none";
 		}
 		else
-			return "visibility:visible";
+			return "display:block";
+		
+	},
+	'dontShowIt' : function(){
+		if(this.processed){
+			return "display:block";
+		}
+		else
+			return "display:none";
 	}
 
 });

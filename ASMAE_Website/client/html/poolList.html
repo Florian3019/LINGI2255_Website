@@ -79,7 +79,15 @@
               <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}">
                 <span class="glyphicon glyphicon-remove removePoolButton" aria-hidden="true"></span> 
               </button>
+              {{#if moreThanOnePair POOL.pairs}}
+              <a href="{{pathFor route='scoreTable' poolId=POOL._id}}" style="text-decoration:none;">
+              <button type="button" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> 
+              </button>
+              </a>
+              {{/if}}
               <label class='label label-primary' for='hy'>Pool</label> <!-- TODO : set the pool name to the court address -->
+              
             </h3>
             <div class='wrapper'>
               <div class='poolContainer' id='{{POOL._id}}'> <!-- _id is here the id of the pool -->
@@ -113,7 +121,7 @@
 <template name="poolItem">
   {{#with getPair PAIRID}} <!-- get the pair data using its id -->
     <div id="{{this._id}}" class="pairs" data-startingPoolId="{{../POOLID}}">
-      <a href="#" class="wish_constraint" data-toggle="tooltip" title=
+      <a href="#" class="wish_constraint" style="text-decoration:none;" data-toggle="tooltip" title=
       "P1W: {{this.player1.wish}}
       P2W:{{this.player2.wish}}">
         <ul class="list-group">

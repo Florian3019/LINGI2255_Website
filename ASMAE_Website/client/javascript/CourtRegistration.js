@@ -64,11 +64,15 @@ Template.courtRegistration.events({
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
 
-        console.log("dans le submit: "+ courtData.dispoSamedi);
-        console.log("dans le submit: "+ courtData.dispoDimanche);
-
-		Meteor.call('updateCourt', courtData, address, function(courtId){
-			Router.go('confirmation_registration_court', {_id: results});
+		Meteor.call('updateCourt', courtData, address, function(error, result){
+            if(error){
+                console.error('CourtRegistration error');
+                console.error(error);
+            }
+            else if(result == null){
+                console.error("No result");
+            }
+			Router.go('confirmation_registration_court', {_id: result});
 	    });
     }
 });
