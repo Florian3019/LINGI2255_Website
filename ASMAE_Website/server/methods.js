@@ -42,7 +42,6 @@ Meteor.methods({
 	},
 
 	'isStaff' : function(){
-		console.log("staff");
 		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isStaff":1});
 		return res ? res.profile.isStaff : false;
 	},
@@ -292,10 +291,12 @@ Meteor.methods({
 		}
 	*/
 	'updateCourt' : function(courtData, address, callback){
-		if(!courtData.ownerID){
-			console.error("updateCourt : Must provide owner id to update the court !");
-			return false;
+		var courtId = courtData._id;
+		if(!courtData.ownerID) //New court
+		{
+			courtData.ownerID = Meteor.userId();
 		}
+
 		var u = Meteor.users.findOne({_id:courtData.ownerID});
 		if(!u){
 			console.error('updateCourt : owner does not exist !');
@@ -312,7 +313,8 @@ Meteor.methods({
 		}
 
 
-       		/*TO ADD:
+       		/*			TODO
+       		ADD:
 
        		courtNumber
        		zone
@@ -320,7 +322,7 @@ Meteor.methods({
        		lendThisYear (ou alors noter l'id du tournoi (ou l'année du dernier tournoi où il était prêté), sinon je ne sais pas quand on pourra le remettre à 'false' après le tournoi)
        		*/
 
-		var courtId = courtData._id;
+		
 		var data = {};
 
 		data.ownerID = courtData.ownerID;
@@ -403,7 +405,6 @@ Meteor.methods({
 			});
 		}
 
-		console.log(courtId);
 		return courtId;
 	},
 
