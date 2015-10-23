@@ -42,9 +42,8 @@ Accounts.emailTemplates.verifyEmail.subject = function(user){
 // };
 Accounts.emailTemplates.verifyEmail.html = function(user,url){
 	var data = {
-		dataintro:"Bonjour "+ user.username,
+		dataintro:"Bonjour "+ user.username+",",
 		datalink:url
 		};
-		console.log("verification mail ?");
 		return SSR.render("verifMail",data);
 };
