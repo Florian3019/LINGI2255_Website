@@ -403,6 +403,7 @@ Meteor.methods({
 			});
 		}
 
+		console.log(courtId);
 		return courtId;
 	},
 

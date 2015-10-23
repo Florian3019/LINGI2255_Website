@@ -84,7 +84,7 @@ Router.route('/court/:_id', {
 	name: 'courtInfoPage',
 	template: 'courtInfoPage',
 	data: function(){
-		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
+		var court = Courts.findOne({ _id: this.params._id});
 		var owner = Meteor.users.findOne({_id: court.ownerID});
 		var address = Addresses.findOne({_id: court.addressID});
 		var data = {};
@@ -186,7 +186,8 @@ Router.route('/confirmation_registration_court/:_id', {
 	template: 'confirmation_registration_court',
 	
 	data: function(){
-		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
+		var court = Courts.findOne({ _id: this.params._id });
+		console.log(court)
 		var owner = Meteor.users.findOne({_id: court.ownerID});
 		console.log(owner);
 		var address = Addresses.findOne({_id: court.addressID});
