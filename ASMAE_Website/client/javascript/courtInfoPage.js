@@ -8,7 +8,35 @@ Template.courtInfoPage.helpers({
   		{
   			return "glyphicon-remove lendNot"
   		}
-  	}
+  	},
+
+    'ownerEmail': function(){
+      return this.owner.emails[0].address;
+    },
+
+    'ownerLastName': function(){
+      if(this.owner.profile.lastName){
+        return this.owner.profile.lastName; 
+      }
+      else
+        return null;
+    },
+
+    'ownerFirstName': function(){
+      if(this.owner.profile.firstName){
+        return this.owner.profile.firstName; 
+      }
+      else
+        return null;
+    },
+
+    'ownerPhone': function(){
+      if(this.owner.profile.phone){
+        return this.owner.profile.phone;
+      }
+      else
+        return null;
+    }
 
 });
 
