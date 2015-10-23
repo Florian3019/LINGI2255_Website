@@ -41,14 +41,14 @@ Template.login.events({
 		 });
 	},
    
-	$('#accordion').on('shown.bs.collapse', function () {
+	// $('#accordion').on('shown.bs.collapse', function () {
 
-		var panel = $(this).find('.in');
+	// 	var panel = $(this).find('.in');
 
-		$('html, body').animate({
-			scrollTop: panel.offset().top
-		}, 500);
+	// 	$('html, body').animate({
+	// 		scrollTop: panel.offset().top
+	// 	}, 500);
 
-	});
+	// });
 	
 });	
