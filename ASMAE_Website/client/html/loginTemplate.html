@@ -38,20 +38,45 @@
         </div>
 		
         <div class="col-md-4">
-          <h2>Connection avec Google</h2>
-          <p>Mettre bouton google ici. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-       </div>
+          <h2>Avec Google</h2> 
+			<button id="google-login" class="btn btn-lg btn-danger">Se connecter avec Google</button>
+        </div>
 	   
         <div class="col-md-4">
-          <h2>Connection avec Facebook</h2>
-          <p> Mettre bouton facebook ici.</p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
+          <h2>Avec Facebook</h2> 
+			<button id="facebook-login" class="btn btn-lg  btn-primary">Se connecter avec Facebook</button>
         </div>
       </div>
 	  
 	<center> 
-		<p class="lead">Pas encore inscrit ? </p> 
-		<a class="btn btn-large btn-success" href="#">S'inscrire</a>
+		<p class="text-primary" data-toggle="collapse" data-target="#inscription">Pas encore inscrit ?</p>
+		<div class="collapse" id="inscription">
+			<div class="well well-lg">
+				<center> 
+				<div class="row">
+					<div class="col-md-12">
+						<form class="login">
+							<h2 class="lead">Inscription</h2>
+							
+							<p>Email: <input type="email" name="email"></p>
+							<label for="inputUser" class="sr-only">Nom d'utilisateur</label>
+							<input type="user" name="user" class="form-control" placeholder="User" required autofocus>
+							
+							<p> </p> <!-- Espace -->
+							<label for="inputEmail" class="sr-only">Addresse mail</label>
+							<input type="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+							<p> </p> <!-- Espace -->
+							<label for="inputPassword" class="sr-only">Mot de passe</label>
+							<input type="password" name="password" class="form-control" placeholder="Password" required>
+							<p> </p> <!-- Espace -->
+
+							<button class="btn btn-success" type="button" >S'inscrire	</button>
+						</form>
+					</div>
+				</div>
+				</center>
+			</div>
+		</div>
+
 	</center>
 </template>	

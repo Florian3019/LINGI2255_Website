@@ -1186,6 +1186,7 @@ Meteor.methods({
 		}
 		return Questions.insert(data)
 	},
+
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
 		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
         	$set: {processed: true,answer:nanswer}
@@ -1201,7 +1202,7 @@ Meteor.methods({
 											message:"j'aurais pu mettre un lorem..."
 										};
 	*/
-	'emailFeedback': function (to, subject, html) {
+	'emailFeedback': function (to, subject, data) {
 
 
 							// Don't wait for result
@@ -1212,10 +1213,10 @@ Meteor.methods({
 							var options =   {
 								auth: "api:" + process.env.MAILGUN_API_KEY,
 									params: {
-										"from":"ingi2255groupf@asmae.com",
+										"from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
 										"to":to,
 										"subject": subject,
-										"html": html,
+										"html": SSR.render("mailing",data),
 									}
 								}
 								var onError = function(error, result) {

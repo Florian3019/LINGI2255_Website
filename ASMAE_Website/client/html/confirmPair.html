@@ -1,10 +1,6 @@
 <template name="confirmPair">
 	<h2> Enregistrement au tournoi avec  {{getNameOtherPlayer idPair}}</h2>
 
-	<div class="container">
-		{{urlFor 'confirmPair' _id=idPair}}
-	</div>
-
 	{{>tournamentRegistration}}
 
 <script>

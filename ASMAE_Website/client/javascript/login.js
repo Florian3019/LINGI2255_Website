@@ -13,5 +13,42 @@ Template.login.events({
         		}
     		}
 		});
-    }
-});
+    },
+	
+	'click #facebook-login': function(event) {
+         Meteor.loginWithFacebook({requestPermissions: ['email', 'user_about_me']}, function(error){
+             if(error){
+        		console.log(error.reason);
+    		} else {
+        		var currentRoute = Router.current().route.getName();
+        		if(currentRoute == "login"){		//Else : don't redirect
+            		Router.go("home");
+        		}
+    		}
+		 });
+	},
+	
+	'click #google-login': function(event) { // https://developers.google.com/accounts/docs/OAuth2Login#scopeparameter
+         Meteor.loginWithGoogle({requestPermissions: ['email']}, function(error){
+             if(error){
+        		console.log(error.reason);
+    		} else {
+        		var currentRoute = Router.current().route.getName();
+        		if(currentRoute == "login"){		//Else : don't redirect
+            		Router.go("home");
+        		}
+    		}
+		 });
+	},
+   
+	$('#accordion').on('shown.bs.collapse', function () {
+
+		var panel = $(this).find('.in');
+
+		$('html, body').animate({
+			scrollTop: panel.offset().top
+		}, 500);
+
+	});
+	
+});	
