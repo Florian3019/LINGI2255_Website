@@ -28,10 +28,12 @@
                         <td>{{owner.profile.firstName}} {{owner.profile.lastName}}</td>
                       </tr>
                       {{/if}}
+  
                       <tr>
-                        <td>Email </td>
+                        <td>Email</td>
                         <td>{{owner.emails[0].address}}</td>
                       </tr>
+  
                       {{#if owner.profile.phone}}
                       <tr>
                         <td>Téléphone </td>
@@ -92,7 +94,10 @@
               </div>
             </div>
 
-            <center><a class="btn btn-default" href="{{pathFor route='modifyCourt' _id=court._id }}" >Modifier</a></center>
+            <center>
+              <a class="btn btn-default" href="{{pathFor route='modifyCourt' _id=court._id }}" >Modifier</a>
+              <button type="button" id="deleteCourt" class="btn btn-default" >Supprimer</button>
+            </center>
             <br />
 
 </div>

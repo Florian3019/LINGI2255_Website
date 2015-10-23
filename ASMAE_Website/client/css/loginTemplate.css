@@ -1,0 +1,22 @@
+.btn-outline, .btn-outline:link, .btn-outline:visited {
+    background-color: transparent;
+    border-radius: 2px;
+    color: #5cb85c;
+    border: 2px solid #5cb85c;
+}
+.btn-outline:active, .btn-outline:hover {
+    background-color: #5cb85c;
+	border-radius: 2px;
+    color: #fff;
+	border: 2px solid #5cb85c;
+}
+
+.btn-outline.btn-lg {
+    border: 3px solid #5cb85c;
+}
+.btn-outline.btn-sm {
+    border: 1px solid #5cb85c;
+}  
+.btn-outline.btn-xs {
+    border: 1px solid #5cb85c;
+}  

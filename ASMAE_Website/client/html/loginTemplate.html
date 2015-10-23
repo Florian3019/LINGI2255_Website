@@ -1,12 +1,8 @@
 <template name="login">
     
-	<!--  
-	<h2>Login</h2>
-    <form class="login">
-        <p>Email: <input type="email" name="email"></p>
-        <p>Password: <input type="password" name="password"></p>
-        <p><input type="submit" value="Login"
-    </form>
+	<!--  Logo resources :
+			https://www.facebookbrand.com/
+	
 	-->
 	
 	<center> 
@@ -38,19 +34,26 @@
         </div>
 		
         <div class="col-md-4">
-          <h2>Avec Google</h2> 
+			<h2>Avec Google</h2> 
+			<img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="30%" height="30%">
+			<p> </p> <!-- Espace -->
 			<button id="google-login" class="btn btn-lg btn-danger">Se connecter avec Google</button>
         </div>
 	   
         <div class="col-md-4">
-          <h2>Avec Facebook</h2> 
+			<h2>Avec Facebook</h2> 
+		  	<img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="30%" height="30%">
+			<p> </p> <!-- Espace -->
 			<button id="facebook-login" class="btn btn-lg  btn-primary">Se connecter avec Facebook</button>
         </div>
-      </div>
-	  
-	<center> 
-		<p class="text-primary" data-toggle="collapse" data-target="#inscription">Pas encore inscrit ?</p>
-		<div class="collapse" id="inscription">
+    </div>
+	  	
+	<p> </p> <!-- Espace -->
+
+	<center> 	
+		<a class="btn btn-outline btn-sm" data-toggle="collapse" data-target="#inscription">Pas encore inscrit ?</a>
+		<p> </p> <!-- Espace -->
+			<div class="collapse" id="inscription">
 			<div class="well well-lg">
 				<center> 
 				<div class="row">
@@ -58,7 +61,6 @@
 						<form class="login">
 							<h2 class="lead">Inscription</h2>
 							
-							<p>Email: <input type="email" name="email"></p>
 							<label for="inputUser" class="sr-only">Nom d'utilisateur</label>
 							<input type="user" name="user" class="form-control" placeholder="User" required autofocus>
 							
