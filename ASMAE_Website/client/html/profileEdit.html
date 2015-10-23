@@ -1,6 +1,211 @@
 <template name="profileEdit">
+	<div>
+		<div id="titleDiv"> <h2>Modification du profil</h2> </div>
+		<form role="form">
 
-Edit the profile here (TODO)
+			<div class="form-group has-feedback" id="lastnameDiv">
+				<label for="text">Nom</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" placeholder="Demesmaeker" ><br>
+					<!-- <div id="lastnameError" hidden>
+						<span class="help-block" >Merci d'entrer votre nom</span>
+						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+					</div>
+					<div id="lastnameOK" hidden>
+						<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+						<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+					</div> -->
+				</div>
+			</div>
 
+			<div class="form-group has-feedback" id="firstnameDiv">
+				<label for="text">Prénom</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="firstname" placeholder="Florian" value="{{firstname}}" name="firstname">
+					<!-- <div id="firstnameError" hidden>
+						<span class="help-block" >Merci d'entrer votre prénom</span>
+						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+					</div>
+					<div id="firstnameOK" hidden>
+						<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+						<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+					</div> -->
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="text">Numéro de téléphone</label>
+				<div class="input-group">
+					<span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
+					<input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" value="{{phone}}" name="phone">
+				</div>
+			</div>
+
+			<div class="form-group has-feedback" id="birthDiv">
+				<label for="date">Date de naissance</label>
+				<div class="input-group">
+					<input type="birth" id="birth" class="form-control" placeholder="1990-01-01" value="{{date}}" name="birth">
+					<!-- <div id="birthError" hidden>
+						<span class="help-block" >Merci d'entrer votre date de naissance</span>
+						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+					</div>
+					<div id="birthOK" hidden>
+						<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+						<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+					</div> -->
+				</div>
+			</div>
+
+			<div class="form-group has-feedback" id="sexDiv">
+				<label for="sex"> Genre :</label>
+				<select name="sex" id="sex" class="form-control" style="width: 15%; display: inline">
+					<option value={{gender}} selected > {{gender}} </option>
+					<option value="M"> Homme </option>
+					<option value="F"> Femme </option>
+				</select>
+				<!-- <div id="sexError" hidden>
+					<span class="help-block"> Merci d'entrer votre genre </span>
+					<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+				</div>
+				<div id="sexOK" hidden>
+					<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+					<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+				</div> -->
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group has-feedback" id="streetDiv">
+						<label for="text">Adresse</label>
+						<div class="input-group" style="display: inline">
+							<input type="text" class="form-control" id="street" placeholder="Rue des deux chapelles" value="{{street}}" name="street">
+							<!-- <div id="streetError" hidden>
+								<span class="help-block" >Merci d'entrer votre rue</span>
+								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+							</div>
+							<div id="streetOK" hidden>
+								<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+								<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+							</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-2">
+					<div class="form-group has-feedback" id="numberDiv">
+						<label for="text">Numéro</label>
+						<div class="input-group">
+							<input type="number" min="0" step="1" class="form-control" id="addressnumber" placeholder="20" value="{{addressNumber}}" name="addressNumber">
+							<!-- <div id="numberError" hidden>
+								<span class="help-block" >Merci d'entrer votre numéro</span>
+								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+							</div>
+							<div id="numberOK" hidden>
+								<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+								<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+							</div> -->
+						</div>
+					</div>
+				</div>
+
+
+				<div class="col-md-2">
+					<div class="form-group">
+						<label for="text">Boite</label>
+						<input type="text" class="form-control" id="box" placeholder="105b" value="{{boxNumber}}" name="boxNumber">
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-2">
+					<div class="form-group has-feedback" id="zipcodeDiv">
+						<label for="text">Code Postal</label>
+						<div class="input-group">
+							<input type="number" min="0" step="1" class="form-control" id="zipcode" placeholder="6230" value="{{zipcode}}" name="zipcode">
+							<!-- <div id="zipcodeError" hidden>
+								<span class="help-block" >Merci d'entrer votre code postal</span>
+								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+							</div>
+							<div id="zipcodeOK" hidden>
+								<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+								<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+							</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-3">
+					<div class="form-group has-feedback" id="cityDiv">
+						<label for="text">Localité</label>
+						<div class="input-group" style="display: inline">
+							<input type="text" class="form-control" id="city" placeholder="Obaix" value="{{city}}" name="city">
+							<!-- <div id="cityError" hidden>
+								<span class="help-block" >Merci d'entrer votre ville</span>
+								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+							</div>
+							<div id="cityOK" hidden>
+								<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+								<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+							</div> -->
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-3">
+					<div class="form-group has-feedback" id="countryDiv">
+						<label for="text">Pays</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="country" placeholder="Belgique" value="{{country}}" name="country">
+							<!-- <div id="countryError" hidden>
+								<span class="help-block" >Merci d'entrer votre pays</span>
+								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+							</div>
+							<div id="countryOK" hidden>
+								<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+								<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+							</div> -->
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="form-group has-feedback" id="AFTDiv">
+				<label for="playerRank">Classement :</label>
+				<select name="rank" id="rank"  class="form-control" style="width: 15%; display: inline">
+					<option value={{AFT}} selected >{{AFT}}</option>
+					<option value="NC">NC</option>
+					<option value="C30.5 ">C30.5</option>
+					<option value="C30.4">C30.4</option>
+					<option value="C30.3">C30.3</option>
+					<option value="C30.2">C30.2</option>
+					<option value="C30.1">C30.1</option>
+					<option value="C30">C30</option>
+					<option value="C15.5">C15.5</option>
+					<option value="C15.4">C15.4</option>
+					<option value="C15.3">C15.3</option>
+					<option value="C15.2">C15.2</option>
+					<option value="C15.1">C15.1</option>
+					<option value="C15">C15</option>
+					<option value="B+4/6">B+4/6</option>
+					<option value="B+2/6">B+2/6</option>
+					<option value="B0">B0</option>
+					<option value="moreRank">plus</option>
+				</select>
+				<!-- <div id="AFTError" hidden>
+					<span class="help-block" >Merci d'entrer votre classement</span>
+					<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+				</div>
+				<div id="AFTOK" hidden>
+					<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+					<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+				</div> -->
+
+			</div>
+
+			<button type="submit" class="btn btn-default">Enregistrer</button>
+
+		</form>
+	</div>
 
 </template>
