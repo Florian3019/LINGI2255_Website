@@ -13,16 +13,16 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-{{#if isStaff}}
+		{{#if isStaff}}
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Staff <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="{{pathFor route='staffManagement'}}">Staff management</a></li>
+            <li><a href="{{pathFor route='staffManagement'}}">Players questions</a></li>
             <li><a href="{{pathFor route='playersInfo'}}">Players info</a></li>
             <li><a href="{{pathFor route='courtInfo'}}">Courts info</a></li>
             <li><a href="{{pathFor route='poolList'}}">Pools info</a></li>
           </ul>
         </li>
-{{/if}}
+		{{/if}}
         <li><a href="{{pathFor route='pictures'}}">Photos</a></li>
         <li><a href="{{pathFor route='rules'}}">Règlement</a></li>
         <li><a href="{{pathFor route='brackets'}}">Brackets</a></li>

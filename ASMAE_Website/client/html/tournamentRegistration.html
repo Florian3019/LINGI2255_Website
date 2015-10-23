@@ -5,7 +5,7 @@
 	<form role="form">
 
 		<div class="form-group has-feedback" id="lastnameDiv">
-      		
+
           <label for="text">Nom</label>
       		<div class="input-group">
           <input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" placeholder="Demesmaeker" ><br>
@@ -60,12 +60,12 @@
 
       <div class="form-group has-feedback" id="sexDiv">
            <label class="radio-inline">
-            <input type="radio" name="sex" id="male" value="homme" {{setGender 'true'}}>
-            Homme
+            <input type="radio" name="sex" id="male" value="M" {{setGender 'true'}}>
+            M
            </label>
            <label class="radio-inline">
-            <input type="radio" name="sex" id="female" value="femme" {{setGender 'false'}}>
-            Femme
+            <input type="radio" name="sex" id="female" value="F" {{setGender 'false'}}>
+            F
            </label>
            <div id="sexError" hidden>
             <span class="help-block" >Merci d'entrer votre sexe</span>
@@ -92,15 +92,15 @@
                   <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
                 </div>
                 </div>
-              </div>   
+              </div>
       		</div>
 
-      		
+
       		<div class="col-md-2">
        			<div class="form-group has-feedback" id="numberDiv">
         			 <label for="text">Numéro</label>
         		 	  <div class="input-group">
-                <input type="number" min="0"  class="form-control" id="addressnumber" placeholder="20" value="{{addressNumber}}" name="addressNumber">
+                <input type="number" min="0" step="1" class="form-control" id="addressnumber" placeholder="20" value="{{addressNumber}}" name="addressNumber">
                 <div id="numberError" hidden>
                   <span class="help-block" >Merci d'entrer votre numéro</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -108,14 +108,14 @@
                 <div id="numberOK" hidden>
                   <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
                   <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-                </div> 
+                </div>
                 </div>
        		 	</div>
-            
+
 
      		 </div>
-      
-      
+
+
       		<div class="col-md-2">
        			<div class="form-group">
          			<label for="text">Boite</label>
@@ -124,13 +124,13 @@
       		</div>
 
     	</div>
-    
+
    		<div class="row">
       		<div class="col-md-2">
       			<div class="form-group has-feedback" id="zipcodeDiv">
       		  		<label for="text">Code Postal</label>
       		 		  <div class="input-group">
-                <input type="number" min="0"  class="form-control" id="zipcode" placeholder="6230" value="{{zipcode}}" name="zipcode">
+                <input type="number" min="0" step="1" class="form-control" id="zipcode" placeholder="6230" value="{{zipcode}}" name="zipcode">
                 <div id="zipcodeError" hidden>
                   <span class="help-block" >Merci d'entrer votre code postal</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -144,7 +144,7 @@
       			</div>
 
       		</div>
-    	
+
     		<div class="col-md-3">
       			<div class="form-group has-feedback" id="cityDiv">
         			<label for="text">Localité</label>
@@ -157,7 +157,7 @@
                 <div id="cityOK" hidden>
                   <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
                   <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-                </div> 
+                </div>
               </div>
        			</div>
 
@@ -216,12 +216,12 @@
 		</div>
 
 		<div class="form-group has-feedback" id="dateMatchDiv">
-			<label for="dateMatch">S'incrire pour le tournoi du:</label>
+			<label for="dateMatch">S'incrire pour le tournoi:</label>
       <select name="dateMatch" id="dateMatch"  class="form-control dateMatch" style="width: 15%; display: inline">
         <option value="" disabled="" selected="" hidden></option>
-				<option value="saturday">Samedi</option>
-				<option value="sunday">Dimanche</option>
-        <option value="family">Tournoi des familles</option>
+				<option value="family">Tournoi des familles (Samedi)</option>
+				<option value="saturday">Mixtes (Samedi)</option>
+				<option value="sunday">Doubles (Dimanche)</option>
 			</select>
       <div id="dateMatchError" hidden>
         <span class="help-block" >Merci d'entrer la date du tournoi</span>
@@ -236,7 +236,7 @@
 
 		<div class="form-group">
 			<label for="number">Nombre d'inscriptions pour le barbecue (15€):</label>
-      		<input type="number" id="BBQ" name="BBQ" min="0" value="0" placeholder=0  class="form-control" style="width: 15%; display: inline">
+      		<input type="number" id="BBQ" name="BBQ" min="0" step="1" value="0" placeholder=0  class="form-control" style="width: 15%; display: inline">
       		<p style="font-size:100%">Dimanche de 12h30 à 15h (boissons non comprises)</p>
 		</div>
 
@@ -283,7 +283,7 @@
               </tr>
             </thead>
             <tbody>
-              
+
               {{#each alonePlayers}}
                 {{#each getPlayer player1._id}}
                     <tr class="aloneRow" id="{{../_id}}" style="cursor: pointer">
@@ -327,4 +327,3 @@
 </div>
 
 </template>
-

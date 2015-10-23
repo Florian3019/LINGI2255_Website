@@ -14,14 +14,14 @@ Template.tournamentRegistration.helpers({
 	},
 
 	'lastname': function(){
-	
+
 		var user=Meteor.user();
 
 		if(user==null){
 			return "";
 		}
 		else{
-			
+
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.lastName':1});
 			return userData ? userData.profile.lastName : "";
 		}
@@ -46,10 +46,10 @@ Template.tournamentRegistration.helpers({
 		else{
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.gender':1});
 
-			if(userData.profile.gender=="homme" && male=='true'){
+			if(userData.profile.gender=="M" && male=='true'){
 				return "checked";
 			}
-			else if(userData.profile.gender=="femme" && male=='false'){
+			else if(userData.profile.gender=="F" && male=='false'){
 				return "checked";
 			}
 		}
@@ -180,7 +180,7 @@ Template.tournamentRegistration.helpers({
 		}
 	}
 
-	
+
 
 
 });
@@ -256,7 +256,7 @@ Template.tournamentRegistration.events({
 			if(errorVisible)
 				e.style.display = 'none';
 			else
-				e.style.display = 'block';  	
+				e.style.display = 'block';
 		}
 
 
@@ -279,7 +279,7 @@ Template.tournamentRegistration.events({
 		document.getElementById("emailPlayerError").style.display = 'none';
 		document.getElementById("emailPlayerOK").style.display = 'none';
 		document.getElementById("emailPlayerErrorMessage").style.display = 'none';
-		
+
 		// Array containing the errors/success to display
 		var errors = new Array();
 		var hasError = false;
@@ -305,7 +305,7 @@ Template.tournamentRegistration.events({
 
 
     	/*
-			Get all the fields and check if they are filled, 
+			Get all the fields and check if they are filled,
 			display error or success according to that
     	*/
         var lastname = event.target.lastname.value;
@@ -425,7 +425,7 @@ Template.tournamentRegistration.events({
 		/*
 			Create the object with the informations about the user
 		*/
-        curUserData = { 
+        curUserData = {
           _id: Meteor.userId(),
           profile:{
             lastName : lastname,
@@ -464,7 +464,7 @@ Template.tournamentRegistration.events({
 
 		if(!$(emailPlayerDiv).is(":visible")){
 			// the user wants to confirm his registration with a pair that already exists
-			
+
 			var pair = Session.get("pair");
 
 			console.log(pair);
@@ -583,7 +583,7 @@ Template.tournamentRegistration.events({
 
         	if(remove){
         		console.log("removing pair "+ remove);
-        		Meteor.call('removePair',remove);	
+        		Meteor.call('removePair',remove);
         	}
 			Meteor.call('addPairsToTournament', pairID, currentYear, dateMatch);
         }
@@ -593,8 +593,8 @@ Template.tournamentRegistration.events({
         Meteor.call('updatePairs', pairData, callback);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
 
-    	Router.go('/myRegistration');
+    	Router.go('myRegistration');
     }
 
 
-  }); 
+  });

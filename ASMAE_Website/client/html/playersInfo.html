@@ -1,5 +1,5 @@
 <template name="playersInfo">
-  <div class="container">   
+  <div class="container">
     <form role="form">
       <h2>Chercher un joueur:</h2>
       <form role="form-group">
@@ -14,10 +14,10 @@
         <div class="form-group">
           <label for="sex">Sexe:</label>
           <div class="radio">
-            <label><input type="radio" name="sex" id="male" value="homme" class=/>Homme</label>
+            <label><input type="radio" name="sex" id="male" value="H" class=/>M</label>
           </div>
           <div class="radio">
-            <label><input type="radio" name="sex" id="female" value="femme" />Femme</label>
+            <label><input type="radio" name="sex" id="female" value="F" />F</label>
         </div>
         <label for="playerRank">Rang:</label><br>
         <select name="rank" id="rank">
@@ -41,7 +41,7 @@
         <option value="moreRank">plus</option>
       </select>
       </div>
-      <button type="submit">Chercher</button>
+      <button type="submit" class="btn btn-default">Rechercher</button>
     </form>
 </form>
 <div>

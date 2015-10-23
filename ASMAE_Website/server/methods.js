@@ -167,10 +167,10 @@ Meteor.methods({
 				return false;
 			}
 			if(gender1){
-				return gender1=="homme" ? "men" : "women";
+				return gender1=="M" ? "men" : "women";
 			}
 			if(gender2){
-				return gender2=="homme" ? "men" : "women";
+				return gender2=="M" ? "men" : "women";
 			}
 		}
 		if(dateMatch == "saturday"){
@@ -349,10 +349,6 @@ Meteor.methods({
 			data.staffComment = courtData.staffComment;
 		}
 
-
-		console.log("courtData samedi recu:" + courtData.dispoSamedi);
-		console.log("courtData dim recu:" + courtData.dispoDimanche);
-
 		if(courtData.dispoSamedi !== null && typeof courtData.dispoSamedi !== 'undefined'){
 			data.dispoSamedi = courtData.dispoSamedi;
 		}
@@ -375,11 +371,11 @@ Meteor.methods({
 			if(address && Meteor.call('addressExists', address)){
 				console.log("Court already exists :");
 				console.log(address);
-				return false;
+				return null;
 			}
 
 			// Create a new court
-			return Courts.insert(data, function(err, courtId){
+			var courtId = Courts.insert(data, function(err, courtId){
 				if(err){
 					console.error('updateCourt error');
 					console.error(err);
@@ -392,18 +388,21 @@ Meteor.methods({
 				}
 			});
 		}
+		else
+		{
+			// Court already exists, so just update it :
+			Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
+				if(err){
+					console.error('updateCourt error');
+					console.error(err);
+					return callback(null);
+				}
+				if(address){
+					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
+				}
+			});
+		}
 
-		// Court already exists, so just update it :
-		Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
-			if(err){
-				console.error('updateCourt error');
-				console.error(err);
-				return callback(null);
-			}
-			if(address){
-				Meteor.call('updateAddress', address, courtData.ownerID, courtId);
-			}
-		});
 		return courtId;
 	},
 
@@ -993,6 +992,28 @@ Meteor.methods({
 
 	},
 
+	// Removes the pool and all its dependencies. Does not erase its pairs nor matches from the db.
+	'removePool' : function(poolId, year, type, category){
+		if(! (category&&type&&year)){
+			return;
+		}
+
+		dataY = {};
+		dataY[type] = 1;
+		// We need to find the type's id, since it's what contains the poolid
+		var yearData = Years.findOne({_id:year},dataY);
+		var typeId = yearData[type];
+
+		// Remove the poolId from the category of the type
+		var typeData = Types.findOne({_id:typeId});
+		var data = {$pull:{}};
+		data.$pull[category] = poolId;
+
+		// DB call
+		Types.update({_id:typeId}, data);
+		Pools.remove({_id:poolId});
+	},
+
 	/*
 		@param pairID a valid ID for a pair that is the Pairs table
 
@@ -1165,6 +1186,12 @@ Meteor.methods({
 		return Questions.insert(data)
 	},
 
+	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
+		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
+        	$set: {processed: true,answer:nanswer}
+      		});
+	},
+
 	//You need to add the secrets.js file inside the server folder.
 /*
 	@param to: is for the receiver email,
@@ -1174,7 +1201,8 @@ Meteor.methods({
 											message:"j'aurais pu mettre un lorem..."
 										};
 	*/
-	'emailFeedback': function (to, subject, html) {
+	'emailFeedback': function (to, subject, data) {
+
 
 							// Don't wait for result
 							this.unblock();
@@ -1184,10 +1212,10 @@ Meteor.methods({
 							var options =   {
 								auth: "api:" + process.env.MAILGUN_API_KEY,
 									params: {
-										"from":"ingi2255groupf@asmae.com",
+										"from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
 										"to":to,
 										"subject": subject,
-										"html": html,
+										"html": SSR.render("mailing",data),
 									}
 								}
 								var onError = function(error, result) {

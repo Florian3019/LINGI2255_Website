@@ -7,7 +7,7 @@ Template.myRegistration.helpers({
   if(!user) return;
   var addrID = user.profile.addressID;
 	var addr = Addresses.findOne({_id:addrID});
-	
+
     data = {
       'firstName': function(){
         return user.profile.firstName;
@@ -19,28 +19,28 @@ Template.myRegistration.helpers({
       return user.emails[0].address;
       },
       'phone': function(){
-      return user.profile.phone;
+		  var phone = user.profile.phone;
+		  phone = phone.substring(0,4) + "/" + phone.substring(4,6) + "." + phone.substring(6,8) + "." + phone.substring(8,10);
+		  return phone;
       },
-      'birdth': function(){
-      return user.profile.birthDate;
+      'birth': function(){
+		  var date = user.profile.birthDate;
+		  date = date.substring(8,10) + "/" + date.substring(5,7) + "/" + date.substring(0,4);
+		  return date;
       },
-      'genre': function(){
+      'gender': function(){
       return user.profile.gender;
       },
-      'street': function(){
-        if(addr) return addr.street;
-      },
-      'number': function(){
-        if(addr) return addr.number;
-      },
-      'boite': function(){
-        if(addr) return addr.box;
-      },
-      'postal': function(){
-        if(addr) return addr.zipCode;
+      'address': function(){
+		  if(addr) {
+			  if (addr.box) {
+  			  return addr.number + ", " + addr.street + ". Boite " + addr.box;
+  		  }
+  		  return addr.number + ", " + addr.street;
+  		}
       },
       'city': function(){
-        if(addr) return addr.city;
+        if(addr) return addr.zipCode +" "+ addr.city;
       },
       'land': function(){
         if(addr) return addr.country;
@@ -60,7 +60,7 @@ Template.myRegistration.helpers({
   if(!pair){
     if(status == "true"){
       return "Vous n'êtes pas inscrit";
-    } 
+    }
     return false;
   }
 
@@ -71,13 +71,13 @@ Template.myRegistration.helpers({
   else if(pair.player2 && pair.player2._id != Meteor.userId()){
     user = Meteor.users.findOne({_id:pair.player2._id});
   }
-  
+
   if(!user){
     if(status == "true") return "En attente d'un partenaire";
     return false;
-  } 
+  }
   if(status) return "Vous êtes inscrit et avez un partenaire !";
-    
+
   return true;
 },
 
@@ -95,10 +95,11 @@ Template.myRegistration.helpers({
   else if(pair.player2 && pair.player2._id != Meteor.userId()){
     user = Meteor.users.findOne({_id:pair.player2._id});
   }
-  
+
   if(!user) return false;
-  
+
   var addr = Addresses.findOne({_id:user.profile.addressID});
+  console.log("myRegistration : "+user.profile.addressID);
   data = {
       'firstName': function(){
         return user.profile.firstName;
@@ -110,28 +111,28 @@ Template.myRegistration.helpers({
       return user.emails[0].address;
       },
       'phone': function(){
-      return user.profile.phone;
+		  var phone = user.profile.phone;
+		  phone = phone.substring(0,4) + "/" + phone.substring(4,6) + "." + phone.substring(6,8) + "." + phone.substring(8,10);
+		  return phone;
       },
-      'birdth': function(){
-      return user.profile.birthDate;
+      'birth': function(){
+		  var date = user.profile.birthDate;
+		  date = date.substring(8,10) + "/" + date.substring(5,7) + "/" + date.substring(0,4);
+		  return date;
       },
-      'genre': function(){
+      'gender': function(){
       return user.profile.gender;
       },
-      'street': function(){
-        if(addr) return addr.street;
+	  'address': function(){
+		  if(addr) {
+			  if (addr.box) {
+  			  return addr.number + ", " + addr.street + ". Boite " + addr.box;
+  		  }
+  		  return addr.number + ", " + addr.street;
+  		}
       },
-      'number': function(){
-        if(addr) return addr.number;
-      },
-      'boite': function(){
-        if(addr) return addr.box;
-      },
-      'postal': function(){
-        if(addr) return addr.zipCode;
-      },
-      'city': function(){
-        if(addr) return addr.city;
+	  'city': function(){
+        if(addr) return addr.zipCode +" "+ addr.city;
       },
       'land': function(){
         if(addr) return addr.country;
@@ -146,3 +147,9 @@ Template.myRegistration.helpers({
 
 });
 
+Template.myRegistration.onCreated(function (){
+	var id = Meteor.userId();
+    var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+	this.subscribe("PairInfo", pair._id);
+	this.subscribe("PartnerAdress", pair._id);
+});
