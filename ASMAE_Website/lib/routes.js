@@ -116,6 +116,11 @@ Router.route('/my-courts', {
 	template: 'myCourts'
 });
 
+Router.route('/adminTemplate', {
+	name: 'adminTemplate',
+	template: 'adminTemplate'
+});
+
 Router.route('/players-info', {
 	name: 'playersInfo',
 	template: 'playersInfo'

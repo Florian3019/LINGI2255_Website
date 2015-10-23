@@ -76,9 +76,12 @@
         <td>
           <div class='parent'>
             <h3>
-              <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}">
-                <span class="glyphicon glyphicon-remove removePoolButton" aria-hidden="true"></span> 
-              </button>
+              {{#unless moreThanOnePair POOL.pairs}}
+                <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}">
+                  <span class="glyphicon glyphicon-remove removePoolButton" aria-hidden="true"></span> 
+                </button>
+              {{/unless}}
+
               {{#if moreThanOnePair POOL.pairs}}
               <a href="{{pathFor route='scoreTable' poolId=POOL._id}}" style="text-decoration:none;">
               <button type="button" class="btn btn-default btn-lg">
