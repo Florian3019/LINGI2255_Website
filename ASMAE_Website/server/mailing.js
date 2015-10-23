@@ -52,7 +52,7 @@ Accounts.emailTemplates.verifyEmail.html = function(user,url){
 };
 
 Accounts.emailTemplates.resetPassword.subject = function(user){
-	return "Comment réinitialiser votre mot de passe ?;"
+	return "Comment réinitialiser votre mot de passe ?";
 };
 Accounts.emailTemplates.resetPassword.html =function(user,url){
 	var data = {

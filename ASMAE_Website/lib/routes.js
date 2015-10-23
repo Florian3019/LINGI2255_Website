@@ -132,9 +132,30 @@ Router.route('/staff-management', {
 	name: 'staffManagement',
 	template: 'staffManagement'
 });
-Router.route('/profileEdit', {
+Router.route('/profileEdit/_id:', {
 	name: 'profileEdit',
-	template: 'profileEdit'
+	template: 'profileEdit',
+	data: function(){
+		if (this.ready()) {
+			var user = Meteor.users.findOne({_id:this.params._id});
+			var address = Addresses.findOne({_id:user.profile.addressID});
+			var data = {};
+			data.user = user;
+			data.address = address;
+			return data;
+		}
+	},
+	onBeforeAction: function(){
+        if(Meteor.userId()){
+            this.next();
+        } else {
+            this.render("login");
+        }
+    },
+    waitOn: function(){
+        return [ Meteor.subscribe('Addresses'), Meteor.subscribe('users') ];
+    }
+
 });
 Router.route('/brackets', {
 	name: 'brackets',
@@ -144,7 +165,7 @@ Router.route('/brackets', {
 Router.route('/confirmation_registration_player', {
 	name: 'confirmation_registration_player',
 	template: 'confirmation_registration_player',
-	
+
 	data: function(){
 		var lastName = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.lastName':1})).profile.lastName;
 		var firstName = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.firstName':1})).profile.firstName;
@@ -162,7 +183,7 @@ Router.route('/confirmation_registration_player', {
 			address = addr.number + ", " + addr.street;
 		}
 		var city = addr.zipCode + " " + addr.city;
-		
+
 		var data = {};
 		data.lastName = lastName;
 		data.firstName = firstName;
@@ -173,7 +194,7 @@ Router.route('/confirmation_registration_player', {
 		data.gender = gender;
 		return data;
     },
-	
+
 	onBeforeAction: function() {
 		var previousLocationPath=Session.get("previousLocationPath");
 		// Redirect to Home if we are not coming from the tournament registration page
@@ -187,7 +208,7 @@ Router.route('/confirmation_registration_player', {
 Router.route('/confirmation_registration_court/:_id', {
 	name: 'confirmation_registration_court',
 	template: 'confirmation_registration_court',
-	
+
 	data: function(){
 		if (this.ready()) {
 			var court = Courts.findOne({ _id: this.params._id });
@@ -208,7 +229,7 @@ Router.route('/confirmation_registration_court/:_id', {
 Router.route('/modify-court/:_id', {
 	name: 'modifyCourt',
 	template: 'courtRegistration',
-	
+
 	data: function(){
 		if (this.ready()) {
 			var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
@@ -230,8 +251,8 @@ Router.route('/modify-court/:_id', {
     },
     waitOn: function(){
         return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
-    }	
-	
+    }
+
 });
 
 Router.route('/search-court', {

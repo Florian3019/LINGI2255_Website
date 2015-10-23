@@ -6,7 +6,7 @@
 			<div class="form-group has-feedback" id="lastnameDiv">
 				<label for="text">Nom</label>
 				<div class="input-group">
-					<input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" placeholder="Demesmaeker" ><br>
+					<input type="text" class="form-control" id="lastname" name="lastname" value="{{users.profile.lastname}}" placeholder="Demesmaeker" ><br>
 					<!-- <div id="lastnameError" hidden>
 						<span class="help-block" >Merci d'entrer votre nom</span>
 						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -21,7 +21,7 @@
 			<div class="form-group has-feedback" id="firstnameDiv">
 				<label for="text">Prénom</label>
 				<div class="input-group">
-					<input type="text" class="form-control" id="firstname" placeholder="Florian" value="{{firstname}}" name="firstname">
+					<input type="text" class="form-control" id="firstname" placeholder="Florian" value="{{profile.firstname}}" name="firstname">
 					<!-- <div id="firstnameError" hidden>
 						<span class="help-block" >Merci d'entrer votre prénom</span>
 						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -36,14 +36,14 @@
 				<label for="text">Numéro de téléphone</label>
 				<div class="input-group">
 					<span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
-					<input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" value="{{phone}}" name="phone">
+					<input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" value="{{profile.phone}}" name="phone">
 				</div>
 			</div>
 
 			<div class="form-group has-feedback" id="birthDiv">
 				<label for="date">Date de naissance</label>
 				<div class="input-group">
-					<input type="birth" id="birth" class="form-control" placeholder="1990-01-01" value="{{date}}" name="birth">
+					<input type="birth" id="birth" class="form-control" placeholder="1990-01-01" value="{{profile.date}}" name="birth">
 					<!-- <div id="birthError" hidden>
 						<span class="help-block" >Merci d'entrer votre date de naissance</span>
 						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -58,7 +58,7 @@
 			<div class="form-group has-feedback" id="sexDiv">
 				<label for="sex"> Genre :</label>
 				<select name="sex" id="sex" class="form-control" style="width: 15%; display: inline">
-					<option value={{gender}} selected > {{gender}} </option>
+					<option value={{profile.gender}} selected > {{profile.gender}} </option>
 					<option value="M"> Homme </option>
 					<option value="F"> Femme </option>
 				</select>

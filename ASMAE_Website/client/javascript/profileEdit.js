@@ -1,4 +1,4 @@
-Template.profileEdit.helpers({
+/*Template.profileEdit.helpers({
 	'lastname': function(){
 		var user=Meteor.user();
 
@@ -168,7 +168,7 @@ Template.profileEdit.helpers({
 		}
 	}
 });
-
+*/
 Template.profileEdit.events({
 	'submit form': function(event){
 		event.preventDefault();
@@ -193,15 +193,21 @@ Template.profileEdit.events({
 			}
 		});
 
+		var lastName = $('[name=lastname]').val();
+		var firstName = $('[name=firstname]').val();
+		//var email TODO
+		var sex = $('[name=sex]').val();
+		var rank = $('[name=rank]').val();
+
 		var userData = {
 			_id: Meteor.userId(),
 			profile:{
-				lastName : $('[name=lastname]').val(),
-				firstName : $('[name=firstname]').val(),
+				lastName : lastName,
+				firstName : firstName,
 				phone : $('[name=phone]').val(),
-				gender : $('[name=sex]').val(),
+				gender : sex,
 				birthDate : $('[name=birth]').val(),
-				AFT : $('[name=rank]').val(),
+				AFT : rank,
 			}
 		};
 
@@ -215,5 +221,7 @@ Template.profileEdit.events({
 			}
 
 		});
+		Router.go('home');
+
 	}
 });
