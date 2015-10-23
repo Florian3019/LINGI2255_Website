@@ -1,24 +1,12 @@
 <template name="tournamentRegistration">
 <div>
-	<div id="titleDiv"> <h2>Enregistrement au tournoi</h2> </div>
+	<div id="titleDiv"> <h2>Inscription au tournoi</h2> </div>
 
 	<form role="form">
 
-		<div class="form-group has-feedback" id="lastnameDiv">
+		<div class="row">
 
-          <label for="text">Nom</label>
-      		<div class="input-group">
-          <input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" placeholder="Demesmaeker" ><br>
-          <div id="lastnameError" hidden>
-            <span class="help-block" >Merci d'entrer votre nom</span>
-            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-          </div>
-          <div id="lastnameOK" hidden>
-            <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-            <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-          </div>
-          </div>
-      </div>
+	<div class="col-md-3">
       <div class="form-group has-feedback" id="firstnameDiv">
       		<label for="text">Prénom</label>
       		<div class="input-group">
@@ -33,16 +21,29 @@
           </div>
           </div>
       </div>
+  	</div>
 
-    	 <div class="form-group">
-     		<label for="text">Numéro de téléphone</label>
-        <div class="input-group">
-          <span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
-       		<input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" value="{{phone}}" name="phone">
-     	  </div>
+	  <div class="col-md-3">
+		  <div class="form-group has-feedback" id="lastnameDiv">
+			<label for="text">Nom</label>
+			  <div class="input-group">
+			<input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" placeholder="Demesmaeker" ><br>
+			<div id="lastnameError" hidden>
+			  <span class="help-block" >Merci d'entrer votre nom</span>
+			  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+			</div>
+			<div id="lastnameOK" hidden>
+			  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+			  <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+			</div>
+			</div>
+		</div>
+	  </div>
 
-      </div>
+  </div>
 
+  <div class="row">
+	  <div class="col-md-3">
      	<div class="form-group has-feedback" id="birthDiv">
       		<label for="date">Date de naissance</label>
       		<div class="input-group">
@@ -57,8 +58,11 @@
           </div>
           </div>
     	</div>
+	</div>
 
+	<div class="col-md-3">
       <div class="form-group has-feedback" id="sexDiv">
+		  <label> Sexe </label> <br>
            <label class="radio-inline">
             <input type="radio" name="sex" id="male" value="M" {{setGender 'true'}}>
             M
@@ -76,9 +80,24 @@
             <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
           </div>
       </div>
+  </div>
+
+  </div>
+
+  <div class="row">
+	  <div class="col-md-3">
+	  <div class="form-group">
+		 <label for="text">Numéro de téléphone</label>
+	 <div class="input-group">
+	   <span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
+		 <input type="number" class="form-control" id="phone" placeholder="0490123456" value="{{phone}}" name="phone">
+	   </div>
+   </div>
+   </div>
+   </div>
 
     	<div class="row">
-      		<div class="col-md-6">
+      		<div class="col-md-4">
    	  			<div class="form-group has-feedback" id="streetDiv">
              		<label for="text">Adresse</label>
              		<div class="input-group" style="display: inline">
@@ -100,7 +119,7 @@
        			<div class="form-group has-feedback" id="numberDiv">
         			 <label for="text">Numéro</label>
         		 	  <div class="input-group">
-                <input type="number" min="0" step="1" class="form-control" id="addressnumber" placeholder="20" value="{{addressNumber}}" name="addressNumber">
+                <input type="number" class="form-control" id="addressnumber" placeholder="20" value="{{addressNumber}}" name="addressNumber">
                 <div id="numberError" hidden>
                   <span class="help-block" >Merci d'entrer votre numéro</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -224,7 +243,7 @@
 				<option value="sunday">Doubles (Dimanche)</option>
 			</select>
       <div id="dateMatchError" hidden>
-        <span class="help-block" >Merci d'entrer la date du tournoi</span>
+        <span class="help-block" >Merci de préciser le tournoi</span>
         <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
         <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
       </div>
@@ -240,15 +259,45 @@
       		<p style="font-size:100%">Dimanche de 12h30 à 15h (boissons non comprises)</p>
 		</div>
 
+	<div class="row">
+		<div class="col-md-6">
 		<div class="form-group">
   			<label for="playerWishes">Souhaits:</label>
        		<textarea name="playerWishes" id="playerWishes" class="form-control"></textarea>
   		</div>
+	</div>
+	</div>
 
+	<div class="row">
+		<div class="col-md-6">
   		<div class="form-group">
   			<label for="playerConstraints">Contraintes:</label>
        		<textarea name="playerConstraints" id="playerConstraints" class="form-control"></textarea>
   		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-5">
+		<div class="form-group has-feedback" id="emailPlayerDiv">
+          <label class="control-label" for="inputGroupSuccess1">Adresse email de votre coéquipier: </label>
+          <div class="input-group">
+            <span class="input-group-addon">@</span>
+            <input type="text" class="form-control" id="emailPlayer"> <!-- aria-describedby="inputGroupSuccess1Status"> -->
+            <div id="emailPlayerError" hidden>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="emailPlayerOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+            </div>
+          </div>
+          <div id="emailPlayerErrorMessage" hidden>
+            <span class="help-block emailPlayerError">Ce joueur n'existe pas ou n'a pas de compte</span>
+          </div>
+        </div>
+	</div>
+</div>
 
 
       <div class="row">
@@ -279,7 +328,7 @@
                 <th>Age</th>
                 <th>Ville</th>
                 <th>Rang</th>
-                <th>Jour</th>
+                <th>Tournoi</th> <!-- Should disappear ! Player should only see other players of its type tournament-->
               </tr>
             </thead>
             <tbody>
@@ -301,26 +350,7 @@
         </div>
       </div>
 
-
-      <div class="form-group has-feedback" id="emailPlayerDiv">
-        <label class="control-label" for="inputGroupSuccess1">Adresse email de votre coéquipier: </label>
-        <div class="input-group">
-          <span class="input-group-addon">@</span>
-          <input type="text" class="form-control" id="emailPlayer"> <!-- aria-describedby="inputGroupSuccess1Status"> -->
-          <div id="emailPlayerError" hidden>
-            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-          </div>
-          <div id="emailPlayerOK" hidden>
-            <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-            <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-          </div>
-        </div>
-        <div id="emailPlayerErrorMessage" hidden>
-          <span class="help-block emailPlayerError">Ce joueur n'existe pas ou n'a pas de compte</span>
-        </div>
-      </div>
-
-  		<button type="submit" class="btn btn-default">Enregistrer</button>
+  		<button type="submit" class="btn btn-default">Soumettre mon inscription</button>
 
 	</form>
 

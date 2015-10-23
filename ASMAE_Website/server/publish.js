@@ -1,14 +1,35 @@
 Meteor.publish('Courts', function(){
-    //TODO: si user dans le staff alors publier tous les courts
-    return Courts.find({ownerID: this.userId});
+	if(this.userId) {
+        var user = Meteor.users.findOne(this.userId);
+        if(user.profile.isStaff || user.profile.isAdmin){
+    		return Courts.find();
+	    }
+	    else{
+	    	return Courts.find({ownerID: this.userId});
+	    }
+    }
+    else{
+    	return null;
+    }
 });
 
 Meteor.publish('Addresses', function(){
-    //TODO: si user dans le staff alors publier tous les courts
-    return Addresses.find({userID: this.userId});
+    if(this.userId) {
+        var user = Meteor.users.findOne(this.userId);
+        if(user.profile.isStaff || user.profile.isAdmin){
+    		return Addresses.find();
+	    }
+	    else{
+	    	return Addresses.find({userID: this.userId});
+	    }
+    }
+    else{
+    	return null;
+    }
 });
 
 Meteor.publish('Questions', function(){
+	//TODO: eulement visible au staff
 	return Questions.find();
 });
 

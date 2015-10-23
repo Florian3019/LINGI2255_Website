@@ -284,7 +284,7 @@ Template.tournamentRegistration.events({
 		var errors = new Array();
 		var hasError = false;
 
-
+		var sendEmail = false; //true if we must send an email
 
 		var alone = event.target.alone.checked; // True if the player tries to register alone
 		var player2ID;
@@ -294,9 +294,8 @@ Template.tournamentRegistration.events({
 	    	// Check that we know that email
 	    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
 	    	if(!u){
-	    		errors.push({id:"emailPlayer", error:true});
-	    		console.log("error");
-				hasError = true;
+	    		// Send an email to the user
+	    		sendEmail=true;
 	    	}
 	    	else{
 	    		player2ID = u._id;
@@ -538,7 +537,7 @@ Template.tournamentRegistration.events({
 					day: dateMatch,
 					//category:<category>, TODO
 					player1:playerData,
-					player2:{_id:player2ID} // TODO--> give all player info
+					//player2:{_id:player2ID} // TODO--> give all player info
 				};
 			}
 			}
@@ -572,6 +571,16 @@ Template.tournamentRegistration.events({
 
         	// Success
         	console.log("tournamentRegistration pairID : " + pairID);
+
+        	if(sendEmail){
+	        	body=body+Router.routes['confirmPair'].url({_id: pairID});
+		    		console.log(body);
+		    		var data = {
+		    			intro:"",
+						message:body};
+					Meteor.call('emailFeedback',to,"Demande d'inscription au Charles de Lorraine",Blaze.toHTMLWithData(Template.mail,data));
+	        }
+
         	if(remove){
         		console.log("removing pair "+ remove);
         		Meteor.call('removePair',remove);
@@ -579,8 +588,11 @@ Template.tournamentRegistration.events({
 			Meteor.call('addPairsToTournament', pairID, currentYear, dateMatch);
         }
 
+        body="Bonjour, \n " + event.target.firstname.value + " " +event.target.lastname.value + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
+        to=event.target.emailPlayer.value; //address of the other player
         Meteor.call('updatePairs', pairData, callback);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
+
     	Router.go('myRegistration');
     }
 
