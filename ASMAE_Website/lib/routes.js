@@ -1,17 +1,17 @@
 Router.configure({
-    layoutTemplate: 'index'
+	layoutTemplate: 'index'
 });
 
 // onStop hook is executed whenever we LEAVE a route
 Router.onStop(function(){
-  // register the previous route location in a session variable
-  Session.set("previousLocationPath", Router.current().route.getName());
-  console.log(Router.current().route.getName());
+	// register the previous route location in a session variable
+	Session.set("previousLocationPath", Router.current().route.getName());
+	console.log(Router.current().route.getName());
 });
 
 Router.route('/', {
-    template: 'home',
-    name: 'home'
+	template: 'home',
+	name: 'home'
 });
 
 Router.route('/contacts', {
@@ -34,13 +34,13 @@ Router.route('/tournament-registration',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
 	onBeforeAction: function(){
-        var currentUser = Meteor.userId();
-        if(currentUser){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    }
+		var currentUser = Meteor.userId();
+		if(currentUser){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	}
 });
 
 Router.route('/poolList', {
@@ -53,31 +53,31 @@ Router.route('/scoreTable/:poolId', {
 	template: 'scoreTable',
 	data: function(){
 		return Pools.findOne({_id:this.params.poolId});
-    }
+	}
 });
 
 Router.route('/court-registration', {
 	name: 'courtRegistration',
 	template: 'courtRegistration',
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    }
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	}
 });
 
 Router.route('/court-info', {
 	name: 'courtInfo',
 	template: 'courtInfo',
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    }
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	}
 });
 
 Router.route('/court/:_id', {
@@ -85,7 +85,7 @@ Router.route('/court/:_id', {
 	template: 'courtInfoPage',
 	data: function(){
 		if (this.ready()) {
-	    	var court = Courts.findOne(this.params._id);
+			var court = Courts.findOne(this.params._id);
 			var owner = Meteor.users.findOne(court.ownerID);
 			var address = Addresses.findOne(court.addressID);
 			var data = {};
@@ -93,22 +93,22 @@ Router.route('/court/:_id', {
 			data.owner = owner;
 			data.address = address;
 			return data;
-	    }
-    },
+		}
+	},
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    },
-    waitOn: function(){
-        return [
-        	Meteor.subscribe('Courts'),
-        	Meteor.subscribe('Addresses'),
-        	Meteor.subscribe('users')
-        ]
-    }
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	},
+	waitOn: function(){
+		return [
+			Meteor.subscribe('Courts'),
+			Meteor.subscribe('Addresses'),
+			Meteor.subscribe('users')
+		]
+	}
 });
 
 Router.route('/my-courts', {
@@ -137,7 +137,7 @@ Router.route('/staff-management', {
 	name: 'staffManagement',
 	template: 'staffManagement'
 });
-Router.route('/profileEdit/_id:', {
+Router.route('/profileEdit/:_id', {
 	name: 'profileEdit',
 	template: 'profileEdit',
 	data: function(){
@@ -151,15 +151,15 @@ Router.route('/profileEdit/_id:', {
 		}
 	},
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    },
-    waitOn: function(){
-        return [ Meteor.subscribe('Addresses'), Meteor.subscribe('users') ];
-    }
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	},
+	waitOn: function(){
+		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users') ];
+	}
 
 });
 Router.route('/brackets', {
@@ -198,7 +198,7 @@ Router.route('/confirmation_registration_player', {
 		data.city = city;
 		data.gender = gender;
 		return data;
-    },
+	},
 
 	onBeforeAction: function() {
 		var previousLocationPath=Session.get("previousLocationPath");
@@ -225,10 +225,10 @@ Router.route('/confirmation_registration_court/:_id', {
 			data.address = address;
 			return data;
 		}
-    },
-    waitOn: function(){
-        return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
-    }
+	},
+	waitOn: function(){
+		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
+	}
 });
 
 Router.route('/modify-court/:_id', {
@@ -246,17 +246,17 @@ Router.route('/modify-court/:_id', {
 			data.address = address;
 			return data;
 		}
-    },
+	},
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    },
-    waitOn: function(){
-        return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
-    }
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	},
+	waitOn: function(){
+		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
+	}
 
 });
 
@@ -275,10 +275,10 @@ Router.route('/confirm_pair/:_id',{
 		return data;
 	},
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    }
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	}
 });
