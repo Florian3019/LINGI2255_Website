@@ -408,6 +408,56 @@ Meteor.methods({
 		return courtId;
 	},
 
+	'deleteCourt' : function(courtId, callback){
+		if(!courtId){
+			console.error("deleteCourt: no courtId in argument");
+			return false;
+		}
+
+		var court = Courts.findOne(courtId);
+		if(!court)
+		{
+			console.error("deleteCourt: no court correponds to courtId");
+			return false;
+		}
+
+		var u = Meteor.users.findOne(court.ownerID);
+		if(!u){
+			console.error('deleteCourt : owner does not exist');
+			return false;
+		}
+
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
+		const userIsOwner = court.ownerID == Meteor.userId();
+
+		if(userIsOwner || isAdmin || isStaff){
+
+			Addresses.remove(court.addressID, function(err){
+				if(err){
+					console.error('deleteCourt: error while deleting court address');
+					console.error(err);
+					return callback(null);
+				}
+			});
+
+			Courts.remove(courtId, function(err){
+				if(err){
+					console.error('deleteCourt: error while deleting court');
+					console.error(err);
+					return callback(null);
+				}
+			});
+
+		}
+		else
+		{
+			console.error("deleteCourt : You don't have the permissions to delete a court !");
+			return false;
+		}
+
+	},
+
 	/*
 		@param : userData : javascript object containing the fields of the user. It must include at least the _id field.
 
