@@ -84,14 +84,16 @@ Router.route('/court/:_id', {
 	name: 'courtInfoPage',
 	template: 'courtInfoPage',
 	data: function(){
-		var court = Courts.findOne({ _id: this.params._id});
-		var owner = Meteor.users.findOne({_id: court.ownerID});
-		var address = Addresses.findOne({_id: court.addressID});
-		var data = {};
-		data.court = court;
-		data.owner = owner;
-		data.address = address;
-		return data;
+		if (this.ready()) {
+	    	var court = Courts.findOne(this.params._id);
+			var owner = Meteor.users.findOne(court.ownerID);
+			var address = Addresses.findOne(court.addressID);
+			var data = {};
+			data.court = court;
+			data.owner = owner;
+			data.address = address;
+			return data;
+	    }
     },
 	onBeforeAction: function(){
         if(Meteor.userId()){
@@ -99,13 +101,14 @@ Router.route('/court/:_id', {
         } else {
             this.render("login");
         }
+    },
+    waitOn: function(){
+        return [
+        	Meteor.subscribe('Courts'),
+        	Meteor.subscribe('Addresses'),
+        	Meteor.subscribe('users')
+        ]
     }
-
-	/*
-	subscriptions: function(){
-        return [ Meteor.subscribe('courts'), Meteor.subscribe('addresses') ]
-    }
-    */
 });
 
 Router.route('/my-courts', {
@@ -186,31 +189,20 @@ Router.route('/confirmation_registration_court/:_id', {
 	template: 'confirmation_registration_court',
 	
 	data: function(){
-		var court = Courts.findOne({ _id: this.params._id });
-		console.log(court)
-		var owner = Meteor.users.findOne({_id: court.ownerID});
-		console.log(owner);
-		var address = Addresses.findOne({_id: court.addressID});
-		var data = {};
-		data.court = court;
-		data.owner = owner;
-		data.address = address;
-		return data;
+		if (this.ready()) {
+			var court = Courts.findOne({ _id: this.params._id });
+			var owner = Meteor.users.findOne({_id: court.ownerID});
+			var address = Addresses.findOne({_id: court.addressID});
+			var data = {};
+			data.court = court;
+			data.owner = owner;
+			data.address = address;
+			return data;
+		}
     },
-
     waitOn: function(){
         return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
-    }	
-	
-	/*
-	onBeforeAction: function() {
-		var previousLocationPath=Session.get("previousLocationPath");
-		// Redirect to Home if we are not coming from the tournament registration page
-		if(previousLocationPath!="courtRegistration"){
-			this.redirect("/")
-		}
-		this.next();
-	}*/
+    }
 });
 
 Router.route('/modify-court/:_id', {
@@ -218,14 +210,16 @@ Router.route('/modify-court/:_id', {
 	template: 'courtRegistration',
 	
 	data: function(){
-		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
-		var owner = Meteor.users.findOne({_id: court.ownerID});
-		var address = Addresses.findOne({_id: court.addressID});
-		var data = {};
-		data.court = court;
-		data.owner = owner;
-		data.address = address;
-		return data;
+		if (this.ready()) {
+			var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
+			var owner = Meteor.users.findOne({_id: court.ownerID});
+			var address = Addresses.findOne({_id: court.addressID});
+			var data = {};
+			data.court = court;
+			data.owner = owner;
+			data.address = address;
+			return data;
+		}
     },
 	onBeforeAction: function(){
         if(Meteor.userId()){

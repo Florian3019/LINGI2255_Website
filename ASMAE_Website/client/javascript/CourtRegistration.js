@@ -49,13 +49,14 @@ Template.courtRegistration.events({
             country : $('[name=country]').val()
         };
 
-        var id; //Used for the update of a court
+        var id, currentOwnerID; //Used for the update of an existing court
         if(this.court){
             id = this.court._id;
+            currentOwnerID = this.court.ownerID;
         }
         var courtData = {
             _id : id,
-            ownerID : Meteor.userId(),
+            ownerID : currentOwnerID,
             surface : $('[name=surface]').val(),
         	courtType : $('[name=courtType]:checked').val(),
         	instructions : $('[name=instructions]').val(),

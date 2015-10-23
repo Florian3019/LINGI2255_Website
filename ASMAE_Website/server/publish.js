@@ -4,13 +4,8 @@ Meteor.publish('Courts', function(){
         if(user.profile.isStaff || user.profile.isAdmin){
     		return Courts.find();
 	    }
-	    else{
-	    	return Courts.find({ownerID: this.userId});
-	    }
     }
-    else{
-    	return null;
-    }
+    return Courts.find({ownerID: this.userId});
 });
 
 Meteor.publish('Addresses', function(){
@@ -34,7 +29,7 @@ Meteor.publish('Questions', function(){
 });
 
 
-Meteor.publish("users", function () {
+Meteor.publish('users', function () {
 	//var res = Meteor.users.find({},{});
 	var res = Meteor.users.find({});
 
