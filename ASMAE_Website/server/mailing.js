@@ -43,7 +43,24 @@ Accounts.emailTemplates.verifyEmail.subject = function(user){
 Accounts.emailTemplates.verifyEmail.html = function(user,url){
 	var data = {
 		dataintro:"Bonjour "+ user.username+",",
+		dataacc:"Merci pour votre inscription !",
+		datacontent:"Grâce à celà, vous allez pouvoir accéder à toutes les fonctions du site comme s'inscrire au tournoi, voir les photos et plein d'autres fonctionalités ! N'hésitez donc pas de visiter tout le site !",
+		datadesc:"Pour accéder à tout çela il ne vous reste plus qu'à vérifier votre compte en cliquant sur le lien suivant:",
 		datalink:url
 		};
 		return SSR.render("verifMail",data);
+};
+
+Accounts.emailTemplates.resetPassword.subject = function(user){
+	return "Comment réinitialiser votre mot de passe ?;"
+};
+Accounts.emailTemplates.resetPassword.html =function(user,url){
+	var data = {
+		dataintro:"Bonjour "+user.username+",",
+		dataacc:"",
+		datacontent:"Il semble que vous ayez oublié votre mot de passe. Si c'est le cas, veuillez suivre les instructions ci-dessous. Si jamais vous n'avez pas demandé le changement de votre mot de passe, vous pouvez simplement ignoré cet email.",
+		datadesc:"Pour modifier votre mot de passe, il suffit de cliquer sur le lien ci-dessous:",
+		datalink:url
+	};
+	return SSR.render("verifMail",data);
 };
