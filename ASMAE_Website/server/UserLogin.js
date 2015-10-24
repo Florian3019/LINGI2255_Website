@@ -113,7 +113,7 @@ addDefaultFields = function(user){
     return user;
 }
 
-/*
+/*	
     Define what happens when the user logs in. Mainly merges the accounts if he logged in via google/facebook
     But already had an account on facebook/google. Also checks if he created an account manually (if so, merges the accounts)
 
@@ -122,6 +122,7 @@ addDefaultFields = function(user){
 */
 
 Accounts.onCreateUser(function (options, user) {
+	user.profile = {}; // To avoid TypeError : Cannot set 'isStaff' and 'isAdmin' of undefined when invoking function addDefaultFields
     // Check if the user logged in via a service (google or facebook)
     if (user.services) {
         if (options.profile) {
