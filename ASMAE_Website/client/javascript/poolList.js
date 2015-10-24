@@ -201,12 +201,21 @@ Template.poolItem.helpers({
 		return Meteor.users.findOne({_id:playerId});
 	},
 
+	'log' : function(x){
+		console.log(x);
+	},
 
 	'getPair' : function(pairId) {
 		var pair = Pairs.findOne({_id:pairId})
 		if(!pair) return undefined;
 		return (pair.player1 && pair.player2) ? pair : undefined;
 	},
+
+	'getColor' : function(player){
+		if(player.wish || player.constraint){
+			return 'orange';
+		}
+	}
 });
 
 Template.poolContainerTemplate.onRendered(function(){

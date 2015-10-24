@@ -1,4 +1,7 @@
+
+<!-- Takes ID = <userID> as parameter -->
 <template name="profileEdit">
+{{#with getPlayer}}
 	<div>
 		<div id="titleDiv"> <h2>Modification du profil</h2> </div>
 		<form role="form">
@@ -207,5 +210,5 @@
 
 		</form>
 	</div>
-
+{{/with}}
 </template>

@@ -18,7 +18,6 @@ Template.playersInfo.events({
     },  
     'click li': function() {
         Session.set('selected', this);
-        Session.set('address', Addresses.find({_id: this.profile.addressID}).fetch()[0]);
         Router.go('playerInfoPage');
     }
 });
