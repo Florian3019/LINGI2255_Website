@@ -189,16 +189,29 @@ Template.poolList.events({
 
 		var yearData = Years.findOne({_id:year},{type:1});
 
+		typeId = yearData[type];
+		if(!typeId){
+			console.error("That type doesn't exist in the db");
+			return;
+		}
 		var newPoolId = Pools.insert({"pairs":[]});
 		var data = {$push:{}}
 		data.$push[category] = newPoolId;
-		Types.update({_id:yearData[type]},data);
+		Types.update({_id:typeId},data);
 	}
 });
 
 Template.poolItem.helpers({
 	'getPlayer' : function(playerId){
 		return Meteor.users.findOne({_id:playerId});
+	},
+
+	'getModalId' : function(){
+		return '#pairModal'+this._id;
+	},
+
+	'getModalPureId' : function(){
+		return 'pairModal' + this._id;
 	},
 
 	'log' : function(x){

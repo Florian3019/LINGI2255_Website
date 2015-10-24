@@ -75,7 +75,7 @@ Template.playerInfoTemplate.events({
 			Check if the button was in a popup (modal), if so, close it before going to profileEdit
 		*/
 		var modalId = event.currentTarget.dataset.modal;
-		if(modalId) $('#'+modalId).modal('hide');
+		if(modalId) $(modalId).modal('hide');
 
 		Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
 		console.log("clicked modifier");

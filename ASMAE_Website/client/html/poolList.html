@@ -127,7 +127,7 @@
 <template name="poolItem">
   {{#with getPair PAIRID}} <!-- get the pair data using its id -->
     <div id="{{this._id}}" class="pairs" data-startingPoolId="{{../POOLID}}">
-      <ul class="list-group" data-target="#pairModal" data-toggle="modal">
+      <ul class="list-group" data-target="{{getModalId}}" data-toggle="modal">
         {{#with getPlayer this.player1._id}}
           <li class="list-group-item pairPlayer {{getColor ../player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}}</li>
         {{/with}}
@@ -138,7 +138,7 @@
     </div>
 
   <!-- Modal -->
-  <div id="pairModal" class="modal fade" role="dialog">
+  <div id="{{getModalPureId}}" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
       <!-- Modal content-->
@@ -153,7 +153,7 @@
 
         <div class="modal-body">
           <div class="panel panel-primary">
-            {{>playerInfoTemplate ID=this.player1._id MODAL='pairModal'}}
+            {{>playerInfoTemplate ID=this.player1._id MODAL=getModalId}}
             
             {{#if this.player1.wish}}
               <h3>Souhaits</h3>
