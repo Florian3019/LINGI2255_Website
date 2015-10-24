@@ -1,5 +1,9 @@
-/*Template.profileEdit.helpers({
-	'lastname': function(){
+Template.profileEdit.helpers({
+	mail : function(){
+		return this.user.emails[0].address;
+	}
+});
+/*	'lastname': function(){
 		var user=Meteor.user();
 
 		if(user==null){
@@ -180,7 +184,6 @@ Template.profileEdit.events({
 			zipCode : $('[name=zipcode]').val(),
 			country : $('[name=country]').val()
 		};
-
 
 		Meteor.call('updateAddress',address,this.user._id, function(error, result){
 			if(error){

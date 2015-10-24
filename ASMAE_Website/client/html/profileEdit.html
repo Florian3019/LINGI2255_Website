@@ -1,8 +1,12 @@
 <template name="profileEdit">
 	<div>
 		<div id="titleDiv"> <h2>Modification du profil</h2> </div>
+		<div class="panel panel-info">
+	             <div class="panel-heading">
+	               <h3 class="panel-title"><div align="left">{{user.username}} - {{mail}}</div><div align="right"></div></h3>
+	             </div>
+						 </div>
 		<form role="form">
-
 			<div class="form-group has-feedback" id="lastnameDiv">
 				<label for="text">Nom</label>
 				<div class="input-group">
