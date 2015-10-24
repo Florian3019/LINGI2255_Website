@@ -21,13 +21,13 @@ if (isProdEnv()) {
 
     ServiceConfiguration.configurations.insert({
         service: 'google',
-        appId: '00000',
-        secret: '00000'
+        appId: '413437801707-k3bevh2blautvhg0m2mtac69up6jl5ge.apps.googleusercontent.com',
+        secret: 'mXBYrXgom9rVMKsog_K1JsIL'
     });
     ServiceConfiguration.configurations.insert({
         service: 'facebook',
-        appId: '00000',
-        secret: '00000'
+        appId: '1665003880380917',
+        secret: '8df4b4b1612e9792af5fd98066918ef7'
     });
 } else {
     // dev environment, currently set up with guillaume leurquin's secrets.
