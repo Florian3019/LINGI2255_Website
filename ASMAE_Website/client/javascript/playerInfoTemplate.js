@@ -57,7 +57,7 @@ Template.playerInfoTemplate.helpers({
 				console.log(err);
 				return;
 			}
-			if(res==true){
+			if(res==false){
 				document.getElementById("button_edit").removeAttribute("hidden");
 			}
 		}
