@@ -57,7 +57,7 @@ Template.myRegistration.onCreated(function (){
 	var id = Meteor.userId();
     var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
 	if(pair){
-    this.subscribe("PairInfo", pair._id);
-	  this.subscribe("PartnerAdress", pair._id);
+    this.subscribe("PairInfo");
+	this.subscribe("PartnerAdress");
   }
 });

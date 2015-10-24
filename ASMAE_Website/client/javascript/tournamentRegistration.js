@@ -536,7 +536,7 @@ Template.tournamentRegistration.events({
 					year:currentYear,
 					day: dateMatch,
 					//category:<category>, TODO
-					player1:playerData,
+					player2:playerData,  // Player2 because search for a single player is made on pairs with empty player2 field
 					//player2:{_id:player2ID} // TODO--> give all player info
 				};
 			}
