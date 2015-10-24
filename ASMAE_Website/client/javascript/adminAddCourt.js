@@ -58,8 +58,6 @@ Template.adminAddCourt.events({
         if(user.firstName){query["profile.firstName"] = user.firstName;}
         if(user.address){query["emails.address"] = user.address;}
         cursor = Meteor.users.find(query).fetch();
-        console.log(cursor);
-        console.log(cursor.length);
         var id, currentOwnerID; //Used for the update of an existing court
         if(this.court){
             id = this.court._id;
@@ -73,7 +71,6 @@ Template.adminAddCourt.events({
         }
         else {
             if(cursor.length > 0) {
-                console.log(cursor[0]._id);
                 currentOwnerID = cursor[0]._id;
             }
             else {
