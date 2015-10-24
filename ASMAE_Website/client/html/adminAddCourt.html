@@ -1,0 +1,101 @@
+<template name="adminAddCourt">
+	<div class="container">    
+		<form role="form">
+
+			<div class="form-group">
+
+				<h2>Informations sur le terrain:</h2>
+				<div class="row">
+					<div class="col-sm-12">
+						<label for="firstName">Prénom:</label>
+						<input type="text" name="firstName" id="firstName" value="{{users.firstName}}" class="form-control" required>
+					</div>
+					<div class="col-sm-12">
+						<label for="lastName">Nom:</label>
+						<input type="text" name="lastName" id="lastName" value="{{users.lastName}}" class="form-control" required>
+					</div>
+					<div class="col-sm-12">
+						<label for="address">Adresse email:</label>
+						<input type="text" name="address" id="address" value="{{users.address}}" class="form-control">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<label for="street">Rue:</label>
+						<input type="text" name="street" id="street" value="{{address.street}}" class="form-control">
+					</div>
+
+				</div>
+				<br>
+				<div class ="row">
+					<div class = "col-sm-2">
+						<label for="addressNumber">Numéro:</label>
+						<input type="text" name="addressNumber" id="addressNumber" value="{{address.number}}" class="form-control">
+					</div>
+					<div class="col-sm-2">
+						<label for="box">Boîte:</label>
+						<input type="text" name="box" id="box" value="{{address.box}}" class="form-control"><br />
+					</div>
+					<div class="col-sm-3">
+						<label for="zipCode">Code postal:</label>
+						<input type="text" name="zipCode" id="zipCode" value="{{address.zipCode}}" class="form-control">
+					</div>
+				</div>
+
+				<div class ="row">
+					<div class="col-sm-4">
+							<label for="city">Ville:</label>
+							<input type="text" name="city" id="city" value="{{address.city}}" class="form-control">
+						</div>
+					<div class="col-sm-3">
+			 		 	<div class="form-group">
+			 			    <label for="text">Pays</label>
+			 			    <input type="text" class="form-control" id="country" value="{{address.country}}" name="country">
+			 		   	</div>
+	     		 	</div>
+     		 	</div>
+
+				<div class="form-group">
+					<label for="surface">Surface:</label>
+					<select name="surface" id="surface" class="form-control custom-inline-radio" style="width: 15%; display: inline">
+						<option value="Autre" {{selectedSurface court.surface "Autre"}}>Autre</option>
+						<option value="Terre Battue" {{selectedSurface court.surface "Terre Battue"}}>Terre Battue</option>
+						<option value="Gazon" {{selectedSurface court.surface "Gazon"}}>Gazon</option>
+						<option value="Synthétique" {{selectedSurface court.surface "Synthétique"}}>Synthétique</option>
+						<option value="Béton" {{selectedSurface court.surface "Béton"}}>Béton</option>
+					</select>
+				</div>
+
+
+				<div class="form-group">
+					<h5><b>Type:</b></h5>
+					<div class="radio">
+						<label><input type="radio" name="courtType" value="privé" {{isPrivate court.courtType}} />Privé</label><br />
+					</div>
+					<div class="radio">
+						<label><input type="radio" name="courtType" value="club" {{isClub court.courtType}} />Club</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="instructions">Instructions d'accès au terrain (facultatif):</label>
+					<textarea name="instructions" id="instructions" class="form-control" value="{{court.instructions}}"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="ownerComment">Commentaires (facultatif):</label>
+					<textarea name="ownerComment" id="ownerComment" class="form-control" value="{{court.ownerComment}}"></textarea>
+				</div>
+				<div class="form-group">
+					<label class="control-label">Disponibilité du terrain:</label><br />
+					<label class="checkbox-inline"><input type="checkbox" {{availableThisDay court.dispoSamedi}} name="dispoSamedi" id="dispoSamedi" value="samedi"/>Samedi</label>
+					<label class="checkbox-inline"><input type="checkbox" {{availableThisDay court.dispoDimanche}} name="dispoDimanche" id="dispoDimanche" value="dimanche"/>Dimanche</label>
+				</div>
+
+				<button type="submit" class="btn btn-default">Enregistrer</button>
+			</div>
+
+		</form>
+
+	</div>
+
+
+</template>

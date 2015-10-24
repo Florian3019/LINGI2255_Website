@@ -1,3 +1,4 @@
+
 Router.configure({
 	layoutTemplate: 'index'
 });
@@ -120,7 +121,10 @@ Router.route('/adminTemplate', {
 	name: 'adminTemplate',
 	template: 'adminTemplate'
 });
-
+Router.route('/adminAddCourt', {
+	name: 'adminAddCourt',
+	template: 'adminAddCourt'
+});
 Router.route('/players-info', {
 	name: 'playersInfo',
 	template: 'playersInfo'

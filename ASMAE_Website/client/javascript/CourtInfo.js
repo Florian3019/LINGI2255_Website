@@ -1,6 +1,7 @@
 Template.courtInfo.events({
    'submit form': function(){
       event.preventDefault();
+        
         var lastName = event.target.lastname.value;
         var firstName = event.target.firstname.value;
         var street = event.target.street.value;
@@ -63,17 +64,14 @@ Template.courtInfo.events({
         }
         Session.set('answer', answer[0]);
         return false;
-    }
-    /*
-    ,  
+    }/*,  
     'click li': function() {
         Session.set('answerT', this);
         var userC = Meteor.users.find({_id: this.ownerID}).fetch()[0];
         Session.set('userC',userC);
         Session.set('addressC', Addresses.find({_id: userC.profile.addressID}).fetch()[0]);
         Router.go('courtInfoPage');
-    }
-    */
+    }*/
 });
 
 Template.courtInfo.helpers({
