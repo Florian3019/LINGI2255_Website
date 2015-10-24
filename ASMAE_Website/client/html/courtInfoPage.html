@@ -18,29 +18,17 @@
                   <table class="table table-user-information">
                     <tbody>
                       <tr>
-                        <td>Owner</td>
-                        <td>{{owner.username}}</td>
+                        <td>Proriétaire</td>
+                        <td>{{ownerFirstName}} {{ownerLastName}}</td>
                       </tr>
-                      <!--
-                      {{#if owner.profile.firstName}}
-                      <tr>
-                        <td>Proriétaire </td>
-                        <td>{{owner.profile.firstName}} {{owner.profile.lastName}}</td>
-                      </tr>
-                      {{/if}}
-  
                       <tr>
                         <td>Email</td>
-                        <td>{{owner.emails[0].address}}</td>
+                        <td>{{ownerEmail}}</td>
                       </tr>
-  
-                      {{#if owner.profile.phone}}
                       <tr>
                         <td>Téléphone </td>
-                        <td>{{owner.profile.phone}}</td>
+                        <td>{{ownerPhone}}</td>
                       </tr>
-                      {{/if}}
-                    -->
                       <tr>
                         <td>Rue</td>
                         <td>{{address.street}}</td>

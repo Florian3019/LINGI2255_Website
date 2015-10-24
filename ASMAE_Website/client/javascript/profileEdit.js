@@ -172,7 +172,6 @@
 Template.profileEdit.events({
 	'submit form': function(event){
 		event.preventDefault();
-
 		var address = {
 			street : $('[name=street]').val(),
 			number : $('[name=addressNumber]').val(),
@@ -183,7 +182,7 @@ Template.profileEdit.events({
 		};
 
 
-		Meteor.call('updateAddress',address,Meteor.userId(), function(error, result){
+		Meteor.call('updateAddress',address,this.user._id, function(error, result){
 			if(error){
 				console.error('profileEdit adress error');
 				console.error(error);
@@ -200,7 +199,7 @@ Template.profileEdit.events({
 		var rank = $('[name=rank]').val();
 
 		var userData = {
-			_id: Meteor.userId(),
+			_id: this.user._id,
 			profile:{
 				lastName : lastName,
 				firstName : firstName,
