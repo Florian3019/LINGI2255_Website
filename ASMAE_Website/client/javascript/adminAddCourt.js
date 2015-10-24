@@ -34,6 +34,9 @@ Template.adminAddCourt.helpers({
         else{
             return '';
         }
+    },
+    'player': function(){
+        return Session.get('cursor1');
     }
 });
 
@@ -53,6 +56,7 @@ Template.adminAddCourt.events({
             lastName : $('[name=lastName]').val(),
             address : $('[name=address]').val()
         };
+        var go = false;
         var query = {};
         if(user.lastName){query["profile.lastName"] = user.lastName;}
         if(user.firstName){query["profile.firstName"] = user.firstName;}
@@ -63,18 +67,24 @@ Template.adminAddCourt.events({
             id = this.court._id;
             if(cursor.length > 0) {
                 currentOwnerID = cursor[0]._id;
+                go = true;
             }
             else {
                 currentOwnerID = this.court.ownerID;
+                go = true;
             }
             
         }
         else {
             if(cursor.length > 0) {
                 currentOwnerID = cursor[0]._id;
+                if(cursor.length == 1){
+                    go = true;
+                }
             }
             else {
                 currentOwnerID = this.court.ownerID;
+                go = true;
             }
         }
         var courtData = {
@@ -87,8 +97,31 @@ Template.adminAddCourt.events({
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
+        
+		    Meteor.call('updateCourt', courtData, address, function(error, result){
+                if(error){
+                    console.error('CourtRegistration error');
+                    console.error(error);
+                }
+                else if(result == null){
+                    console.error("No result");
+                }
+                if(go) {
+                    Router.go('confirmation_registration_court', {_id: result});
+                }
+                else {
+                    Session.set('cursor1',cursor)
+                    Session.set('courtData', courtData);
+                    Session.set('address', address);
+                }
+	        });
+    },  
+    'click li': function() {
+        var courtData = Session.get('courtData');
+        var address = Session.get('address');
+        courtData.ownerID = this._id;
 
-		Meteor.call('updateCourt', courtData, address, function(error, result){
+        Meteor.call('updateCourt', courtData, address, function(error, result){
             if(error){
                 console.error('CourtRegistration error');
                 console.error(error);
@@ -96,7 +129,8 @@ Template.adminAddCourt.events({
             else if(result == null){
                 console.error("No result");
             }
-			Router.go('confirmation_registration_court', {_id: result});
-	    });
+            Router.go('confirmation_registration_court', {_id: result});
+        });
+
     }
 });

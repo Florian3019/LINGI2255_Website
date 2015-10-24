@@ -94,7 +94,13 @@
 			</div>
 
 		</form>
-
+		<div>
+  			<ul class="list-group">
+    		{{#each player}}
+      		<li class="list-group-item playerFound">{{profile.lastName}}, {{profile.firstName}}</li>
+    		{{/each}}
+  		</ul>
+		</div>
 	</div>
 
 
