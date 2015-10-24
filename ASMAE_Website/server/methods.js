@@ -45,6 +45,21 @@ Meteor.methods({
 		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isStaff":1});
 		return res ? res.profile.isStaff : false;
 	},
+	'turnAdmin': function(nid){
+		 Meteor.users.update({_id:nid}, {
+        	$set: {"profile.isAdmin":1,"profile.isStaff":0}
+      		});
+	},
+	'turnStaff': function(nid){
+		 Meteor.users.update({_id:nid}, {
+        	$set: {"profile.isAdmin":0,"profile.isStaff":1}
+      		});
+	},
+	'turnNormal': function(nid){
+		 Meteor.users.update({_id:nid}, {
+        	$set: {"profile.isAdmin":0,"profile.isStaff":0}
+      		});
+	},
 
 	'getAge' : function(birthDate){
 		var birthdate = new Date(birthDate);
