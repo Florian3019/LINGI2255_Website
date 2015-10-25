@@ -63,9 +63,13 @@ Template.poolList.helpers({
 		return {"_id":"toRemove", "pairs":[]}
 	},
 
+	/*
+		Initializes the draggable interface
+	*/
 	'resetDrake' : function(){
 		drake = dragula(
-			{
+			{	
+				/*	Defines what can be moved/dragged	*/
 				moves : function(el, source, handle, sibling) {
 		    		var isPairModal = (' ' + el.className + ' ').indexOf(' pairInfoModal ') > -1
 		    		if(isPairModal){
@@ -89,6 +93,7 @@ Template.poolList.helpers({
 });
 
 Template.pairsToRemoveContainerTemplate.onRendered(function(){
+	// Add the container of this template as a container that can receive draggable objects
   	drake.containers.push(document.querySelector('#pairstoremove'));
 });
 
@@ -152,10 +157,7 @@ Template.poolList.events({
 			Remove from the db unwanted pairs
 		*/
 		var allTables = document.getElementById("allTables");
-		console.log(allTables);
 		var columnPairToRemove = allTables.rows[0];
-		console.log(columnPairToRemove);
-		console.log(columnPairToRemove.cells[1]);
 		var pairsToRemove = columnPairToRemove.cells[1].getElementsByClassName('pairs');
 
 
@@ -182,7 +184,7 @@ Template.poolList.events({
 		// Start by finding the pool container of the pool we'd like to remove, and take the pairs inside it
 		var pairsToRemove = document.getElementById(poolId).children;
 		if(pairsToRemove.length != 0){
-			console.log("Can't remove a pool that is not empty");
+			console.error("Can't remove a pool that is not empty");
 			return;
 		}
 
@@ -198,16 +200,25 @@ Template.poolList.events({
 			return;
 		}
 
+		/*
+			Get the year data corresponding to the year selected
+		*/
 		var yearData = Years.findOne({_id:year},{type:1});
 
+		/*
+			Get the type data corresponding to the type selected
+		*/
 		typeId = yearData[type];
 		if(!typeId){
 			console.error("That type doesn't exist in the db");
 			return;
 		}
+
+		/*	Create the new pool	*/
 		var newPoolId = Pools.insert({"pairs":[]});
 		var data = {$push:{}}
 		data.$push[category] = newPoolId;
+		/*	Add that pool to the list of pools of the corresponding type	*/
 		Types.update({_id:typeId},data);
 	}
 });

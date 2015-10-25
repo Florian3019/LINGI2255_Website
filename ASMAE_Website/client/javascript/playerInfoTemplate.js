@@ -1,10 +1,15 @@
 // Takes a player id as argument
 Template.playerInfoTemplate.helpers({
+
+	/*	
+		Returns an object containing functions 
+		that are used by the template to display information 
+		about the player id passed as argument to the template	
+	*/
 	'getPlayer' : function(){
 		var user = Meteor.users.findOne({_id:this.ID}); // this.ID = <userid>
 		if(!user) return;
 		var addr = Addresses.findOne({_id:user.profile.addressID});
-		console.log("myRegistration : "+user.profile.addressID);
 		data = {
 			'firstName': function(){
 				return user.profile.firstName;
@@ -51,6 +56,9 @@ Template.playerInfoTemplate.helpers({
 	    return data;
 	},
 
+	/*
+		Displays or hides the "modifier" button depending on the permissions of the user
+	*/
 	'showEdit' : function(){
 		var callBack = function(err, res){
 			if(err){
@@ -77,6 +85,7 @@ Template.playerInfoTemplate.events({
 		var modalId = event.currentTarget.dataset.modal;
 		if(modalId) $(modalId).modal('hide');
 
+		/*	Go to profile edit	*/
 		Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
 		console.log("clicked modifier");
 	},
