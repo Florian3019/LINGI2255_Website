@@ -20,7 +20,9 @@
             <li><a href="{{pathFor route='playersInfo'}}">Information sur les joueurs</a></li>
             <li><a href="{{pathFor route='courtInfo'}}">Information sur les terrains</a></li>
             <li><a href="{{pathFor route='poolList'}}">Information sur les poules</a></li>
+            {{#if isAdmin}}
             <li><a href="{{pathFor route='adminTemplate'}}">Page administrateur</a></li>
+            {{/if}}
             <li><a href="{{pathFor route='adminAddCourt'}}">Ajouter un terrain</a></li>
             </ul>
         </li>
@@ -30,7 +32,7 @@
         <li><a href="{{pathFor route='brackets'}}">Brackets</a></li>
 
         {{#if currentUser}}
-        
+
         <li><a href="{{pathFor route='contacts'}}">Contact</a></li>
         <li><a href="{{pathFor route='myCourts'}}">Mes terrains</a></li>
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Inscription <span class="caret"></span></a>

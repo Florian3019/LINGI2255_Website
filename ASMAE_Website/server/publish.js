@@ -193,13 +193,13 @@ Meteor.publish("Pairs", function () {
           user2 = Meteor.users.findOne({_id:pair.player2._id});
         }
         if(!user2) {
-            console.error("Error publish PartnerAdress : you do not have a partner in this pair (user2)");
+            //console.error("Error publish PartnerAdress : you do not have a partner in this pair (user2)");
             var addrID1 = user1.profile.addressID;
 			var addr1 = Addresses.findOne({_id:addrID1});
 			this.added('Addresses',addrID1,addr1);
         }
 		else if(!user1) {
-			console.error("Error publish PartnerAdress : you do not have a partner in this pair (user1)");
+			//console.error("Error publish PartnerAdress : you do not have a partner in this pair (user1)");
 			var addrID2 = user2.profile.addressID;
 			var addr2 = Addresses.findOne({_id:addrID2});
 			this.added('Addresses',addrID2,addr2);
