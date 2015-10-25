@@ -91,14 +91,14 @@ Template.adminAddCourt.events({
             _id : id,
             ownerID : currentOwnerID,
             surface : $('[name=surface]').val(),
-        	courtType : $('[name=courtType]:checked').val(),
-        	instructions : $('[name=instructions]').val(),
-        	ownerComment : $('[name=ownerComment]').val(),
+            courtType : $('[name=courtType]:checked').val(),
+            instructions : $('[name=instructions]').val(),
+            ownerComment : $('[name=ownerComment]').val(),
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
         
-		    Meteor.call('updateCourt', courtData, address, function(error, result){
+            Meteor.call('updateCourt', courtData, address, function(error, result){
                 if(error){
                     console.error('CourtRegistration error');
                     console.error(error);
@@ -114,7 +114,7 @@ Template.adminAddCourt.events({
                     Session.set('courtData', courtData);
                     Session.set('address', address);
                 }
-	        });
+            });
     },  
     'click li': function() {
         var courtData = Session.get('courtData');
