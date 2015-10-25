@@ -12,6 +12,8 @@ Template.courtInfo.events({
         var country = event.target.country.value;
         var surface = event.target.surface.value;
         var courtType = event.target.courtType.value;
+        var dispo = event.target.dispo.value;
+        console.log(dispo)
         var queryAd = {};
         var queryP = {};
         var query = {};
@@ -43,6 +45,22 @@ Template.courtInfo.events({
         
 
         if(surface != "NoType") {query["surface"] = surface;}
+        if(dispo != "NoType") {
+            if(dispo =="Samedi") {
+                query["dispoSamedi"] = true;
+            }
+            else if(dispo =="Dimanche"){
+                query["dispoDimanche"] = true;
+            }
+            else if(dispo =="Both"){
+                query["dispoDimanche"] = true;
+                query["dispoSamedi"] = true;
+            }
+            else{
+                query["dispoDimanche"] = false;
+                query["dispoSamedi"] = false;
+            }
+        }
         if(courtType) {query["courtType"] = courtType;}
         if(ID) {
             query["ownerID"] = ID;
