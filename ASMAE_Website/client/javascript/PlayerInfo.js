@@ -25,5 +25,11 @@ Template.playersInfo.events({
 Template.playersInfo.helpers({
     'player': function(){
         return Session.get('cursor');
-    }
+    },
+    'getAll' : function(){
+    	return Meteor.users.find();
+    },
+    'getEmail' : function(){
+		return this.emails[0].address;
+	}
 });
