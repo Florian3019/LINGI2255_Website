@@ -7,7 +7,7 @@ Meteor.methods({
 		// 	pair1:<pairID>,
 		// 	pair2:<pairID>,
 		// 	result:{
-		// 			pair1Points:<points>, 
+		// 			pair1Points:<points>,
 		// 			pair2Points:<points>
 		// 			},
 		// 	court:<courtID>
@@ -24,7 +24,7 @@ Meteor.methods({
 		// 			[ {"name" : "Jesse James", "id" : "jesse-james", "seed" : 1}, {"name" : "Scott Anderson", "id" : "scott-anderson", "seed" : 12}],
 		// 			[ {"name" : "Josh Groben", "id" : "josh-groben", "seed" : 13}, {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14} ],
 		// 			[ {"name" : "Jake Coutry", "id" : "jake-coutry", "seed" : 15}, {"name" : "Spencer Zettersten", "id" : "spencer-zettersten", "seed" : 16}]
-		// 		], 
+		// 		],
 		// 		[
 		// 			[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1}, {"name" : "James Coutry", "id" : "james-coutry", "seed" : 3} ],
 		// 			[ {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5}, {"name" : "Teddy Koufus", "id" : "teddy-koufus", "seed" : 8} ],
@@ -54,7 +54,7 @@ Meteor.methods({
 
 	/**
 	*	@param year : year for which the brackets must be made
-	*	@param matchType : one of mixt,men,women,family
+	*	@param matchType : one of mixed,men,women,family
 	* 	@param category : preminimes, minimes, cadets, scholars, juniors, seniors or elites
 	*/
 	'makeBrackets' : function(year, matchType, category){
@@ -71,9 +71,9 @@ Meteor.methods({
 
 		// Go through all pools of that type and that category
 		for(var i=0;i<poolList.length;i++){
-			
+
 			var results = {}; // Key : <pairId>, value : <total match points>
-			
+
 			/*
 				For each pool, go through all the matches
 			*/
@@ -85,7 +85,7 @@ Meteor.methods({
 
 				// If the pair has already been added to the list of results, increment its score, otherwise just set its new score.
 				results[pairMatch.pair1] = results[pairMatch.pair1] ? results[pairMatch.pair1]+pairMatch["result.pair1Points"] : pairMatch["result.pair1Points"];
-				results[pairMatch.pair2] = results[pairMatch.pair2] ? results[pairMatch.pair2]+pairMatch["result.pair2Points"] : pairMatch["result.pair2Points"];					
+				results[pairMatch.pair2] = results[pairMatch.pair2] ? results[pairMatch.pair2]+pairMatch["result.pair2Points"] : pairMatch["result.pair2Points"];
 			}
 
 			/*
@@ -117,7 +117,7 @@ Meteor.methods({
 				}
 				// a lost against b, so a is after b
 				return 1;
-			});			
+			});
 
 
 
