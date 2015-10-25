@@ -49,14 +49,7 @@ Template.courtRegistration.events({
             country : $('[name=country]').val()
         };
 
-        var id, currentOwnerID; //Used for the update of an existing court
-        if(this.court){
-            id = this.court._id;
-            currentOwnerID = this.court.ownerID;
-        }
-        var courtData = {
-            _id : id,
-            ownerID : currentOwnerID,
+				var courtData = {
             surface : $('[name=surface]').val(),
         	courtType : $('[name=courtType]:checked').val(),
         	instructions : $('[name=instructions]').val(),
@@ -64,7 +57,10 @@ Template.courtRegistration.events({
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
-
+        if(this.court){ //Used for the update of an existing court
+            courtData._id = this.court._id;
+            courtData.ownerID = this.court.ownerID;
+        }
 		Meteor.call('updateCourt', courtData, address, function(error, result){
             if(error){
                 console.error('CourtRegistration error');
@@ -73,7 +69,18 @@ Template.courtRegistration.events({
             else if(result == null){
                 console.error("No result");
             }
-			Router.go('confirmation_registration_court', {_id: result});
+						if(!Meteor.user().profile.isStaff){
+							var data = {
+							intro:"Bonjour "+Meteor.user().username+",",
+							important:"Merci pour le prêt de votre terrain !",
+							texte:"Si vous recevez ce mail, c'est que vous venez d'inscrire votre terrain ou que vous venez de modifier certaines informations par rapport à celui-ci.",
+							encadre:"Si jamais les informations par rapport à votre terrain sont erronées, n'hésitez pas à nous envoyer un email ou de modifier vous-même les informations !\n Pour toutes questions notre staff sera ravi de vour répondre via l'onglet \"contact\"/.",
+
+						};
+						Meteor.call('emailFeedback',Meteor.user().emails[0].address,"Concernant le prêt de votre terrain",data);}
+						Router.go('confirmation_registration_court', {_id: result});
 	    });
+
+
     }
 });
