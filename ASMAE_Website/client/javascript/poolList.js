@@ -64,15 +64,26 @@ Template.poolList.helpers({
 	},
 
 	'resetDrake' : function(){
-		drake = dragula().on('drag', function (el) {
-	    el.className = el.className.replace('ex-moved', '');
-	  }).on('drop', function (el) {
-	    el.className += ' ex-moved';
-	  }).on('over', function (el, container) {
-	    container.className += ' ex-over';
-	  }).on('out', function (el, container) {
-	  	if(container!=null) container.className = container.className.replace('ex-over', '');
-	  });
+		drake = dragula(
+			{
+				moves : function(el, source, handle, sibling) {
+		    		var isPairModal = (' ' + el.className + ' ').indexOf(' pairInfoModal ') > -1
+		    		if(isPairModal){
+		    			// The modal must not be draggable
+		    			return false;
+		    		}
+		    		return true; // All other elements are draggable
+		  		}
+			}
+		).on('drag', function (el) {
+  		  	el.className = el.className.replace('ex-moved', '');
+	  	}).on('drop', function (el) {
+	    	el.className += ' ex-moved';
+	  	}).on('over', function (el, container) {
+	    	container.className += ' ex-over';
+	  	}).on('out', function (el, container) {
+	  		if(container!=null) container.className = container.className.replace('ex-over', '');
+	 	});
 	}
 
 });

@@ -138,7 +138,7 @@
     </div>
 
   <!-- Modal -->
-  <div id="{{getModalPureId}}" class="modal fade pairInfoModal" role="dialog">
+  <div id="{{getModalPureId}}" class="modal fade pairInfoModal" role="dialog" style="cursor:auto">
     <div class="modal-dialog">
 
       <!-- Modal content-->
@@ -152,7 +152,7 @@
         
 
         <div class="modal-body">
-          <div class="panel panel-primary">
+          <div class="panel panel-primary pairInfoBox">
             {{>playerInfoTemplate ID=this.player1._id MODAL=getModalId}}
             
             {{#if this.player1.wish}}
@@ -164,7 +164,7 @@
               {{this.player1.constraint}}
             {{/if}}
           </div>
-          <div class="panel panel-primary">
+          <div class="panel panel-primary pairInfoBox">
             {{>playerInfoTemplate ID=this.player2._id MODAL='pairModal'}}
 
             {{#if this.player2.wish}}
