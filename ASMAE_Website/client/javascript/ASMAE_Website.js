@@ -8,16 +8,16 @@
       googe: ['profile', 'email','user_birthday']
     },
     /*
-      If true, forces the user to approve the 
-      app's permissions, even if previously approved. 
+      If true, forces the user to approve the
+      app's permissions, even if previously approved.
       Currently only supported with Google.
     */
     forceApprovalPrompt: {
       google:true
     },
     /*
-      Which fields to display in the user creation form. 
-      One of 'USERNAME_AND_EMAIL', 'USERNAME_AND_OPTIONAL_EMAIL', 
+      Which fields to display in the user creation form.
+      One of 'USERNAME_AND_EMAIL', 'USERNAME_AND_OPTIONAL_EMAIL',
       'USERNAME_ONLY', or 'EMAIL_ONLY'
     */
     passwordSignupFields: 'USERNAME_AND_EMAIL',
@@ -72,7 +72,7 @@
 
   Template._loginButtonsLoggedInDropdownActions.helpers({
     allowChangingPassword: function() {
-      // Disallow the user to change its password 
+      // Disallow the user to change its password
       // (which would be inexistant) if he logged in via google or facebook
       var user = Meteor.user();
       if(!user){
@@ -108,8 +108,8 @@
   //       // var password = event.target.password.value;
   //       var birthDate = event.target.date.value;
 
-        
-  //       data = { 
+
+  //       data = {
   //         profile:{
   //           _id: Meteor.userId(),
   //           lastName : lastname,
@@ -126,8 +126,8 @@
   //   }
 
 
-  // }); 
-   
+  // });
+
   // Template.SiteRegistration.helpers({
   //   // TODO
 
@@ -140,12 +140,12 @@
   //   }
 
 
-  // }); 
+  // });
 
   // Additional button to allow profile editing when the user is logged in
   Template._loginButtonsLoggedInDropdown.events({
     'click #login-buttons-edit-profile': function(event) {
-        Router.go('profileEdit');
+        Router.go('profileEdit',{_id:Meteor.userId()});
     }
 });
 

@@ -33,3 +33,5 @@ http
 meteorhacks:ssr
 sanjo:jasmine
 velocity:html-reporter
+chipcastledotcom:jspdf
+jspdf:autotable

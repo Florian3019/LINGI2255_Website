@@ -63,21 +63,37 @@ Template.poolList.helpers({
 		return {"_id":"toRemove", "pairs":[]}
 	},
 
+	/*
+		Initializes the draggable interface
+	*/
 	'resetDrake' : function(){
-		drake = dragula().on('drag', function (el) {
-	    el.className = el.className.replace('ex-moved', '');
-	  }).on('drop', function (el) {
-	    el.className += ' ex-moved';
-	  }).on('over', function (el, container) {
-	    container.className += ' ex-over';
-	  }).on('out', function (el, container) {
-	  	if(container!=null) container.className = container.className.replace('ex-over', '');
-	  });
+		drake = dragula(
+			{	
+				/*	Defines what can be moved/dragged	*/
+				moves : function(el, source, handle, sibling) {
+		    		var isPairModal = (' ' + el.className + ' ').indexOf(' pairInfoModal ') > -1
+		    		if(isPairModal){
+		    			// The modal must not be draggable
+		    			return false;
+		    		}
+		    		return true; // All other elements are draggable
+		  		}
+			}
+		).on('drag', function (el) {
+  		  	el.className = el.className.replace('ex-moved', '');
+	  	}).on('drop', function (el) {
+	    	el.className += ' ex-moved';
+	  	}).on('over', function (el, container) {
+	    	container.className += ' ex-over';
+	  	}).on('out', function (el, container) {
+	  		if(container!=null) container.className = container.className.replace('ex-over', '');
+	 	});
 	}
 
 });
 
 Template.pairsToRemoveContainerTemplate.onRendered(function(){
+	// Add the container of this template as a container that can receive draggable objects
   	drake.containers.push(document.querySelector('#pairstoremove'));
 });
 
@@ -141,10 +157,7 @@ Template.poolList.events({
 			Remove from the db unwanted pairs
 		*/
 		var allTables = document.getElementById("allTables");
-		console.log(allTables);
 		var columnPairToRemove = allTables.rows[0];
-		console.log(columnPairToRemove);
-		console.log(columnPairToRemove.cells[1]);
 		var pairsToRemove = columnPairToRemove.cells[1].getElementsByClassName('pairs');
 
 
@@ -171,7 +184,7 @@ Template.poolList.events({
 		// Start by finding the pool container of the pool we'd like to remove, and take the pairs inside it
 		var pairsToRemove = document.getElementById(poolId).children;
 		if(pairsToRemove.length != 0){
-			console.log("Can't remove a pool that is not empty");
+			console.error("Can't remove a pool that is not empty");
 			return;
 		}
 
@@ -187,12 +200,26 @@ Template.poolList.events({
 			return;
 		}
 
+		/*
+			Get the year data corresponding to the year selected
+		*/
 		var yearData = Years.findOne({_id:year},{type:1});
 
+		/*
+			Get the type data corresponding to the type selected
+		*/
+		typeId = yearData[type];
+		if(!typeId){
+			console.error("That type doesn't exist in the db");
+			return;
+		}
+
+		/*	Create the new pool	*/
 		var newPoolId = Pools.insert({"pairs":[]});
 		var data = {$push:{}}
 		data.$push[category] = newPoolId;
-		Types.update({_id:yearData[type]},data);
+		/*	Add that pool to the list of pools of the corresponding type	*/
+		Types.update({_id:typeId},data);
 	}
 });
 
@@ -201,12 +228,29 @@ Template.poolItem.helpers({
 		return Meteor.users.findOne({_id:playerId});
 	},
 
+	'getModalId' : function(){
+		return '#pairModal'+this._id;
+	},
+
+	'getModalPureId' : function(){
+		return 'pairModal' + this._id;
+	},
+
+	'log' : function(x){
+		console.log(x);
+	},
 
 	'getPair' : function(pairId) {
 		var pair = Pairs.findOne({_id:pairId})
 		if(!pair) return undefined;
 		return (pair.player1 && pair.player2) ? pair : undefined;
 	},
+
+	'getColor' : function(player){
+		if(player.wish || player.constraint){
+			return 'orange';
+		}
+	}
 });
 
 Template.poolContainerTemplate.onRendered(function(){

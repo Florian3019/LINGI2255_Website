@@ -21,13 +21,13 @@ if (isProdEnv()) {
 
     ServiceConfiguration.configurations.insert({
         service: 'google',
-        appId: '00000',
-        secret: '00000'
+        appId: '413437801707-k3bevh2blautvhg0m2mtac69up6jl5ge.apps.googleusercontent.com',
+        secret: 'mXBYrXgom9rVMKsog_K1JsIL'
     });
     ServiceConfiguration.configurations.insert({
         service: 'facebook',
-        appId: '00000',
-        secret: '00000'
+        appId: '1665003880380917',
+        secret: '8df4b4b1612e9792af5fd98066918ef7'
     });
 } else {
     // dev environment, currently set up with guillaume leurquin's secrets.
@@ -113,7 +113,7 @@ addDefaultFields = function(user){
     return user;
 }
 
-/*
+/*	
     Define what happens when the user logs in. Mainly merges the accounts if he logged in via google/facebook
     But already had an account on facebook/google. Also checks if he created an account manually (if so, merges the accounts)
 
@@ -122,6 +122,7 @@ addDefaultFields = function(user){
 */
 
 Accounts.onCreateUser(function (options, user) {
+	user.profile = {}; // To avoid TypeError : Cannot set 'isStaff' and 'isAdmin' of undefined when invoking function addDefaultFields
     // Check if the user logged in via a service (google or facebook)
     if (user.services) {
         if (options.profile) {

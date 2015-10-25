@@ -6,7 +6,6 @@
     <form role="form">
 
       <div class="form-group">
-
         <h2>Recherche d'un terrain:</h2>
         <div class="row">
           <div class="col-sm-12">
@@ -69,7 +68,16 @@
             <label><input type="radio" name="courtType" value="club" />Club</label>
           </div>
         </div>
-        
+        <div class="form-group">
+          <label for="dispo">Disponibilité du terrain:</label>
+          <select name="dispo" id="dispo" class="form-control custom-inline-radio" style="width: 25%; display: inline" selected="NoType">
+            <option value="NoType">Aucune importance</option>
+            <option value="Samedi">Samedi</option>
+            <option value="Dimanche">Dimanche</option>
+            <option value="Both">Samedi et dimanche</option>
+            <option value="No">Aucun des 2</option>
+          </select>
+        </div>
         <button type="submit" class="btn btn-default">Rechercher</button>
       </div>
 

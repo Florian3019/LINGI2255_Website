@@ -1,6 +1,7 @@
 Template.courtInfo.events({
    'submit form': function(){
       event.preventDefault();
+        
         var lastName = event.target.lastname.value;
         var firstName = event.target.firstname.value;
         var street = event.target.street.value;
@@ -11,6 +12,8 @@ Template.courtInfo.events({
         var country = event.target.country.value;
         var surface = event.target.surface.value;
         var courtType = event.target.courtType.value;
+        var dispo = event.target.dispo.value;
+        console.log(dispo)
         var queryAd = {};
         var queryP = {};
         var query = {};
@@ -42,6 +45,22 @@ Template.courtInfo.events({
         
 
         if(surface != "NoType") {query["surface"] = surface;}
+        if(dispo != "NoType") {
+            if(dispo =="Samedi") {
+                query["dispoSamedi"] = true;
+            }
+            else if(dispo =="Dimanche"){
+                query["dispoDimanche"] = true;
+            }
+            else if(dispo =="Both"){
+                query["dispoDimanche"] = true;
+                query["dispoSamedi"] = true;
+            }
+            else{
+                query["dispoDimanche"] = false;
+                query["dispoSamedi"] = false;
+            }
+        }
         if(courtType) {query["courtType"] = courtType;}
         if(ID) {
             query["ownerID"] = ID;
@@ -63,17 +82,14 @@ Template.courtInfo.events({
         }
         Session.set('answer', answer[0]);
         return false;
-    }
-    /*
-    ,  
+    }/*,  
     'click li': function() {
         Session.set('answerT', this);
         var userC = Meteor.users.find({_id: this.ownerID}).fetch()[0];
         Session.set('userC',userC);
         Session.set('addressC', Addresses.find({_id: userC.profile.addressID}).fetch()[0]);
         Router.go('courtInfoPage');
-    }
-    */
+    }*/
 });
 
 Template.courtInfo.helpers({

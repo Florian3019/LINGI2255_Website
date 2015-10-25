@@ -1,17 +1,18 @@
+
 Router.configure({
-    layoutTemplate: 'index'
+	layoutTemplate: 'index'
 });
 
 // onStop hook is executed whenever we LEAVE a route
 Router.onStop(function(){
-  // register the previous route location in a session variable
-  Session.set("previousLocationPath", Router.current().route.getName());
-  console.log(Router.current().route.getName());
+	// register the previous route location in a session variable
+	Session.set("previousLocationPath", Router.current().route.getName());
+	console.log(Router.current().route.getName());
 });
 
 Router.route('/', {
-    template: 'home',
-    name: 'home'
+	template: 'home',
+	name: 'home'
 });
 
 Router.route('/contacts', {
@@ -34,13 +35,13 @@ Router.route('/tournament-registration',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
 	onBeforeAction: function(){
-        var currentUser = Meteor.userId();
-        if(currentUser){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    }
+		var currentUser = Meteor.userId();
+		if(currentUser){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	}
 });
 
 Router.route('/poolList', {
@@ -53,59 +54,62 @@ Router.route('/scoreTable/:poolId', {
 	template: 'scoreTable',
 	data: function(){
 		return Pools.findOne({_id:this.params.poolId});
-    }
+	}
 });
 
 Router.route('/court-registration', {
 	name: 'courtRegistration',
 	template: 'courtRegistration',
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    }
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	}
 });
 
 Router.route('/court-info', {
 	name: 'courtInfo',
 	template: 'courtInfo',
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    }
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	}
 });
 
 Router.route('/court/:_id', {
 	name: 'courtInfoPage',
 	template: 'courtInfoPage',
 	data: function(){
-		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
-		var owner = Meteor.users.findOne({_id: court.ownerID});
-		var address = Addresses.findOne({_id: court.addressID});
-		var data = {};
-		data.court = court;
-		data.owner = owner;
-		data.address = address;
-		return data;
-    },
+		if (this.ready()) {
+			var court = Courts.findOne(this.params._id);
+			var owner = Meteor.users.findOne(court.ownerID);
+			var address = Addresses.findOne(court.addressID);
+			var data = {};
+			data.court = court;
+			data.owner = owner;
+			data.address = address;
+			return data;
+		}
+	},
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    }
-
-	/*
-	subscriptions: function(){
-        return [ Meteor.subscribe('courts'), Meteor.subscribe('addresses') ]
-    }
-    */
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	},
+	waitOn: function(){
+		return [
+			Meteor.subscribe('Courts'),
+			Meteor.subscribe('Addresses'),
+			Meteor.subscribe('users')
+		]
+	}
 });
 
 Router.route('/my-courts', {
@@ -113,6 +117,14 @@ Router.route('/my-courts', {
 	template: 'myCourts'
 });
 
+Router.route('/adminTemplate', {
+	name: 'adminTemplate',
+	template: 'adminTemplate'
+});
+Router.route('/adminAddCourt', {
+	name: 'adminAddCourt',
+	template: 'adminAddCourt'
+});
 Router.route('/players-info', {
 	name: 'playersInfo',
 	template: 'playersInfo'
@@ -129,9 +141,30 @@ Router.route('/staff-management', {
 	name: 'staffManagement',
 	template: 'staffManagement'
 });
-Router.route('/profileEdit', {
+Router.route('/profileEdit/:_id', {
 	name: 'profileEdit',
-	template: 'profileEdit'
+	template: 'profileEdit',
+	data: function(){
+		if (this.ready()) {
+			// var user = Meteor.users.findOne({_id:this.params._id});
+			// var address = Addresses.findOne({_id:user.profile.addressID});
+			// var data = {};
+			// data.user = user;
+			// data.address = address;
+			return {ID:this.params._id};
+		}
+	},
+	onBeforeAction: function(){
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	},
+	waitOn: function(){
+		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users') ];
+	}
+
 });
 Router.route('/brackets', {
 	name: 'brackets',
@@ -141,7 +174,7 @@ Router.route('/brackets', {
 Router.route('/confirmation_registration_player', {
 	name: 'confirmation_registration_player',
 	template: 'confirmation_registration_player',
-	
+
 	data: function(){
 		var lastName = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.lastName':1})).profile.lastName;
 		var firstName = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.firstName':1})).profile.firstName;
@@ -159,7 +192,7 @@ Router.route('/confirmation_registration_player', {
 			address = addr.number + ", " + addr.street;
 		}
 		var city = addr.zipCode + " " + addr.city;
-		
+
 		var data = {};
 		data.lastName = lastName;
 		data.firstName = firstName;
@@ -169,8 +202,8 @@ Router.route('/confirmation_registration_player', {
 		data.city = city;
 		data.gender = gender;
 		return data;
-    },
-	
+	},
+
 	onBeforeAction: function() {
 		var previousLocationPath=Session.get("previousLocationPath");
 		// Redirect to Home if we are not coming from the tournament registration page
@@ -184,59 +217,51 @@ Router.route('/confirmation_registration_player', {
 Router.route('/confirmation_registration_court/:_id', {
 	name: 'confirmation_registration_court',
 	template: 'confirmation_registration_court',
-	
-	data: function(){
-		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
-		var owner = Meteor.users.findOne({_id: court.ownerID});
-		console.log(owner);
-		var address = Addresses.findOne({_id: court.addressID});
-		var data = {};
-		data.court = court;
-		data.owner = owner;
-		data.address = address;
-		return data;
-    },
 
-    waitOn: function(){
-        return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
-    }	
-	
-	/*
-	onBeforeAction: function() {
-		var previousLocationPath=Session.get("previousLocationPath");
-		// Redirect to Home if we are not coming from the tournament registration page
-		if(previousLocationPath!="courtRegistration"){
-			this.redirect("/")
+	data: function(){
+		if (this.ready()) {
+			var court = Courts.findOne({ _id: this.params._id });
+			var owner = Meteor.users.findOne({_id: court.ownerID});
+			var address = Addresses.findOne({_id: court.addressID});
+			var data = {};
+			data.court = court;
+			data.owner = owner;
+			data.address = address;
+			return data;
 		}
-		this.next();
-	}*/
+	},
+	waitOn: function(){
+		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
+	}
 });
 
 Router.route('/modify-court/:_id', {
 	name: 'modifyCourt',
 	template: 'courtRegistration',
-	
+
 	data: function(){
-		var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
-		var owner = Meteor.users.findOne({_id: court.ownerID});
-		var address = Addresses.findOne({_id: court.addressID});
-		var data = {};
-		data.court = court;
-		data.owner = owner;
-		data.address = address;
-		return data;
-    },
+		if (this.ready()) {
+			var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
+			var owner = Meteor.users.findOne({_id: court.ownerID});
+			var address = Addresses.findOne({_id: court.addressID});
+			var data = {};
+			data.court = court;
+			data.owner = owner;
+			data.address = address;
+			return data;
+		}
+	},
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    },
-    waitOn: function(){
-        return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
-    }	
-	
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	},
+	waitOn: function(){
+		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
+	}
+
 });
 
 Router.route('/search-court', {
@@ -254,10 +279,10 @@ Router.route('/confirm_pair/:_id',{
 		return data;
 	},
 	onBeforeAction: function(){
-        if(Meteor.userId()){
-            this.next();
-        } else {
-            this.render("login");
-        }
-    }
+		if(Meteor.userId()){
+			this.next();
+		} else {
+			this.render("login");
+		}
+	}
 });

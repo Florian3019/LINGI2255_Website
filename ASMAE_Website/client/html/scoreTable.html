@@ -70,6 +70,14 @@
 
 
 <button type="button" id="save" class="btn btn-default btn-lg">
-  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Save
+  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
 </button>
+<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
+  <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+</button>
+
+<!-- Frame for the pdf viewer -->
+<iframe class="preview-pane" type="application/pdf" height="650" width="100%" frameborder="0" hidden></iframe>
+<br>
+
 </template>

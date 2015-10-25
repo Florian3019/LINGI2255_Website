@@ -40,15 +40,21 @@ Template.login.events({
     		}
 		 });
 	},
-   
-	$('#accordion').on('shown.bs.collapse', function () {
-
-		var panel = $(this).find('.in');
-
-		$('html, body').animate({
-			scrollTop: panel.offset().top
-		}, 500);
-
-	});
+	
+	'click #sign-up': function(event) {
+		var userName = $('[name=username-sign]').val();
+		var email = $('[name=email-sign]').val();
+        var password = $('[name=password-sign]').val();
+		Accounts.createUser({username: userName, email: email, password: password}, function(error){
+			if(error){
+        		console.log(error.reason);
+    		} else {
+        		var currentRoute = Router.current().route.getName();
+        		if(currentRoute == "login"){		//Else : don't redirect
+            		Router.go("home");
+        		}
+    		}
+		});
+	},
 	
 });	

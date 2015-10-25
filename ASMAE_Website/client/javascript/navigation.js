@@ -9,6 +9,17 @@ Template.navigation.helpers({
 			return false;
 		}
 		
+	},
+	'isAdmin':function(){
+		if(Meteor.user())
+		{
+			return (Meteor.user().profile.isAdmin);
+		}
+		else
+		{
+			return false;
+		}
 	}
+	
 });
 
