@@ -4,10 +4,53 @@ Template.scoreTable.helpers({
 	'getPairs' : function(poolId){
 		var pairList = [];
 		var pool = Pools.findOne({_id:poolId});
+		if(!pool){
+			return;
+		}
 		for(var i=0;i<pool.pairs.length;i++){
 			var pair = Pairs.findOne({_id:pool.pairs[i]});
 			if(pair.player1 && pair.player2) pairList.push(pair);
 		}
+
+		// Create a match for each of these pairs, if it does not yet exist
+		for(var i=0;i<pairList.length;i++){
+			for(var j=0;j<i;j++){
+				pairId1 = pairList[i]._id;
+				pairId2 = pairList[j]._id;
+
+				var match = Matches.findOne(
+					{
+						$and: [
+							{"poolId":poolId}, // I want to find only matches belonging to this pool
+							{$and: [
+								{pairId1: {$exists:true}}, 
+								{pairId2: {$exists:true}}
+							]} // A match has to have both fields for pair1 and pair2 set 
+						]
+					}
+				);
+
+				if(!match){
+					// Match does not exist, create a new one
+					data = {"courtId":pool.court, "poolId":poolId}
+					console.log(pairId1);
+					console.log(pairId2);
+					
+					data[pairId1] = 0;
+					data[pairId2] = 0;
+					console.log(data);
+					// var matchId = Matches.insert(data);
+
+					// Insert that match into the pool
+					// Pools.update({_id:pool._id}, {$addToSet: {matches:matchId} });
+				}
+				else{
+					console.log("found match !");
+					console.log(match);
+				}
+			}
+		}
+
 		return pairList;
 	},
 
@@ -23,36 +66,26 @@ Template.scoreTable.helpers({
 	'getMatch' : function(pair1, pair2){
 		var poolId = this._id;
 
-		// TODO
-		// var match = Pools.findOne(
-		// 	{
-		// 		"_id":poolId, 
-		// 		"matchs":
-		// 			{
-		// 				"$or":
-		// 					[
-		// 						"$elemMatch" :  
-		// 							{
-		// 								{
-		// 									"$and" : [{"pair1":pair1}, {"pair2":pair2}]
-		// 							 	},
-		// 							 	{
-		// 							 		"$and" : [{"pair1":pair2}, {"pair2":pair1}]
-		// 							 	}
-		// 							}
-		// 					]
-		// 			}
-		// 	}
-		// );
+		var match = Matches.findOne(
+			{
+				$and: [
+					{"poolId":poolId}, // I want to find only matches belonging to this pool
+					{$and: [
+						{pairId1: {$exists:true}}, 
+						{pairId2: {$exists:true}}
+					]} // A match has to have both fields for pair1 and pair2 set 
+				]
+			}
+		);
 
-		// if(!match){
-		// 	// Create new match and return it TODO
-		// 	console.log("create new match");
-		// }
-		// else{
-		// 	// Return this match
-		// 	return match;
-		// }
+		if(!match){
+			console.error("A match was not created properly");
+			return;
+		}
+		else{
+			// Return this match
+			return match;
+		}
 
 	}
 

@@ -948,74 +948,50 @@ Meteor.methods({
 
 		A match is structured as follows :
 		{
-			_id:<id>
-			pair1:<pairID>,
-			pair2:<pairID>,
-			result:{
-					pair1Points:<points>,
-					pair2Points:<points>
-					},
-			court:<courtID>
+			_id:<id>,
+			poolId:<poolId>,
+			<pairID>:<points>,
+			<pairID>:<points>,
+			courtId:<courtID>	
 		}
-
-		@return match id on success
 	*/
-	'updateMatch' : function(matchData){
-		data = {};
 
-		if(matchData.pair1){
-			data.pair1 = matchData.pair1;
-		}
-		if(matchData.pair2){
-			data.pair2 = matchData.pair2;
-		}
-		if(matchData.result){
-			var count = 0;
-			var res = {};
-			if(matchData.result.pair1Points){
-				res['pair1Points'] = matchData.result.pair1Points;
-				count = count+1;
-			}
-			if(matchData.result.pair2Points){
-				res['pair2Points'] = matchData.result.pair2Points;
-				count = count+1;
-			}
-			if(count>0){
-				data['result'] = res;
-			}
-		}
-		if(matchData.court){
-			data.court = matchData.court;
-		}
+	// 	@return match id on success
+	// */
+	// 'updateMatch' : function(matchData){
+	// 	data = matchData;
 
+	// 	// if(matchData.court){
+	// 	// 	data.court = matchData.court;
+	// 	// }
 
-		if(!matchData._id){
-			return Matches.insert(data, function(err, matchId){
-				if(err){
-					console.error('updateMatch error');
-					console.error(err);
-				}
-			});
-		}
+	// 	if(!matchData._id){
+	// 		return Matches.insert(data, function(err, matchId){
+	// 			if(err){
+	// 				console.error('updateMatch error');
+	// 				console.error(err);
+	// 			}
+	// 		});
+	// 	}
 
-		Matches.update({_id: matchData._id} , {$set: data}, function(err, count, status){
-			if(err){
-				console.error('updateMatch error');
-				console.error(err);
-			}
-		});
-		return matchData._id;
-	},
+	// 	Matches.update({_id: matchData._id} , {$set: data}, function(err, count, status){
+	// 		if(err){
+	// 			console.error('updateMatch error');
+	// 			console.error(err);
+	// 		}
+	// 	});
+	// 	return matchData._id;
+	// },
 
 	/*
 		A pool is structured as follows:
 		{
 			_id:<id>,
-			court:<court>,
+			court:<court>, --> To remove
 			pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
 			leader:<userId>,
 			matches:[<matchID>, ...], // Will append matches to existing array (no duplicates possible)
-			court:<courtID>,
+			courtId:<courtID>,
 		}
 
 		@return pool id on success
@@ -1023,8 +999,8 @@ Meteor.methods({
 	'updatePool' : function(poolData){
 		var data = {$set:{}, $addToSet:{}};
 
-		if(poolData.court){
-			data.$set["court"] = poolData.court;
+		if(poolData.courtId){
+			data.$set["courtId"] = poolData.courtId;
 		}
 		if(poolData.leader){
 			data.$set["leader"] = poolData.leader;
