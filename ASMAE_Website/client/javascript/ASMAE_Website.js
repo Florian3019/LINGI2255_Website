@@ -145,7 +145,7 @@
   // Additional button to allow profile editing when the user is logged in
   Template._loginButtonsLoggedInDropdown.events({
     'click #login-buttons-edit-profile': function(event) {
-        Router.go('profileEdit',Meteor.users.findOne({_id:Meteor.userId()}, {'profile.lastName':1}));
+        Router.go('profileEdit',{_id:Meteor.userId()});
     }
 });
 

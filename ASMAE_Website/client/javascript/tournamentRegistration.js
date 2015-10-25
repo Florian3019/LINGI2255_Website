@@ -536,7 +536,7 @@ Template.tournamentRegistration.events({
 					year:currentYear,
 					day: dateMatch,
 					//category:<category>, TODO
-					player1:playerData,
+					player2:playerData,  // Player2 because search for a single player is made on pairs with empty player2 field
 					//player2:{_id:player2ID} // TODO--> give all player info
 				};
 			}
@@ -587,7 +587,7 @@ Template.tournamentRegistration.events({
         	}
 			Meteor.call('addPairsToTournament', pairID, currentYear, dateMatch);
         }
-
+    
         body="Bonjour, \n " + event.target.firstname.value + " " +event.target.lastname.value + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
         to=event.target.emailPlayer.value; //address of the other player
         Meteor.call('updatePairs', pairData, callback);

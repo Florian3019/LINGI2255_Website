@@ -40,4 +40,21 @@ Template.login.events({
     		}
 		 });
 	},
+	
+	'click #sign-up': function(event) {
+		var userName = $('[name=username-sign]').val();
+		var email = $('[name=email-sign]').val();
+        var password = $('[name=password-sign]').val();
+		Accounts.createUser({username: userName, email: email, password: password}, function(error){
+			if(error){
+        		console.log(error.reason);
+    		} else {
+        		var currentRoute = Router.current().route.getName();
+        		if(currentRoute == "login"){		//Else : don't redirect
+            		Router.go("home");
+        		}
+    		}
+		});
+	},
+	
 });	

@@ -9,7 +9,7 @@ Template.playersInfo.events({
         var query = {};
         if(lastName){query["profile.lastName"] = lastName;}
         if(firstName){query["profile.firstName"] = firstName;}
-        if(email){query["emails[0].address"] = email;}
+        if(email){query["emails.address"] = email;}
         if(sex) {query["profile.gender"] = sex;}
         if(rank) {query["profile.AFT"] = rank;}
         cursor = Meteor.users.find(query).fetch();
@@ -18,7 +18,6 @@ Template.playersInfo.events({
     },  
     'click li': function() {
         Session.set('selected', this);
-        Session.set('address', Addresses.find({_id: this.profile.addressID}).fetch()[0]);
         Router.go('playerInfoPage');
     }
 });

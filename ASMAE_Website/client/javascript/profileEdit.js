@@ -173,6 +173,20 @@ Template.profileEdit.helpers({
 	}
 });
 */
+
+Template.profileEdit.helpers({
+	'getPlayer' : function(){
+		var user = Meteor.users.findOne({_id:this.ID});
+		var address = Addresses.findOne({_id:user.profile.addressID});
+		var data = {};
+		data.user = user;
+		data.address = address;
+
+		return data;
+	}
+
+});
+
 Template.profileEdit.events({
 	'submit form': function(event){
 		event.preventDefault();

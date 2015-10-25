@@ -5,14 +5,14 @@
 </div>
 
 <div>
-    {{>playerInfoTemplate setCurrentPlayer}}
+    {{>playerInfoTemplate ID=setCurrentPlayer}}
 </div>
 
 <div>
 {{#if hasPairPlayer "false"}}
   <h3> Votre coéquipier : </h3>
 
-  {{>playerInfoTemplate setPairPlayer}}
+  {{>playerInfoTemplate ID=setPairPlayer}}
 {{/if}}
 
 </div>

@@ -1,3 +1,4 @@
+
 Router.configure({
 	layoutTemplate: 'index'
 });
@@ -120,7 +121,10 @@ Router.route('/adminTemplate', {
 	name: 'adminTemplate',
 	template: 'adminTemplate'
 });
-
+Router.route('/adminAddCourt', {
+	name: 'adminAddCourt',
+	template: 'adminAddCourt'
+});
 Router.route('/players-info', {
 	name: 'playersInfo',
 	template: 'playersInfo'
@@ -142,12 +146,12 @@ Router.route('/profileEdit/:_id', {
 	template: 'profileEdit',
 	data: function(){
 		if (this.ready()) {
-			var user = Meteor.users.findOne({_id:this.params._id});
-			var address = Addresses.findOne({_id:user.profile.addressID});
-			var data = {};
-			data.user = user;
-			data.address = address;
-			return data;
+			// var user = Meteor.users.findOne({_id:this.params._id});
+			// var address = Addresses.findOne({_id:user.profile.addressID});
+			// var data = {};
+			// data.user = user;
+			// data.address = address;
+			return {ID:this.params._id};
 		}
 	},
 	onBeforeAction: function(){
