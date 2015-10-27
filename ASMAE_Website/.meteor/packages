@@ -31,7 +31,7 @@ meteorhacks:search-source
 email
 http
 meteorhacks:ssr
-sanjo:jasmine
-velocity:html-reporter
+#sanjo:jasmine
+#velocity:html-reporter
 chipcastledotcom:jspdf
 jspdf:autotable

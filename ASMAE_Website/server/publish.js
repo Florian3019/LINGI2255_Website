@@ -18,14 +18,18 @@ Meteor.publish('Addresses', function(){
 	    	return Addresses.find({userID: this.userId});
 	    }
     }
-    else{
-    	return null;
-    }
 });
 
 Meteor.publish('Questions', function(){
-	//TODO: eulement visible au staff
-	return Questions.find();
+	if(this.userId) {
+        var user = Meteor.users.findOne(this.userId);
+        if(user.profile.isStaff || user.profile.isAdmin){
+    		return Questions.find();
+	    }
+	    else{
+	    	return Questions.find({userID: this.userId});
+	    }
+    }
 });
 
 

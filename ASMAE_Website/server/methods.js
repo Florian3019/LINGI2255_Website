@@ -305,7 +305,7 @@ Meteor.methods({
 			availability:<availability>
 		}
 	*/
-	'updateCourt' : function(courtData, address, callback){
+	'updateCourt' : function(courtData, address){
 		var courtId = courtData._id;
 		if(!courtData.ownerID) //New court
 		{
@@ -343,9 +343,6 @@ Meteor.methods({
 		data.ownerID = courtData.ownerID;
 
 		// Fill in court info
-		if(courtData._id){
-			data._id = courtData._id;
-		}
 		if(courtData.addressID){
 			data.addressID = courtData.addressID;
 		}
@@ -394,9 +391,7 @@ Meteor.methods({
 			// Create a new court
 			var courtId = Courts.insert(data, function(err, courtId){
 				if(err){
-					console.error('updateCourt error');
-					console.error(err);
-					return callback(null);
+					throw new Meteor.Error("updateCourt error: during Courts.insert", err);
 				}
 
 				// Update addressID in the user
@@ -410,9 +405,7 @@ Meteor.methods({
 			// Court already exists, so just update it :
 			Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
 				if(err){
-					console.error('updateCourt error');
-					console.error(err);
-					return callback(null);
+					throw new Meteor.Error("updateCourt error : during Courts.update", err);
 				}
 				if(address){
 					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
@@ -423,7 +416,7 @@ Meteor.methods({
 		return courtId;
 	},
 
-	'deleteCourt' : function(courtId, callback){
+	'deleteCourt' : function(courtId){
 		if(!courtId){
 			console.error("deleteCourt: no courtId in argument");
 			return false;
@@ -450,17 +443,13 @@ Meteor.methods({
 
 			Addresses.remove(court.addressID, function(err){
 				if(err){
-					console.error('deleteCourt: error while deleting court address');
-					console.error(err);
-					return callback(null);
+					throw new Meteor.Error("deleteCourt: error while deleting court address", err);
 				}
 			});
 
 			Courts.remove(courtId, function(err){
 				if(err){
-					console.error('deleteCourt: error while deleting court');
-					console.error(err);
-					return callback(null);
+					throw new Meteor.Error("deleteCourt: error while deleting court", err);
 				}
 			});
 
@@ -644,7 +633,7 @@ Meteor.methods({
 		}
 
 		if(courtId){
-			// Check that that courtId really exists :
+			// Check that courtId really exists :
 			var c = Courts.findOne({_id:courtId});
 			if(!c){
 				console.error('updateAddress : that court doesn\'t exist !');
@@ -662,7 +651,6 @@ Meteor.methods({
 				return false;
 			}
 		}
-
 
 
 		const isAdmin = Meteor.call('isAdmin');
@@ -701,7 +689,7 @@ Meteor.methods({
 			if(userId && !courtId){
 				Addresses.insert(data, function(err, addrId){
 					if(err){
-						console.error('updateAddress error');
+						console.error('updateAddress error: while insert for courtId=false');
 						console.error(err);
 						return false;
 					}
@@ -714,7 +702,7 @@ Meteor.methods({
 			if(courtId){
 				Addresses.insert(data, function(err, addrId){
 					if(err){
-						console.error('updateAddress error');
+						console.error('updateAddress error: while insert for courtId=true');
 						console.error(err);
 						return false;
 					}
@@ -726,13 +714,11 @@ Meteor.methods({
 				return true;
 			}
 		}
-		data._id = addressData._id; // set the address data
-
 
 		// Add the address in the DB
-		var writeResult = Addresses.update({_id: data._id} , {$set: data}, function(err, count, status){
+		var writeResult = Addresses.update({_id: addressData._id} , {$set: data}, function(err, count, status){
 			if(err){
-				console.error('updateAddress error');
+				console.error('updateAddress error : while update existing address');
 				console.error(err);
 				return false;
 			}
