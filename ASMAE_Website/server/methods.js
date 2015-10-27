@@ -887,7 +887,6 @@ Meteor.methods({
 				console.error('updatePayment : trying to update a payment not belonging to the pair provided !');
 				return false;
 			}
-			data._id = paymentData._id;
 		}
 		if(paymentData.status){
 			data.status = paymentData.status;
