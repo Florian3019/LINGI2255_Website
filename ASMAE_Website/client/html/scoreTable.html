@@ -48,17 +48,16 @@
           {{else}}
           <td>
             <div class="input-group" display="inline">
-              <!-- {{#with getMatch ../_id this._id}} -->
-              <!-- {{#with 0}} -->
+              {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
               <input 
                 type="number"
                 min="0"
                 step="1" 
                 class="form-control points" 
-                data-matchid="{{this._id}}" 
-                placeholder="0"> 
-                <!-- value="{{#if equals ../_id this.pair1}} this.result.pair1Points {{else}} this.result.pair2Points {{/if}}"> --> <!-- The id is the id of the pair for which the points are entered -->
-              <!-- {{/with}} -->
+                data-matchid="{{this._id}}"
+                data-pairid="{{../../_id}}"
+                value="{{getPoints this ../../_id}}">
+              {{/with}}
             </div>
           </td>
           {{/if}}
@@ -68,13 +67,17 @@
 {{/with}}
 </table>
 
+  <button type="button" id="save" class="btn btn-default btn-lg">
+    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
+  </button>
+  <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
+    <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+  </button>
 
-<button type="button" id="save" class="btn btn-default btn-lg">
-  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
-</button>
-<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
-  <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-</button>
+
+<div class="checkbox">
+  <label class="checkbox-inline"><input type="checkbox" value="" id="checkBoxEmptyTable"> Table vide </label>
+</div>
 
 <!-- Frame for the pdf viewer -->
 <iframe class="preview-pane" type="application/pdf" height="650" width="100%" frameborder="0" hidden></iframe>

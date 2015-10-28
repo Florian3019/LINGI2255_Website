@@ -1,6 +1,6 @@
 Template.scoreTable.helpers({
 
-	// Returns a list of pairs
+	// Returns a list of pairs that are in this pool
 	'getPairs' : function(poolId){
 		var pairList = [];
 		var pool = Pools.findOne({_id:poolId});
@@ -18,35 +18,29 @@ Template.scoreTable.helpers({
 				pairId1 = pairList[i]._id;
 				pairId2 = pairList[j]._id;
 
+				var d1 = {};
+				d1[pairId1] = {$exists:true};
+				var d2 = {};
+				d2[pairId2] = {$exists:true};
+
+
 				var match = Matches.findOne(
 					{
 						$and: [
 							{"poolId":poolId}, // I want to find only matches belonging to this pool
-							{$and: [
-								{pairId1: {$exists:true}}, 
-								{pairId2: {$exists:true}}
-							]} // A match has to have both fields for pair1 and pair2 set 
+							{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
 						]
 					}
 				);
 
 				if(!match){
 					// Match does not exist, create a new one
-					data = {"courtId":pool.court, "poolId":poolId}
-					console.log(pairId1);
-					console.log(pairId2);
-					
-					data[pairId1] = 0;
-					data[pairId2] = 0;
-					console.log(data);
-					// var matchId = Matches.insert(data);
 
-					// Insert that match into the pool
-					// Pools.update({_id:pool._id}, {$addToSet: {matches:matchId} });
-				}
-				else{
-					console.log("found match !");
-					console.log(match);
+					data = {"poolId":poolId};
+					data.pair1 = {"pairId": pairId1, "points":0};
+					data.pair2 = {"pairId": pairId2, "points":0};
+					console.log(data);
+					Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
 				}
 			}
 		}
@@ -63,30 +57,27 @@ Template.scoreTable.helpers({
 		return x==y;
 	},
 
-	'getMatch' : function(pair1, pair2){
-		var poolId = this._id;
+	'getPoints' : function(match, pairId){
+		var points = match[pairId];
+		return points;
+	},
+
+	'getMatch' : function(poolId, pairId1, pairId2){
+		var d1 = {};
+		d1[(pairId1)] = {$exists:true};
+		var d2 = {};
+		d2[(pairId2)] = {$exists:true};
 
 		var match = Matches.findOne(
 			{
 				$and: [
 					{"poolId":poolId}, // I want to find only matches belonging to this pool
-					{$and: [
-						{pairId1: {$exists:true}}, 
-						{pairId2: {$exists:true}}
-					]} // A match has to have both fields for pair1 and pair2 set 
+					{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
 				]
 			}
 		);
 
-		if(!match){
-			console.error("A match was not created properly");
-			return;
-		}
-		else{
-			// Return this match
-			return match;
-		}
-
+		return match ? match : undefined;
 	}
 
 });
@@ -97,9 +88,20 @@ Template.scoreTable.events({
 		var poolId = this._id; // "this" is the parameter of the template
 		for(var i=0; i<points.length;i++){
 			var score = points[i].value;
-			//TODO
-			console.log(points[i]);
+			var matchId = points[i].getAttribute('data-matchid');
+			var pairId = points[i].getAttribute('data-pairid');
+
+			// the fact that this is pair1 and not pair2 is irrelevant for the update (just for parsing convenience)
+			data = {"_id":matchId, pair1:{"pairId":pairId, "points":score}}; 
+
+			// Update the DB !
+			Meteor.call("updateMatch", data);
 		}
+	},
+
+	'change #checkBoxEmptyTable' : function(event){
+		checked = document.getElementById(event.target.id).checked;
+		Session.set("scoreTable/emptyTable", checked);
 	},
 
 	/*
@@ -141,9 +143,29 @@ Template.scoreTable.events({
 				/*	For every other column, add the pair's score 	*/
 				var tempRow = [pairString];
 				for(var j=0;j<pool.pairs.length;j++){
-					if(i!=j+1){
-						// Display the score of pool.pairs[j] against pool.pairs[i]
-						tempRow.push("0"); // TODO : display the score of the match if we know it, otherwise display a spacebar to let the players write on the board
+					if(i!=j && !Session.get("scoreTable/emptyTable")){
+
+						var d1 = {};
+						d1[(pool.pairs[j])] = {$exists:true};
+						var d2 = {};
+						d2[( pool.pairs[i])] = {$exists:true};
+
+
+						// Fetch the match
+						var match = Matches.findOne(
+							{
+								$and: [
+									{"poolId":poolId}, // I want to find only matches belonging to this pool
+									{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
+								]
+							}
+						);
+
+						score = match[pool.pairs[i]];
+
+
+						// Display the score of pool.pairs[i] against pool.pairs[j]
+						tempRow.push(score); // TODO : display the score of the match if we know it, otherwise display a spacebar to let the players write on the board
 					}
 					else{
 						// A pair can't play against itself
@@ -246,7 +268,6 @@ Template.scoreTable.events({
             };
 
        var headerCell = function (x, y, width, height, key, value, settings){
-       		console.log("headerCell");
        		var fontSize = 10;
        		settings.fontSize = fontSize;
         	pdf.setFontSize(fontSize);

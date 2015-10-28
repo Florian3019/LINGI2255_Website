@@ -939,34 +939,118 @@ Meteor.methods({
 			<pairID>:<points>,
 			courtId:<courtID>	
 		}
+
+		matchData is expected to be formated like this :
+		{
+			_id:<id>, // Optional
+			poolId:<poolId>,
+			pair1: {pairId: <pairID>, points:<points>}, // Note : the order pair1/pair2 is irrelevant and is just for the convenience of parsing the data
+			pair2: {pairId: <pairID>, points:<points>}
+		}
+		
+		Automatically adds the match to the right pool if one is created (must provide pair1 and pair2 or creation will fail)
+
+		providing pair1, pair2 and the poolId is enough to update the right match without giving the id of the match
+
+		@return match id on success
 	*/
+	'updateMatch' : function(matchData){
 
-	// 	@return match id on success
-	// */
-	// 'updateMatch' : function(matchData){
-	// 	data = matchData;
+		if(!matchData){
+			console.error("updateMatch : matchData is undefined");
+			return;
+		}
 
-	// 	// if(matchData.court){
-	// 	// 	data.court = matchData.court;
-	// 	// }
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
 
-	// 	if(!matchData._id){
-	// 		return Matches.insert(data, function(err, matchId){
-	// 			if(err){
-	// 				console.error('updateMatch error');
-	// 				console.error(err);
-	// 			}
-	// 		});
-	// 	}
+		if(!(isAdmin || isStaff)){
+			console.error("updateMatch : You don't have the required permissions!");
+			return;
+		}
 
-	// 	Matches.update({_id: matchData._id} , {$set: data}, function(err, count, status){
-	// 		if(err){
-	// 			console.error('updateMatch error');
-	// 			console.error(err);
-	// 		}
-	// 	});
-	// 	return matchData._id;
-	// },
+
+		data = {};
+
+		var pairDataProdided = false;
+
+		if(matchData.pair1) data[matchData.pair1.pairId] = matchData.pair1.points; // <pairID>:<points>
+		if(matchData.pair2) data[matchData.pair2.pairId] = matchData.pair2.points; // <pairID>:<points>
+
+		if(matchData.pair1 && matchData.pair2){
+			/*	
+				Check if this pair already exists
+				The pair ("pairId1", "pairId2") is a primary key
+			*/
+			var d1 = {};
+			d1[matchData.pair1.pairId] = {$exists:true};
+			var d2 = {};
+			d2[matchData.pair2.pairId] = {$exists:true};
+
+			var matchId = Matches.findOne(
+						{
+							$and: [
+								{"poolId":matchData.poolId}, // I want to find only matches belonging to this pool
+								{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
+							]
+						}
+					);
+
+
+			if(matchId){
+				// The match already exists
+				if(matchData._id && matchData._id != matchId){ // If user provided an id, it must match the one we found, otherwise the DB is not consistent
+					console.error("updateMatch : a match with the same pairs is already existing or the id provided is not correct");
+					return;
+				}
+				data._id = matchId;
+			}
+			else{
+				// No match found in the db
+				if(matchData._id){
+					// This should never happen, user provided an id but we did not find its corresponding pair in the db... 
+					// Either the db is broken or user gave a inexistant id
+					console.error("updateMatch : the id's are auto-generated, the id you provided did not match any known match");
+					return;
+				}
+			}
+			pairDataProdided = true;
+		}
+		else{
+			// If user did not provide both pairs, he must have provided the id
+			if(!matchData._id){
+				console.error("updateMatch : trying to update a match without providing either of the 2 pairs or the match id");
+				return;
+			}
+			data._id = matchData._id;
+		}
+		if(matchData.poolId) data.poolId = matchData.poolId;
+
+		if(!data._id){
+			
+			// Can only create a match if the user provided both pairs and the poolId
+			if(!pairDataProdided){
+				console.error("updateMatch : Trying to create a match without setting the pair data");
+				return;
+			}
+			return Matches.insert(data, function(err, id){
+				if(err){
+					console.error('updateMatch error');
+					console.error(err);
+				}
+				// Just created a match, add it to the pool
+				Meteor.call("updatePool", {_id:data.poolId, matches:[id]});
+			});
+		}
+
+		Matches.update({_id: data._id} , {$set: data}, function(err, count, status){
+			if(err){
+				console.error('updateMatch error');
+				console.error(err);
+			}
+		});
+		return data._id;
+	},
 
 	/*
 		A pool is structured as follows:
@@ -1007,9 +1091,9 @@ Meteor.methods({
 			});
 		}
 
-		if(Meteor.call('objectIsEmpty', data["$set"])) delete data["$set"];
-		if(Meteor.call('objectIsEmpty', data["$addToSet"])) delete data["$addToSet"];
-
+		if(Meteor.call('objectIsEmpty', data.$set)) delete data.$set;
+		if(Meteor.call('objectIsEmpty', data.$addToSet)) delete data.$addToSet;
+		
 		Pools.update({_id: poolData._id} , data, function(err, count, status){
 			if(err){
 				console.error('updatePool error ');

@@ -97,10 +97,12 @@ Template.pairsToRemoveContainerTemplate.onRendered(function(){
   	drake.containers.push(document.querySelector('#pairstoremove'));
 });
 
-Template.poolList.onCreated(function() {
-	Session.set('PoolCategory', null);
-	Session.set('PoolType', null);
-	Session.set('PoolDay', null);
+Template.poolList.onRendered(function() {
+	// Restore the state of the selects, in case the user wants to come back to this page 
+	// (usefull when he clicks on scoreboard and presses the back button)
+	document.getElementById("PoolCategory").value = Session.get('PoolCategory') ? Session.get('PoolCategory') : "";
+	document.getElementById("PoolType").value = Session.get('PoolType') ? Session.get('PoolType') : "";
+	document.getElementById("Year").value = Session.get('Year') ? Session.get('Year') : "";
 });
 
 Template.poolList.events({
@@ -118,12 +120,14 @@ Template.poolList.events({
 		Collects the state of the table of pools to save it into the db
 	*/
 	'click #save':function(event){
-
 		/*
 			Move the pairs in their new pool
 		*/
 		var table = document.getElementById("poolTable");
 		var cells = table.getElementsByClassName('pairs');
+
+		// Remember which pairs were moved
+		moves = {}; // key = newPoolId, value = [{"oldPoolId":<oldPoolId>, "pairId":<pairId>}, ...]
 
 		// Get the pairs and their pools
 		for(var i=0, len=cells.length; i<len; i++){
@@ -132,7 +136,7 @@ Template.poolList.events({
 			var year = Session.get('Year');
 
 			c = cells[i];
-			// Will probably have to change the path to the id, since we changed the html
+
 			var pairId = c.id;
 			var newPoolId = c.parentNode.id;
 			var previousPoolId = document.getElementById(pairId).getAttribute("data-startingpoolid");
@@ -141,6 +145,15 @@ Template.poolList.events({
 				/*
 					Pair changed position
 				*/
+
+				// Add this pair to the list of pairs that moved
+				move = {"oldPoolId":previousPoolId, "pairId":pairId};
+				if(!moves[newPoolId]){
+					moves[newPoolId] = [move]; // Create a new entry
+				} 
+				else{
+					moves[newPoolId].push(move);
+				} 
 
 				// Remove that pair from the previous pool
 				Pools.update({_id:previousPoolId},{$pull : {pairs: pairId}});
@@ -153,6 +166,86 @@ Template.poolList.events({
 			}
 		}
 		
+
+		/**********************************************************************
+			Delete / Move the matches to be consistent with the pair changes !
+		***********************************************************************/
+
+		keys = Object.keys(moves);
+
+		/*
+		 	For every pool that has new pairs
+		*/
+		for(var i=0; i<keys.length;i++){
+			key = keys[i]; // New pool id
+			move = moves[key]; // List of pairs that moved
+			/* 
+				For every pair that moved to that new pool 
+			*/
+			for(var j = 0; j<move.length ;j++){
+				pairId = move[j].pairId; // Pair that moved
+				prevPoolId = move[j].oldPoolId;	// Pool id from which that pair moved
+				previousPool = Pools.findOne({_id:prevPoolId},{matches:1}); // Fetch that pool
+
+				// Collect matches of that pool that contain that pair
+				matchesWithThatPair = [];
+				if(previousPool.matches){// Only check if there actually exists any match if this pool
+					for(var x=0; x<previousPool.matches.length;x++){ // Go through all the matches from the previous pool
+						matchId = previousPool.matches[x];
+						match = Matches.findOne({_id:matchId});
+						if(match[pairId]!=undefined) matchesWithThatPair.push(match); // If the match contains that pair, add it to the list
+					}
+				}
+
+				/* 
+					For every match of the previous pool that contains that pair
+				*/
+				for(var k=0; k<matchesWithThatPair.length;k++){
+					match = matchesWithThatPair[k];
+					/*
+						Test if another pair that moved to the new pool was
+						coming from the same old pool (basically if they moved together)
+					*/
+					found = false;
+					// For every pair that also moved to this new pool
+					for(var l=j+1 /*Start at the pair after the one we are currently at*/; l<move.length;l++){
+						testPair = move[l].pairId;
+						// If the other pair from that match is in the same new pool as that pair, move the match
+						// (and that they're different--> should always be the case, but just to make sure)
+						if(match[testPair]!=undefined && testPair!=pairId){
+							/*
+								testPair and pairId moved to the same pool together
+							*/
+							
+							// Remove the match from the old pool
+							Pools.update({_id:prevPoolId},{$pull:{matches:match._id}});
+
+							// Move the match to the new pool
+							Pools.update({_id:key},{$push:{matches:match._id}});
+
+							// Update the poolId of the match to be the new pool
+							Matches.update({_id:match._id}, {$set:{"poolId":key}});
+
+							// There can only be one match with testPair and pairID --> no need to test the rest
+							found = true;
+							break;
+						}
+					}
+					if(!found){
+						// The pair moved to a new pool without their opponent
+
+						// Remove that match from the previous pool
+						Pools.update({_id:prevPoolId}, {$pull:{matches:match._id}});
+						
+						// Remove that match from the db
+						Matches.remove({_id:match._id});
+					}
+				}
+			}
+		}
+
+
+
 		/*
 			Remove from the db unwanted pairs
 		*/
@@ -167,6 +260,16 @@ Template.poolList.events({
 
 			// Remove that pair from its pool
 			Pools.update({_id:poolId},{$pull : {pairs: pairId}});
+			data = {};
+			data[pairId] = {$exists:true};
+			matchsToRemove = Matches.find(data).fetch();
+
+			// Remove all matches in which this pair exists
+			for(var j=0; j<matchsToRemove.length;j++){
+				m = matchsToRemove[j];
+				Pools.update({_id:poolId}, {$pull: {matches: m._id}});
+				Matches.remove({_id:m._id});
+			}
 
 			// Remove that pair from the db
 			Pairs.remove({_id:pairId});

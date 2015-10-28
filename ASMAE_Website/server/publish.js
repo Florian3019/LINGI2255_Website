@@ -58,7 +58,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'update': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow update */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -68,7 +68,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'remove': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow remove */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -91,7 +91,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'update': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow update */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -101,7 +101,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'remove': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow remove */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -124,7 +124,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'update': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow update */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -134,7 +134,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'remove': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow remove */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -144,6 +144,7 @@ Meteor.publish("Pairs", function () {
     	}
 	});
 
+	/*	Known uses : client/scoreTable	*/
 	Matches.allow({
     	'insert': function (userId,doc) {
 	      	/* user and doc checks ,
@@ -157,7 +158,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'update': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow update */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -167,7 +168,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'remove': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow remove */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -257,4 +258,3 @@ Meteor.publish("Pairs", function () {
 		this.ready();
 
     });
-// }
