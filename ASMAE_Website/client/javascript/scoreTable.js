@@ -163,9 +163,8 @@ Template.scoreTable.events({
 
 						score = match[pool.pairs[i]];
 
-
 						// Display the score of pool.pairs[i] against pool.pairs[j]
-						tempRow.push(score); // TODO : display the score of the match if we know it, otherwise display a spacebar to let the players write on the board
+						tempRow.push(score);
 					}
 					else{
 						// A pair can't play against itself
