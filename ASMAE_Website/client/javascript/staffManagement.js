@@ -1,6 +1,3 @@
-Template.staffManagement.ShowStaff = function(){
-	return Questions.find()
-}
 var ison = false;
 Template.staffManagement.events({
 	'click .btn':function(){
@@ -23,6 +20,9 @@ Template.staffManagement.events({
 	
 });
 Template.staffManagement.helpers({
+	'showStaff' : function(){
+		return Questions.find();
+	},
 	'isProcessed' : function(){
 		if(this.processed)
 			return "Oui";
