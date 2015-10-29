@@ -2,6 +2,14 @@
 <!-- Takes 1 parameter : the poolId for this score table-->
 <template name="scoreTable">
 
+{{#with getLeader this._id}}
+<h5>Chef de poule: </h5>
+<address>
+  <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
+  {{#unless equals this.profile.phone undefined}}<abbr title="Phone">P:</abbr> {{this.profile.phone}} <br>{{/unless}}
+  <a href="mailto:#">{{getEmail this}}</a>
+</address>
+{{/with}}
 
 <table id='scoreTable' class='table'>
 

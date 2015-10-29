@@ -1,5 +1,27 @@
 Template.scoreTable.helpers({
 
+	'getLeader' : function(poolId){
+		pool = Pools.findOne({_id:poolId},{leader:1});
+		if(pool.leader){
+			pair = Pairs.findOne({_id:pool.leader},{player1:1});
+			if(pair && pair.player1 && pair.player1._id){
+				user = Meteor.users.findOne({_id:pair.player1._id});
+				console.log(user);
+				return user;
+			}
+		}
+		return undefined;
+	},
+
+	'getEmail' : function(user){
+		if(user.emails){
+			return user.emails[0].address;
+		}
+		else{
+			return undefined;
+		}
+	},
+
 	// Returns a list of pairs that are in this pool
 	'getPairs' : function(poolId){
 		var pairList = [];
@@ -171,11 +193,21 @@ Template.scoreTable.events({
 			}
 		}
 
+		leader = undefined;
+		// Fetch the leader
+		if(pool.leader){
+			pair = Pairs.findOne({_id:pool.leader},{player1:1});
+			if(pair && pair.player1 && pair.player1._id){
+				leader = Meteor.users.findOne({_id:pair.player1._id});
+			}
+		}
+
 	    /*
 			Create the pdf
 			Useful link : https://github.com/simonbengtsson/jsPDF-AutoTable/issues/44
 	    */
 		var pdf = new jsPDF('p','pt','a4');
+
         pdf.setDrawColor(51, 153, 255); // Lines color
 		/*
 			Create the header
@@ -183,7 +215,15 @@ Template.scoreTable.events({
 	    var header = function (doc, pageCount, options) {
             doc.setFontSize(20);
             // pdf.addImage(headerImgData, 'JPEG', data.settings.margin.left, 40, 25, 25); // To add an image --> TODO : add ASMAE logo
-            doc.text("Poule", options.margins.horizontal, 30); // TODO : change this to contain the court name. Would be good to add leader/staff info too
+            doc.text("Poule\n", options.margins.horizontal, 30); // TODO : change this to contain the court name. Would be good to add leader/staff info too
+            if(leader){
+            	doc.setFontSize(15);
+	            leaderText = "Chef de poule : " + leader.profile.firstName + " " + leader.profile.lastName;
+	            
+	            if(leader.emails) leaderText += "\n" + leader.emails[0].address;
+	            if(leader.profile.phone) leaderText += "    " + leader.profile.phone;
+	        	doc.text(leaderText,  options.margins.horizontal, 50);
+	        }
             doc.setFontSize(options.fontSize);
         };	
 
@@ -205,7 +245,7 @@ Template.scoreTable.events({
         var getValue = function(data, settings, width){
             var textSpace = width - settings.padding * 2;
             // Add one pt to width to fix rounding error
-        	var text = pdf.splitTextToSize(data, textSpace + 1, {fontSize: settings.fontSize}); // split the text to display it on multiple lines
+        	var text = pdf.splitTextToSize(data+"", textSpace + 1, {fontSize: settings.fontSize}); // split the text to display it on multiple lines
 
             value = "";
             const maxLines = settings.lineHeight/pdf.internal.getLineHeight(); // Truncate the text after maxLines (avoid overlap)
