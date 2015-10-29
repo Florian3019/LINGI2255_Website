@@ -1,6 +1,7 @@
 
 // Useful link : http://stackoverflow.com/questions/16439055/retrieve-id-after-insert-in-a-meteor-method-call
 
+
 /*
 
 	/!\
@@ -1058,7 +1059,7 @@ Meteor.methods({
 			_id:<id>,
 			court:<court>, --> To remove
 			pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
-			leader:<userId>,
+			leader:<pairId>, // Leader is the player1 from the pair
 			matches:[<matchID>, ...], // Will append matches to existing array (no duplicates possible)
 			courtId:<courtID>,
 		}
@@ -1179,6 +1180,9 @@ Meteor.methods({
 		var pairs = pool.pairs;
 		if(!pairs){
 			pairs = [];
+		}
+		if(!pool.leader){
+			data.leader=pairID;
 		}
 		pairs.push(pairID);
 		data = {};

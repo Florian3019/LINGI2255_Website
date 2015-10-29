@@ -39,7 +39,6 @@ Template.scoreTable.helpers({
 					data = {"poolId":poolId};
 					data.pair1 = {"pairId": pairId1, "points":0};
 					data.pair2 = {"pairId": pairId2, "points":0};
-					console.log(data);
 					Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
 				}
 			}
@@ -51,10 +50,6 @@ Template.scoreTable.helpers({
 	'getPlayer' : function(userId){
 		var res = Meteor.users.findOne({_id:userId},{profile:1});
 		return res;
-	},
-
-	'equals' : function(x, y){
-		return x==y;
 	},
 
 	'getPoints' : function(match, pairId){

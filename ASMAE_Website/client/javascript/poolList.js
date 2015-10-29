@@ -4,10 +4,6 @@
 var drake; // Draggable object
 
 Template.poolList.helpers({
-	'log' : function(x, text){
-		console.log(text);
-		console.log(x);
-	},
 
 	// // Returns a yearData with id year
 	'getYear' : function(){
@@ -53,10 +49,6 @@ Template.poolList.helpers({
 
 	'getArrayLength' : function(array){
 		return array.length;
-	},
-
-	'equals':function(x, y){
-		return x==y;
 	},
 
 	'getRemovePool' : function(){
@@ -120,6 +112,7 @@ Template.poolList.events({
 		Collects the state of the table of pools to save it into the db
 	*/
 	'click #save':function(event){
+		console.log(drake);
 		/*
 			Move the pairs in their new pool
 		*/
@@ -128,6 +121,10 @@ Template.poolList.events({
 
 		// Remember which pairs were moved
 		moves = {}; // key = newPoolId, value = [{"oldPoolId":<oldPoolId>, "pairId":<pairId>}, ...]
+
+		/**********************************************************************
+			Move the pairs to their new pool
+		***********************************************************************/
 
 		// Get the pairs and their pools
 		for(var i=0, len=cells.length; i<len; i++){
@@ -157,6 +154,37 @@ Template.poolList.events({
 
 				// Remove that pair from the previous pool
 				Pools.update({_id:previousPoolId},{$pull : {pairs: pairId}});
+
+				/*
+					If the pair we moved was a leader, update the new leader of the old pool
+				*/
+				prevPool = Pools.findOne({_id:previousPoolId}, {pairs:1, leader:1});
+				
+				leaderFound = false;
+				if(prevPool.leader==undefined || prevPool.leader==pairId){
+					// Find the first pair in the pool that has 2 players (that is a valid pair) and set it as new leader
+					for(var j=0;j<prevPool.pairs.length;j++){
+						p = Pairs.findOne({_id:prevPool.pairs[j]});
+						if(p.player1 && p.player2 && p.player1._id && p.player2._id){
+							Pools.update({_id:previousPoolId}, {$set:{leader:p._id}});
+							leaderFound = true;
+							break;
+						}
+					}
+					if(!leaderFound){
+						// No more valid pair in the pool, remove its leader
+						Pools.update({_id:previousPoolId}, {$unset:{leader:""}});
+					}
+				}
+				
+				/*
+					If this is the only valid pair in the new pool, set the pair as leader of the new pool
+				*/
+				newPool = Pools.findOne({_id:newPoolId}, {leader:1});
+
+				if(newPool.leader==undefined){
+					Pools.update({_id:newPoolId}, {$set:{leader:pairId}});
+				}
 
 				// Add that pair to the new pool
 				Pools.update({_id:newPoolId}, {$push : {pairs: pairId}});
@@ -337,10 +365,6 @@ Template.poolItem.helpers({
 
 	'getModalPureId' : function(){
 		return 'pairModal' + this._id;
-	},
-
-	'log' : function(x){
-		console.log(x);
 	},
 
 	'getPair' : function(pairId) {
