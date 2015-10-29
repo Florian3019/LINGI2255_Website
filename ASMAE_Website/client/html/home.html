@@ -1,56 +1,11 @@
 <template name="home">
-      <!-- Example row of columns -->
-      <div class="row">
-		  <div class="col-md-4">
-      		<img src="tennis1-min.jpg" width = "100%" />
-  		</div>
-		<div class="col-md-4">
-	  		<img src="tennis2-min.jpg" width = "100%">
-		</div>
-    <div class="col-md-4">
-        <img src="tennis3-min.jpg" width = "100%">
-    </div>
-      </div>
-      
-      <div class="row">
-        <div class="col-md-4">
-          <h2>News</h2>
-          
-          <p>Ceci sera la colone dans laquelle se trouveront les news </p>
-          
-          <p><a class="btn btn-default" href="#" role="button">Voir l'ensemble des news &raquo;</a></p>
-        </div>
-        
-        <div class="col-md-4">
-          <h2>Inscris-toi</h2>
-          <p>Clique ici pour t'inscrire au tournoi Le Charles de Lorraine !</p>
-          <p><a class="btn btn-default" href="{{pathFor route='tournamentRegistration'}}" role="button">Inscription tournoi &raquo;</a></p>
-       </div>
-	   
-        <div class="col-md-4">
-          <h2>Court user</h2>
-          <p>Clique ici si tu es un propriétaire de terrain intéressé par notre tournoi</p>
-          <p><a class="btn btn-default" href="{{pathFor route='courtRegistration'}}" role="button">Inscris ton terrain &raquo;</a></p>
-        </div>
-      </div>
+	<h1 class="mainTitle" style="font-size: 60px; color:white; font: Helvetica; padding-top: 10px">Le Charles de Lorraine</h1>
+    <p style="font-size: 30px; color:white">Tournoi de tennis</p>
+    <p style="padding-top: 150px; padding-bottom: 150px">
+      <a href="{{pathFor route='tournamentRegistration'}}" class="btn btn-lg btn-default" style="margin-left: 40px">Inscription au tournoi</a>
+      <a href="{{pathFor route='courtRegistration'}}" class="btn btn-lg btn-default" style="margin-left: 20px">Inscrivez votre terrain</a>
+    </p>
 
-      <div class="row">
-          <div class="col-md-4">
-              <p><a class="btn btn-default" id="becomeStaff" role="button">Je veux être staff &raquo;</a></p>
-          </div>
-
-          <div class="col-md-4">
-              <p><a class="btn btn-default" id="becomeAdmin" role="button">Je veux être admin &raquo;</a></p>
-          </div>
-
-          <div class="col-md-4">
-              <p><a class="btn btn-default" id="becomeNormal" role="button">Je veux être normal &raquo;</a></p>
-          </div>
-      </div>
-
-
-      
-    
 </template>
 
 

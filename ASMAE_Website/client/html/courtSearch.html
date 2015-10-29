@@ -1,5 +1,7 @@
 <template name="courtSearch">
-  <input type="text" id="search-box" placeholder="Search for a court" />
+  <h3>Recherche d'un terrain:</h3>
+
+  <input type="text" id="search-box" class="form-control" placeholder="Rechercher l'adresse d'un terrain" />
   <div id='search-result'>
       {{#if isLoading}}
         searching ...

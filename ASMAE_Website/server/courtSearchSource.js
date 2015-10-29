@@ -1,5 +1,5 @@
 SearchSource.defineSource('courtsSearch', function(searchText, options) {
-  var options = {limit: 10};
+  var options = {};
   
   if(searchText) {
     var regExp = buildRegExp(searchText);
@@ -11,6 +11,7 @@ SearchSource.defineSource('courtsSearch', function(searchText, options) {
     */
     var addressSelector = {$or: [
       {street: regExp},
+      {number: regExp},
       {city: regExp},
       {zipCode: regExp}
     ]};
