@@ -1,12 +1,45 @@
-<!-- <!DOCTYPE HTML> -->
 <template name="brackets">
-<!-- <html lang="en-US"> -->
+
+
+	<form class="table form-inline" role="form">
+	  <div class="form-group">
+		  <label for="Year">Année</label>
+		  <select class="form-control Year" id="Year">
+	      <option value="" disabled="" selected="" hidden></option>
+			  <option value="2015"> 2015 </option>
+		  </select>
+		  
+	    <label for="PoolCategory">Catégorie</label>
+	    <select class="form-control PoolCategory" id="PoolCategory">
+	      <option value="" disabled="" selected="" hidden></option>
+	      <option value="preminimes">Pré Minimes</option>
+	      <option value="minimes">Minimes</option>
+	      <option value="cadets">Cadet</option>
+	      <option value="scolars">Scolaire</option>
+	      <option value="juniors">Junior</option>
+	      <option value="seniors">Seniors</option>
+	      <option value="elites">Elites</option>
+	    </select>
+
+	    <label for="PoolType">Type</label>
+	    <select class="form-control PoolType" id="PoolType">
+	      <option value="" disabled="" selected="" hidden></option>
+	      <option value="men">Homme</option>
+	      <option value="women">Femme</option>
+	      <option value="mixed">Mixte</option>
+		  <option value="family">Tournoi des familles</option>
+	    </select>
+	  </div>
+	</form>
+
+
+
 	<!-- basic styles -->
 	<style type="text/css">
 		.g_gracket { width: 9999px; padding: 55px 15px 5px; line-height: 100%; position: relative; overflow: hidden;}
 		.g_round { float: left; margin-right: 70px; }
 		.g_game { position: relative; margin-bottom: 15px; }
-		.g_gracket h3 { margin: 0; padding: 10px 8px 8px; font-size: 18px; font-weight: normal; color: #fff}
+		.g_gracket h3 { margin: 0; padding: 10px 8px 8px; font-size: 18px; font-weight: normal; color: #fff; min-width:200px;}
 		.g_team { background: #3597AE; }
 		.g_team:last-child {  background: #FCB821; }
 		.g_round:last-child { margin-right: 20px; }
@@ -16,66 +49,107 @@
 		.g_round_label { top: -5px; font-weight: normal; color: #CCC; text-align: center; font-size: 18px; }
 	</style>
 
+	<div id="wrapper">
 	<!-- empty gracket element -->
-	<div class="my_gracket"></div>
+		<!-- <div class="my_gracket" id="gracketContainer"></div> -->
+		{{#with getYear}}
+			{{#with getType}}
+				{{#with getCategory}}
 
-	<script type="text/javascript">
+					{{#with makeBrackets}}
+						{{displayBrackets this}}
+					{{/with}}
 
-	// ################################################
+				{{/with}}
+			{{/with}}
+		{{/with}}
+	</div>
 
+	<!-- <script type="text/javascript">
 
-		 function myFunction(win, doc, $){
-
-			console.warn("Make sure the min-width of the .gracket_h3 element is set to width of the largest name/player. Gracket needs to build its canvas based on the width of the largest element. We do this my giving it a min width. I'd like to change that!");
-
-			// Fake Data
-			win.TestData = [
-				[
-					[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "displaySeed": "1", "score" : 47 }, {"name" : "Andrew Miller", "id" : "andrew-miller", "seed" : 2, "score" : 30} ],
-					[ {"name" : "James Coutry", "id" : "james-coutry", "seed" : 3, "score" : 10}, {"name" : "Sam Merrill", "id" : "sam-merrill", "seed" : 4, "score":8}],
-					[ {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5}, {"name" : "Everett Zettersten", "id" : "everett-zettersten", "seed" : 6} ],
-					[ {"name" : "John Scott", "id" : "john-scott", "seed" : 7}, {"name" : "Teddy Koufus", "id" : "teddy-koufus", "seed" : 8}],
-					[ {"name" : "Arnold Palmer", "id" : "arnold-palmer", "seed" : 9}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10} ],
-					[ {"name" : "Jesse James", "id" : "jesse-james", "seed" : 1}, {"name" : "Scott Anderson", "id" : "scott-anderson", "seed" : 12}],
-					[ {"name" : "Josh Groben", "id" : "josh-groben", "seed" : 13}, {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14} ],
-					[ {"name" : "Jake Coutry", "id" : "jake-coutry", "seed" : 15}, {"name" : "Spencer Zettersten", "id" : "spencer-zettersten", "seed" : 16}]
-				], 
-				[
-					[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1}, {"name" : "James Coutry", "id" : "james-coutry", "seed" : 3} ],
-					[ {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5}, {"name" : "Teddy Koufus", "id" : "teddy-koufus", "seed" : 8} ],
-					[ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10}, {"name" : "Scott Anderson", "id" : "scott-anderson", "seed" : 12} ],
-					[ {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14}, {"name" : "Jake Coutry", "id" : "jake-coutry", "seed" : 15} ]
-				],
-				[
-					[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1}, {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5} ],
-					[ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10}, {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14} ]
-				],
-				[
-					[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10} ]
-				],
-				[
-					[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1} ]
-				]
-			];
-
-			// Load script (script HAS TO BE in the public folder)
-			$.getScript( "javascript/jquery.gracket.js" )
-  				.done(function( script, textStatus ) {
-    				// console.log( textStatus );
-    				// initializer
-					$(".my_gracket").gracket({ src : win.TestData });
-  				})
- 			 	.fail(function( jqxhr, settings, exception ) {
- 			 		console.error("Error loading jquery.gracket :" + exception);
-				})
-			;
-
-		}; // end my function
+	// // ################################################
 
 
+	// 	 function myFunction(win, doc, $){
 
-		jQuery(myFunction(window, document, jQuery));
+	// 		console.warn("Make sure the min-width of the .gracket_h3 element is set to width of the largest name/player. Gracket needs to build its canvas based on the width of the largest element. We do this my giving it a min width. I'd like to change that!");
 
-	</script>
-<!-- </html> -->
+	// 		// Fake Data
+	// 		// win.TestData = [
+	// 		// 	[
+	// 		// 		[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "displaySeed": "1", "score" : 47 }, {"name" : "Andrew Miller", "id" : "andrew-miller", "seed" : 2, "score" : 30} ],
+	// 		// 		[ {"name" : "James Coutry", "id" : "james-coutry", "seed" : 3, "score" : 10}, {"name" : "Sam Merrill", "id" : "sam-merrill", "seed" : 4, "score":8}],
+	// 		// 		[ {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5}, {"name" : "Everett Zettersten", "id" : "everett-zettersten", "seed" : 6} ],
+	// 		// 		[ {"name" : "John Scott", "id" : "john-scott", "seed" : 7}, {"name" : "Teddy Koufus", "id" : "teddy-koufus", "seed" : 8}],
+	// 		// 		[ {"name" : "Arnold Palmer", "id" : "arnold-palmer", "seed" : 9}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10} ],
+	// 		// 		[ {"name" : "Jesse James", "id" : "jesse-james", "seed" : 1}, {"name" : "Scott Anderson", "id" : "scott-anderson", "seed" : 12}],
+	// 		// 		[ {"name" : "Josh Groben", "id" : "josh-groben", "seed" : 13}, {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14} ],
+	// 		// 		[ {"name" : "Jake Coutry", "id" : "jake-coutry", "seed" : 15}, {"name" : "Spencer Zettersten", "id" : "spencer-zettersten", "seed" : 16}]
+	// 		// 	], 
+	// 		// 	[
+	// 		// 		[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1}, {"name" : "James Coutry", "id" : "james-coutry", "seed" : 3} ],
+	// 		// 		[ {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5}, {"name" : "Teddy Koufus", "id" : "teddy-koufus", "seed" : 8} ],
+	// 		// 		[ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10}, {"name" : "Scott Anderson", "id" : "scott-anderson", "seed" : 12} ],
+	// 		// 		[ {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14}, {"name" : "Jake Coutry", "id" : "jake-coutry", "seed" : 15} ]
+	// 		// 	],
+	// 		// 	[
+	// 		// 		[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1}, {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5} ],
+	// 		// 		[ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10}, {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14} ]
+	// 		// 	],
+	// 		// 	[
+	// 		// 		[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10} ]
+	// 		// 	],
+	// 		// 	[
+	// 		// 		[ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1} ]
+	// 		// 	]
+	// 		// ];
+
+	// 		win.TestData = [
+	// 			[
+	// 				[ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten", "score" : 47 }, {"player1" : "Andrew Miller", "player2" : "Andrew Miller S", "id" : "andrew-miller", "score" : 30} ],
+	// 				[ {"player1" : "James Coutry", "player2" : "James Coutry S", "id" : "james-coutry", "score" : 10}, {"player1" : "Sam Merrill", "player2" : "Sam Merrill S", "id" : "sam-merrill", "score":8}],
+	// 				[ {"player1" : "Anothy Hopkins", "player2" : "Anothy Hopkins S", "id" : "anthony-hopkins"}, {"player1" : "Everett Zettersten", "player2" : "Everett Zettersten S", "id" : "everett-zettersten"} ],
+	// 				[ {"player1" : "John Scott", "player2" : "John Scott S", "id" : "john-scott"}, {"player1" : "Teddy Koufus", "player2" : "Teddy Koufus S", "id" : "teddy-koufus"}],
+	// 				[ {"player1" : "Arnold Palmer", "player2" : "Arnold Palmer S", "id" : "arnold-palmer"}, {"player1" : "Ryan Anderson", "player2" : "Ryan Anderson S", "id" : "ryan-anderson"} ],
+	// 				[ {"player1" : "Jesse James", "player2" : "Jesse James S", "id" : "jesse-james"}, {"player1" : "Scott Anderson", "player2" : "Scott Anderson S", "id" : "scott-anderson"}],
+	// 				[ {"player1" : "Josh Groben", "player2" : "Josh Groben S", "id" : "josh-groben"}, {"player1" : "Sammy Zettersten", "player2" : "Sammy Zettersten S", "id" : "sammy-zettersten"} ],
+	// 				[ {"player1" : "Jake Coutry", "player2" : "Jake Coutry S", "id" : "jake-coutry"}, {"player1" : "Spencer Zettersten", "player2" : "Spencer Zettersten S", "id" : "spencer-zettersten"}]
+	// 			], 
+	// 			[
+	// 				[ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"}, {"player1" : "James Coutry", "player2" : "James Coutry S", "id" : "james-coutry"} ],
+	// 				[ {"player1" : "Anothy Hopkins", "player2" : "Anothy Hopkins S", "id" : "anthony-hopkins"}, {"player1" : "Teddy Koufus", "player2" : "Teddy Koufus S", "id" : "teddy-koufus"} ],
+	// 				[ {"player1" : "Ryan Anderson", "player2" : "Ryan Anderson S", "id" : "ryan-anderson"}, {"player1" : "Scott Anderson", "player2" : "Scott Anderson S", "id" : "scott-anderson"} ],
+	// 				[ {"player1" : "Sammy Zettersten", "player2" : "Sammy Zettersten S", "id" : "sammy-zettersten"}, {"player1" : "Jake Coutry", "player2" : "Jake Coutry S", "id" : "jake-coutry"} ]
+	// 			],
+	// 			[
+	// 				[ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"}, {"player1" : "Anothy Hopkins", "player2" : "Anothy Hopkins S", "id" : "anthony-hopkins"} ],
+	// 				[ {"player1" : "Ryan Anderson", "player2" : "Ryan Anderson S", "id" : "ryan-anderson"}, {"player1" : "Sammy Zettersten", "player2" : "Sammy Zettersten S", "id" : "sammy-zettersten"} ]
+	// 			],
+	// 			[
+	// 				[ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"}, {"player1" : "Ryan Anderson", "player2" : "Ryan Anderson S", "id" : "ryan-anderson"} ]
+	// 			],
+	// 			[
+	// 				[ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"} ]
+	// 			]
+	// 		];
+
+	// 		// Load script (script HAS TO BE in the public folder)
+	// 		$.getScript( "javascript/jquery.gracket.js" )
+ //  				.done(function( script, textStatus ) {
+ //    				// console.log( textStatus );
+ //    				// initializer
+	// 				$(".my_gracket").gracket({ src : win.TestData });
+ //  				})
+ // 			 	.fail(function( jqxhr, settings, exception ) {
+ // 			 		console.error("Error loading jquery.gracket :" + exception);
+	// 			})
+	// 		;
+
+	// 	}; // end my function
+
+
+
+	// 	jQuery(myFunction(window, document, jQuery));
+
+	// </script> -->
 </template>

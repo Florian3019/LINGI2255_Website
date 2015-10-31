@@ -213,17 +213,12 @@ Template.poolList.events({
 			for(var j = 0; j<move.length ;j++){
 				pairId = move[j].pairId; // Pair that moved
 				prevPoolId = move[j].oldPoolId;	// Pool id from which that pair moved
-				previousPool = Pools.findOne({_id:prevPoolId},{matches:1}); // Fetch that pool
 
 				// Collect matches of that pool that contain that pair
-				matchesWithThatPair = [];
-				if(previousPool.matches){// Only check if there actually exists any match if this pool
-					for(var x=0; x<previousPool.matches.length;x++){ // Go through all the matches from the previous pool
-						matchId = previousPool.matches[x];
-						match = Matches.findOne({_id:matchId});
-						if(match[pairId]!=undefined) matchesWithThatPair.push(match); // If the match contains that pair, add it to the list
-					}
-				}
+
+				data = {"poolId":prevPoolId};
+				data[pairId] = {$exists:true};
+				matchesWithThatPair = Matches.find(data).fetch();
 
 				/* 
 					For every match of the previous pool that contains that pair
@@ -245,12 +240,6 @@ Template.poolList.events({
 								testPair and pairId moved to the same pool together
 							*/
 							
-							// Remove the match from the old pool
-							Pools.update({_id:prevPoolId},{$pull:{matches:match._id}});
-
-							// Move the match to the new pool
-							Pools.update({_id:key},{$push:{matches:match._id}});
-
 							// Update the poolId of the match to be the new pool
 							Matches.update({_id:match._id}, {$set:{"poolId":key}});
 
@@ -262,9 +251,6 @@ Template.poolList.events({
 					if(!found){
 						// The pair moved to a new pool without their opponent
 
-						// Remove that match from the previous pool
-						Pools.update({_id:prevPoolId}, {$pull:{matches:match._id}});
-						
 						// Remove that match from the db
 						Matches.remove({_id:match._id});
 					}
@@ -295,7 +281,6 @@ Template.poolList.events({
 			// Remove all matches in which this pair exists
 			for(var j=0; j<matchsToRemove.length;j++){
 				m = matchsToRemove[j];
-				Pools.update({_id:poolId}, {$pull: {matches: m._id}});
 				Matches.remove({_id:m._id});
 			}
 

@@ -61,6 +61,8 @@ Template.scoreTable.helpers({
 					data = {"poolId":poolId};
 					data.pair1 = {"pairId": pairId1, "points":0};
 					data.pair2 = {"pairId": pairId2, "points":0};
+					console.log("scoreTable/match creation");
+					console.log(data);
 					Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
 				}
 			}
@@ -109,8 +111,9 @@ Template.scoreTable.events({
 			var pairId = points[i].getAttribute('data-pairid');
 
 			// the fact that this is pair1 and not pair2 is irrelevant for the update (just for parsing convenience)
-			data = {"_id":matchId, pair1:{"pairId":pairId, "points":score}}; 
-
+			data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score)}}; 
+			console.log("save");
+			console.log(data);
 			// Update the DB !
 			Meteor.call("updateMatch", data);
 		}

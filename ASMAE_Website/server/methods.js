@@ -973,7 +973,7 @@ Meteor.methods({
 
 		data = {};
 
-		var pairDataProdided = false;
+		pairDataProdided = false;
 
 		if(matchData.pair1) data[matchData.pair1.pairId] = matchData.pair1.points; // <pairID>:<points>
 		if(matchData.pair2) data[matchData.pair2.pairId] = matchData.pair2.points; // <pairID>:<points>
@@ -983,12 +983,12 @@ Meteor.methods({
 				Check if this pair already exists
 				The pair ("pairId1", "pairId2") is a primary key
 			*/
-			var d1 = {};
+			d1 = {};
 			d1[matchData.pair1.pairId] = {$exists:true};
-			var d2 = {};
+			d2 = {};
 			d2[matchData.pair2.pairId] = {$exists:true};
 
-			var matchId = Matches.findOne(
+			matchId = Matches.findOne(
 						{
 							$and: [
 								{"poolId":matchData.poolId}, // I want to find only matches belonging to this pool
@@ -1000,7 +1000,7 @@ Meteor.methods({
 
 			if(matchId){
 				// The match already exists
-				if(matchData._id && matchData._id != matchId){ // If user provided an id, it must match the one we found, otherwise the DB is not consistent
+				if(matchData._id && (matchData._id != matchId)){ // If user provided an id, it must match the one we found, otherwise the DB is not consistent
 					console.error("updateMatch : a match with the same pairs is already existing or the id provided is not correct");
 					return;
 				}
@@ -1025,6 +1025,7 @@ Meteor.methods({
 			}
 			data._id = matchData._id;
 		}
+
 		if(matchData.poolId) data.poolId = matchData.poolId;
 
 		if(!data._id){
@@ -1034,19 +1035,22 @@ Meteor.methods({
 				console.error("updateMatch : Trying to create a match without setting the pair data");
 				return;
 			}
+			if(!data.poolId){
+				console.error("updateMatch : Trying to create a match without providing the poolId");
+				return;
+			}
+
 			return Matches.insert(data, function(err, id){
 				if(err){
-					console.error('updateMatch error');
+					console.error('updateMatch error (insert)');
 					console.error(err);
 				}
-				// Just created a match, add it to the pool
-				Meteor.call("updatePool", {_id:data.poolId, matches:[id]});
 			});
 		}
 
 		Matches.update({_id: data._id} , {$set: data}, function(err, count, status){
 			if(err){
-				console.error('updateMatch error');
+				console.error('updateMatch error (update)');
 				console.error(err);
 			}
 		});
@@ -1060,44 +1064,66 @@ Meteor.methods({
 			court:<court>, --> To remove
 			pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
 			leader:<pairId>, // Leader is the player1 from the pair
-			matches:[<matchID>, ...], // Will append matches to existing array (no duplicates possible)
 			courtId:<courtID>,
 		}
 
 		@return pool id on success
 	*/
 	'updatePool' : function(poolData){
-		var data = {$set:{}, $addToSet:{}};
+		var data = {};
+
+		set = undefined;
 
 		if(poolData.courtId){
-			data.$set["courtId"] = poolData.courtId;
+			if(!set) set = {};
+			set["courtId"] = poolData.courtId;
 		}
 		if(poolData.leader){
-			data.$set["leader"] = poolData.leader;
+			if(!set) set = {};
+			set["leader"] = poolData.leader;
 		}
 
+		if(set) data["$set"] = set;
+
+		addToSet = undefined;
 		if(poolData.pairs){
-			data.$addToSet["pairs"] = {$each: poolData.pairs};
+			if(!addToSet) addToSet = {};
+			addToSet["pairs"] = {$each: poolData.pairs};
 		}
-		if(poolData.matches){
-			data.$addToSet["matches"] = {$each: poolData.matches};
-		}
+		// if(poolData.matches){
+		// 	if(!addToSet) addToSet = {};
+		// 	addToSet["matches"] = {$each: poolData.matches};
+		// }
+
+		if(addToSet) data["$addToSet"] = addToSet;
 
 		if(!poolData._id){
 			return Pools.insert(data, function(err, poolID){
 				if(err){
 					console.error('updatePool error');
+					console.error(data);
 					console.error(err);
 				}
 			});
 		}
 
-		if(Meteor.call('objectIsEmpty', data.$set)) delete data.$set;
-		if(Meteor.call('objectIsEmpty', data.$addToSet)) delete data.$addToSet;
+
+		// if(Object.keys(data.$set).length==0) delete data.$set;
+		// if(Object.keys(data.$addToSet).length==0) delete data.$addToSet;
+		// console.log("testEmptyObject");
+		// console.log(data.$set);
+		// console.log(Meteor.call('objectIsEmpty', data.$set));
+		// console.log(Meteor.call('objectIsEmpty', {}));
+		// console.log(Meteor.call('objectIsEmpty', {"hello":1}));
+		
+		
+		// if(Meteor.call('objectIsEmpty', data.$set)) delete data.$set;
+		// if(Meteor.call('objectIsEmpty', data.$addToSet)) delete data.$addToSet;
 		
 		Pools.update({_id: poolData._id} , data, function(err, count, status){
 			if(err){
 				console.error('updatePool error ');
+				console.error(data);
 				console.error(err);
 			}
 		});
