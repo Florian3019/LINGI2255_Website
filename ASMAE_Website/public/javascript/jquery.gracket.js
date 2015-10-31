@@ -157,7 +157,8 @@
           return team = $("<div />", {
             "html" : html,
             "class" : node.teamClass + " " + (data.id || "id_null"),
-            "id" : data.id
+            "id" : data.id,
+            "data-round":data.round
           });
         },
         game : function(node){

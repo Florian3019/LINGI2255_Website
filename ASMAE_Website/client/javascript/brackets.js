@@ -1,101 +1,84 @@
-
-
-// Returns the winners of the pool with id poolId.
-var getPoolWinners = function(poolId){
-
-  pool = Pools.findOne({_id:poolId}, {pairs:1});
-
-  const MAXWINNERS = 2; // Change this value if needed. Must be a multiple of 2
-
-  if(MAXWINNERS%2!=0){
-    console.error("MAXWINNERS must be a multiple of 2");
-    return;
-  }
-
-  pairPoints = {}; // key = pair, value = total points
-
-  // For every pair of the pool, store its total points into pairPoints
-  for(var i=0; i<pool.pairs.length;i++){
-    data = {"poolId":poolId};
-    data[pool.pairs[i]] = {$exists:true};
-
-    toReturn = {};
-    toReturn[pool.pairs[i]] = 1;
-    m = Matches.find(data,toReturn).fetch(); // Get all the matches in which this pair played
-    // For every match where that pair played
-    for(var j=0; j<m.length; j++){
-      match = m[j];
-
-      // If the key doesn't exist yet, initialize it to 0
-      if(!pairPoints[pool.pairs[i]]){
-        pairPoints[pool.pairs[i]] = 0;
-      }
-
-      // Increase that pair's total score
-      pairPoints[pool.pairs[i]] += match[pool.pairs[i]];
-    }
-  }
-  console.log("pairPoints");
-  console.log(pairPoints);
-  keys = Object.keys(pairPoints); // List of pairIds
-
-  // Sorter for pairPoints (by descending order)
-  var pointComparator = function(a,b){
-    // Return a number > 0 if a is after b
-    // Return a number < 0 if a is before b
-    return pairPoints[b]-pairPoints[a];
-  }
-
-  keys.sort(pointComparator);
-
-  winners = [];
-  var i = 0;
-  equals = false;
-  // Select the winners from all the pairs. The best pairs are first in "keys"
-  for(i=0; (i<MAXWINNERS || equals) && i<keys.length; i++){
-    winners.push(keys[i]);
-    // If there are equalities in the points, add the next pair too
-    // if(i+1<keys.length && pairPoints[keys[i]] == pairPoints[keys[i+1]]){
-    //   equals = true;
-    // }
-    // else{
-    //   equals = false;
-    // }
-  }
-
-  console.log(winners);
-
-  return winners;
-};
-
-/*
-  Give this function a category from Years->Types->Category = list of pool ids 
-  and it will return a list of pairs that were winners in their pool
-*/
-var getCategoryWinners = function(poolIdList){
-  allWinners = []; // list of pairIds
-  for(var i=0; i<poolIdList.length;i++){
-    poolWinners = getPoolWinners(poolIdList[i]);
-    for(var j=0; j<poolWinners.length;j++){
-      allWinners.push(poolWinners[j]);
-    }
-  }
-
-  return allWinners;
-};
-
-
 Template.brackets.onRendered(function(){
     year = Session.set("brackets/Year",null);
     type = Session.set("brackets/PoolType",null);
     category = Session.set("brackets/PoolCategory",null);
 });
 
+var getBracketData = function(pair, round){ // /!\ Round starts at 0 /!\
+    /*
+      Number of characters allowed for display. 
+      When changing this value, don't forget to change the min-width of the g_gracket h3 css element in brackets.html too
+    */
+    const MAXSIZE = 25;
+
+    pairPlayer1 = Meteor.users.findOne({_id:pair.player1._id},{profile:1});
+    pairPlayer2 = Meteor.users.findOne({_id:pair.player2._id},{profile:1});
+
+    pairPlayer1String = pairPlayer1.profile.firstName + " " + pairPlayer1.profile.lastName;
+    pairPlayer2String = pairPlayer2.profile.firstName + " " + pairPlayer2.profile.lastName;
+    
+    data = {
+            "player1":pairPlayer1String.substring(0, MAXSIZE), 
+            "player2":pairPlayer2String.substring(0, MAXSIZE), 
+            "id":pair._id, 
+            "score": (pair.tournament==undefined || pair.tournament.length<=round) ? "en jeu" : pair.tournament[round],
+            "round":round
+    };
+
+    return data;
+};
+
+// Round data format : {pair:<pair>, data:<bracketPairData>}
+// Returns the best of the 2 pairs or undefined if the score is not yet known. If score is known, updates roundData with the new score
+var getBestFrom2 = function(roundData1, roundData2, round){
+  if(roundData1==undefined || roundData2==undefined || round==undefined) return undefined;
+  if(roundData1.pair && roundData2.pair && roundData1.pair.tournament && roundData2.pair.tournament && round <= roundData1.pair.tournament.length && round <= roundData2.pair.tournament.length){
+      // The score to display is the score of the next match !
+
+      newRoundData1 = {data:{}};
+      newRoundData1.pair = roundData1.pair;
+      newRoundData1.data.player1 = roundData1.data.player1;
+      newRoundData1.data.player2 = roundData1.data.player2;
+      newRoundData1.data.id = roundData1.data.id;
+
+      s1 = undefined;
+      console.log("round " + round);
+      if(round<roundData1.pair.tournament.length){
+        s1 = roundData1.pair.tournament[round];
+      }
+      else{
+        s1 = '?';
+      }
+      newRoundData1.data.score = round+1<roundData1.pair.tournament.length ? roundData1.pair.tournament[round+1] : 'en jeu';
+      newRoundData1.data.round = round+1;
+
+      newRoundData2 = {data:{}};
+      newRoundData2.pair = roundData2.pair;
+      newRoundData2.data.player1 = roundData2.data.player1;
+      newRoundData2.data.player2 = roundData2.data.player2;
+      newRoundData2.data.id = roundData2.data.id;
+
+      s2 = undefined;
+      if(round<roundData2.pair.tournament.length){
+        s2 = roundData2.pair.tournament[round];
+      }
+      else{
+        s2 = '?';
+      }
+      newRoundData2.data.score = round+1<roundData2.pair.tournament.length ? roundData2.pair.tournament[round+1] : 'en jeu';
+      newRoundData2.data.round = round+1;
+
+      if(s1==='?' || s2==='?') return undefined;
+
+      return s1 > s2 ? newRoundData1 : newRoundData2;
+  }
+
+  return undefined;
+};
+
 Template.brackets.helpers({
 
   'makeBrackets' : function(){
-
-
     /*  Prevent duplication of the brackets --> remove the previous one */
     parent = document.getElementById("wrapper");
     if(parent!= undefined){
@@ -109,13 +92,7 @@ Template.brackets.helpers({
       div.id = "gracketContainer";
       parent.appendChild(div);
     }
-
-
-    /*
-      Number of characters allowed for display. 
-      When changing this value, don't forget to change the min-width of the g_gracket h3 css element in brackets.html too
-    */
-    const MAXSIZE = 25;
+    Session.get('brackets/Start'); // Just to make this function reactive to the button press
     year = Session.get("brackets/Year");
     type = Session.get("brackets/PoolType");
     category = Session.get("brackets/PoolCategory");
@@ -126,83 +103,96 @@ Template.brackets.helpers({
     if(typeId==undefined) return;
     typeData = Types.findOne({_id:typeId});
     if(typeData==undefined) return;
-    poolListId = typeData[category];
-    if(poolListId==undefined) return;
-    allWinners = getCategoryWinners(poolListId);
+    allWinners = typeData[category.concat("Bracket")]; // List of pairIds
+    if(allWinners==undefined){
+      console.error("Tournament not started");
+      return;
+    }
     console.log(allWinners);
+
+    thisRound = []; // {pair:<pair>, data:<bracketPairData>} List of the pairs that made it this round
 
     /*
       pair Format : 
       pair = {"player1" : <player1String>, "player2": <player2String>, id" : <pairId>, "score" : <score> }
       pairs in firstRound : [item1, item2] representing a knock off match with pair1 against pair2
     */
-    firstRound = [];
+    firstRound = []; 
     /*
       Create the firstRound
     */
-    for(var i=0; i<allWinners.length;i+=2){ // Take them 2 by 2
+    for(var i=0; i+1<allWinners.length;i+=2){ // Take them 2 by 2
       pairId = allWinners[i];
       pair1 = Pairs.findOne({_id:pairId});
+      data1 = getBracketData(pair1,0);
 
-      pair1Player1 = Meteor.users.findOne({_id:pair1.player1._id},{profile:1});
-      pair1Player2 = Meteor.users.findOne({_id:pair1.player2._id},{profile:1});
-
-      pair1Player1String = pair1Player1.profile.firstName + " " + pair1Player1.profile.lastName;
-      pair1Player2String = pair1Player2.profile.firstName + " " + pair1Player2.profile.lastName;
-      data1 = {
-              "player1":pair1Player1String.substring(0, MAXSIZE), 
-              "player2":pair1Player2String.substring(0, MAXSIZE), 
-              "id":pair1._id, 
-              "score":"en jeu"
-      };
-      
       if(i+1<allWinners.length){
-        pair2 = Pairs.findOne({_id:allWinners[i+1]});  
-
-        pair2Player1 = Meteor.users.findOne({_id:pair2.player1._id},{profile:1});
-        pair2Player2 = Meteor.users.findOne({_id:pair2.player2._id},{profile:1});
-
-        pair2Player1String = pair2Player1.profile.firstName + " " + pair2Player1.profile.lastName;
-        pair2Player2String = pair2Player2.profile.firstName + " " + pair2Player2.profile.lastName;
-
-        data2 = {
-            "player1":pair2Player1String.substring(0, MAXSIZE), 
-            "player2":pair2Player2String.substring(0, MAXSIZE), 
-            "id":pair2._id, 
-            "score":"en jeu"
-        };
-
+        pairId2 = allWinners[i+1];
+        pair2 = Pairs.findOne({_id:pairId2});  
+        data2 = getBracketData(pair2,0);
         firstRound.push([data1, data2]);
+        thisRound.push({"pair":pair1, "data":data1});
+        thisRound.push({"pair":pair2, "data":data2});
       }
-
-      // TODO do something if number of pairs is odd
-      // else{
-      //   data2 = {"player1":"vide", "player2":"vide", "id":undefined, "score":"/"};
-      // }
     }
 
     brackets = [firstRound];
 
     /*
-      Fill the rest of the rounds with "?"
+      Fill the rest of the rounds with "?" or the score
     */
-    n = Math.floor(firstRound.length);
-    empty = {"player1":"?", "player2":"?", "id":undefined, "score":"?"};
-    // n must be a multiple of 2
-    while(n>0){
-      nextRound = [];
+    empty = {"player1":"?", "player2":"?", "id":undefined, "score":"?", "round":undefined};
 
-      if(n!=1){
-        for(var i=0; i<Math.floor(n/2); i++){
-          nextRound.push([empty,empty]);
-        }
+    round = 0;
+    while(thisRound.length>1){
+      // console.log("allWinners : " + allWinners.length);
+      // console.log("thisRound : "+thisRound.length);
+
+      // round = allWinners.length*2/thisRound.length -1; // Starts at 0
+      newRound = []; // list of roundData
+
+      // Select the best pair from the 2
+      for(var i=0; i+1<thisRound.length ; i+=2){
+        best = getBestFrom2(thisRound[i], thisRound[i+1], round);
+        newRound.push(best);
       }
-      else{
-        nextRound.push([empty]);
-      }
+
+
+      // For each selected pair, convert that pair into an object that can be displayed
+      nextRound = [];
+      for(var i=0; i+1<newRound.length ; i+=2, round){
+        // a plays against b
+        a = newRound[i];
+        b = newRound[i+1];
+
+        nextRound.push([a==undefined ? empty:a.data, b==undefined ? empty:b.data]);
+      } 
+
+      // Add that object to the list of stuff to display
       brackets.push(nextRound);
-      n= Math.floor(n/2);
+
+      if(nextRound.length==1){
+        console.log(round+1);
+        a = getBestFrom2(newRound[0], newRound[1], round+1);
+        if(a!=undefined){
+          if(round+1<a.pair.tournament.length){
+            a.data.score = a.pair.tournament[round+1];
+          }
+          else{
+            a.data.score = '?';
+          }
+          console.log(a.data);
+        }
+        
+        brackets.push([[a==undefined ? empty:a.data]]);
+      }
+
+      thisRound = nextRound;
+      round++;
     }
+
+
+
     return brackets;
   },
 
@@ -277,7 +267,17 @@ Template.brackets.helpers({
     return Session.get('brackets/Year');
   },
 
+  'getScore':function(){
+    pairId = Session.get('brackets/clicked');
+    if(pairId==undefined) return;
+    pair = Pairs.findOne({_id:pairId}, {tournament:1});
 
+    round = Session.get('brackets/round');
+    if(pair.tournament!=undefined && round<pair.tournament.length){
+      return pair.tournament[round];  
+    }
+    return 0;
+  }
 });
 
 
@@ -288,6 +288,18 @@ Template.brackets.events({
   "click .g_team":function(event, template){
     var pairId = event.currentTarget.id;
     console.log(pairId);
+
+    mod = document.getElementById("bracketModal");
+    round = event.currentTarget.dataset.round;
+    console.log("round :" + round);
+    // console.log(event);
+    if(round!=undefined){
+      Session.set('brackets/clicked', pairId);
+      Session.set('brackets/round', round);
+      $("#bracketModal").modal('show');
+    }
+    // mod.modal('show');
+    // mod.modal('hide');
 
   	// TODO : redirect to player profile ?
 
@@ -302,5 +314,44 @@ Template.brackets.events({
   'click .Year':function(event){
     Session.set('brackets/Year', event.target.value);
   },
+
+  'click #start':function(event){
+    Session.set('brackets/Start', true);
+    Meteor.call('startTournament', Session.get('brackets/Year'), Session.get('brackets/PoolType'), Session.get('brackets/PoolCategory'));
+  },
+
+  'click #saveScore':function(event){
+    pairId = Session.get('brackets/clicked');
+    if(pairId==undefined) return;
+    pair = Pairs.findOne({_id:pairId}, {tournament:1});
+
+    round = Session.get('brackets/round');
+    score = document.getElementById("scoreInput").value;
+    score = parseInt(score);
+    newTournament = pair.tournament;
+
+    if(newTournament==undefined){
+      newTournament = [];
+    }
+
+    if(round>=newTournament.length){
+      // The score is new, so we need to add it to the array
+      if(round==newTournament.length){
+        newTournament.push(score);
+      }
+      else{
+        console.error("saveScore error : trying to set the score for a round whose previous score isn't set yet");
+        return;
+      }
+    }
+    else{
+      // Score already existed, but is now modified
+      newTournament[round] = score;
+    }
+
+
+    Pairs.update({_id:pairId}, {$set: {tournament:newTournament}});
+
+  }
 
 });
