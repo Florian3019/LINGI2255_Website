@@ -1,5 +1,5 @@
 /*
-  Returns the winners of the pool with id poolId. Helper of getCategoryWinners
+  Returns the winners of the pool with id poolId. Helper of getCategoryWinners. Resets the tournament points.
 */
 var getPoolWinners = function(poolId){
 
@@ -17,7 +17,12 @@ var getPoolWinners = function(poolId){
   // For every pair of the pool, store its total points into pairPoints
   for(var i=0; i<pool.pairs.length;i++){
     data = {"poolId":poolId};
-    data[pool.pairs[i]] = {$exists:true};
+    pairId = pool.pairs[i];
+    
+    // Unset previous tournament match for that pair
+    Pairs.update({"_id":pairId}, {$unset:{"tournament":""}});
+
+    data[pairId] = {$exists:true};
 
     toReturn = {};
     toReturn[pool.pairs[i]] = 1;
@@ -35,8 +40,6 @@ var getPoolWinners = function(poolId){
       pairPoints[pool.pairs[i]] += match[pool.pairs[i]];
     }
   }
-  console.log("pairPoints");
-  console.log(pairPoints);
   keys = Object.keys(pairPoints); // List of pairIds
 
   // Sorter for pairPoints (by descending order)
@@ -56,8 +59,6 @@ var getPoolWinners = function(poolId){
     winners.push(keys[i]);
     // TODO deal with equalities in the points
   }
-
-  console.log(winners);
 
   return winners;
 };

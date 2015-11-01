@@ -117,11 +117,17 @@ Template.scoreTable.events({
 			// Update the DB !
 			Meteor.call("updateMatch", data);
 		}
+
+		document.getElementById("successBox").removeAttribute("hidden");
 	},
 
 	'change #checkBoxEmptyTable' : function(event){
 		checked = document.getElementById(event.target.id).checked;
 		Session.set("scoreTable/emptyTable", checked);
+	},
+
+	'change .points' : function(event){
+		document.getElementById("successBox").setAttribute("hidden","");// Remove any success message if any, user just changed a score
 	},
 
 	/*

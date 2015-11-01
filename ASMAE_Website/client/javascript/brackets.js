@@ -28,58 +28,47 @@ var getBracketData = function(pair, round){ // /!\ Round starts at 0 /!\
     return data;
 };
 
+var setRoundData = function(roundData){
+  newRoundData = {data:{}};
+  newRoundData.pair = roundData.pair;
+  newRoundData.data.player1 = roundData.data.player1;
+  newRoundData.data.player2 = roundData.data.player2;
+  newRoundData.data.id = roundData.data.id;
+
+  s = undefined;
+  if(round<roundData.pair.tournament.length){
+    s = roundData.pair.tournament[round];
+  }
+  else{
+    s = '?';
+  }
+
+  // The score to display is the score of the next match !
+  newRoundData.data.score = round+1<roundData.pair.tournament.length ? roundData.pair.tournament[round+1] : 'en jeu';
+  newRoundData.data.round = round+1;
+  return {"s":s, "r":newRoundData};
+};
+
+
 // Round data format : {pair:<pair>, data:<bracketPairData>}
 // Returns the best of the 2 pairs or undefined if the score is not yet known. If score is known, updates roundData with the new score
 var getBestFrom2 = function(roundData1, roundData2, round){
   if(roundData1==undefined || roundData2==undefined || round==undefined) return undefined;
   if(roundData1.pair && roundData2.pair && roundData1.pair.tournament && roundData2.pair.tournament && round <= roundData1.pair.tournament.length && round <= roundData2.pair.tournament.length){
-      // The score to display is the score of the next match !
+      
+      a = setRoundData(roundData1);
+      b = setRoundData(roundData2);
 
-      newRoundData1 = {data:{}};
-      newRoundData1.pair = roundData1.pair;
-      newRoundData1.data.player1 = roundData1.data.player1;
-      newRoundData1.data.player2 = roundData1.data.player2;
-      newRoundData1.data.id = roundData1.data.id;
+      if(a.s==='?' || b.s==='?') return undefined;
 
-      s1 = undefined;
-      console.log("round " + round);
-      if(round<roundData1.pair.tournament.length){
-        s1 = roundData1.pair.tournament[round];
-      }
-      else{
-        s1 = '?';
-      }
-      newRoundData1.data.score = round+1<roundData1.pair.tournament.length ? roundData1.pair.tournament[round+1] : 'en jeu';
-      newRoundData1.data.round = round+1;
-
-      newRoundData2 = {data:{}};
-      newRoundData2.pair = roundData2.pair;
-      newRoundData2.data.player1 = roundData2.data.player1;
-      newRoundData2.data.player2 = roundData2.data.player2;
-      newRoundData2.data.id = roundData2.data.id;
-
-      s2 = undefined;
-      if(round<roundData2.pair.tournament.length){
-        s2 = roundData2.pair.tournament[round];
-      }
-      else{
-        s2 = '?';
-      }
-      newRoundData2.data.score = round+1<roundData2.pair.tournament.length ? roundData2.pair.tournament[round+1] : 'en jeu';
-      newRoundData2.data.round = round+1;
-
-      if(s1==='?' || s2==='?') return undefined;
-
-      return s1 > s2 ? newRoundData1 : newRoundData2;
+      return a.s > b.s ? a.r : b.r;
   }
 
   return undefined;
 };
 
-Template.brackets.helpers({
-
-  'makeBrackets' : function(){
-    /*  Prevent duplication of the brackets --> remove the previous one */
+var resetBrackets = function(document){
+  /*  Prevent duplication of the brackets --> remove the previous one */
     parent = document.getElementById("wrapper");
     if(parent!= undefined){
       // Remove a pre-existing gracket element
@@ -92,28 +81,98 @@ Template.brackets.helpers({
       div.id = "gracketContainer";
       parent.appendChild(div);
     }
+}
+
+var setInfo = function(document, msg){
+  infoBox = document.getElementById("infoBox");
+  infoMsg = document.getElementById("infoMsg");
+  infoBox.removeAttribute("hidden");
+  infoMsg.innerHTML = msg;
+}
+
+function getSelectedText(document, elementId) {
+    var elt = document.getElementById(elementId);
+
+    if (elt.selectedIndex == -1)
+        return null;
+
+    return elt.options[elt.selectedIndex].text;
+}
+
+Template.brackets.helpers({
+
+  'makeBrackets' : function(){
+    
+    resetBrackets(document);
+
     Session.get('brackets/Start'); // Just to make this function reactive to the button press
     year = Session.get("brackets/Year");
     type = Session.get("brackets/PoolType");
     category = Session.get("brackets/PoolCategory");
 
+    startButton =  document.getElementById("start");
+
+
     yearData = Years.findOne({_id:year});
-    if(yearData==undefined) return;
+    if(yearData==undefined){
+      console.info("No data found for year "+year);
+      setInfo(document, "Pas de données trouvées pour l'année "+year);
+      if(year!=undefined && type!=undefined && category!=undefined) startButton.style.visibility = 'hidden';
+      return;  
+    } 
     typeId = yearData[type];
-    if(typeId==undefined) return;
+    if(typeId==undefined){
+      console.info("No data found for type "+type);
+      setInfo(document, "Pas de données trouvées pour le type "+getSelectedText(document, "PoolType") + " de l'année "+year);
+      if(year!=undefined && type!=undefined && category!=undefined) startButton.style.visibility = 'hidden';
+      return;  
+    } 
     typeData = Types.findOne({_id:typeId});
-    if(typeData==undefined) return;
-    allWinners = typeData[category.concat("Bracket")]; // List of pairIds
-    if(allWinners==undefined){
-      console.error("Tournament not started");
+    if(typeData==undefined){
+      console.error("makeBrackets : id search on the Types DB failed");
+      if(year!=undefined && type!=undefined && category!=undefined) startButton.style.visibility = 'hidden';
+      return;  
+    }
+    if(typeData[category]==undefined){
+      console.info("No matches for pools of category "+category + ", type "+type, " at year "+year);
+      setInfo(document, "Pas de données trouvées pour la catégorie "
+        + getSelectedText(document, "PoolCategory")  
+        + " du type "+getSelectedText(document, "PoolType") 
+        + " de l'année "+year);
+      if(year!=undefined && type!=undefined && category!=undefined) startButton.style.visibility = 'hidden';
       return;
     }
-    console.log(allWinners);
 
-    thisRound = []; // {pair:<pair>, data:<bracketPairData>} List of the pairs that made it this round
+    allWinners = typeData[category.concat("Bracket")]; // List of pairIds
+    
+    if(allWinners==undefined){
+      if(startButton!=undefined){
+        console.info("Tournament not started");
+        startButton.innerHTML="Démarrer le tournoi";
+        startButton.style.visibility = 'visible';
+      }
+      return;
+    }
+    if(startButton!=undefined){
+      startButton.innerHTML="Redémarrer le tournoi";
+      startButton.style.visibility = 'visible';
+    } 
+
+    if(allWinners.length==0){
+      console.info("There are no matches for that year, type and category, did you create any ?");
+      setInfo(document, "Pas de matchs pour l'année "+year
+        + " type " + getSelectedText(document, "PoolType")
+        + " de la catégorie " + getSelectedText(document, "PoolCategory")
+        + ".Si vous en avez créé, cliquez sur redémarrer le tournoi pour mettre à jour");
+      return;
+    }
+
+    document.getElementById("infoBox").setAttribute("hidden",""); // hide any previous info message
+
+    thisRound = []; // {pair:<pair>, data:<bracketPairData>} List of the pairs that made it this round (contains roundData)
 
     /*
-      pair Format : 
+      pair display Format : 
       pair = {"player1" : <player1String>, "player2": <player2String>, id" : <pairId>, "score" : <score> }
       pairs in firstRound : [item1, item2] representing a knock off match with pair1 against pair2
     */
@@ -145,21 +204,16 @@ Template.brackets.helpers({
 
     round = 0;
     while(thisRound.length>1){
-      // console.log("allWinners : " + allWinners.length);
-      // console.log("thisRound : "+thisRound.length);
-
-      // round = allWinners.length*2/thisRound.length -1; // Starts at 0
       newRound = []; // list of roundData
 
-      // Select the best pair from the 2
+      // Select the best pair from the 2 for each match
       for(var i=0; i+1<thisRound.length ; i+=2){
         best = getBestFrom2(thisRound[i], thisRound[i+1], round);
-        newRound.push(best);
+        newRound.push(best); // best contains a pair and its display data
       }
 
-
       // For each selected pair, convert that pair into an object that can be displayed
-      nextRound = [];
+      nextRound = []; // contains objects that are going to be displayed
       for(var i=0; i+1<newRound.length ; i+=2, round){
         // a plays against b
         a = newRound[i];
@@ -169,29 +223,33 @@ Template.brackets.helpers({
       } 
 
       // Add that object to the list of stuff to display
-      brackets.push(nextRound);
+      if(nextRound.length>0) brackets.push(nextRound);
 
-      if(nextRound.length==1){
-        console.log(round+1);
-        a = getBestFrom2(newRound[0], newRound[1], round+1);
+      // If newRound.length == 1 --> only 2 pairs in the tournament
+      // If nextRound.length == 2 --> we are at the last 2 pairs of the tournament and need to display the winner
+      if(newRound.length==1 || nextRound.length==2){
+
+        // If there are only 2 pairs in the tournament, we need to take the information from the firstRound (or in this case thisRound)
+        // If there are only 2 pairs in the tournament, we need to take the information from the newly created round
+        a = newRound.length==1 ? getBestFrom2(thisRound[0], thisRound[1], round) : getBestFrom2(newRound[0], newRound[1], round+1);
+        r = newRound.length==1 ? round : round+1;
+
+        // Set the score to be the same score as the round we currently are at (and not the next round, as done by getBestFrom2)
         if(a!=undefined){
-          if(round+1<a.pair.tournament.length){
-            a.data.score = a.pair.tournament[round+1];
+          if(r<a.pair.tournament.length){
+            a.data.score = a.pair.tournament[r];
           }
           else{
             a.data.score = '?';
           }
-          console.log(a.data);
         }
-        
-        brackets.push([[a==undefined ? empty:a.data]]);
+        ultimateWinner = [a==undefined ? empty:a.data];
+        brackets.push([ultimateWinner]); // Only one pair: the winner
       }
 
-      thisRound = nextRound;
+      thisRound = newRound;
       round++;
     }
-
-
 
     return brackets;
   },
@@ -200,50 +258,10 @@ Template.brackets.helpers({
     var myFunction = function($){
 
       console.warn("Make sure the min-width of the .gracket_h3 element is set to width of the largest name/player. Gracket needs to build its canvas based on the width of the largest element. We do this my giving it a min width. I'd like to change that!");
-      console.log("brackets:");
-      console.log(brackets);
-      TestData = [
-       [
-         [ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten", "score" : 47 }, {"player1" : "Andrew Miller", "player2" : "Andrew Miller S", "id" : "andrew-miller", "score" : 30} ],
-         [ {"player1" : "James Coutry", "player2" : "James Coutry S", "id" : "james-coutry", "score" : 10}, {"player1" : "Sam Merrill", "player2" : "Sam Merrill S", "id" : "sam-merrill", "score":8}],
-         [ {"player1" : "Anothy Hopkins", "player2" : "Anothy Hopkins S", "id" : "anthony-hopkins"}, {"player1" : "Everett Zettersten", "player2" : "Everett Zettersten S", "id" : "everett-zettersten"} ],
-         [ {"player1" : "John Scott", "player2" : "John Scott S", "id" : "john-scott"}, {"player1" : "Teddy Koufus", "player2" : "Teddy Koufus S", "id" : "teddy-koufus"}],
-         [ {"player1" : "Arnold Palmer", "player2" : "Arnold Palmer S", "id" : "arnold-palmer"}, {"player1" : "Ryan Anderson", "player2" : "Ryan Anderson S", "id" : "ryan-anderson"} ],
-         [ {"player1" : "Jesse James", "player2" : "Jesse James S", "id" : "jesse-james"}, {"player1" : "Scott Anderson", "player2" : "Scott Anderson S", "id" : "scott-anderson"}],
-         [ {"player1" : "Josh Groben", "player2" : "Josh Groben S", "id" : "josh-groben"}, {"player1" : "Sammy Zettersten", "player2" : "Sammy Zettersten S", "id" : "sammy-zettersten"} ],
-         [ {"player1" : "Jake Coutry", "player2" : "Jake Coutry S", "id" : "jake-coutry"}, {"player1" : "Spencer Zettersten", "player2" : "Spencer Zettersten S", "id" : "spencer-zettersten"}]
-       ], 
-       [
-         [ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"}, {"player1" : "James Coutry", "player2" : "James Coutry S", "id" : "james-coutry"} ],
-         [ {"player1" : "Anothy Hopkins", "player2" : "Anothy Hopkins S", "id" : "anthony-hopkins"}, {"player1" : "Teddy Koufus", "player2" : "Teddy Koufus S", "id" : "teddy-koufus"} ],
-         [ {"player1" : "Ryan Anderson", "player2" : "Ryan Anderson S", "id" : "ryan-anderson"}, {"player1" : "Scott Anderson", "player2" : "Scott Anderson S", "id" : "scott-anderson"} ],
-         [ {"player1" : "Sammy Zettersten", "player2" : "Sammy Zettersten S", "id" : "sammy-zettersten"}, {"player1" : "Jake Coutry", "player2" : "Jake Coutry S", "id" : "jake-coutry"} ]
-       ],
-       [
-         [ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"}, {"player1" : "Anothy Hopkins", "player2" : "Anothy Hopkins S", "id" : "anthony-hopkins"} ],
-         [ {"player1" : "Ryan Anderson", "player2" : "Ryan Anderson S", "id" : "ryan-anderson"}, {"player1" : "Sammy Zettersten", "player2" : "Sammy Zettersten S", "id" : "sammy-zettersten"} ]
-       ],
-       [
-         [ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"}, {"player1" : "Ryan Anderson", "player2" : "Ryan Anderson S", "id" : "ryan-anderson"} ]
-       ],
-       [
-         [ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"} ]
-       ]
-     ];
-
-     testData2 = [
-       [
-         [ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"}, {"player1" : "Ryan Anderson", "player2" : "Ryan Anderson S", "id" : "ryan-anderson"} ]
-       ],
-       [
-         [ {"player1" : "Erik Zettersten", "player2" : "Erik Zettersten S", "id" : "erik-zettersten"} ]
-       ]
-     ];
 
       // Load script (script HAS TO BE in the public folder)
       $.getScript( "javascript/jquery.gracket.js" )
           .done(function( script, textStatus ) {
-            // console.log( textStatus );
             // initializer
           $(".my_gracket").gracket({ src : brackets });
           })
@@ -270,7 +288,12 @@ Template.brackets.helpers({
   'getScore':function(){
     pairId = Session.get('brackets/clicked');
     if(pairId==undefined) return;
-    pair = Pairs.findOne({_id:pairId}, {tournament:1});
+    pair = Pairs.findOne({"_id":pairId}, {"tournament":1});
+
+    if(pair==undefined){
+      console.warn("getScore warning : pair not found with pairId provided");
+      return;
+    }
 
     round = Session.get('brackets/round');
     if(pair.tournament!=undefined && round<pair.tournament.length){
@@ -287,22 +310,15 @@ Template.brackets.events({
 	// Do something when the user clicks on a player
   "click .g_team":function(event, template){
     var pairId = event.currentTarget.id;
-    console.log(pairId);
-
     mod = document.getElementById("bracketModal");
     round = event.currentTarget.dataset.round;
-    console.log("round :" + round);
-    // console.log(event);
-    if(round!=undefined){
+
+    // Display modal to edit the score
+    if(round!=undefined){ // Only allow to click on pairs that are not "?"
       Session.set('brackets/clicked', pairId);
       Session.set('brackets/round', round);
       $("#bracketModal").modal('show');
     }
-    // mod.modal('show');
-    // mod.modal('hide');
-
-  	// TODO : redirect to player profile ?
-
   },
 
   'click .PoolType':function(event){
@@ -317,6 +333,7 @@ Template.brackets.events({
 
   'click #start':function(event){
     Session.set('brackets/Start', true);
+    // resetBrackets(document);
     Meteor.call('startTournament', Session.get('brackets/Year'), Session.get('brackets/PoolType'), Session.get('brackets/PoolCategory'));
   },
 
