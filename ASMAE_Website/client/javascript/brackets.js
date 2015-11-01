@@ -105,6 +105,10 @@ Template.brackets.helpers({
 
   'makeBrackets' : function(){
     
+    /********************************************
+      Error Handling and data gathering
+    ********************************************/
+
     resetBrackets(document);
 
     Session.get('brackets/Start'); // Just to make this function reactive to the button press
@@ -165,13 +169,18 @@ Template.brackets.helpers({
       setInfo(document, "Pas de matchs pour l'année "+year
         + " type " + getSelectedText(document, "PoolType")
         + " de la catégorie " + getSelectedText(document, "PoolCategory")
-        + ".Si vous en avez créé, cliquez sur redémarrer le tournoi pour mettre à jour");
+        + ". Si vous en avez créé, cliquez sur redémarrer le tournoi pour mettre à jour");
       return;
     }
     infoBox = document.getElementById("infoBox");
     if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // hide any previous info message
 
-    thisRound = []; // {pair:<pair>, data:<bracketPairData>} List of the pairs that made it this round (contains roundData)
+
+
+    /********************************************
+      First round creation
+    ********************************************/
+     thisRound = []; // {pair:<pair>, data:<bracketPairData>} List of the pairs that made it this round (contains roundData)
 
     /*
       pair display Format : 
@@ -198,6 +207,10 @@ Template.brackets.helpers({
     }
 
     brackets = [firstRound];
+
+    /********************************************
+      Other rounds creation
+    ********************************************/
 
     /*
       Fill the rest of the rounds with "?" or the score
@@ -236,10 +249,10 @@ Template.brackets.helpers({
         a = newRound.length==1 ? getBestFrom2(thisRound[0], thisRound[1], round) : getBestFrom2(newRound[0], newRound[1], round+1);
         r = newRound.length==1 ? round : round+1;
 
-        // Set the score to be the same score as the round we currently are at (and not the next round, as done by getBestFrom2)
         if(a!=undefined){
           if(r<a.pair.tournament.length){
-            a.data.score = a.pair.tournament[r];
+            a.data.score = 'Gagnant';
+            // a.data.score = a.pair.tournament[r];
           }
           else{
             a.data.score = '?';
