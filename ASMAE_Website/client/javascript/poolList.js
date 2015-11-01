@@ -177,8 +177,10 @@ var removeUnwantedPairs = function(document){
 var setInfo = function(document, msg){
   infoBox = document.getElementById("infoBox");
   infoMsg = document.getElementById("infoMsg");
-  infoBox.removeAttribute("hidden");
-  infoMsg.innerHTML = msg;
+  if(infoBox!=undefined ){ // check that the box is already rendered
+  	infoBox.removeAttribute("hidden");
+  	infoMsg.innerHTML = msg;
+  }
 }
 
 function getSelectedText(document, elementId) {
@@ -197,11 +199,12 @@ Template.poolList.helpers({
 		var year = Session.get('Year');
 		var y = Years.findOne({_id:year});
 
-		if(y==undefined){
+		if(year!=undefined && y==undefined){
 			setInfo(document, "Pas de données trouvées pour l'année "+ year);
 		}
 		else{
-			document.getElementById("infoBox").setAttribute("hidden","");
+			infoBox =document.getElementById("infoBox");
+			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
 		}
 
 		return y;
@@ -212,11 +215,12 @@ Template.poolList.helpers({
 		var type = Session.get('PoolType');
 		var t = Types.findOne({_id:yearData[type]});
 
-		if(t==undefined){
+		if(type!=undefined && t==undefined){
 			setInfo(document, "Pas de données trouvées pour le type "+ getSelectedText(document, "PoolType") + " de l'année "+Session.get('Year'));
 		}
 		else{
-			document.getElementById("infoBox").setAttribute("hidden","");
+			infoBox =document.getElementById("infoBox");
+			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
 		}
 
 		return t;
@@ -248,13 +252,14 @@ Template.poolList.helpers({
 			}
 		}
 
-		if(poolList.length==0){
+		if(poolList.length==0 && category!=undefined){
 			setInfo(document, "Pas de poules trouvées pour la catégorie " + getSelectedText(document, "PoolCategory")
 				+ " du type " + getSelectedText(document, "PoolType") 
 				+ " de l'année "+Session.get('Year'));
 		}
 		else{
-			document.getElementById("infoBox").setAttribute("hidden","");
+			infoBox =document.getElementById("infoBox");
+			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
 		}
 
 		return poolList;

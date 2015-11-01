@@ -86,8 +86,10 @@ var resetBrackets = function(document){
 var setInfo = function(document, msg){
   infoBox = document.getElementById("infoBox");
   infoMsg = document.getElementById("infoMsg");
-  infoBox.removeAttribute("hidden");
-  infoMsg.innerHTML = msg;
+  if(infoBox!=undefined ){ // check that the box is already rendered
+    infoBox.removeAttribute("hidden");
+    infoMsg.innerHTML = msg;
+  }
 }
 
 function getSelectedText(document, elementId) {
@@ -166,8 +168,8 @@ Template.brackets.helpers({
         + ".Si vous en avez créé, cliquez sur redémarrer le tournoi pour mettre à jour");
       return;
     }
-
-    document.getElementById("infoBox").setAttribute("hidden",""); // hide any previous info message
+    infoBox = document.getElementById("infoBox");
+    if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // hide any previous info message
 
     thisRound = []; // {pair:<pair>, data:<bracketPairData>} List of the pairs that made it this round (contains roundData)
 
