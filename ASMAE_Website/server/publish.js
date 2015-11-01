@@ -18,14 +18,18 @@ Meteor.publish('Addresses', function(){
 	    	return Addresses.find({userID: this.userId});
 	    }
     }
-    else{
-    	return null;
-    }
 });
 
 Meteor.publish('Questions', function(){
-	//TODO: eulement visible au staff
-	return Questions.find();
+	if(this.userId) {
+        var user = Meteor.users.findOne(this.userId);
+        if(user.profile.isStaff || user.profile.isAdmin){
+    		return Questions.find();
+	    }
+	    else{
+	    	return Questions.find({userID: this.userId});
+	    }
+    }
 });
 
 
@@ -54,7 +58,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'update': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow update */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -64,7 +68,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'remove': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow remove */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -87,7 +91,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'update': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow update */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -97,7 +101,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'remove': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow remove */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -120,7 +124,7 @@ Meteor.publish("Pairs", function () {
     	},
     	'update': function (userId,doc) {
 	      	/* user and doc checks ,
-	      	return true to allow insert */
+	      	return true to allow update */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -130,7 +134,41 @@ Meteor.publish("Pairs", function () {
     	},
     	'remove': function (userId,doc) {
 	      	/* user and doc checks ,
+	      	return true to allow remove */
+	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+	      		return true;
+	  		}
+	  		else{
+	  			return false;
+	  		}
+    	}
+	});
+
+	/*	Known uses : client/scoreTable	*/
+	Matches.allow({
+    	'insert': function (userId,doc) {
+	      	/* user and doc checks ,
 	      	return true to allow insert */
+	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+	      		return true;
+	  		}
+	  		else{
+	  			return false;
+	  		}
+    	},
+    	'update': function (userId,doc) {
+	      	/* user and doc checks ,
+	      	return true to allow update */
+	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+	      		return true;
+	  		}
+	  		else{
+	  			return false;
+	  		}
+    	},
+    	'remove': function (userId,doc) {
+	      	/* user and doc checks ,
+	      	return true to allow remove */
 	      	if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 	      		return true;
 	  		}
@@ -151,6 +189,10 @@ Meteor.publish("Pairs", function () {
 
 	Meteor.publish("Types", function(){
 		return Types.find({},{});
+	});
+
+	Meteor.publish("Matches", function(){
+		return Matches.find({},{});
 	});
 
 
@@ -216,4 +258,3 @@ Meteor.publish("Pairs", function () {
 		this.ready();
 
     });
-// }

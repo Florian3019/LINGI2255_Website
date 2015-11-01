@@ -12,7 +12,7 @@
 
 <template name="index">
     {{> navigation}}
-    <div class="jumbotron">
+    <div class="jumbotron {{isHomePage}}">
       <div class="container">
         {{> yield}}
       </div>

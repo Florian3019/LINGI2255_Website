@@ -1,6 +1,7 @@
 
 // Useful link : http://stackoverflow.com/questions/16439055/retrieve-id-after-insert-in-a-meteor-method-call
 
+
 /*
 
 	/!\
@@ -246,7 +247,8 @@ Meteor.methods({
 		@param typeData is structured as a type
 
 		A type structure is as follows :
-		{
+		{	
+			// Can only $addToSet
 			_id:<typeID>
 			preminimes:<list of poolIDs>
 			minimes:<list of poolIDs>
@@ -255,6 +257,17 @@ Meteor.methods({
 			juniors:<list of poolIDs>
 			seniors:<list of poolIDs>
 			elites:<list of poolIDs>
+	
+
+			// Can only $set
+			preminimesBracket:<list of pairId>
+			minimesBracket:<list of pairId>
+			cadetsBracket:<list of pairId>
+			scolarsBracket:<list of pairId>
+			juniorsBracket:<list of pairId>
+			seniorsBracket:<list of pairId>
+			elitesBracket:<list of pairId>
+			listBracket:<list of pairID>
 
 			NOTE : for the family tournament, only one list of pools :
 			list:<list of poolIDs>
@@ -269,17 +282,23 @@ Meteor.methods({
 		// list = family tournament case
 		cat = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites", "list"];
 
-		var data = {$addToSet:{}};
+		var data = {};
 		for (var i=0;i<cat.length;i++){
-			if(typeData[cat[i]]){
+			if(typeData[cat[i]]!=undefined){
+				if(!data.$addToSet) data['$addToSet'] = {};
 				data.$addToSet[cat[i]] = {$each : typeData[cat[i]]};
+			}
+			var b = cat[i].concat("Bracket");
+			if(typeData[b]!=undefined){
+				if(!data.$set) data['$set'] = {};
+				data.$set[b] = typeData[b];
 			}
 		}
 		if(!typeData._id){
 			return Types.insert(data);
 		}
 
-		Types.update({_id: typeData._id} , Meteor.call('objectIsEmpty', data["$addToSet"]) ? {} : data);
+		Types.update({_id: typeData._id} , data);
 		return typeData._id;
 	},
 
@@ -305,7 +324,7 @@ Meteor.methods({
 			availability:<availability>
 		}
 	*/
-	'updateCourt' : function(courtData, address, callback){
+	'updateCourt' : function(courtData, address){
 		var courtId = courtData._id;
 		if(!courtData.ownerID) //New court
 		{
@@ -343,9 +362,6 @@ Meteor.methods({
 		data.ownerID = courtData.ownerID;
 
 		// Fill in court info
-		if(courtData._id){
-			data._id = courtData._id;
-		}
 		if(courtData.addressID){
 			data.addressID = courtData.addressID;
 		}
@@ -394,9 +410,7 @@ Meteor.methods({
 			// Create a new court
 			var courtId = Courts.insert(data, function(err, courtId){
 				if(err){
-					console.error('updateCourt error');
-					console.error(err);
-					return callback(null);
+					throw new Meteor.Error("updateCourt error: during Courts.insert", err);
 				}
 
 				// Update addressID in the user
@@ -410,9 +424,7 @@ Meteor.methods({
 			// Court already exists, so just update it :
 			Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
 				if(err){
-					console.error('updateCourt error');
-					console.error(err);
-					return callback(null);
+					throw new Meteor.Error("updateCourt error : during Courts.update", err);
 				}
 				if(address){
 					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
@@ -423,7 +435,7 @@ Meteor.methods({
 		return courtId;
 	},
 
-	'deleteCourt' : function(courtId, callback){
+	'deleteCourt' : function(courtId){
 		if(!courtId){
 			console.error("deleteCourt: no courtId in argument");
 			return false;
@@ -450,17 +462,13 @@ Meteor.methods({
 
 			Addresses.remove(court.addressID, function(err){
 				if(err){
-					console.error('deleteCourt: error while deleting court address');
-					console.error(err);
-					return callback(null);
+					throw new Meteor.Error("deleteCourt: error while deleting court address", err);
 				}
 			});
 
 			Courts.remove(courtId, function(err){
 				if(err){
-					console.error('deleteCourt: error while deleting court');
-					console.error(err);
-					return callback(null);
+					throw new Meteor.Error("deleteCourt: error while deleting court", err);
 				}
 			});
 
@@ -644,7 +652,7 @@ Meteor.methods({
 		}
 
 		if(courtId){
-			// Check that that courtId really exists :
+			// Check that courtId really exists :
 			var c = Courts.findOne({_id:courtId});
 			if(!c){
 				console.error('updateAddress : that court doesn\'t exist !');
@@ -662,7 +670,6 @@ Meteor.methods({
 				return false;
 			}
 		}
-
 
 
 		const isAdmin = Meteor.call('isAdmin');
@@ -701,7 +708,7 @@ Meteor.methods({
 			if(userId && !courtId){
 				Addresses.insert(data, function(err, addrId){
 					if(err){
-						console.error('updateAddress error');
+						console.error('updateAddress error: while insert for courtId=false');
 						console.error(err);
 						return false;
 					}
@@ -714,7 +721,7 @@ Meteor.methods({
 			if(courtId){
 				Addresses.insert(data, function(err, addrId){
 					if(err){
-						console.error('updateAddress error');
+						console.error('updateAddress error: while insert for courtId=true');
 						console.error(err);
 						return false;
 					}
@@ -726,13 +733,11 @@ Meteor.methods({
 				return true;
 			}
 		}
-		data._id = addressData._id; // set the address data
-
 
 		// Add the address in the DB
-		var writeResult = Addresses.update({_id: data._id} , {$set: data}, function(err, count, status){
+		var writeResult = Addresses.update({_id: addressData._id} , {$set: data}, function(err, count, status){
 			if(err){
-				console.error('updateAddress error');
+				console.error('updateAddress error : while update existing address');
 				console.error(err);
 				return false;
 			}
@@ -769,6 +774,7 @@ Meteor.methods({
 				constraint:<constraint>,
 				paymentID:<paymentID>
 			}
+			tournament :[<pointsRound1>, <pointsRound2>, ....]
 		}
 
 		@return : the pair id if successful, otherwise returns false
@@ -855,7 +861,6 @@ Meteor.methods({
 		return pairData['_id'];
 	},
 
-
 	/*
 		A payment is structured as follows :
 		{
@@ -901,7 +906,6 @@ Meteor.methods({
 				console.error('updatePayment : trying to update a payment not belonging to the pair provided !');
 				return false;
 			}
-			data._id = paymentData._id;
 		}
 		if(paymentData.status){
 			data.status = paymentData.status;
@@ -948,110 +952,196 @@ Meteor.methods({
 
 		A match is structured as follows :
 		{
-			_id:<id>
-			pair1:<pairID>,
-			pair2:<pairID>,
-			result:{
-					pair1Points:<points>,
-					pair2Points:<points>
-					},
-			court:<courtID>
+			_id:<id>,
+			poolId:<poolId>,
+			<pairID>:<points>,
+			<pairID>:<points>,
+			courtId:<courtID>	
 		}
+
+		matchData is expected to be formated like this :
+		{
+			_id:<id>, // Optional
+			poolId:<poolId>,
+			pair1: {pairId: <pairID>, points:<points>}, // Note : the order pair1/pair2 is irrelevant and is just for the convenience of parsing the data
+			pair2: {pairId: <pairID>, points:<points>}
+		}
+		
+		Automatically adds the match to the right pool if one is created (must provide pair1 and pair2 or creation will fail)
+
+		providing pair1, pair2 and the poolId is enough to update the right match without giving the id of the match
 
 		@return match id on success
 	*/
 	'updateMatch' : function(matchData){
+
+		if(!matchData){
+			console.error("updateMatch : matchData is undefined");
+			return;
+		}
+
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
+
+		if(!(isAdmin || isStaff)){
+			console.error("updateMatch : You don't have the required permissions!");
+			return;
+		}
+
+
 		data = {};
 
-		if(matchData.pair1){
-			data.pair1 = matchData.pair1;
-		}
-		if(matchData.pair2){
-			data.pair2 = matchData.pair2;
-		}
-		if(matchData.result){
-			var count = 0;
-			var res = {};
-			if(matchData.result.pair1Points){
-				res['pair1Points'] = matchData.result.pair1Points;
-				count = count+1;
-			}
-			if(matchData.result.pair2Points){
-				res['pair2Points'] = matchData.result.pair2Points;
-				count = count+1;
-			}
-			if(count>0){
-				data['result'] = res;
-			}
-		}
-		if(matchData.court){
-			data.court = matchData.court;
-		}
+		pairDataProdided = false;
+
+		if(matchData.pair1) data[matchData.pair1.pairId] = matchData.pair1.points; // <pairID>:<points>
+		if(matchData.pair2) data[matchData.pair2.pairId] = matchData.pair2.points; // <pairID>:<points>
+
+		if(matchData.pair1 && matchData.pair2){
+			/*	
+				Check if this pair already exists
+				The pair ("pairId1", "pairId2") is a primary key
+			*/
+			d1 = {};
+			d1[matchData.pair1.pairId] = {$exists:true};
+			d2 = {};
+			d2[matchData.pair2.pairId] = {$exists:true};
+
+			matchId = Matches.findOne(
+						{
+							$and: [
+								{"poolId":matchData.poolId}, // I want to find only matches belonging to this pool
+								{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
+							]
+						}
+					);
 
 
-		if(!matchData._id){
-			return Matches.insert(data, function(err, matchId){
+			if(matchId){
+				// The match already exists
+				if(matchData._id && (matchData._id != matchId)){ // If user provided an id, it must match the one we found, otherwise the DB is not consistent
+					console.error("updateMatch : a match with the same pairs is already existing or the id provided is not correct");
+					return;
+				}
+				data._id = matchId;
+			}
+			else{
+				// No match found in the db
+				if(matchData._id){
+					// This should never happen, user provided an id but we did not find its corresponding pair in the db... 
+					// Either the db is broken or user gave a inexistant id
+					console.error("updateMatch : the id's are auto-generated, the id you provided did not match any known match");
+					return;
+				}
+			}
+			pairDataProdided = true;
+		}
+		else{
+			// If user did not provide both pairs, he must have provided the id
+			if(!matchData._id){
+				console.error("updateMatch : trying to update a match without providing either of the 2 pairs or the match id");
+				return;
+			}
+			data._id = matchData._id;
+		}
+
+		if(matchData.poolId) data.poolId = matchData.poolId;
+
+		if(!data._id){
+			
+			// Can only create a match if the user provided both pairs and the poolId
+			if(!pairDataProdided){
+				console.error("updateMatch : Trying to create a match without setting the pair data");
+				return;
+			}
+			if(!data.poolId){
+				console.error("updateMatch : Trying to create a match without providing the poolId");
+				return;
+			}
+
+			return Matches.insert(data, function(err, id){
 				if(err){
-					console.error('updateMatch error');
+					console.error('updateMatch error (insert)');
 					console.error(err);
 				}
 			});
 		}
 
-		Matches.update({_id: matchData._id} , {$set: data}, function(err, count, status){
+		Matches.update({_id: data._id} , {$set: data}, function(err, count, status){
 			if(err){
-				console.error('updateMatch error');
+				console.error('updateMatch error (update)');
 				console.error(err);
 			}
 		});
-		return matchData._id;
+		return data._id;
 	},
 
 	/*
 		A pool is structured as follows:
 		{
 			_id:<id>,
-			court:<court>,
+			court:<court>, --> To remove
 			pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
-			leader:<userId>,
-			matches:[<matchID>, ...], // Will append matches to existing array (no duplicates possible)
-			court:<courtID>,
+			leader:<pairId>, // Leader is the player1 from the pair
+			courtId:<courtID>,
 		}
 
 		@return pool id on success
 	*/
 	'updatePool' : function(poolData){
-		var data = {$set:{}, $addToSet:{}};
+		var data = {};
 
-		if(poolData.court){
-			data.$set["court"] = poolData.court;
+		set = undefined;
+
+		if(poolData.courtId){
+			if(!set) set = {};
+			set["courtId"] = poolData.courtId;
 		}
 		if(poolData.leader){
-			data.$set["leader"] = poolData.leader;
+			if(!set) set = {};
+			set["leader"] = poolData.leader;
 		}
 
+		if(set) data["$set"] = set;
+
+		addToSet = undefined;
 		if(poolData.pairs){
-			data.$addToSet["pairs"] = {$each: poolData.pairs};
+			if(!addToSet) addToSet = {};
+			addToSet["pairs"] = {$each: poolData.pairs};
 		}
-		if(poolData.matches){
-			data.$addToSet["matches"] = {$each: poolData.matches};
-		}
+		// if(poolData.matches){
+		// 	if(!addToSet) addToSet = {};
+		// 	addToSet["matches"] = {$each: poolData.matches};
+		// }
+
+		if(addToSet) data["$addToSet"] = addToSet;
 
 		if(!poolData._id){
 			return Pools.insert(data, function(err, poolID){
 				if(err){
 					console.error('updatePool error');
+					console.error(data);
 					console.error(err);
 				}
 			});
 		}
 
-		if(Meteor.call('objectIsEmpty', data["$set"])) delete data["$set"];
-		if(Meteor.call('objectIsEmpty', data["$addToSet"])) delete data["$addToSet"];
 
+		// if(Object.keys(data.$set).length==0) delete data.$set;
+		// if(Object.keys(data.$addToSet).length==0) delete data.$addToSet;
+		// console.log("testEmptyObject");
+		// console.log(data.$set);
+		// console.log(Meteor.call('objectIsEmpty', data.$set));
+		// console.log(Meteor.call('objectIsEmpty', {}));
+		// console.log(Meteor.call('objectIsEmpty', {"hello":1}));
+		
+		
+		// if(Meteor.call('objectIsEmpty', data.$set)) delete data.$set;
+		// if(Meteor.call('objectIsEmpty', data.$addToSet)) delete data.$addToSet;
+		
 		Pools.update({_id: poolData._id} , data, function(err, count, status){
 			if(err){
 				console.error('updatePool error ');
+				console.error(data);
 				console.error(err);
 			}
 		});
@@ -1134,6 +1224,9 @@ Meteor.methods({
 		var pairs = pool.pairs;
 		if(!pairs){
 			pairs = [];
+		}
+		if(!pool.leader){
+			data.leader=pairID;
 		}
 		pairs.push(pairID);
 		data = {};

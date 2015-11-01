@@ -31,6 +31,14 @@
   </div>
 </form>
 
+  <div id="infoBox" class="alert alert-info" role="alert" hidden>
+    <h4>
+      <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+      <span class="sr-only">Info:</span>
+      <span id="infoMsg"></span>
+    </h4>
+  </div>
+
 <table id='allTables' class='table'>
 <tr>
   <td>
@@ -72,6 +80,14 @@
     </button>
    {{/with}}
 {{/with}}
+
+  <div id="successBox" class="alert alert-success" role="alert" hidden>
+    <h4>
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+      <span class="sr-only">Succès:</span>
+      <span id="infoMsg">Poules sauvées !</span>
+    </h4>
+  </div>
 </template>
 
 <!-- Takes 1 argument : the pool -->
@@ -98,7 +114,7 @@
             <div class='wrapper'>
               <div class='poolContainer' id='{{POOL._id}}'> <!-- _id is here the id of the pool -->
                 {{#each POOL.pairs}} <!-- For each pair id in the pool -->
-                  {{>poolItem PAIRID=this POOLID=../POOL._id}} <!-- Set ID to the id of the pool, so that we can make it draggable -->
+                  {{>poolItem PAIRID=this POOLID=../POOL._id LEADER=../POOL.leader}} <!-- Set ID to the id of the pool, so that we can make it draggable -->
                 {{/each}}
               </div>
             </div>
@@ -129,7 +145,8 @@
     <div id="{{this._id}}" class="pairs" data-startingPoolId="{{../POOLID}}">
       <ul class="list-group" data-target="{{getModalId}}" data-toggle="modal">
         {{#with getPlayer this.player1._id}}
-          <li class="list-group-item pairPlayer {{getColor ../player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}}</li>
+          <li class="list-group-item pairPlayer {{getColor ../player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{#if equals ../_id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
+          
         {{/with}}
         {{#with getPlayer this.player2._id}}
           <li class="list-group-item pairPlayer {{getColor ../player2}}" id="{{this.player2._id}}" >{{profile.firstName}} {{profile.lastName}}</li>

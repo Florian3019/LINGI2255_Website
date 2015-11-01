@@ -12,7 +12,7 @@
       gracketClass : "g_gracket",
       gameClass : "g_game",
       roundClass : "g_round",
-      roundLabelClass : "g_round_label",
+      roundLabelClass : "g_round_label label label-primary",
       teamClass : "g_team",
       winnerClass : "g_winner",
       spacerClass : "g_spacer",
@@ -135,20 +135,30 @@
     var helpers = {
       build : {
         team : function(data, node){
+          // var html = [
+          //   '<h3' +((typeof data.score === "undefined") ? "" : " title=\"Score: " + data.score + "\"") +'>',
+          //     '<span class="' + node.seedClass + '">',
+          //       ((typeof data.displaySeed === "undefined") ? data.seed : data.displaySeed),
+          //     '</span>',
+          //     '&nbsp;' + data.name + '&nbsp;',              
+          //     '<font size=2 color=\"' + node.scoreColor + '\">',
+          //       ((typeof data.score === "undefined") ? "" : data.score),
+          //     '</font>',
+          //   '</h3>'
+          // ].join("");
           var html = [
-            '<h3' +((typeof data.score === "undefined") ? "" : " title=\"Score: " + data.score + "\"") +'>',
-              '<span class="' + node.seedClass + '">',
-                ((typeof data.displaySeed === "undefined") ? data.seed : data.displaySeed),
-              '</span>',
-              '&nbsp;' + data.name + '&nbsp;',              
-              '<font size=2 color=\"' + node.scoreColor + '\">',
-                ((typeof data.score === "undefined") ? "" : data.score),
-              '</font>',
-            '</h3>'
+            '<h3> Score: ' + data.score + ' </h3>',
+            '<ul class="list-group">',
+              '<li class="list-group-item">' + data.player1 + '</li>',
+              '<li class="list-group-item">' + data.player2 + '</li>',
+            '</ul>'
           ].join("");
+
           return team = $("<div />", {
             "html" : html,
-            "class" : node.teamClass + " " + (data.id || "id_null")
+            "class" : node.teamClass + " " + (data.id || "id_null"),
+            "id" : data.id,
+            "data-round":data.round
           });
         },
         game : function(node){
@@ -231,9 +241,9 @@
               _playerHt = game_html.find("> div").eq(1).height(),
               _totalItemWidth = 0
             ;
-
-            if (typeof console !== "undefined")
-              console.info("Padding Left: " + _paddingLeft + "px", "Player/Name Width: " + _itemWidth + "px", "Container padding left: " + _startingLeftPos + "px");
+            
+            //if (typeof console !== "undefined")
+            //  console.info("Padding Left: " + _paddingLeft + "px", "Player/Name Width: " + _itemWidth + "px", "Container padding left: " + _startingLeftPos + "px");
 
             //We must put a restriction on the corner radius and the line gap
             if (_cornerRadius > _itemHeight/3) _cornerRadius = _itemHeight/3;

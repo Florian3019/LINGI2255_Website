@@ -158,4 +158,5 @@ Tracker.autorun(function () {
   Meteor.subscribe("Pools");
   Meteor.subscribe("Years");
   Meteor.subscribe("Types");
+  Meteor.subscribe("Matches");
 });

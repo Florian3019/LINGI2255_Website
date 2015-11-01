@@ -1,13 +1,70 @@
 Template.scoreTable.helpers({
 
-	// Returns a list of pairs
+	'getLeader' : function(poolId){
+		pool = Pools.findOne({_id:poolId},{leader:1});
+		if(pool.leader){
+			pair = Pairs.findOne({_id:pool.leader},{player1:1});
+			if(pair && pair.player1 && pair.player1._id){
+				user = Meteor.users.findOne({_id:pair.player1._id});
+				return user;
+			}
+		}
+		return undefined;
+	},
+
+	'getEmail' : function(user){
+		if(user.emails){
+			return user.emails[0].address;
+		}
+		else{
+			return undefined;
+		}
+	},
+
+	// Returns a list of pairs that are in this pool
 	'getPairs' : function(poolId){
 		var pairList = [];
 		var pool = Pools.findOne({_id:poolId});
+		if(!pool){
+			return;
+		}
 		for(var i=0;i<pool.pairs.length;i++){
 			var pair = Pairs.findOne({_id:pool.pairs[i]});
 			if(pair.player1 && pair.player2) pairList.push(pair);
 		}
+
+		// Create a match for each of these pairs, if it does not yet exist
+		for(var i=0;i<pairList.length;i++){
+			for(var j=0;j<i;j++){
+				pairId1 = pairList[i]._id;
+				pairId2 = pairList[j]._id;
+
+				var d1 = {};
+				d1[pairId1] = {$exists:true};
+				var d2 = {};
+				d2[pairId2] = {$exists:true};
+
+
+				var match = Matches.findOne(
+					{
+						$and: [
+							{"poolId":poolId}, // I want to find only matches belonging to this pool
+							{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
+						]
+					}
+				);
+
+				if(!match){
+					// Match does not exist, create a new one
+
+					data = {"poolId":poolId};
+					data.pair1 = {"pairId": pairId1, "points":0};
+					data.pair2 = {"pairId": pairId2, "points":0};
+					Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
+				}
+			}
+		}
+
 		return pairList;
 	},
 
@@ -16,44 +73,27 @@ Template.scoreTable.helpers({
 		return res;
 	},
 
-	'equals' : function(x, y){
-		return x==y;
+	'getPoints' : function(match, pairId){
+		var points = match[pairId];
+		return points;
 	},
 
-	'getMatch' : function(pair1, pair2){
-		var poolId = this._id;
+	'getMatch' : function(poolId, pairId1, pairId2){
+		var d1 = {};
+		d1[(pairId1)] = {$exists:true};
+		var d2 = {};
+		d2[(pairId2)] = {$exists:true};
 
-		// TODO
-		// var match = Pools.findOne(
-		// 	{
-		// 		"_id":poolId, 
-		// 		"matchs":
-		// 			{
-		// 				"$or":
-		// 					[
-		// 						"$elemMatch" :  
-		// 							{
-		// 								{
-		// 									"$and" : [{"pair1":pair1}, {"pair2":pair2}]
-		// 							 	},
-		// 							 	{
-		// 							 		"$and" : [{"pair1":pair2}, {"pair2":pair1}]
-		// 							 	}
-		// 							}
-		// 					]
-		// 			}
-		// 	}
-		// );
+		var match = Matches.findOne(
+			{
+				$and: [
+					{"poolId":poolId}, // I want to find only matches belonging to this pool
+					{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
+				]
+			}
+		);
 
-		// if(!match){
-		// 	// Create new match and return it TODO
-		// 	console.log("create new match");
-		// }
-		// else{
-		// 	// Return this match
-		// 	return match;
-		// }
-
+		return match ? match : undefined;
 	}
 
 });
@@ -64,9 +104,25 @@ Template.scoreTable.events({
 		var poolId = this._id; // "this" is the parameter of the template
 		for(var i=0; i<points.length;i++){
 			var score = points[i].value;
-			//TODO
-			console.log(points[i]);
+			var matchId = points[i].getAttribute('data-matchid');
+			var pairId = points[i].getAttribute('data-pairid');
+
+			// the fact that this is pair1 and not pair2 is irrelevant for the update (just for parsing convenience)
+			data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score)}}; 
+			// Update the DB !
+			Meteor.call("updateMatch", data);
 		}
+
+		document.getElementById("successBox").removeAttribute("hidden");
+	},
+
+	'change #checkBoxEmptyTable' : function(event){
+		checked = document.getElementById(event.target.id).checked;
+		Session.set("scoreTable/emptyTable", checked);
+	},
+
+	'change .points' : function(event){
+		document.getElementById("successBox").setAttribute("hidden","");// Remove any success message if any, user just changed a score
 	},
 
 	/*
@@ -108,9 +164,28 @@ Template.scoreTable.events({
 				/*	For every other column, add the pair's score 	*/
 				var tempRow = [pairString];
 				for(var j=0;j<pool.pairs.length;j++){
-					if(i!=j+1){
-						// Display the score of pool.pairs[j] against pool.pairs[i]
-						tempRow.push("0"); // TODO : display the score of the match if we know it, otherwise display a spacebar to let the players write on the board
+					if(i!=j && !Session.get("scoreTable/emptyTable")){
+
+						var d1 = {};
+						d1[(pool.pairs[j])] = {$exists:true};
+						var d2 = {};
+						d2[( pool.pairs[i])] = {$exists:true};
+
+
+						// Fetch the match
+						var match = Matches.findOne(
+							{
+								$and: [
+									{"poolId":poolId}, // I want to find only matches belonging to this pool
+									{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
+								]
+							}
+						);
+
+						score = match[pool.pairs[i]];
+
+						// Display the score of pool.pairs[i] against pool.pairs[j]
+						tempRow.push(score);
 					}
 					else{
 						// A pair can't play against itself
@@ -122,11 +197,21 @@ Template.scoreTable.events({
 			}
 		}
 
+		leader = undefined;
+		// Fetch the leader
+		if(pool.leader){
+			pair = Pairs.findOne({_id:pool.leader},{player1:1});
+			if(pair && pair.player1 && pair.player1._id){
+				leader = Meteor.users.findOne({_id:pair.player1._id});
+			}
+		}
+
 	    /*
 			Create the pdf
 			Useful link : https://github.com/simonbengtsson/jsPDF-AutoTable/issues/44
 	    */
 		var pdf = new jsPDF('p','pt','a4');
+
         pdf.setDrawColor(51, 153, 255); // Lines color
 		/*
 			Create the header
@@ -134,7 +219,15 @@ Template.scoreTable.events({
 	    var header = function (doc, pageCount, options) {
             doc.setFontSize(20);
             // pdf.addImage(headerImgData, 'JPEG', data.settings.margin.left, 40, 25, 25); // To add an image --> TODO : add ASMAE logo
-            doc.text("Poule", options.margins.horizontal, 30); // TODO : change this to contain the court name. Would be good to add leader/staff info too
+            doc.text("Poule\n", options.margins.horizontal, 30); // TODO : change this to contain the court name. Would be good to add leader/staff info too
+            if(leader){
+            	doc.setFontSize(15);
+	            leaderText = "Chef de poule : " + leader.profile.firstName + " " + leader.profile.lastName;
+	            
+	            if(leader.emails) leaderText += "\n" + leader.emails[0].address;
+	            if(leader.profile.phone) leaderText += "    " + leader.profile.phone;
+	        	doc.text(leaderText,  options.margins.horizontal, 50);
+	        }
             doc.setFontSize(options.fontSize);
         };	
 
@@ -156,7 +249,7 @@ Template.scoreTable.events({
         var getValue = function(data, settings, width){
             var textSpace = width - settings.padding * 2;
             // Add one pt to width to fix rounding error
-        	var text = pdf.splitTextToSize(data, textSpace + 1, {fontSize: settings.fontSize}); // split the text to display it on multiple lines
+        	var text = pdf.splitTextToSize(data+"", textSpace + 1, {fontSize: settings.fontSize}); // split the text to display it on multiple lines
 
             value = "";
             const maxLines = settings.lineHeight/pdf.internal.getLineHeight(); // Truncate the text after maxLines (avoid overlap)
@@ -213,7 +306,6 @@ Template.scoreTable.events({
             };
 
        var headerCell = function (x, y, width, height, key, value, settings){
-       		console.log("headerCell");
        		var fontSize = 10;
        		settings.fontSize = fontSize;
         	pdf.setFontSize(fontSize);

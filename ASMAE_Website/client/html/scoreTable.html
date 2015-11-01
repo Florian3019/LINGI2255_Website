@@ -2,6 +2,14 @@
 <!-- Takes 1 parameter : the poolId for this score table-->
 <template name="scoreTable">
 
+{{#with getLeader this._id}}
+<h5>Chef de poule: </h5>
+<address>
+  <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
+  {{#unless equals this.profile.phone undefined}}<abbr title="Phone">P:</abbr> {{this.profile.phone}} <br>{{/unless}}
+  <a href="mailto:#">{{getEmail this}}</a>
+</address>
+{{/with}}
 
 <table id='scoreTable' class='table'>
 
@@ -48,17 +56,16 @@
           {{else}}
           <td>
             <div class="input-group" display="inline">
-              <!-- {{#with getMatch ../_id this._id}} -->
-              <!-- {{#with 0}} -->
+              {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
               <input 
                 type="number"
                 min="0"
                 step="1" 
                 class="form-control points" 
-                data-matchid="{{this._id}}" 
-                placeholder="0"> 
-                <!-- value="{{#if equals ../_id this.pair1}} this.result.pair1Points {{else}} this.result.pair2Points {{/if}}"> --> <!-- The id is the id of the pair for which the points are entered -->
-              <!-- {{/with}} -->
+                data-matchid="{{this._id}}"
+                data-pairid="{{../../_id}}"
+                value="{{getPoints this ../../_id}}">
+              {{/with}}
             </div>
           </td>
           {{/if}}
@@ -68,13 +75,25 @@
 {{/with}}
 </table>
 
+  <button type="button" id="save" class="btn btn-default btn-lg">
+    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
+  </button>
+  <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
+    <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+  </button>
 
-<button type="button" id="save" class="btn btn-default btn-lg">
-  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
-</button>
-<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
-  <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-</button>
+  <div id="successBox" class="alert alert-success" role="alert" hidden>
+    <h4>
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+      <span class="sr-only">Succès:</span>
+      <span id="infoMsg">Scores sauvés !</span>
+    </h4>
+  </div>
+
+
+<div class="checkbox">
+  <label class="checkbox-inline"><input type="checkbox" value="" id="checkBoxEmptyTable"> Table vide </label>
+</div>
 
 <!-- Frame for the pdf viewer -->
 <iframe class="preview-pane" type="application/pdf" height="650" width="100%" frameborder="0" hidden></iframe>
