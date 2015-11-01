@@ -1,3 +1,8 @@
+var resetPairTournament = function(pairId){
+    // Unset previous tournament match for that pair
+    Pairs.update({"_id":pairId}, {$unset:{"tournament":"", "tournamentCourts":""}});
+}
+
 /*
   Returns the winners of the pool with id poolId. Helper of getCategoryWinners. Resets the tournament points.
 */
@@ -19,14 +24,14 @@ var getPoolWinners = function(poolId){
     data = {"poolId":poolId};
     pairId = pool.pairs[i];
     
-    // Unset previous tournament match for that pair
-    Pairs.update({"_id":pairId}, {$unset:{"tournament":""}});
+    resetPairTournament(pairId); // Remove any previous tournament data
 
     data[pairId] = {$exists:true};
 
     toReturn = {};
     toReturn[pool.pairs[i]] = 1;
     m = Matches.find(data,toReturn).fetch(); // Get all the matches in which this pair played
+
     // For every match where that pair played
     for(var j=0; j<m.length; j++){
       match = m[j];

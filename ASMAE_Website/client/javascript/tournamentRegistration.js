@@ -590,6 +590,7 @@ Template.tournamentRegistration.events({
     
         body="Bonjour, \n " + event.target.firstname.value + " " +event.target.lastname.value + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
         to=event.target.emailPlayer.value; //address of the other player
+        console.log(pairData);
         Meteor.call('updatePairs', pairData, callback);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
 

@@ -127,6 +127,7 @@
           };
           
         };
+        console.log("jquery.gracket.js : brackets drawn");
       }
     
     };
@@ -158,7 +159,8 @@
             "html" : html,
             "class" : node.teamClass + " " + (data.id || "id_null"),
             "id" : data.id,
-            "data-round":data.round
+            "data-round":data.round,
+            "data-courtid":data.courtId
           });
         },
         game : function(node){
@@ -241,7 +243,7 @@
               _playerHt = game_html.find("> div").eq(1).height(),
               _totalItemWidth = 0
             ;
-            
+
             //if (typeof console !== "undefined")
             //  console.info("Padding Left: " + _paddingLeft + "px", "Player/Name Width: " + _itemWidth + "px", "Container padding left: " + _startingLeftPos + "px");
 

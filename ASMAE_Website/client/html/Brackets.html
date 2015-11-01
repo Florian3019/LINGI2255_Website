@@ -68,15 +68,11 @@
 
 	<div id="wrapper">
 	<!-- empty gracket element -->
-		<!-- <div class="my_gracket" id="gracketContainer"></div> -->
+		
 		{{#with getYear}}
 			{{#with getType}}
 				{{#with getCategory}}
-
-					{{#with makeBrackets}}
-						{{displayBrackets this}}
-					{{/with}}
-
+					{{>gracketTemplate ALLWINNERS=getAllWinners}}
 				{{/with}}
 			{{/with}}
 		{{/with}}
@@ -98,7 +94,16 @@
         <div class="modal-body">
 		    <label for="text">Score</label>
 			<div class="input-group">
-				<input type="number" min="0" step="1" class="form-control" id="scoreInput" value="{{getScore}}" placeholder="0" autofocus><br>
+				<input 
+				type="number" 
+				min="0" 
+				step="1" 
+				class="form-control" 
+				id="scoreInput" 
+				value="{{getScore}}" 
+				placeholder="0" 
+				autofocus
+				onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()"><br>
 		  	</div>
 	  		  <button type="button" id="saveScore" class="btn btn-default btn-lg" data-dismiss="modal">
 			    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
@@ -114,4 +119,13 @@
   </div>
 
 
+</template>
+
+<template name="gracketTemplate">
+<!-- {{#with getUpdate}} -->
+<div class="my_gracket" id="gracketContainer"></div>
+<!-- {{/with}} -->
+{{#with makeBrackets}}
+	{{displayBrackets this}}
+{{/with}}
 </template>

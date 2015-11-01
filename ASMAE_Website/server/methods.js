@@ -72,7 +72,6 @@ Meteor.methods({
 
 	'getCategory' : function(birthDate, family){
 		var age = Meteor.call('getAge', birthDate);
-		console.log(age);
 		if(age < 9){
 			return undefined;
 		}
@@ -840,7 +839,7 @@ Meteor.methods({
 		var check1 = setPlayerData("player1");
 		var check2 = setPlayerData("player2");
 		if(check1 == false || check2 == false) return false;
-		if(!check1 && !check2){
+		if(check1==undefined && check2==undefined){
 			console.warn("No data about any player was provided to updatePairs");
 		}
 
