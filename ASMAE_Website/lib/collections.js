@@ -8,3 +8,4 @@ Matches = new Mongo.Collection('Matches');
 Years = new Mongo.Collection('Years');
 Types = new Mongo.Collection('Types');
 Pools = new Mongo.Collection('Pools');
+Extras = new Mongo.Collection('Extras');

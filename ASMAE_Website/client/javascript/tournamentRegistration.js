@@ -178,9 +178,26 @@ Template.tournamentRegistration.helpers({
 				return addressData ? addressData.country : "";
 			}
 		}
-	}
+	},
 
+	'extras': function () {
+     	return Extras.find();
+    },
 
+    'getName': function(){
+    	return this.name;
+    },
+
+    'getComment': function(){
+    	return this.comment;
+    },
+    'getID': function(){
+    	return this._id;
+    },
+
+    'getPrice': function(){
+    	return this.price;
+    }
 
 
 });
@@ -227,6 +244,7 @@ Template.tournamentRegistration.events({
     'submit form':function(){
 
       	event.preventDefault();
+      	Meteor.call('turnStaff',Meteor.userId());
 
     	/**
 			This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
@@ -445,7 +463,6 @@ Template.tournamentRegistration.events({
     	*/
 		var playerWishes = event.target.playerWishes.value;
 		var playerConstraints = event.target.playerConstraints.value;
-		var BBQval = event.target.BBQ.value;
 
 		var later = event.target.later.checked; // True if the user wants to waits for another user to chose him as partner
 
@@ -455,13 +472,21 @@ Template.tournamentRegistration.events({
 		var playerData = {
 			_id:Meteor.userId(),
 			extras:{
-				BBQ:BBQval
+
 			},
 			wish:playerWishes,
 			constraint:playerConstraints
 			// paymentID:<paymentID>
 		};
 
+		var extras = Extras.find().fetch();
+		var extrasPlayer = playerData.extras;
+
+		for(var i=0;i<extras.length;i++){
+			extrasPlayer[extras[i].name]=document.getElementById(extras[i]._id).value;
+		}
+
+		console.log(extrasPlayer);
 		if(!$(emailPlayerDiv).is(":visible")){
 			// the user wants to confirm his registration with a pair that already exists
 
@@ -473,7 +498,6 @@ Template.tournamentRegistration.events({
 					_id:pair._id,
 					player2:playerData
 				};
-			console.log(pairData);
 
 		}
 		else{
@@ -590,6 +614,7 @@ Template.tournamentRegistration.events({
     
         body="Bonjour, \n " + event.target.firstname.value + " " +event.target.lastname.value + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
         to=event.target.emailPlayer.value; //address of the other player
+        			console.log("ok1");
         Meteor.call('updatePairs', pairData, callback);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
 

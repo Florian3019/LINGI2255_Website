@@ -159,4 +159,5 @@ Tracker.autorun(function () {
   Meteor.subscribe("Years");
   Meteor.subscribe("Types");
   Meteor.subscribe("Matches");
+  Meteor.subscribe("Extras");
 });

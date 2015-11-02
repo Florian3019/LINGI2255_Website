@@ -269,6 +269,11 @@ Router.route('/search-court', {
 	template: 'courtSearch'
 });
 
+Router.route('/modify-extras',{
+	name: "modifyExtras",
+	template: 'modifyExtras'
+});
+
 Router.route('/confirm_pair/:_id',{
 	name: 'confirmPair',
 	template: 'confirmPair',
