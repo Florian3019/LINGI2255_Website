@@ -809,7 +809,6 @@ Meteor.methods({
 		}
 
 		const userIsOwner = ID['player1'] == Meteor.userId() || ID['player2'] == Meteor.userId();
-
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updatePairs : You don't have the required permissions!");
 			return false;
@@ -841,18 +840,29 @@ Meteor.methods({
 			if(pData['paymentID']) p['paymentID'] = pData['paymentID'];
 			if(pData['wish']) p['wish'] = pData['wish'];
 			if(pData['constraint']) p['constraint'] = pData['constraint'];
+
 			if(pData['extras']){
 				extr = {};
 				var count = 0;
 				var dataExtras = pData['extras'];
-				if(dataExtras['BBQ']){
-					extr['BBQ'] = dataExtras['BBQ'];
-					count = count+1;
+
+				var extras = Extras.find().fetch();
+
+				for(var i=0;i<extras.length;i++){
+					console.log(dataExtras);
+
+					if(dataExtras[extras[i].name]){
+						extr[extras[i].name] = dataExtras[extras[i].name];
+						count = count+1;
+					}
 				}
+
 				if(count>0){
 					p['extras'] = extr;
 				}
 			}
+
+			console.log(p);
 			data[player] = p;
 		}
 
@@ -1363,6 +1373,23 @@ Meteor.methods({
 			processed : false
 		}
 		return Questions.insert(data)
+	},
+
+	'insertExtra' : function(Extra){
+		var data ={
+			name : Extra.desc,
+			price : Extra.price,
+			comment : Extra.comment
+		}
+		return Extras.insert(data);
+	},
+
+	'removeExtra' : function(ExtraID){
+		Extras.remove({_id:ExtraID});
+	},
+
+	'updateExtra' : function(Extra){
+		Extras.update(Extra.extra,{name: Extra.name, price: Extra.price, comment: Extra.comment});
 	},
 
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
