@@ -1,16 +1,28 @@
+var aloneDependency = new Deps.Dependency();
+var tournamentDate = new Date(15, 8, 12); // 12 sept 2015
+var tournamentYear = 2015;
+
 Template.tournamentRegistration.helpers({
 	'alonePlayers' : function(){
-		var res = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}} ]});
+		aloneDependency.depend();
+		var tournamentValue = document.getElementById("dateMatch").value;
+		console.log(tournamentValue);
+		var res = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}},
+		{"day":tournamentValue}]});
 		return res;
 	},
 
 	'getPlayer' : function(userId){
-		return Meteor.users.find({_id:userId},{profile:1});
+		return Meteor.users.findOne({_id:userId},{profile:1});
 	},
 
 	'getCity' :function(addressID){
-		var res = Addresses.find({_id:addressID});
-		return res;
+		var res = Addresses.findOne({_id:addressID});
+		return res.city;
+	},
+
+	'getAge': function(birthDate) {
+		return Meteor.call('getAge', birthDate, tournamentDate);
 	},
 
 	'lastname': function(){
@@ -198,6 +210,7 @@ Template.tournamentRegistration.events({
 			later.style.display = 'block';
 			table.style.display = 'block';
 			e.setAttribute("disabled","true");
+			aloneDependency.changed();
 		}else{
 			later.style.display = 'none';
 			table.style.display = 'none';
@@ -333,14 +346,35 @@ Template.tournamentRegistration.events({
         else{
         	errors.push({id:"sex", error:false});
         }
-        var birthDate = event.target.birth.value;
-        if(!birthDate){
-        	errors.push({id:"birth", error:true});
+
+		// Birthdate
+        var birthDay = event.target.birthDay.value;
+		var birthMonth = event.target.birthMonth.value;
+		var birthYear = event.target.birthYear.value;
+        if(!birthDay || birthDay > 31 || birthDay < 1){
+        	errors.push({id:"birthDay", error:true});
         	hasError = true;
         }
         else{
-        	errors.push({id:"birth", error:false});
+        	errors.push({id:"birthDay", error:false});
         }
+		if(!birthMonth || birthMonth > 12 || birthMonth < 1){
+        	errors.push({id:"birthMonth", error:true});
+        	hasError = true;
+        }
+        else{
+        	errors.push({id:"birthMonth", error:false});
+        }
+		if(!birthYear || birthYear < 1900 || birthYear > tournamentYear - 9){
+        	errors.push({id:"birthYear", error:true});
+        	hasError = true;
+        }
+        else{
+        	errors.push({id:"birthYear", error:false});
+        }
+		// new Date object for the birthdate. Year : only 2 last digits. Month : from 0 to 11.
+		var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
+
         var AFT = event.target.rank.value;
 		if(!AFT || AFT==""){
         	errors.push({id:"AFT", error:true});
@@ -587,7 +621,7 @@ Template.tournamentRegistration.events({
         	}
 			Meteor.call('addPairsToTournament', pairID, currentYear, dateMatch);
         }
-    
+
         body="Bonjour, \n " + event.target.firstname.value + " " +event.target.lastname.value + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
         to=event.target.emailPlayer.value; //address of the other player
         console.log(pairData);
@@ -598,4 +632,9 @@ Template.tournamentRegistration.events({
     }
 
 
+  });
+
+
+  Template.tournamentRegistration.onCreated(function (){
+	  this.subscribe("AddressesNoSafe"); //TODO: selective addresses ?
   });

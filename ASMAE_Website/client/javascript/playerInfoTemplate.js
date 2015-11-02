@@ -1,10 +1,10 @@
 // Takes a player id as argument
 Template.playerInfoTemplate.helpers({
 
-	/*	
-		Returns an object containing functions 
-		that are used by the template to display information 
-		about the player id passed as argument to the template	
+	/*
+		Returns an object containing functions
+		that are used by the template to display information
+		about the player id passed as argument to the template
 	*/
 	'getPlayer' : function(){
 		var user = Meteor.users.findOne({_id:this.ID}); // this.ID = <userid>
@@ -29,8 +29,7 @@ Template.playerInfoTemplate.helpers({
 			'birth': function(){
 			  var date = user.profile.birthDate;
 			  if(!date) return;
-			  date = date.substring(8,10) + "/" + date.substring(5,7) + "/" + date.substring(0,4);
-			  return date;
+			  return date.getDay() + "/" + date.getMonth() + "/" + date.getFullYear();
 			},
 			'gender': function(){
 				return user.profile.gender;

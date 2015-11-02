@@ -20,6 +20,10 @@ Meteor.publish('Addresses', function(){
     }
 });
 
+Meteor.publish('AddressesNoSafe', function() {
+	return Addresses.find();
+});
+
 Meteor.publish('Questions', function(){
 	if(this.userId) {
         var user = Meteor.users.findOne(this.userId);

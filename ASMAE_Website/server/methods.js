@@ -62,16 +62,31 @@ Meteor.methods({
       		});
 	},
 
-	'getAge' : function(birthDate){
-		var birthdate = new Date(birthDate);
-		var cur = new Date();
-		var diff = cur.getTime()-birthdate.getTime(); // This is the difference in milliseconds
-		var age = Math.floor(diff/31536000000); // Divide by 1000*60*60*24*365
-		return age;
+	/*
+	* @param birthDate is of type Date
+	* @param todayDate give an optional today date (e. g. date of the tournament)
+	*/
+	'getAge' : function(birthDate, todayDate){
+		var today;
+		if (todayDate) {
+			today = todayDate;
+		}
+		else {
+			today = new Date();
+		}
+	    var age = today.getFullYear() - birthDate.getFullYear();
+	    var m = today.getMonth() - birthDate.getMonth();
+	    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+	        age--;
+	    }
+	    return age;
 	},
 
+	/*
+	* @param birthDate is of type Date
+	*/
 	'getCategory' : function(birthDate, family){
-		var age = Meteor.call('getAge', birthDate);
+		var age = Meteor.call('getAge', birthDate, undefined);
 		if(age < 9){
 			return undefined;
 		}
@@ -130,7 +145,7 @@ Meteor.methods({
 			if(cat1 && cat2){
 				// Both players are provided, check that the categories match !
 				if(cat1 != cat2){
-					console.error("addPairsToTournament : categories of the 2 players do not match !");
+					console.error("getPairCategory : categories of the 2 players do not match !");
 					return false;
 				}
 				return cat1;
@@ -143,7 +158,7 @@ Meteor.methods({
 			}
 			else{
 				// No way of knowing the category since no player is provided
-				console.error("addPairsToTournament : no way to know the category, no player provided !");
+				console.error("getPairCategory : no way to know the category, no player provided !");
 				return false;
 			}
 		}
@@ -246,7 +261,7 @@ Meteor.methods({
 		@param typeData is structured as a type
 
 		A type structure is as follows :
-		{	
+		{
 			// Can only $addToSet
 			_id:<typeID>
 			preminimes:<list of poolIDs>
@@ -256,7 +271,7 @@ Meteor.methods({
 			juniors:<list of poolIDs>
 			seniors:<list of poolIDs>
 			elites:<list of poolIDs>
-	
+
 
 			// Can only $set
 			preminimesBracket:<list of pairId>
@@ -355,7 +370,7 @@ Meteor.methods({
        		lendThisYear (ou alors noter l'id du tournoi (ou l'année du dernier tournoi où il était prêté), sinon je ne sais pas quand on pourra le remettre à 'false' après le tournoi)
        		*/
 
-		
+
 		var data = {};
 
 		data.ownerID = courtData.ownerID;
@@ -774,6 +789,8 @@ Meteor.methods({
 				paymentID:<paymentID>
 			}
 			tournament :[<pointsRound1>, <pointsRound2>, ....]
+			day: family | saturday | sunday
+			category: <category>
 		}
 
 		@return : the pair id if successful, otherwise returns false
@@ -799,8 +816,11 @@ Meteor.methods({
 		}
 
 		var data = {};
-		if(pairData._id){
-			data._id = pairData._id;
+		if (pairData.day) {
+			data.day = pairData.day;
+		}
+		if (pairData.category) {
+			data.category = pairData.category;
 		}
 
 		// Player = player1 or player2
@@ -955,7 +975,7 @@ Meteor.methods({
 			poolId:<poolId>,
 			<pairID>:<points>,
 			<pairID>:<points>,
-			courtId:<courtID>	
+			courtId:<courtID>
 		}
 
 		matchData is expected to be formated like this :
@@ -965,7 +985,7 @@ Meteor.methods({
 			pair1: {pairId: <pairID>, points:<points>}, // Note : the order pair1/pair2 is irrelevant and is just for the convenience of parsing the data
 			pair2: {pairId: <pairID>, points:<points>}
 		}
-		
+
 		Automatically adds the match to the right pool if one is created (must provide pair1 and pair2 or creation will fail)
 
 		providing pair1, pair2 and the poolId is enough to update the right match without giving the id of the match
@@ -996,7 +1016,7 @@ Meteor.methods({
 		if(matchData.pair2) data[matchData.pair2.pairId] = matchData.pair2.points; // <pairID>:<points>
 
 		if(matchData.pair1 && matchData.pair2){
-			/*	
+			/*
 				Check if this pair already exists
 				The pair ("pairId1", "pairId2") is a primary key
 			*/
@@ -1009,7 +1029,7 @@ Meteor.methods({
 						{
 							$and: [
 								{"poolId":matchData.poolId}, // I want to find only matches belonging to this pool
-								{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
+								{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set
 							]
 						}
 					);
@@ -1026,7 +1046,7 @@ Meteor.methods({
 			else{
 				// No match found in the db
 				if(matchData._id){
-					// This should never happen, user provided an id but we did not find its corresponding pair in the db... 
+					// This should never happen, user provided an id but we did not find its corresponding pair in the db...
 					// Either the db is broken or user gave a inexistant id
 					console.error("updateMatch : the id's are auto-generated, the id you provided did not match any known match");
 					return;
@@ -1046,7 +1066,7 @@ Meteor.methods({
 		if(matchData.poolId) data.poolId = matchData.poolId;
 
 		if(!data._id){
-			
+
 			// Can only create a match if the user provided both pairs and the poolId
 			if(!pairDataProdided){
 				console.error("updateMatch : Trying to create a match without setting the pair data");
@@ -1132,11 +1152,11 @@ Meteor.methods({
 		// console.log(Meteor.call('objectIsEmpty', data.$set));
 		// console.log(Meteor.call('objectIsEmpty', {}));
 		// console.log(Meteor.call('objectIsEmpty', {"hello":1}));
-		
-		
+
+
 		// if(Meteor.call('objectIsEmpty', data.$set)) delete data.$set;
 		// if(Meteor.call('objectIsEmpty', data.$addToSet)) delete data.$addToSet;
-		
+
 		Pools.update({_id: poolData._id} , data, function(err, count, status){
 			if(err){
 				console.error('updatePool error ');
