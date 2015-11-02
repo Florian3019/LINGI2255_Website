@@ -31,6 +31,14 @@
   </div>
 </form>
 
+  <div id="infoBox" class="alert alert-info" role="alert" hidden>
+    <h4>
+      <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+      <span class="sr-only">Info:</span>
+      <span id="infoMsg"></span>
+    </h4>
+  </div>
+
 <table id='allTables' class='table'>
 <tr>
   <td>
@@ -72,6 +80,14 @@
     </button>
    {{/with}}
 {{/with}}
+
+  <div id="successBox" class="alert alert-success" role="alert" hidden>
+    <h4>
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+      <span class="sr-only">Succès:</span>
+      <span id="infoMsg">Poules sauvées !</span>
+    </h4>
+  </div>
 </template>
 
 <!-- Takes 1 argument : the pool -->

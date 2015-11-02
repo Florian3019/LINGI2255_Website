@@ -72,7 +72,6 @@ Meteor.methods({
 
 	'getCategory' : function(birthDate, family){
 		var age = Meteor.call('getAge', birthDate);
-		console.log(age);
 		if(age < 9){
 			return undefined;
 		}
@@ -247,7 +246,8 @@ Meteor.methods({
 		@param typeData is structured as a type
 
 		A type structure is as follows :
-		{
+		{	
+			// Can only $addToSet
 			_id:<typeID>
 			preminimes:<list of poolIDs>
 			minimes:<list of poolIDs>
@@ -256,6 +256,17 @@ Meteor.methods({
 			juniors:<list of poolIDs>
 			seniors:<list of poolIDs>
 			elites:<list of poolIDs>
+	
+
+			// Can only $set
+			preminimesBracket:<list of pairId>
+			minimesBracket:<list of pairId>
+			cadetsBracket:<list of pairId>
+			scolarsBracket:<list of pairId>
+			juniorsBracket:<list of pairId>
+			seniorsBracket:<list of pairId>
+			elitesBracket:<list of pairId>
+			listBracket:<list of pairID>
 
 			NOTE : for the family tournament, only one list of pools :
 			list:<list of poolIDs>
@@ -270,17 +281,23 @@ Meteor.methods({
 		// list = family tournament case
 		cat = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites", "list"];
 
-		var data = {$addToSet:{}};
+		var data = {};
 		for (var i=0;i<cat.length;i++){
-			if(typeData[cat[i]]){
+			if(typeData[cat[i]]!=undefined){
+				if(!data.$addToSet) data['$addToSet'] = {};
 				data.$addToSet[cat[i]] = {$each : typeData[cat[i]]};
+			}
+			var b = cat[i].concat("Bracket");
+			if(typeData[b]!=undefined){
+				if(!data.$set) data['$set'] = {};
+				data.$set[b] = typeData[b];
 			}
 		}
 		if(!typeData._id){
 			return Types.insert(data);
 		}
 
-		Types.update({_id: typeData._id} , Meteor.call('objectIsEmpty', data["$addToSet"]) ? {} : data);
+		Types.update({_id: typeData._id} , data);
 		return typeData._id;
 	},
 
@@ -756,6 +773,7 @@ Meteor.methods({
 				constraint:<constraint>,
 				paymentID:<paymentID>
 			}
+			tournament :[<pointsRound1>, <pointsRound2>, ....]
 		}
 
 		@return : the pair id if successful, otherwise returns false
@@ -831,7 +849,7 @@ Meteor.methods({
 		var check1 = setPlayerData("player1");
 		var check2 = setPlayerData("player2");
 		if(check1 == false || check2 == false) return false;
-		if(!check1 && !check2){
+		if(check1==undefined && check2==undefined){
 			console.warn("No data about any player was provided to updatePairs");
 		}
 
@@ -851,7 +869,6 @@ Meteor.methods({
 		});
 		return pairData['_id'];
 	},
-
 
 	/*
 		A payment is structured as follows :

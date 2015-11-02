@@ -6,7 +6,6 @@ Template.scoreTable.helpers({
 			pair = Pairs.findOne({_id:pool.leader},{player1:1});
 			if(pair && pair.player1 && pair.player1._id){
 				user = Meteor.users.findOne({_id:pair.player1._id});
-				console.log(user);
 				return user;
 			}
 		}
@@ -61,8 +60,6 @@ Template.scoreTable.helpers({
 					data = {"poolId":poolId};
 					data.pair1 = {"pairId": pairId1, "points":0};
 					data.pair2 = {"pairId": pairId2, "points":0};
-					console.log("scoreTable/match creation");
-					console.log(data);
 					Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
 				}
 			}
@@ -112,16 +109,20 @@ Template.scoreTable.events({
 
 			// the fact that this is pair1 and not pair2 is irrelevant for the update (just for parsing convenience)
 			data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score)}}; 
-			console.log("save");
-			console.log(data);
 			// Update the DB !
 			Meteor.call("updateMatch", data);
 		}
+
+		document.getElementById("successBox").removeAttribute("hidden");
 	},
 
 	'change #checkBoxEmptyTable' : function(event){
 		checked = document.getElementById(event.target.id).checked;
 		Session.set("scoreTable/emptyTable", checked);
+	},
+
+	'change .points' : function(event){
+		document.getElementById("successBox").setAttribute("hidden","");// Remove any success message if any, user just changed a score
 	},
 
 	/*

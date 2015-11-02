@@ -1,6 +1,5 @@
 <template name="courtSearch">
-  <h3>Recherche d'un terrain:</h3>
-
+  <h2>Recherche d'un terrain:</h2>
   <input type="text" id="search-box" class="form-control" placeholder="Rechercher l'adresse d'un terrain" />
   <div id='search-result'>
       {{#if isLoading}}
@@ -10,7 +9,7 @@
     {{#each getCourts}}
     {{#with courtInfos this}}
     <div class="oneCourt">
-      <h4><a href="{{pathFor route='courtInfoPage' _id=court._id }}" >{{{address.street}}}, {{{address.number}}}, {{{address.zipCode}}}, {{{address.city}}}</a></h4>
+      <h4><a href="{{pathFor route='courtInfoPage' _id=court._id }}" >{{{address.street}}}, {{{address.number}}}, {{{address.city}}}, {{{address.zipCode}}}</a></h4>
       <div class="description">
         Surface: {{court.surface}}<br />
         Type: {{court.courtType}}

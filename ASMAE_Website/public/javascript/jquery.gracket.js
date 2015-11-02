@@ -127,6 +127,7 @@
           };
           
         };
+        console.log("jquery.gracket.js : brackets drawn");
       }
     
     };
@@ -157,7 +158,9 @@
           return team = $("<div />", {
             "html" : html,
             "class" : node.teamClass + " " + (data.id || "id_null"),
-            "id" : data.id
+            "id" : data.id,
+            "data-round":data.round,
+            "data-courtid":data.courtId
           });
         },
         game : function(node){
@@ -241,8 +244,8 @@
               _totalItemWidth = 0
             ;
 
-            if (typeof console !== "undefined")
-              console.info("Padding Left: " + _paddingLeft + "px", "Player/Name Width: " + _itemWidth + "px", "Container padding left: " + _startingLeftPos + "px");
+            //if (typeof console !== "undefined")
+            //  console.info("Padding Left: " + _paddingLeft + "px", "Player/Name Width: " + _itemWidth + "px", "Container padding left: " + _startingLeftPos + "px");
 
             //We must put a restriction on the corner radius and the line gap
             if (_cornerRadius > _itemHeight/3) _cornerRadius = _itemHeight/3;
