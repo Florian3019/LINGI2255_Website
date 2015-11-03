@@ -5,6 +5,10 @@ var tournamentYear = 2015;
 Template.tournamentRegistration.helpers({
 	'alonePlayers' : function(){
 
+		if (Session.get("firstTime")) {
+			return undefined;
+		}
+
 		function checkErrors() {
 			/**
 				This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
@@ -36,8 +40,8 @@ Template.tournamentRegistration.helpers({
 				Get all the fields and check if they are filled,
 				display error or success according to that
 	    	*/
-	        var male = document.getElementById("male").value;
-			var female = document.getElementById("female").value;
+	        var male = document.getElementById("male").checked;
+			var female = document.getElementById("female").checked;
 	        if(!male && !female){
 	        	errors.push({id:"sex", error:true});
 	        	hasError = true;
@@ -91,7 +95,7 @@ Template.tournamentRegistration.helpers({
 	        	set_error(d.id, d.error);
 	        }
 	        if(hasError){
-	        	console.log("An error occured");
+	        	console.log("At least one field is missing or mis-filled");
 				return true;
 	        }
 			return false;
@@ -143,9 +147,12 @@ Template.tournamentRegistration.helpers({
 			return undefined;
 		}
 
-		var tournamentDateMatch = document.getElementById("dateMatch").value;
-		var age = getAge(new Date(document.getElementById("birthYear"),document.getElementById("birthMonth")-1,document.getElementById("birthDay")));
-		var male = document.getElementById("male").value;
+		var temp = document.getElementById("dateMatch");
+		var tournamentDateMatch = temp.options[temp.selectedIndex].value;
+		var date = new Date(document.getElementById("birthYear").value,document.getElementById("birthMonth").value-1,document.getElementById("birthDay").value);
+		var age = getAge(date);
+
+		var male = document.getElementById("male").checked;
 		if (male) {
 			sex = "M";
 		}
@@ -153,15 +160,19 @@ Template.tournamentRegistration.helpers({
 			sex = "F"
 		}
 		var category = getCategory(age);
+		console.log("User. dateMatch : "+tournamentDateMatch+", age : "+age+", sex : "+sex+", category : "+category);
 
 		var pairs = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}},
 		{"day":tournamentDateMatch}]}).fetch();
+		console.log("Pairs : ");
+		console.log(pairs);
 		var res = [];
 		for (var i = 0; i < pairs.length; i++) {
 			var aloneProfile = Meteor.users.findOne({_id:pairs[i].player1._id}).profile;
 			var aloneAge = getAge(aloneProfile.birthDate);
-			var aloneSex = aloneProfile.sex;
+			var aloneSex = aloneProfile.gender;
 			var aloneCategory = getCategory(aloneAge);
+			console.log("Other. age : "+aloneAge+", sex : "+aloneSex+", category : "+aloneCategory);
 
 			if (tournamentDateMatch==="family") {
 				if((age <= 15 && aloneAge > 25) || (age >= 25 && aloneAge <= 15)) {
@@ -410,6 +421,7 @@ Template.tournamentRegistration.events({
 			table.style.display = 'block';
 			refresh.style.display = 'block';
 			e.setAttribute("disabled","true");
+			Session.set("firstTime", false);
 			aloneDependency.changed();
 		}else{
 			later.style.display = 'none';
@@ -423,8 +435,10 @@ Template.tournamentRegistration.events({
 		var table = document.getElementById("tableAlone");
 		if(event.target.checked){
 			table.style.display = 'none';
+			refresh.style.display = 'none';
 		}else{
 			table.style.display = 'block';
+			refresh.style.display = 'block';
 		}
     },
 
@@ -853,4 +867,5 @@ Template.tournamentRegistration.events({
   Template.tournamentRegistration.onCreated(function (){
 	  this.subscribe("AddressesNoSafe"); //TODO: selective addresses ?
 	  this.subscribe("users");
+	  Session.set("firstTime", true);
   });
