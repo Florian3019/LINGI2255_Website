@@ -636,7 +636,7 @@ Meteor.methods({
 
 		The addressData structure is as follows :
 		{
-			_id:<id>, // Ommit this if you want to create a new address, this will be auto-generated
+			_id:<id>, // Omit this if you want to create a new address, this will be auto-generated
 			street:<street>,
 			number:<number>,
 			box:<box>,
@@ -1434,38 +1434,9 @@ Meteor.methods({
 	},
 
 
-
 	/*
-		@param : userData : javascript object containing the fields of the user. It must include at least the _id field.
-
-		User structure is as follows :
-		{
-			createdAt:<createdAt>,
-			_id:<id>,
-			emails:[{ "address" : "<email1>", "verified" : false } , ...],
-			profile:{
-				name:<name>,
-				title:<title>,
-				firstName:<firstName>,
-				lastName:<lastName>,
-				addressID:<addressID>,
-				phone:<phone>,
-				birthDate:<birthDate>,
-				AFT:<AFT>,
-				isStaff:<isStaff>,
-				isAdmin:<isAdmin>,
-				gender:<gender>
-			},
-			services:{
-				google{
-					<google stuff>
-				}
-				facebook{
-					<facebook stuff>
-				}
-			}
-		}
-	*/
+	 * Insert some users in the DB
+	 */
 	'populateDB': function() {
 		var n = 20;
 
@@ -1492,10 +1463,10 @@ Meteor.methods({
 				city:cities[i],
 				zipCode:zipCodes[i],
 				country:"Belgique"
-			}
+			};
 			var addressID = Meteor.call("updateAddress", addressData);
 			var emails = [{address:"user"+i+"@user.be"}];
-			var phone = Math.random() * 1000000000; // 9 numbers
+			var phone = Math.round(Math.random() * 1000000000); // 9 numbers
 			var profile = {
 				firstName:firstNames[i],
 				lastName:lastNames[i],
@@ -1506,13 +1477,15 @@ Meteor.methods({
 				isStaff:false,
 				isAdmin:false,
 				gender:genders[i]
-			}
+			};
 
-			Accounts.createUser({
+			var userID = Accounts.createUser({
 						   emails : emails[i],
 						   password : firstNames[i],
 						   profile  : profile
 					   });
+
+			Meteor.call("updatePairs",{player1: {_id:userID}});
 		}
 	}
 
