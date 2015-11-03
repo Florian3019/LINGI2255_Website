@@ -4,11 +4,183 @@ var tournamentYear = 2015;
 
 Template.tournamentRegistration.helpers({
 	'alonePlayers' : function(){
-		aloneDependency.depend();
-		var tournamentValue = document.getElementById("dateMatch").value;
-		console.log(tournamentValue);
-		var res = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}},
-		{"day":tournamentValue}]});
+
+		function checkErrors() {
+			/**
+				This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
+				If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
+			*/
+			function set_error(id,errorVisible) {
+				const error = "Error";
+				const OK = "OK";
+				const div = "Div";
+				var e = document.getElementById(id.concat(error));
+				if(!errorVisible){
+					e.style.display = 'none';
+					document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
+				}else{
+					e.style.display = 'block';
+					document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
+				}
+				e = document.getElementById(id.concat(OK));
+				if(errorVisible)
+					e.style.display = 'none';
+				else
+					e.style.display = 'block';
+			}
+
+			var errors = new Array();
+			var hasError = false;
+
+			/*
+				Get all the fields and check if they are filled,
+				display error or success according to that
+	    	*/
+	        var male = document.getElementById("male").value;
+			var female = document.getElementById("female").value;
+	        if(!male && !female){
+	        	errors.push({id:"sex", error:true});
+	        	hasError = true;
+	        }
+	        else{
+	        	errors.push({id:"sex", error:false});
+	        }
+
+			// Birthdate
+	        var birthDay = document.getElementById("birthDay").value;
+			var birthMonth = document.getElementById("birthMonth").value;
+			var birthYear = document.getElementById("birthYear").value;
+	        if(!birthDay || birthDay > 31 || birthDay < 1){
+	        	errors.push({id:"birthDay", error:true});
+	        	hasError = true;
+	        }
+	        else{
+	        	errors.push({id:"birthDay", error:false});
+	        }
+			if(!birthMonth || birthMonth > 12 || birthMonth < 1){
+	        	errors.push({id:"birthMonth", error:true});
+	        	hasError = true;
+	        }
+	        else{
+	        	errors.push({id:"birthMonth", error:false});
+	        }
+			if(!birthYear || birthYear < 1900 || birthYear > tournamentYear - 9){
+	        	errors.push({id:"birthYear", error:true});
+	        	hasError = true;
+	        }
+	        else{
+	        	errors.push({id:"birthYear", error:false});
+	        }
+			// new Date object for the birthdate. Year : only 2 last digits. Month : from 0 to 11.
+			//var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
+
+	        var dateMatch = document.getElementById("dateMatch").value;
+	        if(!dateMatch){
+	        	errors.push({id:"dateMatch", error:true});
+	        	hasError = true;
+	        }
+	        else{
+	        	errors.push({id:"dateMatch", error:false});
+	        }
+
+			/*
+				Display all errors
+	 		*/
+	        for(var i in errors){
+	        	var d = errors[i];
+	        	set_error(d.id, d.error);
+	        }
+	        if(hasError){
+	        	console.log("An error occured");
+				return true;
+	        }
+			return false;
+		}
+
+		function getAge(birthDate){
+		    var age = tournamentDate.getFullYear() - birthDate.getFullYear();
+		    var m = tournamentDate.getMonth() - birthDate.getMonth();
+		    if (m < 0 || (m === 0 && tournamentDate.getDate() < birthDate.getDate())) {
+		        age--;
+		    }
+		    return age;
+		}
+
+		/*
+		* @param age is of type int
+		*/
+		function getCategory(age){
+			if(age < 9){
+				return undefined;
+			}
+			if(9 <= age && age <= 10){
+				return "preMinimes";
+			}
+			if(11 <= age && age <= 12){
+				return "minimes";
+			}
+			if(13 <= age && age <= 14){
+				return "cadet";
+			}
+			if(15 <= age && age <= 16){
+				return "scolaire";
+			}
+			if(17 <= age && age <= 19){
+				return "junior";
+			}
+			if(20 <= age && age <= 40){
+				return "seniors";
+			}
+			return "elites";
+		}
+
+		aloneDependency.depend(); // Refresh when button is hit
+
+		var check = checkErrors();
+		if (check) { // An error occurred (mis-filled field)
+			var e = document.getElementById("refreshErrorMessage");
+			e.style.display = 'block';
+			return undefined;
+		}
+
+		var tournamentDateMatch = document.getElementById("dateMatch").value;
+		var age = getAge(new Date(document.getElementById("birthYear"),document.getElementById("birthMonth")-1,document.getElementById("birthDay")));
+		var male = document.getElementById("male").value;
+		if (male) {
+			sex = "M";
+		}
+		else {
+			sex = "F"
+		}
+		var category = getCategory(age);
+
+		var pairs = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}},
+		{"day":tournamentDateMatch}]}).fetch();
+		var res = [];
+		for (var i = 0; i < pairs.length; i++) {
+			var aloneProfile = Meteor.users.findOne({_id:pairs[i].player1._id}).profile;
+			var aloneAge = getAge(aloneProfile.birthDate);
+			var aloneSex = aloneProfile.sex;
+			var aloneCategory = getCategory(aloneAge);
+
+			if (tournamentDateMatch==="family") {
+				if((age <= 15 && aloneAge > 25) || (age >= 25 && aloneAge <= 15)) {
+					res.push(pairs[i]);
+				}
+			}
+
+			else if (tournamentDateMatch==="saturday") { // Mixed
+				if (sex != aloneSex && aloneCategory === category) {
+					res.push(pairs[i]);
+				}
+			}
+			else if(tournamentDateMatch==="sunday") { // Same sex
+				if (sex === aloneSex && aloneCategory === category) {
+					res.push(pairs[i]);
+				}
+			}
+		}
+
 		return res;
 	},
 
@@ -231,15 +403,18 @@ Template.tournamentRegistration.events({
 		var e = document.getElementById("emailPlayer");
 		var table = document.getElementById("tableAlone");
 		var later = document.getElementById("checkboxLater");
+		var refresh = document.getElementById("refresh");
 		document.getElementById("later").checked = false; // reset "later" checkbox
 		if(event.target.checked){
 			later.style.display = 'block';
 			table.style.display = 'block';
+			refresh.style.display = 'block';
 			e.setAttribute("disabled","true");
 			aloneDependency.changed();
 		}else{
 			later.style.display = 'none';
 			table.style.display = 'none';
+			refresh.style.display = 'none';
 			e.removeAttribute("disabled","false");
 		}
     },
@@ -263,7 +438,12 @@ Template.tournamentRegistration.events({
     	Session.set('aloneSelected', newId); // Set the player's id in the session variable aloneSelected
     },
 
-    'submit form':function(){
+	"click [data-action='refresh']" : function(event) {
+		event.preventDefault();
+		aloneDependency.changed();
+	},
+
+    "submit form":function(){
 
       	event.preventDefault();
       	Meteor.call('turnStaff',Meteor.userId());
@@ -672,4 +852,5 @@ Template.tournamentRegistration.events({
 
   Template.tournamentRegistration.onCreated(function (){
 	  this.subscribe("AddressesNoSafe"); //TODO: selective addresses ?
+	  this.subscribe("users");
   });

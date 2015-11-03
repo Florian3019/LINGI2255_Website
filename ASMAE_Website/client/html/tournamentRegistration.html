@@ -350,6 +350,12 @@
         <div class="form-group checkboxLater col-md-4" id="checkboxLater" hidden>
           <label class="checkbox-inline"><input type="checkbox" value="" id="later">   Je veux choisir quelqu'un plus tard </label>
         </div>
+		<div id="refresh" hidden>
+		<button class="btn btn-default" data-action="refresh"> Actualiser </button>
+		</div>
+		<div id="refreshErrorMessage" hidden>
+			<span class="help-block refreshError"> Veuillez vérifier le formulaire </span>
+		</div>
       </div>
 
       <div class="panel panel-default" id="tableAlone" hidden>
@@ -386,7 +392,7 @@
         </div>
       </div>
 
-  		<button type="submit" class="btn btn-default">Soumettre mon inscription</button>
+  		<button type="submit" class="btn btn-default" id="submit">Soumettre mon inscription</button>
 
 	</form>
 
