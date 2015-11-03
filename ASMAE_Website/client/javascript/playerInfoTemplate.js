@@ -29,7 +29,7 @@ Template.playerInfoTemplate.helpers({
 			'birth': function(){
 			  var date = user.profile.birthDate;
 			  if(!date) return;
-			  return date.getDay() + "/" + date.getMonth() + "/" + date.getFullYear();
+			  return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
 			},
 			'gender': function(){
 				return user.profile.gender;
