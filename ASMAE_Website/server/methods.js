@@ -445,7 +445,7 @@ Meteor.methods({
 				}
 			});
 		}
-
+		console.log("hello you");
 		return courtId;
 	},
 
