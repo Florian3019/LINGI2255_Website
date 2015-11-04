@@ -445,7 +445,6 @@ Meteor.methods({
 				}
 			});
 		}
-		console.log("hello you");
 		return courtId;
 	},
 
@@ -1018,6 +1017,7 @@ Meteor.methods({
 
 
 		data = {};
+		var dataID;
 
 		pairDataProdided = false;
 
@@ -1050,7 +1050,7 @@ Meteor.methods({
 					console.error("updateMatch : a match with the same pairs is already existing or the id provided is not correct");
 					return;
 				}
-				data._id = matchId;
+				dataID = matchId;
 			}
 			else{
 				// No match found in the db
@@ -1069,12 +1069,12 @@ Meteor.methods({
 				console.error("updateMatch : trying to update a match without providing either of the 2 pairs or the match id");
 				return;
 			}
-			data._id = matchData._id;
+			dataID = matchData._id;
 		}
 
 		if(matchData.poolId) data.poolId = matchData.poolId;
 
-		if(!data._id){
+		if(!dataID){
 
 			// Can only create a match if the user provided both pairs and the poolId
 			if(!pairDataProdided){
@@ -1094,13 +1094,13 @@ Meteor.methods({
 			});
 		}
 
-		Matches.update({_id: data._id} , {$set: data}, function(err, count, status){
+		Matches.update({_id: dataID} , {$set: data}, function(err, count, status){
 			if(err){
 				console.error('updateMatch error (update)');
 				console.error(err);
 			}
 		});
-		return data._id;
+		return dataID;
 	},
 
 	/*
