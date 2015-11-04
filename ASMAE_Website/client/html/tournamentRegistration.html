@@ -10,7 +10,7 @@
       <div class="form-group has-feedback" id="firstnameDiv">
       		<label for="text">Prénom</label>
       		<div class="input-group">
-          <input type="text" class="form-control" id="firstname" placeholder="Florian" value="{{firstname}}" name="firstname">
+          <input type="text" class="form-control" id="firstname" value="{{firstname}}" name="firstname">
           <div id="firstnameError" hidden>
             <span class="help-block" >Merci d'entrer votre prénom</span>
             <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -27,7 +27,7 @@
 		  <div class="form-group has-feedback" id="lastnameDiv">
 			<label for="text">Nom</label>
 			  <div class="input-group">
-			<input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" placeholder="Demesmaeker" ><br>
+			<input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" ><br>
 			<div id="lastnameError" hidden>
 			  <span class="help-block" >Merci d'entrer votre nom</span>
 			  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -43,21 +43,56 @@
   </div>
 
   <div class="row">
-	  <div class="col-md-3">
-     	<div class="form-group has-feedback" id="birthDiv">
-      		<label for="date">Date de naissance</label>
+	  <label> Date de naissance </label> <br>
+	  <div class="col-md-2">
+     	<div class="form-group has-feedback" id="birthDayDiv">
+      		<label for="day">Jour</label>
       		<div class="input-group">
-          <input type="date" id="birth" class="form-control" placeholder="1990-01-01" value="{{date}}" name="date de naissance">
-          <div id="birthError" hidden>
-            <span class="help-block" >Merci d'entrer votre date de naissance</span>
+          <input type="number" id="birthDay" class="form-control" value="{{date}}" name="jour de naissance">
+          <div id="birthDayError" hidden>
+            <span class="help-block" >Merci d'entrer le jour</span>
             <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
           </div>
-          <div id="birthOK" hidden>
+          <div id="birthDayOK" hidden>
             <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
             <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
           </div>
           </div>
     	</div>
+	</div>
+
+		<div class="col-md-2">
+       	<div class="form-group has-feedback" id="birthMonthDiv">
+        		<label for="month">Mois</label>
+        		<div class="input-group">
+            <input type="number" id="birthMonth" class="form-control" value="{{date}}" name="mois de naissance">
+            <div id="birthMonthError" hidden>
+              <span class="help-block" >Merci d'entrer le mois</span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="birthMonthOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+            </div>
+            </div>
+      	</div>
+	</div>
+
+		<div class="col-md-2">
+       	<div class="form-group has-feedback" id="birthYearDiv">
+        		<label for="year">Année</label>
+        		<div class="input-group">
+            <input type="number" id="birthYear" class="form-control" value="{{date}}" name="année de naissance">
+            <div id="birthYearError" hidden>
+              <span class="help-block" >Merci d'entrer l'année</span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="birthYearOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+            </div>
+            </div>
+      	</div>
 	</div>
 
 	<div class="col-md-3">
@@ -90,7 +125,7 @@
 		 <label for="text">Numéro de téléphone</label>
 	 <div class="input-group">
 	   <span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
-		 <input type="number" class="form-control" id="phone" placeholder="0490123456" value="{{phone}}" name="phone">
+		 <input type="number" class="form-control" id="phone" value="{{phone}}" name="phone">
 	   </div>
    </div>
    </div>
@@ -101,7 +136,7 @@
    	  			<div class="form-group has-feedback" id="streetDiv">
              		<label for="text">Adresse</label>
              		<div class="input-group" style="display: inline">
-                <input type="text" class="form-control" id="street" placeholder="Rue des deux chapelles" value="{{street}}" name="street">
+                <input type="text" class="form-control" id="street" value="{{street}}" name="street">
           		  <div id="streetError" hidden>
                 <span class="help-block" >Merci d'entrer votre rue</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -119,7 +154,7 @@
        			<div class="form-group has-feedback" id="numberDiv">
         			 <label for="text">Numéro</label>
         		 	  <div class="input-group">
-                <input type="number" class="form-control" id="addressnumber" placeholder="20" value="{{addressNumber}}" name="addressNumber">
+                <input type="number" class="form-control" id="addressnumber" value="{{addressNumber}}" name="addressNumber">
                 <div id="numberError" hidden>
                   <span class="help-block" >Merci d'entrer votre numéro</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -138,7 +173,7 @@
       		<div class="col-md-2">
        			<div class="form-group">
          			<label for="text">Boite</label>
-         			<input type="text" class="form-control" id="box" placeholder="105b" value="{{boxNumber}}" name="boxNumber">
+         			<input type="text" class="form-control" id="box" value="{{boxNumber}}" name="boxNumber">
        		 	</div>
       		</div>
 
@@ -149,7 +184,7 @@
       			<div class="form-group has-feedback" id="zipcodeDiv">
       		  		<label for="text">Code Postal</label>
       		 		  <div class="input-group">
-                <input type="number" min="0" step="1" class="form-control" id="zipcode" placeholder="6230" value="{{zipcode}}" name="zipcode">
+                <input type="number" min="0" step="1" class="form-control" id="zipcode" value="{{zipcode}}" name="zipcode">
                 <div id="zipcodeError" hidden>
                   <span class="help-block" >Merci d'entrer votre code postal</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -168,7 +203,7 @@
       			<div class="form-group has-feedback" id="cityDiv">
         			<label for="text">Localité</label>
         			<div class="input-group" style="display: inline">
-                <input type="text" class="form-control" id="city" placeholder="Obaix" value="{{city}}" name="city">
+                <input type="text" class="form-control" id="city" value="{{city}}" name="city">
                 <div id="cityError" hidden>
                   <span class="help-block" >Merci d'entrer votre ville</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -186,7 +221,7 @@
      		 	<div class="form-group has-feedback" id="countryDiv">
    			    <label for="text">Pays</label>
    			    <div class="input-group">
-            <input type="text" class="form-control" id="country" placeholder="Belgique" value="{{country}}" name="country">
+            <input type="text" class="form-control" id="country" value="{{country}}" name="country">
      		     <div id="countryError" hidden>
                 <span class="help-block" >Merci d'entrer votre pays</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -253,11 +288,16 @@
       </div>
 		</div>
 
-		<div class="form-group">
-			<label for="number">Nombre d'inscriptions pour le barbecue (15€):</label>
-      		<input type="number" id="BBQ" name="BBQ" min="0" step="1" value="0" placeholder=0  class="form-control" style="width: 15%; display: inline">
-      		<p style="font-size:100%">Dimanche de 12h30 à 15h (boissons non comprises)</p>
-		</div>
+  <div class="form-group">
+      {{#each extras}}
+          <div class="form-group">
+            <label for="number">{{getName}} ({{getPrice}} euros)</label>
+                <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" value="0" class="form-control" style="width: 15%; display: inline">
+                <p style="font-size:100%">{{getComment}}</p>
+        </div>
+
+      {{/each}}
+  </div>
 
 	<div class="row">
 		<div class="col-md-6">
@@ -302,16 +342,20 @@
 
       <div class="row">
         <div class="form-group col-md-3 checkboxAloneDiv" id="checkboxAloneDiv">
-          <label class="checkbox-inline"><input type="checkbox" value="" id="alone">   Je veux m'inscrire seul</label>
+          <label class="checkbox-inline"><input type="checkbox" value="" id="alone"> Je n'ai pas de partenaire (permet de choisir parmi les autres joueurs seuls)</label>
           <div id="alreadyRegisteredErrorMessage" hidden>
             <span class="help-block alreadyRegisteredError" >Vous êtes déjà inscrit !</span>
           </div>
         </div>
-
-
         <div class="form-group checkboxLater col-md-4" id="checkboxLater" hidden>
           <label class="checkbox-inline"><input type="checkbox" value="" id="later">   Je veux choisir quelqu'un plus tard </label>
         </div>
+		<div id="refresh" hidden>
+		<button class="btn btn-default" data-action="refresh"> Actualiser </button>
+		</div>
+		<div id="refreshErrorMessage" hidden>
+			<span class="help-block refreshError"> Veuillez vérifier le formulaire avant de pouvoir choisir un partenaire</span>
+		</div>
       </div>
 
       <div class="panel panel-default" id="tableAlone" hidden>
@@ -328,29 +372,27 @@
                 <th>Age</th>
                 <th>Ville</th>
                 <th>Rang</th>
-                <th>Tournoi</th> <!-- Should disappear ! Player should only see other players of its type tournament-->
               </tr>
             </thead>
             <tbody>
 
               {{#each alonePlayers}}
-                {{#each getPlayer player1._id}}
+                {{#with getPlayer player1._id}}
                     <tr class="aloneRow" id="{{../_id}}" style="cursor: pointer">
                       <td> {{profile.lastName}} </td>
                       <td> {{profile.firstName}} </td>
-                      <td> {{profile.birthDate}} </td>
-                      <td> {{#each getCity profile.addressID}} {{city}} {{/each}}</td>
+                      <td> {{getAge profile.birthDate}} </td>
+                      <td> {{getCity profile.addressID}}</td>
                       <td> {{profile.AFT}} </td>
-                      <td> {{../day}} </td>
                     </tr>
-                {{/each}}
+                {{/with}}
               {{/each}}
             </tbody>
           </table>
         </div>
       </div>
 
-  		<button type="submit" class="btn btn-default">Soumettre mon inscription</button>
+  		<button type="submit" class="btn btn-default" id="submit">Soumettre mon inscription</button>
 
 	</form>
 

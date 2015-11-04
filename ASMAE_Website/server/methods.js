@@ -62,16 +62,31 @@ Meteor.methods({
       		});
 	},
 
-	'getAge' : function(birthDate){
-		var birthdate = new Date(birthDate);
-		var cur = new Date();
-		var diff = cur.getTime()-birthdate.getTime(); // This is the difference in milliseconds
-		var age = Math.floor(diff/31536000000); // Divide by 1000*60*60*24*365
-		return age;
+	/*
+	* @param birthDate is of type Date
+	* @param todayDate give an optional today date (e. g. date of the tournament)
+	*/
+	'getAge' : function(birthDate, todayDate){
+		var today;
+		if (todayDate) {
+			today = todayDate;
+		}
+		else {
+			today = new Date();
+		}
+	    var age = today.getFullYear() - birthDate.getFullYear();
+	    var m = today.getMonth() - birthDate.getMonth();
+	    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+	        age--;
+	    }
+	    return age;
 	},
 
+	/*
+	* @param birthDate is of type Date
+	*/
 	'getCategory' : function(birthDate, family){
-		var age = Meteor.call('getAge', birthDate);
+		var age = Meteor.call('getAge', birthDate, undefined);
 		if(age < 9){
 			return undefined;
 		}
@@ -130,7 +145,7 @@ Meteor.methods({
 			if(cat1 && cat2){
 				// Both players are provided, check that the categories match !
 				if(cat1 != cat2){
-					console.error("addPairsToTournament : categories of the 2 players do not match !");
+					console.error("getPairCategory : categories of the 2 players do not match !");
 					return false;
 				}
 				return cat1;
@@ -143,7 +158,7 @@ Meteor.methods({
 			}
 			else{
 				// No way of knowing the category since no player is provided
-				console.error("addPairsToTournament : no way to know the category, no player provided !");
+				console.error("getPairCategory : no way to know the category, no player provided !");
 				return false;
 			}
 		}
@@ -246,7 +261,7 @@ Meteor.methods({
 		@param typeData is structured as a type
 
 		A type structure is as follows :
-		{	
+		{
 			// Can only $addToSet
 			_id:<typeID>
 			preminimes:<list of poolIDs>
@@ -256,7 +271,7 @@ Meteor.methods({
 			juniors:<list of poolIDs>
 			seniors:<list of poolIDs>
 			elites:<list of poolIDs>
-	
+
 
 			// Can only $set
 			preminimesBracket:<list of pairId>
@@ -355,7 +370,7 @@ Meteor.methods({
        		lendThisYear (ou alors noter l'id du tournoi (ou l'année du dernier tournoi où il était prêté), sinon je ne sais pas quand on pourra le remettre à 'false' après le tournoi)
        		*/
 
-		
+
 		var data = {};
 
 		data.ownerID = courtData.ownerID;
@@ -621,7 +636,7 @@ Meteor.methods({
 
 		The addressData structure is as follows :
 		{
-			_id:<id>, // Ommit this if you want to create a new address, this will be auto-generated
+			_id:<id>, // Omit this if you want to create a new address, this will be auto-generated
 			street:<street>,
 			number:<number>,
 			box:<box>,
@@ -774,6 +789,8 @@ Meteor.methods({
 				paymentID:<paymentID>
 			}
 			tournament :[<pointsRound1>, <pointsRound2>, ....]
+			day: family | saturday | sunday
+			category: <category>
 		}
 
 		@return : the pair id if successful, otherwise returns false
@@ -792,15 +809,17 @@ Meteor.methods({
 		}
 
 		const userIsOwner = ID['player1'] == Meteor.userId() || ID['player2'] == Meteor.userId();
-
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updatePairs : You don't have the required permissions!");
 			return false;
 		}
 
 		var data = {};
-		if(pairData._id){
-			data._id = pairData._id;
+		if (pairData.day) {
+			data.day = pairData.day;
+		}
+		if (pairData.category) {
+			data.category = pairData.category;
 		}
 
 		// Player = player1 or player2
@@ -821,18 +840,29 @@ Meteor.methods({
 			if(pData['paymentID']) p['paymentID'] = pData['paymentID'];
 			if(pData['wish']) p['wish'] = pData['wish'];
 			if(pData['constraint']) p['constraint'] = pData['constraint'];
+
 			if(pData['extras']){
 				extr = {};
 				var count = 0;
 				var dataExtras = pData['extras'];
-				if(dataExtras['BBQ']){
-					extr['BBQ'] = dataExtras['BBQ'];
-					count = count+1;
+
+				var extras = Extras.find().fetch();
+
+				for(var i=0;i<extras.length;i++){
+					console.log(dataExtras);
+
+					if(dataExtras[extras[i].name]){
+						extr[extras[i].name] = dataExtras[extras[i].name];
+						count = count+1;
+					}
 				}
+
 				if(count>0){
 					p['extras'] = extr;
 				}
 			}
+
+			console.log(p);
 			data[player] = p;
 		}
 
@@ -955,7 +985,7 @@ Meteor.methods({
 			poolId:<poolId>,
 			<pairID>:<points>,
 			<pairID>:<points>,
-			courtId:<courtID>	
+			courtId:<courtID>
 		}
 
 		matchData is expected to be formated like this :
@@ -965,7 +995,7 @@ Meteor.methods({
 			pair1: {pairId: <pairID>, points:<points>}, // Note : the order pair1/pair2 is irrelevant and is just for the convenience of parsing the data
 			pair2: {pairId: <pairID>, points:<points>}
 		}
-		
+
 		Automatically adds the match to the right pool if one is created (must provide pair1 and pair2 or creation will fail)
 
 		providing pair1, pair2 and the poolId is enough to update the right match without giving the id of the match
@@ -996,7 +1026,7 @@ Meteor.methods({
 		if(matchData.pair2) data[matchData.pair2.pairId] = matchData.pair2.points; // <pairID>:<points>
 
 		if(matchData.pair1 && matchData.pair2){
-			/*	
+			/*
 				Check if this pair already exists
 				The pair ("pairId1", "pairId2") is a primary key
 			*/
@@ -1009,7 +1039,7 @@ Meteor.methods({
 						{
 							$and: [
 								{"poolId":matchData.poolId}, // I want to find only matches belonging to this pool
-								{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set 
+								{$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set
 							]
 						}
 					);
@@ -1026,7 +1056,7 @@ Meteor.methods({
 			else{
 				// No match found in the db
 				if(matchData._id){
-					// This should never happen, user provided an id but we did not find its corresponding pair in the db... 
+					// This should never happen, user provided an id but we did not find its corresponding pair in the db...
 					// Either the db is broken or user gave a inexistant id
 					console.error("updateMatch : the id's are auto-generated, the id you provided did not match any known match");
 					return;
@@ -1046,7 +1076,7 @@ Meteor.methods({
 		if(matchData.poolId) data.poolId = matchData.poolId;
 
 		if(!data._id){
-			
+
 			// Can only create a match if the user provided both pairs and the poolId
 			if(!pairDataProdided){
 				console.error("updateMatch : Trying to create a match without setting the pair data");
@@ -1132,11 +1162,11 @@ Meteor.methods({
 		// console.log(Meteor.call('objectIsEmpty', data.$set));
 		// console.log(Meteor.call('objectIsEmpty', {}));
 		// console.log(Meteor.call('objectIsEmpty', {"hello":1}));
-		
-		
+
+
 		// if(Meteor.call('objectIsEmpty', data.$set)) delete data.$set;
 		// if(Meteor.call('objectIsEmpty', data.$addToSet)) delete data.$addToSet;
-		
+
 		Pools.update({_id: poolData._id} , data, function(err, count, status){
 			if(err){
 				console.error('updatePool error ');
@@ -1224,13 +1254,13 @@ Meteor.methods({
 		if(!pairs){
 			pairs = [];
 		}
-		if(!pool.leader){
-			data.leader=pairID;
-		}
 		pairs.push(pairID);
 		data = {};
 		data._id = poolID;
 		data.pairs = pairs;
+		if(!pool.leader){
+			data.leader=pairID;
+		}
 		Meteor.call('updatePool', data, function(err, poolId){
 			console.log("addPairsToTournament is done");
 		});
@@ -1345,6 +1375,23 @@ Meteor.methods({
 		return Questions.insert(data)
 	},
 
+	'insertExtra' : function(Extra){
+		var data ={
+			name : Extra.desc,
+			price : Extra.price,
+			comment : Extra.comment
+		}
+		return Extras.insert(data);
+	},
+
+	'removeExtra' : function(ExtraID){
+		Extras.remove({_id:ExtraID});
+	},
+
+	'updateExtra' : function(Extra){
+		Extras.update(Extra.extra,{name: Extra.name, price: Extra.price, comment: Extra.comment});
+	},
+
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
 		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
         	$set: {processed: true,answer:nanswer}
@@ -1384,7 +1431,65 @@ Meteor.methods({
 								// Send the request
 								Meteor.http.post(postURL, options, onError);
 								console.log("Email sent");
+	},
+
+
+	/*
+	 * Insert some users in the DB
+	 */
+	'populateDB': function() {
+		var n = 20;
+
+		var firstNames = ["Jean-Pierre", "Antoine", "Marc", "André", "Kévin", "Fred", "Philippe", "Louis", "Pierre", "Jacques", "Marie", "Jeanne", "Madison", "Clothilde", "Barbara", "Sybille", "Hélène", "Priscilla", "Sophie", "Julie"];
+		var lastNames = ["Dupont", "Dubois", "Heymans", "Deplasse", "Mercier", "Lopez", "Perrin", "Chevalier", "Blanc", "Legrand", "Fournier", "Lefevre", "Rousseau", "Garcia", "Petit", "Fontaine", "Bonnet", "Dumont", "Boyer", "Lemaire"];
+		var days = [12, 11, 8, 27, 24, 17, 12, 2, 3, 9, 19, 24, 13, 17, 11, 6, 4, 21, 20, 20];
+		var months = [0, 1, 0, 11, 6, 3, 2, 2, 6, 7, 0, 9, 9, 11, 10, 10, 10, 3, 11, 3];
+		var years = [2004, 1994, 1996, 1998, 2001, 2000, 2001, 1990, 1993, 1995, 1990, 1999, 1998, 1993, 2001, 2001, 2003, 2004, 2000, 1991];
+
+		var streets = ["Rue bidon", "Avenue Louise", "Avenue Jupiter", "rue de l\'aurore", "rue de l\'Abbaye", "rue d\'Argent", "rue de Dinant", "rue Ducale", "rue Lens", "rue Lebeau", "rue de Livourne", "rue de Laeken", "rue de Paris", "rue du Persil", "rue Picard", "rue du Vautour", "rue de la vallée", "rue Van Helmont", "rue de la Violette", "rue Willems"];
+		var numbers = [11, 18, 456, 98, 2, 98, 23, 7, 567, 928, 62, 17, 19, 92, 63, 77, 21, 23, 87, 26];
+		var boxes = [3, 8, 1, 1, 1, 1, 2, 9, 32, 12, 2, 8, 9, 12, 3, 2, 4, 7, 1, 9];
+		var cities = ["Bruxelles", "Bruxelles", "Liège", "Namur", "Arlon", "Anvers", "Wavre", "Bruxelles", "Bruxelles", "Liège", "Namur", "Arlon", "Anvers", "Wavre", "Bruxelles", "Bruxelles", "Liège", "Namur", "Arlon", "Anvers"];
+		var zipCodes = [1000, 1000, 2000, 3000, 4000, 5000, 6000, 1000, 1000, 2000, 3000, 4000, 5000, 6000, 1000, 1000, 2000, 3000, 4000, 5000];
+		var AFTs = ["C30.4", "C15.4", "C15", "C30", "C15.1", "C30.2", "C30.2", "C30.1", "C30", "C15.2", "C30.4", "C15.4", "C15", "C30", "C15.1", "C30.2", "C30.2", "C30.1", "C30", "C15.2"];
+		var genders = ["M","M","M","M","M","M","M","M","M","M","F","F","F","F","F","F","F","F","F","F",];
+
+		for (var i=0; i<n; i++) {
+			var date = new Date(years[i], months[i], days[i]);
+			var addressData = {
+				street:streets[i],
+				number:numbers[i],
+				box:boxes[i],
+				city:cities[i],
+				zipCode:zipCodes[i],
+				country:"Belgique"
+			};
+			var addressID = Meteor.call("updateAddress", addressData);
+			var emails = [{address:"user"+i+"@user.be"}];
+			var phone = Math.round(Math.random() * 1000000000); // 9 numbers
+			var profile = {
+				firstName:firstNames[i],
+				lastName:lastNames[i],
+				addressID:addressID,
+				phone:phone,
+				birthDate:date,
+				AFT:AFTs[i],
+				isStaff:false,
+				isAdmin:false,
+				gender:genders[i]
+			};
+
+			var userID = Accounts.createUser({
+						   emails : emails[i],
+						   password : firstNames[i],
+						   profile  : profile
+					   });
+
+			Meteor.call("updatePairs",{player1: {_id:userID}});
+		}
 	}
+
+
 /* This one is for sending email with smtp and the MAIL_URL environment variable but i can't connect this one with google.
 	'sendEmail' : function(to, from, subject, text){
 		check([to, from, subject, text], [String]);

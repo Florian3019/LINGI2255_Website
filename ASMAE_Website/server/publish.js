@@ -20,6 +20,10 @@ Meteor.publish('Addresses', function(){
     }
 });
 
+Meteor.publish('AddressesNoSafe', function() {
+	return Addresses.find();
+});
+
 Meteor.publish('Questions', function(){
 	if(this.userId) {
         var user = Meteor.users.findOne(this.userId);
@@ -29,6 +33,13 @@ Meteor.publish('Questions', function(){
 	    else{
 	    	return Questions.find({userID: this.userId});
 	    }
+    }
+});
+
+Meteor.publish('Extras', function(){
+	if(this.userId) {
+        var user = Meteor.users.findOne(this.userId);
+        return Extras.find();
     }
 });
 
