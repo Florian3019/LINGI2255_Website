@@ -553,7 +553,6 @@ Meteor.methods({
 		var profile = userData.profile;
 
 		var data = {};
-		data._id = userData._id; // Always add the id
 
 		if(userData.createdAt){
 			data.createdAt = userData.createdAt;
@@ -613,7 +612,7 @@ Meteor.methods({
 		}
 
 		// Write data on the DB
-		var writeResult = Meteor.users.update({_id: data._id} , {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, $set: data}, {upsert: true});
+		var writeResult = Meteor.users.update({_id: userData._id} , {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, $set: data}, {upsert: true});
 		if(writeResult.writeConcernError){
 			console.error('updateUser : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;
