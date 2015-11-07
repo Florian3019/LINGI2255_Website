@@ -3,7 +3,8 @@
 
 var drake; // Draggable object
 
-
+const CategoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites"};
+const TypesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
 // Returns a list of pair moves
 var movePairs = function(document){
 	var table = document.getElementById("poolTable");
@@ -18,9 +19,9 @@ var movePairs = function(document){
 
 	// Get the pairs and their pools
 	for(var i=0, len=cells.length; i<len; i++){
-		var category = Session.get('PoolCategory');
-		var type = Session.get('PoolType');
-		var year = Session.get('Year');
+		var category = Session.get('PoolList/Category');
+		var type = Session.get('PoolList/Type');
+		var year = Session.get('PoolList/Year');
 
 		c = cells[i];
 
@@ -183,20 +184,20 @@ var setInfo = function(document, msg){
   }
 }
 
-function getSelectedText(document, elementId) {
-    var elt = document.getElementById(elementId);
+// function getSelectedText(document, elementId) {
+//     var elt = document.getElementById(elementId);
 
-    if (elt.selectedIndex == -1)
-        return null;
+//     if (elt.selectedIndex == -1)
+//         return null;
 
-    return elt.options[elt.selectedIndex].text;
-}
+//     return elt.options[elt.selectedIndex].text;
+// }
 
 Template.poolList.helpers({
 
 	// // Returns a yearData with id year
 	'getYear' : function(){
-		var year = Session.get('Year');
+		var year = Session.get('PoolList/Year');
 		var y = Years.findOne({_id:year});
 
 		if(year!=undefined && y==undefined){
@@ -212,11 +213,11 @@ Template.poolList.helpers({
 	
 	// Returns a typeData
 	'getType' : function(yearData){
-		var type = Session.get('PoolType');
+		var type = Session.get('PoolList/Type');
 		var t = Types.findOne({_id:yearData[type]});
 
 		if(type!=undefined && t==undefined){
-			setInfo(document, "Pas de données trouvées pour le type "+ getSelectedText(document, "PoolType") + " de l'année "+Session.get('Year'));
+			setInfo(document, "Pas de données trouvées pour le type "+ TypesTranslate[Session.get("PoolList/Type")] + " de l'année "+Session.get('PoolList/Year'));
 		}
 		else{
 			infoBox =document.getElementById("infoBox");
@@ -228,7 +229,7 @@ Template.poolList.helpers({
 
 	// Returns a list of poolData
 	'getPools' : function(typeData){
-		category = Session.get('PoolCategory');
+		category = Session.get('PoolList/Category');
 		poolIdList = typeData[category];
 		poolList = [];
 		
@@ -253,9 +254,9 @@ Template.poolList.helpers({
 		}
 
 		if(poolList.length==0 && category!=undefined){
-			setInfo(document, "Pas de poules trouvées pour la catégorie " + getSelectedText(document, "PoolCategory")
-				+ " du type " + getSelectedText(document, "PoolType") 
-				+ " de l'année "+Session.get('Year'));
+			setInfo(document, "Pas de poules trouvées pour la catégorie " + CategoriesTranslate[Session.get("PoolList/Category")]
+				+ " du type " + TypesTranslate[Session.get("PoolList/Type")]
+				+ " de l'année "+Session.get('PoolList/Year'));
 		}
 		else{
 			infoBox =document.getElementById("infoBox");
@@ -271,6 +272,18 @@ Template.poolList.helpers({
 
 	'getRemovePool' : function(){
 		return {"_id":"toRemove", "pairs":[]}
+	},
+
+	'getChosenScorePool' : function(){
+		poolId = Session.get("PoolList/ChosenScorePool")
+		if(poolId!=""){
+			return {_id:poolId};
+		}
+		else return "";
+	},
+
+	'chosenBrackets' : function(){
+		return Session.get("PoolList/ChosenBrackets");
 	},
 
 	/*
@@ -290,7 +303,7 @@ Template.poolList.helpers({
 		  		}
 			}
 		).on('drag', function (el) {
-			document.getElementById("successBox").setAttribute("hidden",""); // Hide success message if any
+			hideSuccessBox(document);
   		  	el.className = el.className.replace('ex-moved', '');
 	  	}).on('drop', function (el) {
 	    	el.className += ' ex-moved';
@@ -311,23 +324,124 @@ Template.pairsToRemoveContainerTemplate.onRendered(function(){
 Template.poolList.onRendered(function() {
 	// Restore the state of the selects, in case the user wants to come back to this page 
 	// (usefull when he clicks on scoreboard and presses the back button)
-	document.getElementById("PoolCategory").value = Session.get('PoolCategory') ? Session.get('PoolCategory') : "";
-	document.getElementById("PoolType").value = Session.get('PoolType') ? Session.get('PoolType') : "";
-	document.getElementById("Year").value = Session.get('Year') ? Session.get('Year') : "";
+	Session.set("PoolList/ChosenScorePool","");
+	Session.set("PoolList/ChosenBrackets","");
 });
 
+var hideSuccessBox = function(document){
+	var box = document.getElementById("successBox")
+	if(box!=undefined) box.setAttribute("hidden",""); // Hide success message if any
+};
+
+var updateArrow = function(document, info){
+	prevInfo = Session.get("PoolList/Selected");
+	if(prevInfo!=undefined){
+		// 1rst level
+		var prevSelected = document.getElementById(prevInfo.type+"_glyphicon_type");
+		prevSelected.setAttribute("style","display:none;");
+		// 2nd level
+		var prevSelected = document.getElementById(prevInfo.type+"_"+prevInfo.category+"_glyphicon_category");
+		prevSelected.setAttribute("style","display:none;");
+		// 3rd level
+		var prevSelected = document.getElementById(prevInfo.type+"_"+prevInfo.category+"_glyphicon_"+ (prevInfo.isPool ? "pool" : "bracket"));
+		prevSelected.setAttribute("style","display:none;");
+	}
+
+	// 1rst level
+	var selected = document.getElementById(info.type+"_glyphicon_type");
+	selected.setAttribute("style","display:inline;");
+	// 2nd level
+	var selected = document.getElementById(info.type+"_"+info.category+"_glyphicon_category");
+	selected.setAttribute("style","display:inline;");
+	// 3rd level
+	var selected = document.getElementById(info.type+"_"+info.category+"_glyphicon_"+ (info.isPool ? "pool" : "bracket"));
+	selected.setAttribute("style","display:inline;");
+
+	Session.set("PoolList/Selected", info);
+};
+
+var collapseMenus = function(document, event){
+	info = Session.get("PoolList/Selected");
+	console.log("collapseMenus");
+	if(info==undefined) return;
+
+	var classList = event.classList;
+	var id = event.id;
+	var typeEvent;
+	var type;
+	if(classList.contains("collapseType")){
+		typeEvent = true;
+	}
+	else{
+		var s = id.split("_");
+		type = s[1];
+		typeEvent = false; // category event
+	}
+
+	console.log(type);
+
+	// var idsToNotCollapse = ["btn-"+info.type,"btn-"+info.type+"_"+info.category];
+	// menus = document.getElementsByClassName("btn-navbar");
+	// console.log(menus);
+	menus = document.querySelectorAll("[aria-expanded=true]");
+	// console.log(menus);
+	for(var i=0; i<menus.length;i++){
+		var m = menus[i];
+
+		// console.log(m);
+		// if(idsToNotCollapse.indexOf(m.id)==-1){
+		if(typeEvent){
+			if(m.id != id){
+				m.click();
+			}
+		}
+		else{
+			if(m.id != id && m.id != "btn_"+type){
+				m.click();
+			}
+		}
+	}
+};
+
 Template.poolList.events({
-	'click .PoolType':function(event){
-		document.getElementById("successBox").setAttribute("hidden",""); // Hide success message if any
-		Session.set('PoolType', event.target.value);
+
+	'click .PoolOption' : function(event){
+		var type = event.currentTarget.dataset.type;
+		var category = event.currentTarget.dataset.category;
+		hideSuccessBox(document);
+		Session.set('PoolList/Category', category);
+		Session.set('PoolList/Type', type);
+		Session.set("PoolList/ChosenScorePool","");
+		Session.set("PoolList/ChosenBrackets","");
+
+		var info = {"type":type, "category":category, "isPool":true};
+		updateArrow(document, info);
+		// collapseMenus(document, null);
 	},
-	'click .PoolCategory':function(event){
-		document.getElementById("successBox").setAttribute("hidden",""); // Hide success message if any
-		Session.set('PoolCategory', event.target.value);
+
+	'click .BracketOption' : function(event){
+		var type = event.currentTarget.dataset.type;
+		var category = event.currentTarget.dataset.category;
+		hideSuccessBox(document);
+		Session.set('PoolList/Category', category);
+		Session.set('PoolList/Type', type);
+		Session.set("PoolList/ChosenBrackets","true");
+		Session.set("PoolList/ChosenScorePool","");
+
+		var info = {"type":type, "category":category, "isPool":false};
+		updateArrow(document, info);
+		// collapseMenus(document, null);
 	},
+
+	'click .collapsableMenu' : function(event){
+		console.log(event);
+		collapseMenus(document, event.currentTarget);
+	},
+
 	'click .Year':function(event){
-		document.getElementById("successBox").setAttribute("hidden",""); // Hide success message if any
-		Session.set('Year', event.target.value);
+		hideSuccessBox(document);
+		Session.set('PoolList/Year', event.target.value);
+		Session.set("PoolList/ChosenScorePool","");
 	},
 
 	/*
@@ -357,9 +471,9 @@ Template.poolList.events({
 
 	'click #removePool' : function(event){
 		var poolId = event.currentTarget.dataset.poolid;
-		var category = Session.get('PoolCategory');
-		var type = Session.get('PoolType');
-		var year = Session.get('Year');
+		var category = Session.get('PoolList/Category');
+		var type = Session.get('PoolList/Type');
+		var year = Session.get('PoolList/Year');
 		/*
 			Move the pairs from that pool in the 'to remove pairs'
 		*/
@@ -374,9 +488,9 @@ Template.poolList.events({
 	},
 
 	'click #addPool':function(event){
-		var category = Session.get('PoolCategory');
-		var type = Session.get('PoolType');
-		var year = Session.get('Year');
+		var category = Session.get('PoolList/Category');
+		var type = Session.get('PoolList/Type');
+		var year = Session.get('PoolList/Year');
 
 		if(! (category&&type&&year)){
 			return;
@@ -439,4 +553,10 @@ Template.poolContainerTemplate.helpers({
 	'moreThanOnePair' : function(pairs){
 		return pairs.length>0;
 	}
+});
+
+Template.poolContainerTemplate.events({
+	'click .scoreButton' : function(event){
+		Session.set("PoolList/ChosenScorePool", event.currentTarget.dataset.poolid);
+	},
 });

@@ -1,36 +1,4 @@
 <template name="brackets">
-
-
-	<form class="table form-inline" role="form">
-	  <div class="form-group">
-		  <label for="Year">Année</label>
-		  <select class="form-control Year" id="Year">
-	      <option value="" disabled="" selected="" hidden></option>
-			  <option value="2015"> 2015 </option>
-		  </select>
-		  
-	    <label for="PoolCategory">Catégorie</label>
-	    <select class="form-control PoolCategory" id="PoolCategory">
-	      <option value="" disabled="" selected="" hidden></option>
-	      <option value="preminimes">Pré Minimes</option>
-	      <option value="minimes">Minimes</option>
-	      <option value="cadets">Cadet</option>
-	      <option value="scolars">Scolaire</option>
-	      <option value="juniors">Junior</option>
-	      <option value="seniors">Seniors</option>
-	      <option value="elites">Elites</option>
-	    </select>
-
-	    <label for="PoolType">Type</label>
-	    <select class="form-control PoolType" id="PoolType">
-	      <option value="" disabled="" selected="" hidden></option>
-	      <option value="men">Homme</option>
-	      <option value="women">Femme</option>
-	      <option value="mixed">Mixte</option>
-		  <option value="family">Tournoi des familles</option>
-	    </select>
-	  </div>
-
 	  	<!-- Only display button if all options are selected -->
 		{{#with getYear}}
 			{{#with getType}}
@@ -41,7 +9,7 @@
 	 			{{/with}}
 	 		{{/with}}
 		{{/with}}
-	</form>
+	<!-- </form> -->
 
 	<div id="infoBox" class="alert alert-info" role="alert" hidden>
 	  <h4>

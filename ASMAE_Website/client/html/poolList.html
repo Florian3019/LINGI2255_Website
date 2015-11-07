@@ -1,93 +1,147 @@
 <template name="poolList">
 
-<form class="table form-inline" role="form">
-  <div class="form-group">
-	  <label for="Year">Année</label>
-	  <select class="form-control Year" id="Year">
-      <option value="" disabled="" selected="" hidden></option>
-		  <option value="2015"> 2015 </option>
-	  </select>
-	  
-    <label for="PoolCategory">Catégorie</label>
-    <select class="form-control PoolCategory" id="PoolCategory">
-      <option value="" disabled="" selected="" hidden></option>
-      <option value="preminimes">Pré Minimes</option>
-      <option value="minimes">Minimes</option>
-      <option value="cadets">Cadet</option>
-      <option value="scolars">Scolaire</option>
-      <option value="juniors">Junior</option>
-      <option value="seniors">Seniors</option>
-      <option value="elites">Elites</option>
-    </select>
 
-    <label for="PoolType">Type</label>
-    <select class="form-control PoolType" id="PoolType">
-      <option value="" disabled="" selected="" hidden></option>
-      <option value="men">Homme</option>
-      <option value="women">Femme</option>
-      <option value="mixed">Mixte</option>
-	  <option value="family">Tournoi des familles</option>
-    </select>
-  </div>
-</form>
+<div id="PoolListWrapper">
 
-  <div id="infoBox" class="alert alert-info" role="alert" hidden>
-    <h4>
-      <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-      <span class="sr-only">Info:</span>
-      <span id="infoMsg"></span>
-    </h4>
-  </div>
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand"> Poules </li>
+                <li>
+                    <select class="form-control Year" id="Year" style="width:50%;" text-align="center">
+                      <option value="" disabled="" selected="" hidden>Année</option>
+                      <option value="2015"> 2015 </option>
+                    </select>
+                </li>
+                {{#with getYear}}
+                  <li>{{>CategorySelect TYPE="men" DESC="Homme"}}</li>
+                  <li>{{>CategorySelect TYPE="women" DESC="Femme"}}</li>
+                  <li>{{>CategorySelect TYPE="mixed" DESC="Mixte"}}</li>
+                  <li>{{>CategorySelect TYPE="family" DESC="Familles"}}</li>
+                {{/with}}
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
 
-<table id='allTables' class='table'>
-<tr>
-  <td>
-    <table id='poolTable' class='table'>
-      {{#with getYear}} <!-- Returns a yearData -->
-      {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->    
-          {{#with getType this}}
-              {{#each getPools this}} <!-- Returns a list of lists of poolData, one list by column -->
-                <tr>
-                {{#each this}} <!-- For each pool in the column -->
-                  {{>poolContainerTemplate POOL=this}}
-                {{/each}}
-                </tr>
-              {{/each}}
-        {{/with}}
-      {{/with}}
-    </table>
-  </td>
-  <td id='pairsToRemoveColumn'>
-    {{#with getYear}}
-      {{#with getType this}}
-        {{>pairsToRemoveContainerTemplate}}
-      {{/with}}
-    {{/with}}
-  </td>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                    <div class="col-lg-20">
+                        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+                          <div id="infoBox" class="alert alert-info" role="alert" hidden>
+                            <h4>
+                              <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                              <span class="sr-only">Info:</span>
+                              <span id="infoMsg"></span>
+                            </h4>
+                          </div>
+
+                          {{#if getChosenScorePool}}
+                            {{>scoreTable getChosenScorePool}}
+                          {{else}}
+                            {{#if chosenBrackets}}
+                              {{>brackets}}
+                            {{else}}
+                                <!-- Pool Tables -->
+                              <table id='allTables' class='table'>
+                              <tr>
+                                <td>
+                                  <table id='poolTable' class='table'>
+                                    {{#with getYear}} <!-- Returns a yearData -->
+                                    {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->    
+                                        {{#with getType this}}
+                                            {{#each getPools this}} <!-- Returns a list of lists of poolData, one list by column -->
+                                              <tr>
+                                              {{#each this}} <!-- For each pool in the column -->
+                                                {{>poolContainerTemplate POOL=this}}
+                                              {{/each}}
+                                              </tr>
+                                            {{/each}}
+                                      {{/with}}
+                                    {{/with}}
+                                  </table>
+                                </td>
+                                <td id='pairsToRemoveColumn'>
+                                  {{#with getYear}}
+                                    {{#with getType this}}
+                                      {{>pairsToRemoveContainerTemplate}}
+                                    {{/with}}
+                                  {{/with}}
+                                </td>
 
 
-</tr>
-</table>
+                              </tr>
+                              </table>
 
-{{#with getYear}}
-  {{#with getType this}}
-    <button type="button" id="save" class="btn btn-default btn-lg">
-      <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
-    </button>
+                              {{#with getYear}}
+                                {{#with getType this}}
+                                  <button type="button" id="save" class="btn btn-default btn-lg">
+                                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
+                                  </button>
 
-    <button type="button" id="addPool" class="btn btn-default btn-lg">
-      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Poule
-    </button>
-   {{/with}}
-{{/with}}
+                                  <button type="button" id="addPool" class="btn btn-default btn-lg">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Poule
+                                  </button>
+                                 {{/with}}
+                              {{/with}}
 
-  <div id="successBox" class="alert alert-success" role="alert" hidden>
-    <h4>
-      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-      <span class="sr-only">Succès:</span>
-      <span id="infoMsg">Poules sauvées !</span>
-    </h4>
-  </div>
+                                <div id="successBox" class="alert alert-success" role="alert" hidden>
+                                  <h4>
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                    <span class="sr-only">Succès:</span>
+                                    <span id="infoMsg">Poules sauvées !</span>
+                                  </h4>
+                                </div>
+                          {{/if}}
+                        {{/if}}
+
+                    </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+
+
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#PoolListWrapper").toggleClass("toggled");
+    });
+    </script>
+
+
+
+</template>
+
+<!-- Param : TYPE -->
+<template name="CategorySelect">
+  <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span> 
+  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}}</a>
+  <ul class="nav collapse CategoryOption" id="{{TYPE}}" role="menu" aria-labelledby="btn-{{TYPE}}">
+    <li>{{>PoolBracketsSelect ID=TYPE CAT="preMinimes" DESC="Pré Minimes"}}</li>
+    <li>{{>PoolBracketsSelect ID=TYPE CAT="minimes" DESC="Minimes"}}</li>
+    <li>{{>PoolBracketsSelect ID=TYPE CAT="cadets" DESC="Cadet"}}</li>
+    <li>{{>PoolBracketsSelect ID=TYPE CAT="scolars" DESC="Scolaires"}}</li>
+    <li>{{>PoolBracketsSelect ID=TYPE CAT="juniors" DESC="Junior"}}</li>
+    <li>{{>PoolBracketsSelect ID=TYPE CAT="seniors" DESC="Seniors"}}</li>
+    <li>{{>PoolBracketsSelect ID=TYPE CAT="elites" DESC="Elites"}}</li>
+  </ul>
+</template>
+
+<template name="PoolBracketsSelect">
+  <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_category" style="display:none;"></span> 
+  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory" data-target="#{{this.ID}}_{{this.CAT}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}}</a>
+  <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
+    <li class="PoolOption" data-category="{{this.CAT}}" data-type="{{this.ID}}" >
+      <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_pool" style="display:none"></span> 
+      Poule
+    </li>
+    <li class="BracketOption" data-category="{{this.CAT}}" data-type="{{this.ID}}">
+      <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_bracket" style="display:none"></span> 
+      Tournoi
+    </li>
+  </ul>
 </template>
 
 <!-- Takes 1 argument : the pool -->
@@ -102,16 +156,16 @@
               {{/unless}}
 
               {{#if moreThanOnePair POOL.pairs}}
-              <a href="{{pathFor route='scoreTable' poolId=POOL._id}}" style="text-decoration:none;">
-              <button type="button" class="btn btn-default btn-lg">
+              <!-- <a href="{{pathFor route='scoreTable' poolId=POOL._id}}" style="text-decoration:none;"> -->
+              <button type="button" class="btn btn-default btn-lg scoreButton" data-poolId="{{POOL._id}}">
                 <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> 
               </button>
-              </a>
+              <!-- </a> -->
               {{/if}}
               <label class='label label-primary' for='hy'>Poule</label> <!-- TODO : set the pool name to the court address -->
               
             </h3>
-            <div class='wrapper'>
+            <div class='PoolWrapper'>
               <div class='poolContainer' id='{{POOL._id}}'> <!-- _id is here the id of the pool -->
                 {{#each POOL.pairs}} <!-- For each pair id in the pool -->
                   {{>poolItem PAIRID=this POOLID=../POOL._id LEADER=../POOL.leader}} <!-- Set ID to the id of the pool, so that we can make it draggable -->

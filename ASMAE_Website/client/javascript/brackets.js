@@ -1,12 +1,6 @@
 
 // Do Session.set('brackets/update',Session.get('brackets/update') when you want to update the brackets (and only then).
 
-Template.brackets.onRendered(function(){
-    year = Session.set("brackets/Year",null);
-    type = Session.set("brackets/PoolType",null);
-    category = Session.set("brackets/PoolCategory",null);
-});
-
 const react = {reactive: false};
 
 var canModifyCourt = function(pair, round){
@@ -176,35 +170,15 @@ function clear(node) {
     clear(node.firstChild);
   }
   node.parentNode.removeChild(node);
-  // console.log(node, "cleared!");
 }
 
 var resetBrackets = function(document){
   /*  Prevent duplication of the brackets --> remove the previous one */
     var myNode = document.getElementById("gracketContainer");
-    // $('#gracketContainer').empty();
-
-    // if(myNode!=undefined) while (myNode.firstChild) {
-    //   myNode.removeChild(myNode.firstChild);
-    // }
     if(myNode!=undefined) clearInner(myNode);
 
     console.log("resetBrackets");
     console.log(document.getElementById("gracketContainer"));
-    // if(parent!= undefined){
-    //   // Remove a pre-existing gracket element
-    //   child = document.getElementById("gracketContainer");
-    //   // $("#gracketContainer").empty();
-    //   if(child!=undefined) parent.removeChild(child);
-
-    //   $(".g_round").remove();
-
-    //   // Add an empty gracket element
-    //   var div = document.createElement("div");
-    //   div.className = "my_gracket";
-    //   div.id = "gracketContainer";
-    //   parent.appendChild(div);
-    // }
 }
 
 var displayBrackets =  function(document,brackets){
@@ -255,13 +229,16 @@ function getSelectedText(document, elementId) {
 
 Template.brackets.helpers({
   'getType':function(){
-    return Session.get('brackets/PoolType');
+    console.log(Session.get('PoolList/Type'));
+    return Session.get('PoolList/Type');
   },
   'getCategory':function(){
-    return Session.get('brackets/PoolCategory');
+    console.log(Session.get('PoolList/Category'));
+    return Session.get('PoolList/Category');
   },
   'getYear':function(){
-    return Session.get('brackets/Year');
+    console.log(Session.get('PoolList/Year'));
+    return Session.get('PoolList/Year');
   },
 
   'getScore':function(){
@@ -293,9 +270,9 @@ var handleBracketErrors = function(document){
     /********************************************
       Error Handling and data gathering
     ********************************************/
-    year = Session.get("brackets/Year");
-    type = Session.get("brackets/PoolType");
-    category = Session.get("brackets/PoolCategory");
+    year = Session.get("PoolList/Year");
+    type = Session.get("PoolList/Type");
+    category = Session.get("PoolList/Category");
 
     startButton =  document.getElementById("start");
 
@@ -354,9 +331,6 @@ var handleBracketErrors = function(document){
     }
     infoBox = document.getElementById("infoBox");
     if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // hide any previous info message
-    // gracketContainer = document.getElementById("gracketContainer");
-    // console.log(gracketContainer);
-    // console.log("handleBracketErrors");
     return allWinners;
 }
 
@@ -477,7 +451,7 @@ Template.gracketTemplate.onRendered(function(){
   displayBrackets(document, brackets);
 });
 
-var changed = false;
+// var changed = false;
 
 Template.brackets.events({
 
@@ -496,43 +470,18 @@ Template.brackets.events({
     }
   },
 
-  'click .PoolType':function(event){
-    if(Session.get('brackets/PoolType') != event.target.value){
-     Session.set('brackets/PoolType', event.target.value);
-     changed = true;
-     Session.set('brackets/update',Session.get('brackets/update') ? false:true);
-    }
-  },
-  'click .PoolCategory':function(event){
-    // if(Session.get('brackets/PoolCategory') != event.target.value) resetBrackets(document);
-    if(Session.get('brackets/PoolCategory') != event.target.value){
-     Session.set('brackets/PoolCategory', event.target.value);
-     console.log("changed");
-     changed = true;
-     Session.set('brackets/update',Session.get('brackets/update') ? false:true);
-    }
-  },
-  'click .Year':function(event){
-    // if(Session.get('brackets/Year') != event.target.value) resetBrackets(document);
-    if(Session.get('brackets/Year') != event.target.value){
-     Session.set('brackets/Year', event.target.value);
-     changed = true;
-     Session.set('brackets/update',Session.get('brackets/update') ? false:true);
-    }
-  },
-
   'click #start':function(event){
-    if(changed){
+    // if(changed){
       callback = function(err, status){
-        changed = false;
+        // changed = false;
         Session.set('brackets/update',Session.get('brackets/update') ? false:true);
       };
       console.log("calling startTournament");
-      year = Session.get('brackets/Year');
-      type = Session.get('brackets/PoolType');
-      cat = Session.get('brackets/PoolCategory');
+      year = Session.get('PoolList/Year');
+      type = Session.get('PoolList/Type');
+      cat = Session.get('PoolList/Category');
       Meteor.call('startTournament', year, type, cat, callback);
-    }
+    // }
   },
 
   'click #saveScore':function(event){
@@ -545,7 +494,7 @@ Template.brackets.events({
     score = parseInt(score);
     setPoints(pair, round, score);
     Pairs.update({"_id":pairId}, {$set: {"tournament":pair.tournament}});
-    changed = true;
+    // changed = true;
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   }
 

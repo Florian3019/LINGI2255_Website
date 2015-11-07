@@ -49,12 +49,9 @@ Router.route('/poolList', {
 	template: 'poolList'
 });
 
-Router.route('/scoreTable/:poolId', {
+Router.route('/scoreTable', {
 	name: 'scoreTable',
-	template: 'scoreTable',
-	data: function(){
-		return Pools.findOne({_id:this.params.poolId});
-	}
+	template: 'scoreTable'
 });
 
 Router.route('/court-registration', {
