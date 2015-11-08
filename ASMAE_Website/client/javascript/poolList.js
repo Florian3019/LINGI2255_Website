@@ -362,7 +362,6 @@ var updateArrow = function(document, info){
 
 var collapseMenus = function(document, event){
 	info = Session.get("PoolList/Selected");
-	console.log("collapseMenus");
 	if(info==undefined) return;
 
 	var classList = event.classList;
@@ -378,18 +377,9 @@ var collapseMenus = function(document, event){
 		typeEvent = false; // category event
 	}
 
-	console.log(type);
-
-	// var idsToNotCollapse = ["btn-"+info.type,"btn-"+info.type+"_"+info.category];
-	// menus = document.getElementsByClassName("btn-navbar");
-	// console.log(menus);
 	menus = document.querySelectorAll("[aria-expanded=true]");
-	// console.log(menus);
 	for(var i=0; i<menus.length;i++){
 		var m = menus[i];
-
-		// console.log(m);
-		// if(idsToNotCollapse.indexOf(m.id)==-1){
 		if(typeEvent){
 			if(m.id != id){
 				m.click();
@@ -416,7 +406,6 @@ Template.poolList.events({
 
 		var info = {"type":type, "category":category, "isPool":true};
 		updateArrow(document, info);
-		// collapseMenus(document, null);
 	},
 
 	'click .BracketOption' : function(event){
@@ -430,11 +419,9 @@ Template.poolList.events({
 
 		var info = {"type":type, "category":category, "isPool":false};
 		updateArrow(document, info);
-		// collapseMenus(document, null);
 	},
 
 	'click .collapsableMenu' : function(event){
-		console.log(event);
 		collapseMenus(document, event.currentTarget);
 	},
 

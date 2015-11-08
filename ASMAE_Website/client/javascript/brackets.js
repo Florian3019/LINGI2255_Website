@@ -75,7 +75,7 @@ var getPoints = function(pair, round){
   return pair.tournament[round];
 }
 
-var setPoints = function(pair, round, points){
+var setPoints = function(pair, round, score){
   if(pair.tournament==undefined){
     pair.tournament = [];
   }
@@ -114,11 +114,16 @@ var getBracketData = function(pair, round){ // /!\ Round starts at 0 /!\
             "player2":pairPlayer2String.substring(0, MAXSIZE), 
             "id":pair._id, 
             "score": (pair.tournament==undefined || pair.tournament.length<=round) ? "en jeu" : getPoints(pair, round),
-            "round":round
+            "round":round,
+            "clickable":"true"
     };
 
     return data;
 };
+
+var getPlaceHolder = function(round){
+  return {"player1":"?", "player2":"?", "id":undefined, "score":-5, "round":round, "display":"none" ,'courtId':undefined};
+}
 
 var setRoundData = function(roundData){
   newRoundData = {data:{}};
@@ -126,8 +131,10 @@ var setRoundData = function(roundData){
   newRoundData.data.player1 = roundData.data.player1;
   newRoundData.data.player2 = roundData.data.player2;
   newRoundData.data.id = roundData.data.id;
+  newRoundData.data.clickable = "true";
 
   s = undefined;
+
   if(round<roundData.pair.tournament.length){
     s = getPoints(roundData.pair, round);
   }
@@ -229,15 +236,12 @@ function getSelectedText(document, elementId) {
 
 Template.brackets.helpers({
   'getType':function(){
-    console.log(Session.get('PoolList/Type'));
     return Session.get('PoolList/Type');
   },
   'getCategory':function(){
-    console.log(Session.get('PoolList/Category'));
     return Session.get('PoolList/Category');
   },
   'getYear':function(){
-    console.log(Session.get('PoolList/Year'));
     return Session.get('PoolList/Year');
   },
 
@@ -334,6 +338,33 @@ var handleBracketErrors = function(document){
     return allWinners;
 }
 
+var hasPoints = function(pairData){
+  var score = pairData.data.score;
+  return score === parseInt(score, 10); // Test if points is an integer
+}
+
+/**  
+    Computes the number of matches that the bracket will contain from the
+    Number of matches in the first round.
+    @pre : firstRoundMatchNumber is divisible by 2
+*/
+var getTotalMatchesFromStart =  function(firstRoundMatchNumber){
+  if(firstRoundMatchNumber%2 != 0){
+    console.error("getTotalMatchesFromStart : firstRoundMatchNumber is not a multiple of 2");
+    return;
+  }
+
+  var totalMatches = firstRoundMatchNumber;
+  // while(firstRoundMatchNumber > 1){
+  //   var firstRoundMatchNumber *= 0.5;
+  //   firstRoundMatchNumber += firstRoundMatchNumber%2;
+  //   firstRoundMatchNumber *= 0.5;
+  //   if(firstRoundMatchNumber<1) firstRoundMatchNumber = 1;
+  //   totalMatches += firstRoundMatchNumber;
+  // }
+  return totalMatches;
+}
+
 var makeBrackets = function(document){
   allWinners = handleBracketErrors(document);
   if(allWinners==undefined) return;
@@ -348,6 +379,10 @@ var makeBrackets = function(document){
     pairs in firstRound : [item1, item2] representing a knock off match with pair1 against pair2
   */
   firstRound = []; 
+
+  var matchesCompleted = 0;
+  var totalMatches = 0;
+
   /*
     Create the firstRound
   */
@@ -362,6 +397,10 @@ var makeBrackets = function(document){
       data2 = getBracketData(pair2,0);
       a = {"pair":pair1, "data":data1};
       b = {"pair":pair2, "data":data2};
+
+      if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
+      totalMatches += 1;
+
       setCourt(a, b, 0);
       firstRound.push([a.data, b.data]);
 
@@ -369,6 +408,8 @@ var makeBrackets = function(document){
       thisRound.push(b);
     }
   }
+
+
 
   brackets = [firstRound];
 
@@ -388,7 +429,32 @@ var makeBrackets = function(document){
     // Select the best pair from the 2 for each match
     for(var i=0; i+1<thisRound.length ; i+=2){
       best = getBestFrom2(thisRound[i], thisRound[i+1], round);
+
+      // If this is the last pair to add to this round and that by adding it, we make an uneven number of pairs in this round
+      if(i+1==thisRound.length-1 && newRound.length%2==0 && best!=undefined){
+        // Forward the points of this round to the next for this pair
+        if(thisRound[i].data.id === best.data.id) best.data.score = thisRound[i].data.score;
+        else best.data.score = thisRound[i+1].data.score;
+
+        best.data.clickable = "false";
+
+        if(hasPoints(best)){
+          setPoints(best.pair, round+1, best.data.score);
+          Pairs.update({"_id":best.pair._id}, {$set: {"tournament":best.pair.tournament}});
+        }
+      }
+
       newRound.push(best); // best contains a pair and its display data
+    }
+
+    if(thisRound.length%2 != 0){
+      // Uneven number of pairs !
+      last = thisRound[thisRound.length-1];
+
+      var last2 = undefined;
+      if(last!=undefined) last2 = setRoundData(last).r;
+      console.log(last2);
+      newRound.push(last2);
     }
 
     // For each selected pair, convert that pair into an object that can be displayed
@@ -402,17 +468,27 @@ var makeBrackets = function(document){
       nextRound.push([a==undefined ? empty:a.data, b==undefined ? empty:b.data]);
     } 
 
+    if(newRound.length%2 != 0 && newRound.length!=1){
+      // Uneven number of matches !
+      last = newRound[newRound.length-1];
+      nextRound.push([last==undefined ? empty:last.data, getPlaceHolder(round+1)]);
+    }
+
     // Add that object to the list of stuff to display
     if(nextRound.length>0) brackets.push(nextRound);
 
-    // If newRound.length == 1 --> only 2 pairs in the tournament
-    // If nextRound.length == 2 --> we are at the last 2 pairs of the tournament and need to display the winner
-    if(newRound.length==1 || nextRound.length==2){
-
+    // If newRound.length == 1 --> we are at the last 2 pairs of the tournament and need to display the winner
+    if(newRound.length==1){
+      console.log(newRound);
+      console.log(thisRound);
       // If there are only 2 pairs in the tournament, we need to take the information from the firstRound (or in this case thisRound)
       // If there are only 2 pairs in the tournament, we need to take the information from the newly created round
-      a = newRound.length==1 ? getBestFrom2(thisRound[0], thisRound[1], round) : getBestFrom2(newRound[0], newRound[1], round+1);
-      r = newRound.length==1 ? round : round+1;
+      // a = newRound.length==1 ? getBestFrom2(thisRound[0], thisRound[1], round) : getBestFrom2(newRound[0], newRound[1], round+1);
+      // r = newRound.length==1 ? round : round+1;
+      a = getBestFrom2(thisRound[0], thisRound[1], round);
+      r = round;
+
+      console.log(a);
 
       if(a!=undefined){
         if(r<a.pair.tournament.length){
@@ -430,6 +506,39 @@ var makeBrackets = function(document){
     thisRound = newRound;
     round++;
   }
+
+  console.log(brackets);
+
+      // brackets = [
+      //   // [
+      //   //   [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1}, {"name" : "James Coutry", "id" : "james-coutry", "seed" : 3} ],
+      //   //   [ {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5}, {"name" : "Teddy Koufus", "id" : "teddy-koufus", "seed" : 8} ],
+      //   //   [ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10}, {"name" : "Scott Anderson", "id" : "scott-anderson", "seed" : 12} ],
+      //   //   [ {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14}, {"name" : "Jake Coutry", "id" : "jake-coutry", "seed" : 15} ]
+      //   // ],
+      //   [
+      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"}, {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5, "visibility":"visible"}],
+      //     [ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"visible"}, {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14, "visibility":"visible"} ],
+      //     [ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"visible"}, {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14, "visibility":"visible"} ]
+      //   ],
+      //   [
+      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"visible"} ],
+      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"hidden"} ]
+      //   ],
+      //   [
+      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"visible"} ]
+      //   ],
+      //   [
+      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"} ]
+      //   ]
+      // ];
+
+
+
+
+
+
+
 
   return brackets;
 }
@@ -459,6 +568,8 @@ Template.brackets.events({
   "click .g_team":function(event, template){
     var pairId = event.currentTarget.id;
     mod = document.getElementById("bracketModal");
+    clickable = event.currentTarget.dataset.clickable;
+    if(clickable==="false") return;
     round = event.currentTarget.dataset.round; // if undefined --> means '?'
     courtId = event.currentTarget.dataset.courtid; // can be undefined
 

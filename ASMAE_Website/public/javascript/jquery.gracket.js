@@ -157,6 +157,8 @@
 
           return team = $("<div />", {
             "html" : html,
+            "style" : "display:"+data.display+";",
+            "data-clickable": data.clickable,
             "class" : node.teamClass + " " + (data.id || "id_null"),
             "id" : data.id,
             "data-round":data.round,
