@@ -24,7 +24,7 @@ Template.scoreTable.helpers({
 	// Returns a list of pairs that are in this pool
 	'getPairs' : function(poolId){
 		var pairList = [];
-		var pool = Pools.findOne({_id:poolId});
+		var pool = Pools.findOne({_id:poolId},{reactive:false});
 		if(!pool){
 			return;
 		}
@@ -32,6 +32,9 @@ Template.scoreTable.helpers({
 			var pair = Pairs.findOne({_id:pool.pairs[i]});
 			if(pair.player1 && pair.player2) pairList.push(pair);
 		}
+
+		var totalMatches = 0;
+		var completedMatches = 0;
 
 		// Create a match for each of these pairs, if it does not yet exist
 		for(var i=0;i<pairList.length;i++){
@@ -54,16 +57,25 @@ Template.scoreTable.helpers({
 					}
 				);
 
-				if(!match){
+				totalMatches += 1;
+
+				if(match==undefined){
 					// Match does not exist, create a new one
 
 					data = {"poolId":poolId};
-					data.pair1 = {"pairId": pairId1, "points":0};
-					data.pair2 = {"pairId": pairId2, "points":0};
+					data.pair1 = {"pairId": pairId1, "points":-1};
+					data.pair2 = {"pairId": pairId2, "points":-1};
 					Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
+				}
+				else{
+					if(match[pairId1]>0 && match[pairId2]>0) completedMatches += 1;
 				}
 			}
 		}
+
+		var completion = (totalMatches==0) ? 0 : completedMatches/totalMatches;
+		Pools.update({_id:poolId}, {$set:{"completion":completion}},{reactive:false});
+		console.log("pool completion "+completion);
 
 		return pairList;
 	},
@@ -75,6 +87,7 @@ Template.scoreTable.helpers({
 
 	'getPoints' : function(match, pairId){
 		var points = match[pairId];
+		if(points<0) return;
 		return points;
 	},
 
@@ -104,11 +117,12 @@ Template.scoreTable.events({
 		var poolId = this._id; // "this" is the parameter of the template
 		for(var i=0; i<points.length;i++){
 			var score = points[i].value;
+			if(score=="") score = "-1";
 			var matchId = points[i].getAttribute('data-matchid');
 			var pairId = points[i].getAttribute('data-pairid');
 
 			// the fact that this is pair1 and not pair2 is irrelevant for the update (just for parsing convenience)
-			data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score)}}; 
+			data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score,10)}}; 
 			// Update the DB !
 			Meteor.call("updateMatch", data);
 		}

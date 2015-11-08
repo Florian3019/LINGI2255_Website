@@ -277,7 +277,7 @@ var handleBracketErrors = function(document){
 
     startButton =  document.getElementById("start");
 
-    yearData = Years.findOne({_id:year});
+    yearData = Years.findOne({_id:year},{reactive:false});
     if(yearData==undefined){
       console.info("No data found for year "+year);
       setInfo(document, "Pas de données trouvées pour l'année "+year);
@@ -291,7 +291,7 @@ var handleBracketErrors = function(document){
       if(year!=undefined && type!=undefined && category!=undefined && startButton!=undefined) startButton.style.visibility = 'hidden';
       return;  
     } 
-    typeData = Types.findOne({_id:typeId});
+    typeData = Types.findOne({_id:typeId},{reactive:false});
     if(typeData==undefined){
       console.error("handleBracketErrors : id search on the Types DB failed");
       if(year!=undefined && type!=undefined && category!=undefined && startButton!=undefined) startButton.style.visibility = 'hidden';
@@ -335,31 +335,24 @@ var handleBracketErrors = function(document){
     return allWinners;
 }
 
-var hasPoints = function(pairData){
-  var score = pairData.data.score;
-  return score === parseInt(score, 10); // Test if points is an integer
+var setCompletion = function(completion){
+  year = Session.get("PoolList/Year");
+  type = Session.get("PoolList/Type");
+  category = Session.get("PoolList/Category");
+
+  yearData = Years.findOne({"_id":year},{reactive:false});
+  typeId = yearData[type];
+  var str = "completion.brackets.";
+  str = str.concat(category);
+  data = {};
+  data[str] = completion;
+  Types.update({"_id":typeId}, {$set:data},{reactive:false});
 }
 
-/**  
-    Computes the number of matches that the bracket will contain from the
-    Number of matches in the first round.
-    @pre : firstRoundMatchNumber is divisible by 2
-*/
-var getTotalMatchesFromStart =  function(firstRoundMatchNumber){
-  if(firstRoundMatchNumber%2 != 0){
-    console.error("getTotalMatchesFromStart : firstRoundMatchNumber is not a multiple of 2");
-    return;
-  }
-
-  var totalMatches = firstRoundMatchNumber;
-  // while(firstRoundMatchNumber > 1){
-  //   var firstRoundMatchNumber *= 0.5;
-  //   firstRoundMatchNumber += firstRoundMatchNumber%2;
-  //   firstRoundMatchNumber *= 0.5;
-  //   if(firstRoundMatchNumber<1) firstRoundMatchNumber = 1;
-  //   totalMatches += firstRoundMatchNumber;
-  // }
-  return totalMatches;
+var hasPoints = function(pairData){
+  if(pairData==undefined) return false;
+  var score = pairData.data.score;
+  return score === parseInt(score, 10); // Test if points is an integer
 }
 
 var makeBrackets = function(document){
@@ -396,7 +389,6 @@ var makeBrackets = function(document){
       b = {"pair":pair2, "data":data2};
 
       if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
-      totalMatches += 1;
 
       setCourt(a, b, 0);
       firstRound.push([a.data, b.data]);
@@ -406,7 +398,7 @@ var makeBrackets = function(document){
     }
   }
 
-
+  totalMatches += firstRound.length;
 
   brackets = [firstRound];
 
@@ -461,14 +453,20 @@ var makeBrackets = function(document){
       b = newRound[i+1];
 
       setCourt(a, b, round+1); // Define which court to use for that match
+
+      if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
+
       nextRound.push([a==undefined ? empty:a.data, b==undefined ? empty:b.data]);
     } 
 
     if(newRound.length%2 != 0 && newRound.length!=1){
       // Uneven number of matches !
       last = newRound[newRound.length-1];
+      if(hasPoints(last)) matchesCompleted += 1; // This is completed by default since there is no oppononent to fight
       nextRound.push([last==undefined ? empty:last.data, getPlaceHolder(round+1)]);
     }
+
+    totalMatches += nextRound.length;
 
     // Add that object to the list of stuff to display
     if(nextRound.length>0) brackets.push(nextRound);
@@ -498,6 +496,10 @@ var makeBrackets = function(document){
     thisRound = newRound;
     round++;
   }
+
+  completionPercentage = (totalMatches==0) ? 0 : matchesCompleted/totalMatches;
+  setCompletion(completionPercentage);
+  // console.log("completion : " +completionPercentage);
 
   return brackets;
 }
@@ -559,7 +561,6 @@ Template.brackets.events({
     score = parseInt(score);
     setPoints(pair, round, score);
     Pairs.update({"_id":pairId}, {$set: {"tournament":pair.tournament}});
-    // changed = true;
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   }
 

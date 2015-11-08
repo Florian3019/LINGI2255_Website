@@ -3,6 +3,7 @@
 
 var drake; // Draggable object
 
+const categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites"];
 const CategoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites"};
 const TypesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
 // Returns a list of pair moves
@@ -233,12 +234,19 @@ Template.poolList.helpers({
 		poolIdList = typeData[category];
 		poolList = [];
 		
+		totalNumberOfPairs = 0;
+		totalCompletion = 0;
+
 		const MAXCOLUMNS = 3; // Change this value if needed
 		var k = 0;
 		var column = [];
 		if(poolIdList){
 			for(var i=0;i<poolIdList.length;i++){
 				pool = Pools.findOne({_id: poolIdList[i]});
+				
+				totalNumberOfPairs += pool.pairs.length;
+				poolCompletion = pool.completion;
+				totalCompletion += pool.pairs.length * (poolCompletion==undefined ? 0 : poolCompletion);
 				
 				if(k>=MAXCOLUMNS){
 					poolList.push(column);
@@ -263,6 +271,14 @@ Template.poolList.helpers({
 			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
 		}
 
+		var completion = (totalNumberOfPairs==0) ? 0 : totalCompletion/totalNumberOfPairs;
+
+		if(totalNumberOfPairs!=0){
+			var str = "completion.pools.".concat(category);
+			updateData = {};
+			updateData[str] = completion
+			Types.update({_id:typeData._id},{$set:updateData});
+		}
 		return poolList;
 	},
 
@@ -333,6 +349,9 @@ var hideSuccessBox = function(document){
 	if(box!=undefined) box.setAttribute("hidden",""); // Hide success message if any
 };
 
+/*
+	Updates the arrow of the collapsable menu
+*/
 var updateArrow = function(document, info){
 	prevInfo = Session.get("PoolList/Selected");
 	if(prevInfo!=undefined){
@@ -360,6 +379,9 @@ var updateArrow = function(document, info){
 	Session.set("PoolList/Selected", info);
 };
 
+/*
+	Collapses all menus when a new one is clicked
+*/
 var collapseMenus = function(document, event){
 	info = Session.get("PoolList/Selected");
 	if(info==undefined) return;
@@ -434,7 +456,7 @@ Template.poolList.events({
 	/*
 		Collects the state of the table of pools to save it into the db
 	*/
-	'click #save':function(event){
+	'click #savePools':function(event){
 		/*
 			Move the pairs in their new pool
 		*/
@@ -547,3 +569,90 @@ Template.poolContainerTemplate.events({
 		Session.set("PoolList/ChosenScorePool", event.currentTarget.dataset.poolid);
 	},
 });
+
+
+Template.CategorySelect.helpers({
+	'getTypeCompletion' : function(type){
+		year = Session.get("PoolList/Year");
+		yearSearchData = {};
+		yearSearchData[type] = 1;
+		yearData = Years.findOne({"_id":year}, yearSearchData);
+		typeId = yearData[type];
+		typeData = Types.findOne({"_id":typeId},{"completion":1});
+		if(typeData==undefined || typeData.completion==undefined) return "(?)";
+
+		typeCompletion = 0;
+		nonEmptyCat = 0;
+
+		var completionData = typeData["completion"];
+		if(completionData==undefined) return "(?)";
+
+		for(var i=0; i<categoriesKeys.length;i++){
+			var cPools = completionData["pools"][categoriesKeys[i]];
+			if(cPools!=undefined){
+				nonEmptyCat+=2;
+				typeCompletion += cPools;
+			}
+			var cBrackets = completionData["brackets"][categoriesKeys[i]];				
+			if(cBrackets!=undefined){
+				typeCompletion += cBrackets;
+			}
+		}
+
+		completion = (nonEmptyCat==0) ? 0 : typeCompletion/nonEmptyCat;
+
+		var perc = completion*100;
+		var toReturn = "("+perc.toFixed(0)+"%)";
+		return toReturn;
+	}
+});
+
+var formatPerc = function(perc){
+	return "("+perc.toFixed(0)+"%)";
+}
+
+Template.poolBracketsSelect.helpers({
+	'getBracketCompletion' : function(type, category){
+		year = Session.get("PoolList/Year");
+		yearSearchData = {};
+		yearSearchData[type] = 1;
+		yearData = Years.findOne({"_id":year}, yearSearchData);
+		typeId = yearData[type];
+		typeData = Types.findOne({"_id":typeId},{"completion.brackets":1});
+		if(typeData==undefined || typeData.completion==undefined || typeData.completion.brackets==undefined || typeData.completion.brackets[category]==undefined) return "(?)";
+		var perc = typeData.completion.brackets[category]*100;
+		return formatPerc(perc);
+	},
+
+	'getPoulesCompletion' : function(type, category){
+		year = Session.get("PoolList/Year");
+		yearSearchData = {};
+		yearSearchData[type] = 1;
+		yearData = Years.findOne({"_id":year}, yearSearchData);
+		typeId = yearData[type];
+		typeData = Types.findOne({"_id":typeId},{"completion.pools":1});
+		if(typeData==undefined || typeData.completion==undefined || typeData.completion.pools==undefined || typeData.completion.pools[category]==undefined) return "(?)";
+		var perc = typeData.completion.pools[category]*100;
+		return formatPerc(perc);
+	},
+
+	'getCategoryCompletion' : function(type, category){
+		year = Session.get("PoolList/Year");
+		yearSearchData = {};
+		yearSearchData[type] = 1;
+		yearData = Years.findOne({"_id":year}, yearSearchData);
+		typeId = yearData[type];
+
+		searchData = {};
+		searchData["completion.pools.".concat(category)] = 1;
+		searchData["completion.brackets.".concat(category)] = 1;
+		typeData = Types.findOne({"_id":typeId},searchData);
+		if(typeData==undefined || typeData.completion==undefined || typeData.completion.pools==undefined || typeData.completion.pools[category]==undefined) return "(?)";
+		cPool = typeData.completion.pools[category];
+		cBrackets = 0;
+		if(typeData.completion.brackets!=undefined) cBrackets = (typeData.completion.brackets[category]==undefined) ? 0 : typeData.completion.brackets[category];
+		var completion = (cBrackets + cPool)/2
+		var perc = completion*100;
+		return formatPerc(perc);
+	}
+})

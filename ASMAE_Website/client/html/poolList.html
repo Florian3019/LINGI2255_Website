@@ -75,7 +75,7 @@
 
                               {{#with getYear}}
                                 {{#with getType this}}
-                                  <button type="button" id="save" class="btn btn-default btn-lg">
+                                  <button type="button" id="savePools" class="btn btn-default btn-lg">
                                     <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
                                   </button>
 
@@ -117,29 +117,29 @@
 <!-- Param : TYPE -->
 <template name="CategorySelect">
   <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span> 
-  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}}</a>
+  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
   <ul class="nav collapse CategoryOption" id="{{TYPE}}" role="menu" aria-labelledby="btn-{{TYPE}}">
-    <li>{{>PoolBracketsSelect ID=TYPE CAT="preMinimes" DESC="Pré Minimes"}}</li>
-    <li>{{>PoolBracketsSelect ID=TYPE CAT="minimes" DESC="Minimes"}}</li>
-    <li>{{>PoolBracketsSelect ID=TYPE CAT="cadets" DESC="Cadet"}}</li>
-    <li>{{>PoolBracketsSelect ID=TYPE CAT="scolars" DESC="Scolaires"}}</li>
-    <li>{{>PoolBracketsSelect ID=TYPE CAT="juniors" DESC="Junior"}}</li>
-    <li>{{>PoolBracketsSelect ID=TYPE CAT="seniors" DESC="Seniors"}}</li>
-    <li>{{>PoolBracketsSelect ID=TYPE CAT="elites" DESC="Elites"}}</li>
+    <li>{{>poolBracketsSelect ID=TYPE CAT="preMinimes" DESC="Pré Minimes"}}</li>
+    <li>{{>poolBracketsSelect ID=TYPE CAT="minimes" DESC="Minimes"}}</li>
+    <li>{{>poolBracketsSelect ID=TYPE CAT="cadets" DESC="Cadet"}}</li>
+    <li>{{>poolBracketsSelect ID=TYPE CAT="scolars" DESC="Scolaires"}}</li>
+    <li>{{>poolBracketsSelect ID=TYPE CAT="juniors" DESC="Junior"}}</li>
+    <li>{{>poolBracketsSelect ID=TYPE CAT="seniors" DESC="Seniors"}}</li>
+    <li>{{>poolBracketsSelect ID=TYPE CAT="elites" DESC="Elites"}}</li>
   </ul>
 </template>
 
-<template name="PoolBracketsSelect">
+<template name="poolBracketsSelect">
   <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_category" style="display:none;"></span> 
-  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory" data-target="#{{this.ID}}_{{this.CAT}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}}</a>
+  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory" data-target="#{{this.ID}}_{{this.CAT}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
   <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
     <li class="PoolOption" data-category="{{this.CAT}}" data-type="{{this.ID}}" >
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_pool" style="display:none"></span> 
-      Poule
+      Poules {{getPoulesCompletion this.ID this.CAT}}
     </li>
     <li class="BracketOption" data-category="{{this.CAT}}" data-type="{{this.ID}}">
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_bracket" style="display:none"></span> 
-      Tournoi
+      Tournoi {{getBracketCompletion this.ID this.CAT}}
     </li>
   </ul>
 </template>
