@@ -183,13 +183,10 @@ var resetBrackets = function(document){
   /*  Prevent duplication of the brackets --> remove the previous one */
     var myNode = document.getElementById("gracketContainer");
     if(myNode!=undefined) clearInner(myNode);
-
-    console.log("resetBrackets");
-    console.log(document.getElementById("gracketContainer"));
 }
 
 var displayBrackets =  function(document,brackets){
-  console.log("displayBrackets");
+  gracketContainer = document.getElementById("gracketContainer");
   if(gracketContainer!=undefined) gracketContainer.removeAttribute("hidden");
   gracket = document.getElementsByClassName("my_gracket");
   
@@ -453,7 +450,6 @@ var makeBrackets = function(document){
 
       var last2 = undefined;
       if(last!=undefined) last2 = setRoundData(last).r;
-      console.log(last2);
       newRound.push(last2);
     }
 
@@ -479,16 +475,12 @@ var makeBrackets = function(document){
 
     // If newRound.length == 1 --> we are at the last 2 pairs of the tournament and need to display the winner
     if(newRound.length==1){
-      console.log(newRound);
-      console.log(thisRound);
       // If there are only 2 pairs in the tournament, we need to take the information from the firstRound (or in this case thisRound)
       // If there are only 2 pairs in the tournament, we need to take the information from the newly created round
       // a = newRound.length==1 ? getBestFrom2(thisRound[0], thisRound[1], round) : getBestFrom2(newRound[0], newRound[1], round+1);
       // r = newRound.length==1 ? round : round+1;
       a = getBestFrom2(thisRound[0], thisRound[1], round);
       r = round;
-
-      console.log(a);
 
       if(a!=undefined){
         if(r<a.pair.tournament.length){
@@ -506,39 +498,6 @@ var makeBrackets = function(document){
     thisRound = newRound;
     round++;
   }
-
-  console.log(brackets);
-
-      // brackets = [
-      //   // [
-      //   //   [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1}, {"name" : "James Coutry", "id" : "james-coutry", "seed" : 3} ],
-      //   //   [ {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5}, {"name" : "Teddy Koufus", "id" : "teddy-koufus", "seed" : 8} ],
-      //   //   [ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10}, {"name" : "Scott Anderson", "id" : "scott-anderson", "seed" : 12} ],
-      //   //   [ {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14}, {"name" : "Jake Coutry", "id" : "jake-coutry", "seed" : 15} ]
-      //   // ],
-      //   [
-      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"}, {"name" : "Anothy Hopkins", "id" : "anthony-hopkins", "seed" : 5, "visibility":"visible"}],
-      //     [ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"visible"}, {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14, "visibility":"visible"} ],
-      //     [ {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"visible"}, {"name" : "Sammy Zettersten", "id" : "sammy-zettersten", "seed" : 14, "visibility":"visible"} ]
-      //   ],
-      //   [
-      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"visible"} ],
-      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"hidden"} ]
-      //   ],
-      //   [
-      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"}, {"name" : "Ryan Anderson", "id" : "ryan-anderson", "seed" : 10, "visibility":"visible"} ]
-      //   ],
-      //   [
-      //     [ {"name" : "Erik Zettersten", "id" : "erik-zettersten", "seed" : 1, "visibility":"visible"} ]
-      //   ]
-      // ];
-
-
-
-
-
-
-
 
   return brackets;
 }
@@ -560,8 +519,6 @@ Template.gracketTemplate.onRendered(function(){
   displayBrackets(document, brackets);
 });
 
-// var changed = false;
-
 Template.brackets.events({
 
 	// Do something when the user clicks on a player
@@ -582,9 +539,7 @@ Template.brackets.events({
   },
 
   'click #start':function(event){
-    // if(changed){
       callback = function(err, status){
-        // changed = false;
         Session.set('brackets/update',Session.get('brackets/update') ? false:true);
       };
       console.log("calling startTournament");
@@ -592,7 +547,6 @@ Template.brackets.events({
       type = Session.get('PoolList/Type');
       cat = Session.get('PoolList/Category');
       Meteor.call('startTournament', year, type, cat, callback);
-    // }
   },
 
   'click #saveScore':function(event){
