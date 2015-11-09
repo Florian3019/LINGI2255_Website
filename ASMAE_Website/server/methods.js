@@ -403,6 +403,10 @@ Meteor.methods({
 			data.dispoDimanche = courtData.dispoDimanche;
 		}
 
+		if(courtData.free !== null && typeof courtData.free !== 'undefined'){
+			data.free = courtData.free;
+		}
+
 		if(typeof courtData.dispoSamedi !== 'undefined' && typeof courtData.dispoDimanche !== 'undefined')
 		{
 			if(courtData.dispoSamedi || courtData.dispoDimanche){
@@ -436,6 +440,7 @@ Meteor.methods({
 		else
 		{
 			// Court already exists, so just update it :
+
 			Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
 				if(err){
 					throw new Meteor.Error("updateCourt error : during Courts.update", err);
@@ -983,7 +988,8 @@ Meteor.methods({
 			poolId:<poolId>,
 			<pairID>:<points>,
 			<pairID>:<points>,
-			courtId:<courtID>
+			courtId:<courtID>,
+			day:<matchDate> // Saturday or Sunday
 		}
 
 		matchData is expected to be formated like this :
@@ -1043,6 +1049,14 @@ Meteor.methods({
 						}
 					);
 
+			// Set the day for the match
+
+			if(matchData.pair1.day=="saturday" || matchData.pair1.day=="family"){
+				data.day="Saturday";
+			}
+			else{
+				data.day="Sunday";
+			}
 
 			if(matchId){
 				// The match already exists
@@ -1302,7 +1316,7 @@ Meteor.methods({
 			yearTable = Meteor.call('updateYear',yearData);
 		}
 
-		return Meteor.call('getNextPoolInPoolList', typeTable, category);
+		return Meteor.call('getNextPoolInPoolList', typeTable, type, category);
 	},
 
 	/*
@@ -1314,7 +1328,7 @@ Meteor.methods({
 		This pool should be the first 'not full' pool it encounters while iterating over the list of pools
 		If all current pools are full, create a new pool, update the Types table and returns the poolID
 	*/
-	'getNextPoolInPoolList' : function(typeTable, category) {
+	'getNextPoolInPoolList' : function(typeTable, type, category) {
 		console.log(typeTable);
 		var poolList = typeTable[category];
 		console.log(poolList);
@@ -1335,6 +1349,11 @@ Meteor.methods({
 
 		// no 'not full' pool found, creating a new one
 		var poolID = Pools.insert({});
+
+		// Assign a court to the new pool
+
+		Meteor.call('addCourtToPool',poolID,type);
+
 		poolList = [poolID];
 		data = {};
 		data._id = typeTable._id;
@@ -1357,6 +1376,44 @@ Meteor.methods({
 			list.push(data._id);
 		})
 	},
+
+	'addCourtToPool' : function(PoolID, type) {
+        
+        if(!PoolID){
+            console.error("addCourtToPool: This is not a valid pool");
+            return;
+        }
+
+        var pool = Pools.findOne({_id: PoolID});
+
+        if(!pool){
+            console.error("addCourtToPool: This is not a valid pool");
+            return;
+        }
+
+        var court;
+
+        if(type=="mixed" || type=="family"){
+        	// find a court available on Saturday
+        	court = Courts.findOne({$and: [{'dispoSamedi': true},{'free':true}]});
+        }
+        else{
+			// find a court available on Sunday
+			court = Courts.findOne({$and: [{'dispoDimanche': true},{'free':true}]});
+        }
+
+        if(court){
+        	// a court was found
+        	pool.courtId = court._id;
+        	Meteor.call('updatePool',pool);
+        	court.free=false;
+        	Meteor.call('updateCourt',court,null);
+        }
+        else{
+        	console.log("addCourtToPool: No court was found")
+        }
+
+    },
 
 	'removePair' : function(pairId){
 		Pairs.remove({_id:pairId});

@@ -38,6 +38,7 @@ Template.courtRegistration.helpers({
 
 Template.courtRegistration.events({
     'submit form': function(event){
+
         event.preventDefault();
         var address = {
             street : $('[name=street]').val(),
@@ -54,7 +55,8 @@ Template.courtRegistration.events({
         	instructions : $('[name=instructions]').val(),
         	ownerComment : $('[name=ownerComment]').val(),
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
-            dispoDimanche : $('[name=dispoDimanche]').is(":checked")
+            dispoDimanche : $('[name=dispoDimanche]').is(":checked"),
+            free : true // the court isn't used yet
         };
         if(this.court){ //Used for the update of an existing court
             courtData._id = this.court._id;
@@ -77,6 +79,7 @@ Template.courtRegistration.events({
 
 			};
 			Meteor.call('emailFeedback',Meteor.user().emails[0].address,"Concernant le prêt de votre terrain",data);}
+
 			Router.go('confirmation_registration_court', {_id: result});
 	    });
 

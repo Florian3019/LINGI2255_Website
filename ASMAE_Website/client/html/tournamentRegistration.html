@@ -48,7 +48,7 @@
      	<div class="form-group has-feedback" id="birthDayDiv">
       		<label for="day">Jour</label>
       		<div class="input-group">
-          <input type="number" id="birthDay" class="form-control" value="{{date}}" name="jour de naissance">
+          <input type="number" id="birthDay" class="form-control" min="1" value="{{date}}" name="jour de naissance">
           <div id="birthDayError" hidden>
             <span class="help-block" >Merci d'entrer le jour</span>
             <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -65,7 +65,7 @@
        	<div class="form-group has-feedback" id="birthMonthDiv">
         		<label for="month">Mois</label>
         		<div class="input-group">
-            <input type="number" id="birthMonth" class="form-control" value="{{date}}" name="mois de naissance">
+            <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{date}}" name="mois de naissance">
             <div id="birthMonthError" hidden>
               <span class="help-block" >Merci d'entrer le mois</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -82,7 +82,7 @@
        	<div class="form-group has-feedback" id="birthYearDiv">
         		<label for="year">Année</label>
         		<div class="input-group">
-            <input type="number" id="birthYear" class="form-control" value="{{date}}" name="année de naissance">
+            <input type="number" id="birthYear" class="form-control" min="1900" value="{{date}}" name="année de naissance">
             <div id="birthYearError" hidden>
               <span class="help-block" >Merci d'entrer l'année</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -125,7 +125,7 @@
 		 <label for="text">Numéro de téléphone</label>
 	 <div class="input-group">
 	   <span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
-		 <input type="number" class="form-control" id="phone" value="{{phone}}" name="phone">
+		 <input type="number" class="form-control" id="phone" min="0" value="{{phone}}" name="phone">
 	   </div>
    </div>
    </div>
@@ -154,7 +154,7 @@
        			<div class="form-group has-feedback" id="numberDiv">
         			 <label for="text">Numéro</label>
         		 	  <div class="input-group">
-                <input type="number" class="form-control" id="addressnumber" value="{{addressNumber}}" name="addressNumber">
+                <input type="number" class="form-control" id="addressnumber" min="0" value="{{addressNumber}}" name="addressNumber">
                 <div id="numberError" hidden>
                   <span class="help-block" >Merci d'entrer votre numéro</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -173,7 +173,7 @@
       		<div class="col-md-2">
        			<div class="form-group">
          			<label for="text">Boite</label>
-         			<input type="text" class="form-control" id="box" value="{{boxNumber}}" name="boxNumber">
+         			<input type="text" class="form-control" id="box" min="0" value="{{boxNumber}}" name="boxNumber">
        		 	</div>
       		</div>
 

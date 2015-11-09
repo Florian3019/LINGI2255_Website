@@ -493,10 +493,25 @@ Template.poolList.events({
 			return;
 		}
 
+		// the court assigned to this pair is now available
+
+		var pool = Pools.findOne({_id : poolId});
+
+		if(pool.courtId){
+
+			var court = Courts.findOne({_id : pool.courtId});
+			court.free = true;
+
+			console.log(court);
+
+			Meteor.call('updateCourt',court,null);
+		}
+
 		Meteor.call('removePool', poolId, year, type, category);
 	},
 
 	'click #addPool':function(event){
+
 		var category = Session.get('PoolList/Category');
 		var type = Session.get('PoolList/Type');
 		var year = Session.get('PoolList/Year');
@@ -521,6 +536,7 @@ Template.poolList.events({
 
 		/*	Create the new pool	*/
 		var newPoolId = Pools.insert({"pairs":[]});
+		Meteor.call('addCourtToPool',newPoolId,type);
 		var data = {$push:{}}
 		data.$push[category] = newPoolId;
 		/*	Add that pool to the list of pools of the corresponding type	*/
