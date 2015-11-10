@@ -1378,7 +1378,7 @@ Meteor.methods({
 	},
 
 	'addCourtToPool' : function(PoolID, type) {
-        
+
         if(!PoolID){
             console.error("addCourtToPool: This is not a valid pool");
             return;
@@ -1485,8 +1485,13 @@ Meteor.methods({
 								}
 
 								// Send the request
-								Meteor.http.post(postURL, options, onError);
-								console.log("Email sent");
+                if (Meteor.call('isStaff') || Meteor.call('isAdmin')){// || Meteor.user().emails[0].address == to) {
+                  Meteor.http.post(postURL, options, onError);
+                  console.log("Email sent");
+                }
+                else{
+                  console.error("Forbidden permissions to send mail");
+                }
 	},
 
 
@@ -1544,24 +1549,6 @@ Meteor.methods({
 			Meteor.call("updatePairs",{player1: {_id:userID}});
 		}
 	}
-
-
-/* This one is for sending email with smtp and the MAIL_URL environment variable but i can't connect this one with google.
-	'sendEmail' : function(to, from, subject, text){
-		check([to, from, subject, text], [String]);
-
-		// Let other method calls from the same client start running,
-		// without waiting for the email sending to complete.
-		this.unblock();
-
-		Email.send({
-			to: to,
-			from: from,
-			subject: subject,
-			text: text
-		});
-	}
-	*/
 
 
 
