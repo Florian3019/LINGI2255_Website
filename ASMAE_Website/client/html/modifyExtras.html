@@ -2,6 +2,7 @@
 	<form role="form">
 	<div>
 		<h4> Extras actuels: </h4>
+		{{#if hasExtras}}
 		<div class="row">
 			<div class="col-md-3">
 		    	<label for="text"> Nom:</label>
@@ -13,6 +14,9 @@
 		    	<label for="text"> Commentaire:</label>
 		  	</div>
 	  	</div>
+	  	{{else}}
+	  		Aucun extras
+	  	{{/if}}
 		<div class="form-group">
 		    {{#each extras}}
 		      	<div class="row">
