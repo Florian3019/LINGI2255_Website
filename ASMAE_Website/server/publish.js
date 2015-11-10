@@ -45,7 +45,6 @@ Meteor.publish('Extras', function(){
 
 
 Meteor.publish('users', function () {
-	//var res = Meteor.users.find({},{});
 	var res = Meteor.users.find({});
 
 	return res;
