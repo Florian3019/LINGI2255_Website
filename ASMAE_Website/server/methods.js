@@ -11,7 +11,6 @@
 
 */
 
-
 Meteor.methods({
 
 	'objectIsEmpty' : function(obj) {
@@ -91,24 +90,24 @@ Meteor.methods({
 			return undefined;
 		}
 		if(9 <= age && age <= 10){
-			return "preMinimes";
+			return categoriesKeys[0];
 		}
 		if(11 <= age && age <= 12){
-			return "minimes";
+			return categoriesKeys[1];
 		}
 		if(13 <= age && age <= 14){
-			return "cadet";
+			return categoriesKeys[2];
 		}
 		if(15 <= age && age <= 16){
-			return "scolaire";
+			return categoriesKeys[3];
 		}
 		if(17 <= age && age <= 19){
-			return "junior";
+			return categoriesKeys[4];
 		}
 		if(20 <= age && age <= 40){
-			return "seniors";
+			return categoriesKeys[5];
 		}
-		return "elites";
+		return categoriesKeys[6];
 	},
 
 	'getPairCategory' : function(type, p1, p2){
@@ -172,8 +171,8 @@ Meteor.methods({
 	'getPairType' : function(dateMatch, p1, p2){
 		var type;
 
-		if(dateMatch == "family"){
-			return "family";
+		if(dateMatch == typeKeys[3]){ // Family
+			return typeKeys[3];
 		}
 
 		var gender1;
@@ -196,10 +195,10 @@ Meteor.methods({
 				return false;
 			}
 			if(gender1){
-				return gender1=="M" ? "men" : "women";
+				return gender1=="M" ? typeKeys[0] : typeKeys[1]; // men or women
 			}
 			if(gender2){
-				return gender2=="M" ? "men" : "women";
+				return gender2=="M" ? typeKeys[0] : typeKeys[1]; // men or women
 			}
 		}
 		if(dateMatch == "saturday"){
@@ -210,7 +209,7 @@ Meteor.methods({
 			if(!gender1 && !gender2){
 				console.warn("No information on the gender available, setting type to mixed");
 			}
-			return "mixed";
+			return typeKeys[2]; //mixed
 		}
 	},
 
@@ -293,16 +292,15 @@ Meteor.methods({
 			return;
 		}
 
-		// list = family tournament case
-		cat = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites", "list"];
+		console.log(typeData);
 
 		var data = {};
-		for (var i=0;i<cat.length;i++){
-			if(typeData[cat[i]]!=undefined){
+		for (var i=0;i<categoriesKeys.length;i++){
+			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
-				data.$addToSet[cat[i]] = {$each : typeData[cat[i]]};
+				data.$addToSet[categoriesKeys[i]] = {$each : typeData[categoriesKeys[i]]};
 			}
-			var b = cat[i].concat("Bracket");
+			var b = categoriesKeys[i].concat("Bracket");
 			if(typeData[b]!=undefined){
 				if(!data.$set) data['$set'] = {};
 				data.$set[b] = typeData[b];

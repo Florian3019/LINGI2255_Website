@@ -118,24 +118,24 @@ Template.tournamentRegistration.helpers({
 				return undefined;
 			}
 			if(9 <= age && age <= 10){
-				return "preMinimes";
+				return categoriesKeys[0];
 			}
 			if(11 <= age && age <= 12){
-				return "minimes";
+				return categoriesKeys[1];
 			}
 			if(13 <= age && age <= 14){
-				return "cadet";
+				return categoriesKeys[2];
 			}
 			if(15 <= age && age <= 16){
-				return "scolaire";
+				return categoriesKeys[3];
 			}
 			if(17 <= age && age <= 19){
-				return "junior";
+				return categoriesKeys[4];
 			}
 			if(20 <= age && age <= 40){
-				return "seniors";
+				return categoriesKeys[5];
 			}
-			return "elites";
+			return categoriesKeys[6];
 		}
 
 		aloneDependency.depend(); // Refresh when button is hit
