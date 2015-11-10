@@ -1,15 +1,24 @@
 <template name="playersInfo">
   <div class="container">
     <form role="form">
-      <h2>Chercher un joueur:</h2>
-      <form role="form-group">
-        <div class="form-group">
-          <label for="text">Nom:</label>
-          <input type="text" class="form-control" id="lastname" name="lastname">
-          <label for="text">Prénom:</label>
-          <input type="text" class="form-control" id="firstname" name="firstname">
-          <label for="email">Addresse email:</label>
-          <input type="email" class="form-control" id="email" name="email">
+      <div class="form-group">
+        <h2>Chercher un joueur:</h2>
+        <div class="row">
+          <div class="col-sm-3">
+            <label for="text">Prénom:</label>
+            <input type="text" class="form-control" id="firstname" name="firstname">
+          </div>
+          <div class="col-sm-3">
+            <label for="text">Nom:</label>
+            <input type="text" class="form-control" id="lastname" name="lastname">
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-3">
+            <label for="email">Addresse email:</label>
+            <input type="email" class="form-control" id="email" name="email">
+          </div>
         </div>
         <div class="form-group">
           <label for="sex">Sexe:</label>
@@ -42,7 +51,7 @@
       </select>
       </div>
       <button type="submit" class="btn btn-default">Rechercher</button>
-    </form>
+      </div>
 </form>
 <div>
   <ul class="list-group">
