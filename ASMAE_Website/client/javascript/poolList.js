@@ -3,11 +3,6 @@
 
 var drake; // Draggable object
 
-const typeKeys = ["men", "women", "mixed", "family"];
-const categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites"];
-const CategoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites"};
-const TypesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
-
 var setInfo = function(document, msg){
   infoBox = document.getElementById("infoBox");
   infoMsg = document.getElementById("infoMsg");
@@ -486,7 +481,7 @@ Template.poolList.events({
 
 		pool = Pools.findOne({"_id":poolId}, {"pairs":1});
 		pairsToRemove = pool.pairs;
-		
+
 		if(pairsToRemove.length!=0){
 			// We need another pool to put these pairs into
 			yearData = Years.findOne({"_id":year});
@@ -581,7 +576,7 @@ Template.poolList.helpers({
 		var t = Types.findOne({_id:yearData[type]});
 
 		if(type!=undefined && t==undefined){
-			setInfo(document, "Pas de données trouvées pour le type "+ TypesTranslate[Session.get("PoolList/Type")] + " de l'année "+Session.get('PoolList/Year'));
+			setInfo(document, "Pas de données trouvées pour le type "+ typesTranslate[Session.get("PoolList/Type")] + " de l'année "+Session.get('PoolList/Year'));
 		}
 		else{
 			infoBox =document.getElementById("infoBox");
@@ -595,8 +590,8 @@ Template.poolList.helpers({
 		category = Session.get('PoolList/Category');
 		poolList = typeData[category];
 		if(poolList==undefined || poolList.length==0 && category!=undefined){
-			setInfo(document, "Pas de poules trouvées pour la catégorie " + CategoriesTranslate[Session.get("PoolList/Category")]
-				+ " du type " + TypesTranslate[Session.get("PoolList/Type")]
+			setInfo(document, "Pas de poules trouvées pour la catégorie " + categoriesTranslate[Session.get("PoolList/Category")]
+				+ " du type " + typesTranslate[Session.get("PoolList/Type")]
 				+ " de l'année "+Session.get('PoolList/Year'));
 			return true;
 		}
@@ -856,7 +851,7 @@ Template.CategorySelect.helpers({
 		var toReturn = [];
 		for(var i=0;i<categoriesKeys.length;i++){
 			key = categoriesKeys[i];
-			toReturn.push({"key":key, "value":CategoriesTranslate[key]});
+			toReturn.push({"key":key, "value":categoriesTranslate[key]});
 		}
 
 		return toReturn;
@@ -929,7 +924,7 @@ Template.modalItem.helpers({
 		for(var i=0; i<typeKeys.length;i++){
 			var key = typeKeys[i];
 			var selected = type===key ? true : false;
-			toReturn.push({"key":key, "value":TypesTranslate[key], "selected":selected})
+			toReturn.push({"key":key, "value":typesTranslate[key], "selected":selected})
 		}
 		console.log(toReturn);
 		return toReturn;
