@@ -3,6 +3,7 @@
 
 var drake; // Draggable object
 
+const typeKeys = ["men", "women", "mixed", "family"];
 const categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites"];
 const CategoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites"};
 const TypesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
@@ -477,10 +478,33 @@ Template.poolList.events({
 			Move the pairs from that pool in the 'to remove pairs'
 		*/
 		// Start by finding the pool container of the pool we'd like to remove, and take the pairs inside it
-		var pairsToRemove = document.getElementById("a"+poolId).children;
-		if(pairsToRemove.length != 0){
-			console.error("Can't remove a pool that is not empty");
-			return;
+		// var pairsToRemove = document.getElementById("a"+poolId).children;
+		// if(pairsToRemove.length != 0){
+		// 	console.error("Can't remove a pool that is not empty");
+		// 	return;
+		// }
+
+		pool = Pools.findOne({"_id":poolId}, {"pairs":1});
+		pairsToRemove = pool.pairs;
+		
+		if(pairsToRemove.length!=0){
+			// We need another pool to put these pairs into
+			yearData = Years.findOne({"_id":year});
+			typeData = Types.findOne({"_id":yearData[type]});
+			poolList = typeData[category];
+
+			if(poolList.length==0 && pairsToRemove.length != 0){
+				console.error("Can't remove the last pool, there are still single players linked to it");
+				return;
+			}
+
+			receivingPool = poolList[0]; // Pool that will receive the single players
+			Pools.update({"_id":receivingPool}, {$addToSet:{"pairs":{$each:pairsToRemove}}});
+		}
+
+		for(var i=0; i<pairsToRemove.length;i++){
+			Meteor.call("removeAllMatchesWithPair",pairsToRemove[i]);
+			Pairs.update({"_id":pairsToRemove[i]}, {$unset:{"tournament":"", "tournamentCourts":""}});
 		}
 
 		// the court assigned to this pair is now available
@@ -655,7 +679,7 @@ Template.poolList.helpers({
 			{	
 				/*	Defines what can be moved/dragged	*/
 				moves : function(el, source, handle, sibling) {
-		    		var isPairModal = (' ' + el.className + ' ').indexOf(' pairInfoModal ') > -1;
+					var isPairModal = (' ' + el.className + ' ').indexOf(' pairInfoModal ') > -1;
 		    		if(isPairModal){
 		    			// The modal must not be draggable
 		    			return false;
@@ -775,7 +799,11 @@ Template.poolContainerTemplate.onRendered(function(){
 
 Template.poolContainerTemplate.helpers({
 	'moreThanOnePair' : function(pairs){
-		return pairs.length>0;
+		for(var i=0;i<pairs.length;i++){
+			pair = Pairs.findOne({"_id":pairs[i]});
+			if(hasBothPlayers(pair)) return true;
+		}
+		return false;
 	}
 });
 
@@ -888,3 +916,28 @@ Template.poolBracketsSelect.helpers({
 		return formatPerc(perc);
 	}
 })
+
+/******************************************************************************************************************
+											modalItem
+*******************************************************************************************************************/
+
+Template.modalItem.helpers({
+	'getAvailableTypes':function(){
+		var toReturn = [];
+		var type = Session.get("PoolList/Type");
+
+		for(var i=0; i<typeKeys.length;i++){
+			var key = typeKeys[i];
+			var selected = type===key ? true : false;
+			toReturn.push({"key":key, "value":TypesTranslate[key], "selected":selected})
+		}
+		console.log(toReturn);
+		return toReturn;
+	},
+});
+
+// Template.modalItem.events({
+// 	'click .typeChosing' :function(event){
+// 		console.log(event);
+// 	}
+// })

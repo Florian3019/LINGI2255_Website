@@ -229,7 +229,7 @@
 
 <template name="modalItem">
  <!-- Modal -->
-  <div id="pairModal{{PAIR._id}}" class="modal fade pairInfoModal" role="dialog" style="cursor:auto">
+  <div id="pairModal{{PAIR._id}}" class="modal fade pairInfoModal " role="dialog" style="cursor:auto">
     <div class="modal-dialog">
 
       <!-- Modal content-->
@@ -255,20 +255,33 @@
               {{PAIR.player1.constraint}}
             {{/if}}
           </div>
-          {{#unless equals PAIR.player2._id undefined}}
-          <div class="panel panel-primary pairInfoBox">
-              {{>playerInfoTemplate ID=PAIR.player2._id MODAL='pairModal'}}
+          {{#if equals PAIR.player2._id undefined}}
+          <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                TODO
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                {{#each getAvailableTypes}}
+                  <li><a href="#" class="typeChosing">{{this.value}}</a></li>
+                {{/each}}
+              </ul>
+            </div>
 
-              {{#if PAIR.player2.wish}}
-                <h3>Souhaits</h3>
-                {{PAIR.player2.wish}}
-              {{/if}}
-              {{#if PAIR.player2.constraint}}
-                <h3>Contraintes</h3>
-                {{PAIR.player2.constraint}}
-              {{/if}}
-          </div>
-          {{/unless}}
+          {{else}}
+            <div class="panel panel-primary pairInfoBox">
+                {{>playerInfoTemplate ID=PAIR.player2._id MODAL='pairModal'}}
+
+                {{#if PAIR.player2.wish}}
+                  <h3>Souhaits</h3>
+                  {{PAIR.player2.wish}}
+                {{/if}}
+                {{#if PAIR.player2.constraint}}
+                  <h3>Contraintes</h3>
+                  {{PAIR.player2.constraint}}
+                {{/if}}
+            </div>
+          {{/if}}
         </div>
 
         <div class="modal-footer">

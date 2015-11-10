@@ -13,6 +13,13 @@
   box-sizing: inherit;
 }
 
+/*.modal { overflow: visible; }
+.modal-body { overflow-y: visible !important; }*/
+
+/*.bootstrap-select.btn-group .dropdown-menu.inner {
+    position: static;
+}*/
+
 .__slackin {
   float: right;
   margin-left: 10px;
