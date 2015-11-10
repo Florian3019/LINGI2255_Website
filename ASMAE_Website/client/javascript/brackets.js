@@ -4,7 +4,7 @@
 const react = {reactive: false};
 
 var canModifyCourt = function(pair, round){
-  var ret = (pair.tournamentCourts==undefined && round==0) || (pair.tournamentCourts!=undefined && round==pair.tournamentCourts.length)
+  var ret = pair==undefined || (pair.tournamentCourts==undefined && round==0) || (pair.tournamentCourts!=undefined && round==pair.tournamentCourts.length)
   return ret;
 }
 
@@ -58,7 +58,7 @@ var setCourt = function(roundData1, roundData2, round){
   }
 
   courtId = pair1.tournamentCourts[round];
-  if(courtId!=undefined && courtId!=pair2.tournamentCourts[round]){
+  if(courtId!=undefined && pair2!=undefined && pair2.tournament!=undefined && courtId!=pair2.tournamentCourts[round]){
     // Inconsistent data
     console.error("setCourt : 2 pairs that play together are not on the same court !");
     console.error(pair1);
@@ -67,8 +67,8 @@ var setCourt = function(roundData1, roundData2, round){
     return;
   }
 
-  roundData1.data.courtId = courtId;
-  roundData2.data.courtId = courtId;
+  if(roundData1.data != undefined) roundData1.data.courtId = courtId;
+  if(roundData2.data != undefined) roundData2.data.courtId = courtId;
 }
 
 var getPoints = function(pair, round){
@@ -102,6 +102,8 @@ var getBracketData = function(pair, round){ // /!\ Round starts at 0 /!\
       When changing this value, don't forget to change the min-width of the g_gracket h3 css element in brackets.html too
     */
     const MAXSIZE = 25;
+
+    if(pair==undefined || pair.player1==undefined || pair.player2==undefined) return;
 
     pairPlayer1 = Meteor.users.findOne({_id:pair.player1._id},{profile:1});
     pairPlayer2 = Meteor.users.findOne({_id:pair.player2._id},{profile:1});
@@ -350,13 +352,13 @@ var setCompletion = function(completion){
 }
 
 var hasPoints = function(pairData){
-  if(pairData==undefined) return false;
+  if(pairData==undefined || pairData.data==undefined) return false;
   var score = pairData.data.score;
   return score === parseInt(score, 10); // Test if points is an integer
 }
 
 var makeBrackets = function(document){
-  allWinners = handleBracketErrors(document);
+  allWinners = handleBracketErrors(document); // Table of winner pair Id
   if(allWinners==undefined) return;
   /********************************************
     First round creation

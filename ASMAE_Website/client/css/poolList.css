@@ -23,6 +23,10 @@
   background-color: inherit;
 }
 
+#specialTable{
+  background-color: inherit;
+}
+
 .parent{
   display: inline-block;
   vertical-align: top;
@@ -81,9 +85,9 @@
   color : green;
 }
 
-#pairstoremoveparent{
+/*#pairstoremoveparent{
   margin-left:200px;
-}
+}*/
 
 .handle {
   padding: 0 5px;

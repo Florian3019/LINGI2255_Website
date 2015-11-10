@@ -1,6 +1,7 @@
 Template.scoreTable.helpers({
 
 	'getLeader' : function(poolId){
+		if(poolId==undefined) return undefined;
 		pool = Pools.findOne({_id:poolId},{leader:1});
 		if(pool.leader){
 			pair = Pairs.findOne({_id:pool.leader},{player1:1});
@@ -68,7 +69,7 @@ Template.scoreTable.helpers({
 					Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
 				}
 				else{
-					if(match[pairId1]>0 && match[pairId2]>0) completedMatches += 1;
+					if(match[pairId1]>=0 && match[pairId2]>=0) completedMatches += 1;
 				}
 			}
 		}
