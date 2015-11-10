@@ -45,6 +45,10 @@ Template.modifyExtras.events({
 
 Template.modifyExtras.helpers({
 	
+	'hasExtras' : function(){
+		return Extras.find().fetch().length > 0;
+	},
+
 	'extras': function () {
      	return Extras.find();
     },

@@ -1,0 +1,50 @@
+/* CSS declarations go here */
+
+/* 
+	Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris
+*/
+.dropdown:hover .dropdown-menu {
+display: block;
+}
+
+/*.navbar-brand,
+.navbar-nav li a {
+    line-height: 42px;
+    height: 60px;
+    padding-top: 8px;
+}
+body {
+  padding-top: 80px;
+}
+@media (max-width: 979px) {
+  body {
+    padding-top: 0px;
+  }
+}*/
+
+/*.dropdown-menu li {
+	line-height: 6px;
+}*/
+
+/*
+html { 
+  background: url(tennis.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+*/
+
+.jumbotron {
+    margin-bottom: 0px;
+    background-image: url(tennis.jpg);
+    background-position: 0% 25%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    /*text-shadow: black 0.3em 0.3em 0.3em;*/
+}
+
+.homePage {
+   background-image: url(main.jpg);
+}

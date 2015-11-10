@@ -13,7 +13,6 @@ Template.courtInfo.events({
         var surface = event.target.surface.value;
         var courtType = event.target.courtType.value;
         var dispo = event.target.dispo.value;
-        console.log(dispo)
         var queryAd = {};
         var queryP = {};
         var query = {};

@@ -1213,6 +1213,12 @@ Meteor.methods({
 		Pools.remove({_id:poolId});
 	},
 
+	'removeAllMatchesWithPair' : function(pairId){
+		matchSearch = {};
+		matchSearch[pairId] = {$exists:true};
+		Matches.remove(matchSearch);
+	},
+
 	/*
 		@param pairID a valid ID for a pair that is the Pairs table
 
