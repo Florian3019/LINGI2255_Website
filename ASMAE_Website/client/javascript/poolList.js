@@ -817,6 +817,16 @@ Template.CategorySelect.helpers({
 		var perc = completion*100;
 		var toReturn = "("+perc.toFixed(0)+"%)";
 		return toReturn;
+	},
+
+	'getCategories' : function(){
+		var toReturn = [];
+		for(var i=0;i<categoriesKeys.length;i++){
+			key = categoriesKeys[i];
+			toReturn.push({"key":key, "value":CategoriesTranslate[key]});
+		}
+
+		return toReturn;
 	}
 });
 

@@ -120,13 +120,9 @@
   <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span> 
   <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
   <ul class="nav collapse CategoryOption" id="{{TYPE}}" role="menu" aria-labelledby="btn-{{TYPE}}">
-    <li>{{>poolBracketsSelect ID=TYPE CAT="preMinimes" DESC="Pré Minimes"}}</li>
-    <li>{{>poolBracketsSelect ID=TYPE CAT="minimes" DESC="Minimes"}}</li>
-    <li>{{>poolBracketsSelect ID=TYPE CAT="cadets" DESC="Cadet"}}</li>
-    <li>{{>poolBracketsSelect ID=TYPE CAT="scolars" DESC="Scolaires"}}</li>
-    <li>{{>poolBracketsSelect ID=TYPE CAT="juniors" DESC="Junior"}}</li>
-    <li>{{>poolBracketsSelect ID=TYPE CAT="seniors" DESC="Seniors"}}</li>
-    <li>{{>poolBracketsSelect ID=TYPE CAT="elites" DESC="Elites"}}</li>
+    {{#each getCategories}}
+      <li>{{>poolBracketsSelect ID=../TYPE CAT=this.key DESC=this.value}}</li>
+    {{/each}}
   </ul>
 </template>
 
