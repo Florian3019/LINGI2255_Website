@@ -267,9 +267,14 @@ Router.route('/modify-court/:_id', {
 
 });
 
-Router.route('/search-court', {
+Router.route('/recherche-terrain', {
 	name: 'courtSearch',
 	template: 'courtSearch'
+});
+
+Router.route('/terrains', {
+	name: 'courtsList',
+	template: 'courtsList'
 });
 
 Router.route('/modify-extras',{

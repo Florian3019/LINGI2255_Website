@@ -1,0 +1,27 @@
+<template name="courtsList">
+    <h3>Terrains inscrits pour ce tournoi:</h3>
+    <table class="table">
+  		<thead>
+        		<tr>
+                <th>Owner</th>
+          	    <th>Addresse</th>
+                <th>Surface</th>
+          	    <th>Type</th>
+                <th>Samedi</th>
+                <th>Dimanche</th>
+        		</tr>
+      	</thead>
+      	<tbody>
+      		{{#each courts}}
+      		<tr>
+            <td><a href="{{pathFor route='playerInfoPage'}}">{{courtOwner ownerID}}</a></td>
+      			<td><a href="{{pathFor route='courtInfoPage' _id=this._id}}">{{courtAddress addressID}}</a></td>
+            <td>{{surface}}</td>
+      			<td>{{courtType}}</td>
+            <td><span class="glyphicon {{checkedForDay dispoSamedi}}"></span></td>
+            <td><span class="glyphicon {{checkedForDay dispoDimanche}}"></span></td>
+      		</tr>
+      		{{/each}}
+      	</tbody>
+  	</table>
+</template>

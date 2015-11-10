@@ -1,6 +1,6 @@
 SearchSource.defineSource('courtsSearch', function(searchText, options) {
   var options = {};
-  
+
   if(searchText) {
     var regExp = buildRegExp(searchText);
     /*
