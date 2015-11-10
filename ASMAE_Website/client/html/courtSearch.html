@@ -17,6 +17,7 @@
         	<tbody>
         		{{#each getCourts}}
             {{#with courtInfos this}}
+            {{#if court._id}}
         		<tr>
               <td><a href="{{pathFor route='playerInfoPage'}}">{{courtOwner court.ownerID}}</a></td>
         			<td><a href="{{pathFor route='courtInfoPage' _id=court._id}}">{{{address.street}}}, {{{address.number}}}, {{{address.city}}}, {{{address.zipCode}}}</a></td>
@@ -25,6 +26,7 @@
               <td><span class="glyphicon {{checkedForDay court.dispoSamedi}}"></span></td>
               <td><span class="glyphicon {{checkedForDay court.dispoDimanche}}"></span></td>
         		</tr>
+            {{/if}}
             {{/with}}
         		{{/each}}
         	</tbody>
