@@ -44,6 +44,7 @@
                             {{else}}
 
                             {{#with getYear}} <!-- Returns a yearData -->
+                              {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
                               {{#with getType this}}
                                 <!-- Pool Tables -->
                                 {{#unless thereIsNoPool this}}
@@ -61,7 +62,7 @@
                                     <tr>
                                       <td>
                                         <table id='poolTable' class='table'>
-                                          {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->    
+                                              
                                           {{#each getPools this}} <!-- Returns a list of lists of poolData, one list by column -->
                                             <tr>
                                             {{#each this}} <!-- For each pool in the column -->
@@ -161,7 +162,7 @@
               
             </h3>
             <div class='PoolWrapper'>
-              <div class='poolContainer poule' id='{{POOL._id}}'> <!-- _id is here the id of the pool -->
+              <div class='poolContainer poule' id='a{{POOL._id}}'> <!-- _id is here the id of the pool (with css escape a) -->
                 {{#each POOL.pairs}} <!-- For each pair id in the pool -->
                   {{>poolItem PAIRID=this POOLID=../POOL._id LEADER=../POOL.leader}} <!-- Set ID to the id of the pool, so that we can make it draggable -->
                 {{/each}}

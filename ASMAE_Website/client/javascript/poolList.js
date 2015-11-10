@@ -287,6 +287,7 @@ var movePairs = function(document){
 
 		var pairId = c.id;
 		var newPoolId = c.parentNode.id;
+		newPoolId = newPoolId.substring(1, newPoolId.length); // Remove css excape character "a"
 		var previousPoolId = document.getElementById(pairId).getAttribute("data-startingpoolid");
 
 		if(previousPoolId!=newPoolId){
@@ -476,7 +477,7 @@ Template.poolList.events({
 			Move the pairs from that pool in the 'to remove pairs'
 		*/
 		// Start by finding the pool container of the pool we'd like to remove, and take the pairs inside it
-		var pairsToRemove = document.getElementById(poolId).children;
+		var pairsToRemove = document.getElementById("a"+poolId).children;
 		if(pairsToRemove.length != 0){
 			console.error("Can't remove a pool that is not empty");
 			return;
@@ -710,6 +711,7 @@ Template.alonePairsContainerTemplate.helpers({
 		if(poolIdList){
 			for(var i=0;i<poolIdList.length;i++){
 				pool = Pools.findOne({"_id": poolIdList[i]});
+				if(pool==undefined) continue;
 				for(var j=0; j<pool.pairs.length;j++){
 					var pair = Pairs.findOne({"_id":pool.pairs[j]});
 					if(!hasBothPlayers(pair)){
@@ -765,7 +767,10 @@ Template.poolItem.helpers({
 *******************************************************************************************************************/
 
 Template.poolContainerTemplate.onRendered(function(){
-  	drake.containers.push(document.querySelector('#'+this.data.POOL._id)); // Make the id this.data.ID draggable 
+	console.log("on rendered");
+	doc = document.querySelector('#a'+this.data.POOL._id);
+	console.log(doc);
+  	drake.containers.push(doc); // Make the id this.data.ID draggable 
 });
 
 Template.poolContainerTemplate.helpers({
