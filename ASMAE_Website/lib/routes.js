@@ -15,6 +15,12 @@ Router.route('/', {
 	name: 'home'
 });
 
+Router.route('/courtEmail', {
+	template: 'courtEmail',
+	name: 'courtEmail'
+});
+
+
 Router.route('/contacts', {
 	name: 'contacts',
 	template: 'contacts'

@@ -1,111 +1,85 @@
 <template name="modifyExtras">
-
 	<form role="form">
-
 	<div>
 		<h4> Extras actuels: </h4>
-
 		<div class="row">
-
-			<div class="col-md-2">
-		      <h5> Nom </h5>
+			<div class="col-md-3">
+		    	<label for="text"> Nom:</label>
 		  	</div>
-
-			<div class="col-md-2">
-		     <h5> Prix </h5>
+			<div class="col-md-3">
+		    	<label for="text"> Prix:</label>
 		  	</div>
-
-		  	<div class="col-md-2">
-		      <h5> Commentaire </h5>
+		  	<div class="col-md-3">
+		    	<label for="text"> Commentaire:</label>
 		  	</div>
 	  	</div>
-
-
 		<div class="form-group">
-		      {{#each extras}}
-		      		<div class="row">
-
-						<div class="col-md-2">
-					      <div class="form-group" id="nameExtra">
-					      		<div class="input-group">
-					          		<input type="text" class="form-control" id="name{{getID}}" value="{{getName}}" name="{{getName}}">
-					      		</div>
-					  		</div>
+		    {{#each extras}}
+		      	<div class="row">
+					<div class="col-md-3">
+					    <div class="form-group" id="nameExtra">
+					        <div class="input-group">
+					          	<input type="text" class="form-control" id="name{{getID}}" value="{{getName}}" name="{{getName}}">
+					      	</div>
 					  	</div>
-
-						<div class="col-md-2">
-					      <div class="form-group" id="priceExtra">
-					      		<div class="input-group">
-					         		 <input type="number" min="0" step="1" class="form-control" id="price{{getID}}" name="{{getPrice}}" value="{{getPrice}}">
-					      		</div>
-					  		</div>
+					</div>
+					<div class="col-md-3">
+					    <div class="form-group" id="priceExtra">
+					      	<div class="input-group">
+					         	<input type="number" min="0" step="1" class="form-control" id="price{{getID}}" name="{{getPrice}}" value="{{getPrice}}">
+					      	</div>
 					  	</div>
-
-					  	<div class="col-md-2">
-					      <div class="form-group" id="commentExtra">
-					      		<div class="input-group">
-					         		 <input type="text" class="form-control" id="comment{{getID}}" name="{{getComment}}" value="{{getComment}}">
-					      		</div>
-					  		</div>
+					</div>
+					<div class="col-md-3">
+					    <div class="form-group" id="commentExtra">
+					      	<div class="input-group">
+					        	<input type="text" class="form-control" id="comment{{getID}}" name="{{getComment}}" value="{{getComment}}">
+					      	</div>
 					  	</div>
-
-					  	<label class="radio-inline">
-            				<input type="radio" name="group{{getID}}" id="modify{{getID}}">
+					</div>
+					<label class="radio-inline">
+            			<input type="radio" name="group{{getID}}" id="modify{{getID}}">
             					Modifier
-          				 </label>
-
+          				</label>
            				<label class="radio-inline">
 				            <input type="radio" name="group{{getID}}" id="delete{{getID}}">
 				            Supprimer
-			           </label>
-
-			           <label class="radio-inline">
+			          	</label>
+			           	<label class="radio-inline">
 				            <input type="radio" name="group{{getID}}" id="cancel{{getID}}">
 				            Annuler
-			           </label>
+			           	</label>
 				  	</div>
-
-		      {{/each}}
-
-		 </div>
-
-
-	</div>
-
+		        {{/each}}
+		 	</div>
+		</div>
 		<h4> Ajouter un extra: </h4>
-
 		<div class="row">
-
 			<div class="col-md-3">
-		      <div class="form-group" id="nameExtra">
-		      		<label for="text">Nom</label>
+		      	<div class="form-group" id="nameExtra">
+		      		<label for="text">Nom:</label>
 		      		<div class="input-group">
 		          		<input type="text" class="form-control" id="nameExtra" name="nameExtra">
 		      		</div>
 		  		</div>
 		  	</div>
-
 			<div class="col-md-3">
 		      <div class="form-group" id="priceExtra">
-		      		<label for="number"> Prix</label>
+		      		<label for="number"> Prix:</label>
 		      		<div class="input-group">
 		         		 <input type="number" min="0" step="1" class="form-control" id="priceExtra" name="priceExtra">
 		      		</div>
 		  		</div>
 		  	</div>
-
 		  	<div class="col-md-3">
 		      <div class="form-group" id="comment">
-		      		<label for="text"> Commentaire</label>
+		      		<label for="text"> Commentaire:</label>
 		      		<div class="input-group">
 		         		 <input type="text" class="form-control" id="comment" name="comment">
 		      		</div>
 		  		</div>
 		  	</div>
 	  	</div>
-
 	<button type="submit" class="btn btn-default" >Sauver</button>
-
 	</form>
-
 </template>

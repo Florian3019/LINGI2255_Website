@@ -20,9 +20,8 @@
             <li><a href="{{pathFor route='playersInfo'}}">Information sur les joueurs</a></li>
             <li><a href="{{pathFor route='courtInfo'}}">Information sur les terrains</a></li>
             <li><a href="{{pathFor route='poolList'}}">Gestion du tournoi</a></li>
-            {{#if isAdmin}}
+            <li><a href="{{pathFor route='courtEmail'}}">Envoi de mail aux gestionnaires de terrains</a></li>
             <li><a href="{{pathFor route='adminTemplate'}}">Page administrateur</a></li>
-            {{/if}}
             <li><a href="{{pathFor route='adminAddCourt'}}">Ajouter un terrain</a></li>
             <li><a href="{{pathFor route='modifyExtras'}}">Modifier les extras</a></li>
             </ul>
