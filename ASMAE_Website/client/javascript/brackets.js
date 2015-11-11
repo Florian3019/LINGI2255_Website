@@ -243,6 +243,10 @@ function getSelectedText(document, elementId) {
 }
 
 Template.brackets.helpers({
+  'getGracketWidth':function(){
+    return 270*Session.get('brackets/rounds');
+  },
+
   'getType':function(){
     return Session.get('PoolList/Type');
   },
@@ -639,10 +643,10 @@ Template.brackets.events({
     /*
       Create the pdf
     */
-    var pdf = new jsPDF('landscape','pt','a4');
+    var pdf = new jsPDF('portrait','pt','a4');
     pdf.addHTML(source, 
-    30,
-    30,
+    0,
+    0,
     function() {
       /*
       Display the pdf in the html
