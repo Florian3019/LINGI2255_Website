@@ -1,7 +1,33 @@
 Template.profileEdit.helpers({
 	mail : function(){
 		return this.user.emails[0].address;
-	}
+	},
+  getDate : function(){
+    return this.user.profile.birthDate.getDate();
+  },
+  getMonth : function(){
+    return this.user.profile.birthDate.getMonth()+1;
+  },
+  getYear : function(){
+    return this.user.profile.birthDate.getFullYear();
+  },
+  setGender : function(male){
+		var user=Meteor.user();
+
+		if(user==null){
+			return "";
+		}
+		else{
+			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.gender':1});
+
+			if(userData.profile.gender=="M" && male=='true'){
+				return "checked";
+			}
+			else if(userData.profile.gender=="F" && male=='false'){
+				return "checked";
+			}
+		}
+	},
 });
 /*	'lastname': function(){
 		var user=Meteor.user();
@@ -215,6 +241,12 @@ Template.profileEdit.events({
 		var sex = $('[name=sex]').val();
 		var rank = $('[name=rank]').val();
 
+    var birthDay = event.target.birthDay.value;
+    var birthMonth = event.target.birthMonth.value;
+    var birthYear = event.target.birthYear.value;
+
+    var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
+
 		var userData = {
 			_id: this.user._id,
 			profile:{
@@ -222,7 +254,7 @@ Template.profileEdit.events({
 				firstName : firstName,
 				phone : $('[name=phone]').val(),
 				gender : sex,
-				birthDate : $('[name=birth]').val(),
+				birthDate : birthDate,
 				AFT : rank,
 			}
 		};

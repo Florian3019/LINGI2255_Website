@@ -47,37 +47,82 @@
 				</div>
 			</div>
 
-			<div class="form-group has-feedback" id="birthDiv">
-				<label for="date">Date de naissance</label>
-				<div class="input-group">
-					<input type="birth" id="birth" class="form-control" placeholder="1990-01-01" value="{{user.profile.birthDate}}" name="birth">
-					<!-- <div id="birthError" hidden>
-						<span class="help-block" >Merci d'entrer votre date de naissance</span>
-						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-					</div>
-					<div id="birthOK" hidden>
-						<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-						<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-					</div> -->
-				</div>
-			</div>
+      <div class="row">
+    	  <label> Date de naissance </label> <br>
+    	  <div class="col-md-2">
+         	<div class="form-group has-feedback" id="birthDayDiv">
+          		<label for="day">Jour</label>
+          		<div class="input-group">
+              <input type="number" id="birthDay" class="form-control" min="1" max="31" value="{{getDate}}" name="jour de naissance">
+              <!-- <div id="birthDayError" hidden>
+                <span class="help-block" >Merci d'entrer le jour</span>
+                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+              </div>
+              <div id="birthDayOK" hidden>
+                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+              </div> -->
+              </div>
+        	</div>
+    	</div>
 
-			<div class="form-group has-feedback" id="sexDiv">
-				<label for="sex"> Sexe :</label>
-				<select name="sex" id="sex" class="form-control" style="width: 15%; display: inline">
-					<option value={{user.profile.gender}} selected > {{user.profile.gender}} </option>
-					<option value="M"> M </option>
-					<option value="F"> F </option>
-				</select>
-				<!-- <div id="sexError" hidden>
-					<span class="help-block"> Merci d'entrer votre genre </span>
-					<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-				</div>
-				<div id="sexOK" hidden>
-					<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-					<span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-				</div> -->
-			</div>
+    		<div class="col-md-2">
+           	<div class="form-group has-feedback" id="birthMonthDiv">
+            		<label for="month">Mois</label>
+            		<div class="input-group">
+                <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{getMonth}}" name="mois de naissance">
+                <!-- <div id="birthMonthError" hidden>
+                  <span class="help-block" >Merci d'entrer le mois</span>
+                  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                </div>
+                <div id="birthMonthOK" hidden>
+                  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                  <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+                </div> -->
+                </div>
+          	</div>
+    	</div>
+
+    		<div class="col-md-2">
+           	<div class="form-group has-feedback" id="birthYearDiv">
+            		<label for="year">Année</label>
+            		<div class="input-group">
+                <input type="number" id="birthYear" class="form-control" min="1900" value="{{getYear}}" name="année de naissance">
+                <!-- <div id="birthYearError" hidden>
+                  <span class="help-block" >Merci d'entrer l'année</span>
+                  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                </div>
+                <div id="birthYearOK" hidden>
+                  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                  <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+                </div> -->
+                </div>
+          	</div>
+    	</div>
+
+    	<div class="col-md-3">
+          <div class="form-group has-feedback" id="sexDiv">
+    		  <label> Sexe </label> <br>
+               <label class="radio-inline">
+                <input type="radio" name="sex" id="male" value="M" {{setGender 'true'}}>
+                M
+               </label>
+               <label class="radio-inline">
+                <input type="radio" name="sex" id="female" value="F" {{setGender 'false'}}>
+                F
+               </label>
+               <!-- <div id="sexError" hidden>
+                <span class="help-block" >Merci d'entrer votre sexe</span>
+                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+              </div>
+              <div id="sexOK" hidden>
+                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+              </div> -->
+          </div>
+      </div>
+
+      </div>
 
 			<div class="row">
 				<div class="col-md-6">
