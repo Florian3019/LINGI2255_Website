@@ -1,6 +1,8 @@
 <template name="adminTemplate">
 
 {{getAll}}
+<button type='button' class='btn btn-primary btn-md' id="savebtn">Sauver les changements</button>
+<br/> <br/>
 <table class="table table-bordered">
     <thead>
 	<tr>
@@ -8,9 +10,7 @@
 		<th>Email</th>
 		<th>UserName</th>
 		<th>Permissions actuelles</th>
-		<th>Normal</th>
-		<th>Staff</th>
-		<th>Admin</th>
+		<th>Nouvelles permissions</th>
 	</tr>
 	</thead>
 	<tbody>
@@ -20,9 +20,15 @@
 	<td>{{getEmail}}</td>
 	<td>{{getUserName}}</td>
 	<td>{{getCurrentState}}</td>
-	<td><button type='button' class='btn btn-primary btn-md' value='salut' onclick="Session.set('chosen','normal');">Normal</button></td>
-	<td><button type='button' class='btn btn-primary btn-md' value='salut' onclick="Session.set('chosen','staff');">Staff</button></td>
-	<td><button type='button' class='btn btn-primary btn-md' value='salut' onclick="Session.set('chosen','admin');">Admin</button></td>
+	<td>
+	      <select class="form-control" id={{getId}} name="mySelects">
+		<option></option>
+		<option>Normal</option>
+		<option>Staff</option>
+		<option>Admin</option>
+	      </select>
+      </td>
+
 	</tr>
 {{/each}}
 	
