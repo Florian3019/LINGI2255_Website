@@ -35,3 +35,5 @@ meteorhacks:ssr
 #velocity:html-reporter
 chipcastledotcom:jspdf
 jspdf:autotable
+anti:i18n
+aslagle:reactive-table
