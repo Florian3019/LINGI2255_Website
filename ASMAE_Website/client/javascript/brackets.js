@@ -76,6 +76,7 @@ var getPoints = function(pair, round){
 }
 
 var setPoints = function(pair, round, score){
+  if(pair==undefined) return;
   if(pair.tournament==undefined){
     pair.tournament = [];
   }
@@ -552,6 +553,12 @@ Template.gracketTemplate.onRendered(function(){
   displayBrackets(document, brackets);
 });
 
+var getStringOptions = function(){
+  return "\ncatégorie: "+Session.get("PoolList/Category")+
+      " type: "+Session.get("PoolList/Type") +
+      " année: "+Session.get("PoolList/Year");
+}
+
 Template.brackets.events({
 
 	// Do something when the user clicks on a player
@@ -572,9 +579,7 @@ Template.brackets.events({
   },
 
   'click #start':function(event){
-      callback = function(err, status){
-        Session.set('brackets/update',Session.get('brackets/update') ? false:true);
-      };
+
       console.log("calling startTournament");
       year = Session.get('PoolList/Year');
       type = Session.get('PoolList/Type');
@@ -582,6 +587,16 @@ Template.brackets.events({
 
       maxWinners = document.getElementById("winnersPerPool").value;
      
+      callback = function(err, status){
+        Meteor.call("addToModificationsLog", 
+        {"opType":"Création tournoi knock-off", 
+        "details":
+            "Paires par poule: "+maxWinners+getStringOptions()
+        });
+
+
+        Session.set('brackets/update',Session.get('brackets/update') ? false:true);
+      };
 
       if(maxWinners<1){
         console.error("maxWinners can't be lower than 1");
@@ -599,6 +614,15 @@ Template.brackets.events({
     score = document.getElementById("scoreInput").value;
     score = parseInt(score);
     setPoints(pair, round, score);
+
+    Meteor.call("addToModificationsLog", 
+    {"opType":"Modification points match knock-off", 
+    "details":
+        "Round: "+round+
+        " PairId"+pairId+
+        " Points: "+score+getStringOptions()
+    });
+
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   }
 

@@ -112,6 +112,12 @@ Template.scoreTable.helpers({
 
 });
 
+var getStringOptions = function(){
+  return "\ncatégorie: "+Session.get("PoolList/Category")+
+      " type: "+Session.get("PoolList/Type") +
+      " année: "+Session.get("PoolList/Year");
+}
+
 Template.scoreTable.events({
   'click #save' : function(event){
     var points = document.getElementsByClassName("points");
@@ -126,6 +132,14 @@ Template.scoreTable.events({
       data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score,10)}};
       // Update the DB !
       Meteor.call("updateMatch", data);
+
+      Meteor.call("addToModificationsLog", 
+      {"opType":"Modification points match poule", 
+      "details":
+          "Match: "+matchId+
+          " PairId: "+ pairId+
+          " Points: "+data.points+getStringOptions()
+      });
     }
 
     document.getElementById("successBox").removeAttribute("hidden");
