@@ -283,7 +283,7 @@ Template.brackets.helpers({
 
 var hideStuff = function(stuff){
   for(s in stuff){
-    if(year!=undefined && type!=undefined && category!=undefined && stuff!=undefined){
+    if(year!=undefined && type!=undefined && category!=undefined && s!=undefined){
       s.style.display = 'none';
     } 
   }
