@@ -1,7 +1,7 @@
 
 <!-- Takes ID = <userID> as parameter -->
 <template name="profileEdit">
-	<div class="container"> 
+	<div class="container">
 		<form role="form">
 			{{#with getPlayer}}
 			<div class="form-group">
@@ -29,6 +29,7 @@
 						<input type="text" class="form-control" id="firstname" value="{{user.profile.firstName}}" name="firstname">
 					</div>
 				</div>
+
 				<br>
 				<div class="row">
 					<div class="col-sm-3 col-sm-offset-3">
@@ -43,23 +44,23 @@
 				<div class="row">
 					<div class="col-sm-6 col-sm-offset-3">
 	  					<label>Date de naissance:</label> <br>
-	  				</div>	
+	  				</div>
 	  				<div class="col-sm-2 col-sm-offset-3">
      					<div class="form-group" id="birthDayDiv">
       						<label for="day">Jour:</label>
-          					<input type="number" id="birthDay" class="form-control" min="1" value="{{date}}" name="jour de naissance">
+          					<input type="number" id="birthDay" class="form-control" min="1" value="{{getDate}}" name="jour de naissance">
   	  					</div>
     				</div>
 					<div class="col-sm-2">
       					<div class="form-group" id="birthMonthDiv">
       						<label for="month">Mois:</label>
-          					<input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{date}}" name="mois de naissance">	
+          					<input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{getMonth}}" name="mois de naissance">
         				</div>
       				</div>
 					<div class="col-sm-2">
       					<div class="form-group" id="birthYearDiv">
       						<label for="year">Année:</label>
-          					<input type="number" id="birthYear" class="form-control" min="1950" value="{{date}}" name="année de naissance">
+          					<input type="number" id="birthYear" class="form-control" min="1950" value="{{getYear}}" name="année de naissance">
     					</div>
 	  				</div>
   				</div>

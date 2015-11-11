@@ -1,228 +1,170 @@
 <template name="tournamentRegistration">
-<div>
-	<div id="titleDiv"> <h2>Inscription au tournoi</h2> </div>
-
-	<form role="form">
-
-		<div class="row">
-
-	<div class="col-md-3">
-      <div class="form-group has-feedback" id="firstnameDiv">
-      		<label for="text">Prénom</label>
-      		<div class="input-group">
-          <input type="text" class="form-control" id="firstname" value="{{firstname}}" name="firstname">
-          <div id="firstnameError" hidden>
-            <span class="help-block" >Merci d'entrer votre prénom</span>
-            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-          </div>
-          <div id="firstnameOK" hidden>
-            <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-            <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-          </div>
-          </div>
+<div class="container">
+  <form role="form">
+    <div class="form-group">
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+          <h2>Inscription au tournoi:</h2>
+        </div>
       </div>
-  	</div>
-
-	  <div class="col-md-3">
-		  <div class="form-group has-feedback" id="lastnameDiv">
-			<label for="text">Nom</label>
-			  <div class="input-group">
-			<input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" ><br>
-			<div id="lastnameError" hidden>
-			  <span class="help-block" >Merci d'entrer votre nom</span>
-			  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-			</div>
-			<div id="lastnameOK" hidden>
-			  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-			  <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-			</div>
-			</div>
-		</div>
-	  </div>
-
-  </div>
-
-  <div class="row">
-	  <label> Date de naissance </label> <br>
-	  <div class="col-md-2">
-     	<div class="form-group has-feedback" id="birthDayDiv">
-      	<label for="day">Jour</label>
-      	<div class="input-group">
-          <input type="number" id="birthDay" class="form-control" min="1" value="{{date}}" name="jour de naissance">
-          <div id="birthDayError" hidden>
-            <span class="help-block" >Merci d'entrer le jour</span>
-            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-          </div>
-          <div id="birthDayOK" hidden>
-            <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-            <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+      <div class="row">
+        <div class="col-sm-3 col-sm-offset-3">
+          <div class="form-group has-feedback" id="lastnameDiv">
+            <label for="text">Nom:</label>
+            <input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" ><br>
+            <div id="lastnameError" hidden>
+              <span class="help-block" >Merci d'entrer votre nom</span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="lastnameOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">success)</span>
+            </div>
           </div>
         </div>
-  	  </div>
-    </div>
-
-		<div class="col-md-2">
-      <div class="form-group has-feedback" id="birthMonthDiv">
-      	<label for="month">Mois</label>
-      	<div class="input-group">
-          <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{date}}" name="mois de naissance">
-          <div id="birthMonthError" hidden>
-            <span class="help-block" >Merci d'entrer le mois</span>
-            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-          </div>
-          <div id="birthMonthOK" hidden>
-            <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-            <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+        <div class="col-sm-3">
+          <div class="form-group has-feedback" id="firstnameDiv">
+            <label for="text">Prénom:</label>
+            <input type="text" class="form-control" id="firstname" value="{{firstname}}" name="firstname">
+            <div id="firstnameError" hidden>
+              <span class="help-block" >Merci d'entrer votre prénom</span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="firstnameOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+            </div>
           </div>
         </div>
       </div>
-	  </div>
-
-		<div class="col-md-2">
-      <div class="form-group has-feedback" id="birthYearDiv">
-        <label for="year">Année</label>
-       	<div class="input-group">
-          <input type="number" id="birthYear" class="form-control" min="1900" value="{{date}}" name="année de naissance">
-          <div id="birthYearError" hidden>
-            <span class="help-block" >Merci d'entrer l'année</span>
-            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-          </div>
-          <div id="birthYearOK" hidden>
-            <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-            <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+      <div class="row">
+        <div class="col-sm-3 col-sm-offset-3">
+          <label>Date de naissance: </label> <br>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-2 col-sm-offset-3">
+     	    <div class="form-group has-feedback" id="birthDayDiv">
+            <label for="day">Jour:</label>
+            <input type="number" id="birthDay" class="form-control" min="1" value="{{date}}" name="jour de naissance">
+            <div id="birthDayError" hidden>
+              <span class="help-block" >Merci d'entrer le jour</span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="birthDayOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+            </div>
           </div>
         </div>
-    	</div>
-	  </div>
-
-	<div class="col-md-3">
-      <div class="form-group has-feedback" id="sexDiv">
-		  <label> Sexe </label> <br>
-           <label class="radio-inline">
-            <input type="radio" name="sex" id="male" value="M" {{setGender 'true'}}>
-            M
-           </label>
-           <label class="radio-inline">
-            <input type="radio" name="sex" id="female" value="F" {{setGender 'false'}}>
-            F
-           </label>
-           <div id="sexError" hidden>
-            <span class="help-block" >Merci d'entrer votre sexe</span>
-            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+        <div class="col-sm-2">
+          <div class="form-group has-feedback" id="birthMonthDiv">
+            <label for="month">Mois:</label>
+            <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{date}}" name="mois de naissance">
+            <div id="birthMonthError" hidden>
+              <span class="help-block" >Merci d'entrer le mois</span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="birthMonthOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+            </div>
           </div>
-          <div id="sexOK" hidden>
-            <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-            <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+        </div>
+		    <div class="col-sm-2">
+          <div class="form-group has-feedback" id="birthYearDiv">
+            <label for="year">Année:</label>
+            <input type="number" id="birthYear" class="form-control" min="1900" value="{{date}}" name="année de naissance">
+            <div id="birthYearError" hidden>
+              <span class="help-block" >Merci d'entrer l'année</span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="birthYearOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+            </div>
           </div>
+        </div>
       </div>
-  </div>
-
-  </div>
-
-  <div class="row">
-	  <div class="col-md-3">
-	  <div class="form-group">
-		 <label for="text">Numéro de téléphone</label>
-	 <div class="input-group">
-	   <span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
-		 <input type="number" class="form-control" id="phone" min="0" value="{{phone}}" name="phone">
-	   </div>
-   </div>
-   </div>
-   </div>
-
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-3">
+          <div class="form-group has-feedback" id="sexDiv">
+		        <label>Sexe: </label> <br>
+              <label class="radio-inline">
+                <input type="radio" name="sex" id="male" value="M" {{setGender 'true'}}>Homme</label>
+              <br>
+            <label class="radio-inline">
+            <input type="radio" name="sex" id="female" value="F" {{setGender 'false'}}>Femme</label>
+            <div id="sexError" hidden>
+              <span class="help-block" >Merci d'entrer votre sexe</span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="sexOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3 col-sm-offset-3">
+          <div class="form-group">
+		        <label for="text">Numéro de téléphone:</label>
+            <div class="input-group">
+              <span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
+		          <input type="number" class="form-control" id="phone" min="0" value="{{phone}}" name="phone">
+            </div>
+          </div>
+        </div>
+      </div>
     	<div class="row">
-      		<div class="col-md-4">
-   	  			<div class="form-group has-feedback" id="streetDiv">
-             		<label for="text">Adresse</label>
-             		<div class="input-group" style="display: inline">
-                <input type="text" class="form-control" id="street" value="{{street}}" name="street">
-          		  <div id="streetError" hidden>
+      	<div class="col-sm-3 col-sm-offset-3">
+   	  		<div class="form-group has-feedback" id="streetDiv">
+            <label for="text">Rue:</label>
+            <div class="input-group" style="display: inline">
+              <input type="text" class="form-control" id="street" value="{{street}}" name="street">
+          		<div id="streetError" hidden>
                 <span class="help-block" >Merci d'entrer votre rue</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-                </div>
-                <div id="streetOK" hidden>
-                  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-                  <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-                </div>
-                </div>
               </div>
-      		</div>
-
-
-      		<div class="col-md-2">
-       			<div class="form-group has-feedback" id="numberDiv">
-        			 <label for="text">Numéro</label>
-        		 	  <div class="input-group">
-                <input type="number" class="form-control" id="addressnumber" min="0" value="{{addressNumber}}" name="addressNumber">
-                <div id="numberError" hidden>
-                  <span class="help-block" >Merci d'entrer votre numéro</span>
-                  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-                </div>
-                <div id="numberOK" hidden>
-                  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-                  <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-                </div>
-                </div>
-       		 	</div>
-
-
-     		 </div>
-
-
-      		<div class="col-md-2">
-       			<div class="form-group">
-         			<label for="text">Boite</label>
-         			<input type="text" class="form-control" id="box" min="0" value="{{boxNumber}}" name="boxNumber">
-       		 	</div>
-      		</div>
-
+              <div id="streetOK" hidden>
+                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+              </div>
+            </div>
+          </div>
+      	</div>
+        <div class="col-sm-2">
+       	  <div class="form-group has-feedback" id="numberDiv">
+            <label for="text">Numéro:</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="addressnumber" min="0" value="{{addressNumber}}" name="addressNumber">
+              <div id="numberError" hidden>
+                <span class="help-block" >Merci d'entrer votre numéro</span>
+                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+              </div>
+              <div id="numberOK" hidden>
+                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+              </div>
+            </div>
+       	 	</div>
+        </div>
+        <div class="col-sm-1">
+     			<div class="form-group">
+       			<label for="text">Boite:</label>
+      			<input type="text" class="form-control" id="box" min="0" value="{{boxNumber}}" name="boxNumber">
+       	 	</div>
+      	</div>
     	</div>
 
    		<div class="row">
-      		<div class="col-md-2">
-      			<div class="form-group has-feedback" id="zipcodeDiv">
-      		  		<label for="text">Code Postal</label>
-      		 		  <div class="input-group">
-                <input type="number" min="0" step="1" class="form-control" id="zipcode" value="{{zipcode}}" name="zipcode">
-                <div id="zipcodeError" hidden>
-                  <span class="help-block" >Merci d'entrer votre code postal</span>
-                  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-                </div>
-                <div id="zipcodeOK" hidden>
-                  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-                  <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-                </div>
-                </div>
-
-      			</div>
-
-      		</div>
-
-    		<div class="col-md-3">
-      			<div class="form-group has-feedback" id="cityDiv">
-        			<label for="text">Localité</label>
-        			<div class="input-group" style="display: inline">
-                <input type="text" class="form-control" id="city" value="{{city}}" name="city">
-                <div id="cityError" hidden>
-                  <span class="help-block" >Merci d'entrer votre ville</span>
-                  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-                </div>
-                <div id="cityOK" hidden>
-                  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-                  <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-                </div>
-              </div>
-       			</div>
-
-      		</div>
-
-    		<div class="col-md-3">
-     		 	<div class="form-group has-feedback" id="countryDiv">
-   			    <label for="text">Pays</label>
-   			    <div class="input-group">
-            <input type="text" class="form-control" id="country" value="{{country}}" name="country">
-     		     <div id="countryError" hidden>
+        <div class="col-sm-2 col-sm-offset-3">
+          <div class="form-group has-feedback" id="countryDiv">
+            <label for="text">Pays:</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="country" value="{{country}}" name="country">
+              <div id="countryError" hidden>
                 <span class="help-block" >Merci d'entrer votre pays</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
               </div>
@@ -230,138 +172,172 @@
                 <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
                 <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
               </div>
-              </div>
-           </div>
-
-     		 </div>
-     	</div>
-
-		<div class="form-group has-feedback" id="AFTDiv">
-			<label for="playerRank">Classement :</label>
-      <select name="rank" id="rank"  class="form-control" style="width: 15%; display: inline">
-        <option value="" disabled="" selected="" hidden></option>
-				<option value="NC">NC</option>
-				<option value="C30.5 ">C30.5</option>
-				<option value="C30.4">C30.4</option>
-				<option value="C30.3">C30.3</option>
-				<option value="C30.2">C30.2</option>
-				<option value="C30.1">C30.1</option>
-				<option value="C30">C30</option>
-				<option value="C15.5">C15.5</option>
-				<option value="C15.4">C15.4</option>
-				<option value="C15.3">C15.3</option>
-				<option value="C15.2">C15.2</option>
-				<option value="C15.1">C15.1</option>
-				<option value="C15">C15</option>
-				<option value="B+4/6">B+4/6</option>
-				<option value="B+2/6">B+2/6</option>
-				<option value="B0">B0</option>
-				<option value="moreRank">plus</option>
-			</select>
-      <div id="AFTError" hidden>
-        <span class="help-block" >Merci d'entrer votre classement</span>
-        <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-      </div>
-      <div id="AFTOK" hidden>
-        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-        <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-      </div>
-
-		</div>
-
-		<div class="form-group has-feedback" id="dateMatchDiv">
-			<label for="dateMatch">S'incrire pour le tournoi:</label>
-      <select name="dateMatch" id="dateMatch"  class="form-control dateMatch" style="width: 15%; display: inline">
-        <option value="" disabled="" selected="" hidden></option>
-				<option value="family">Tournoi des familles (Samedi)</option>
-				<option value="saturday">Mixtes (Samedi)</option>
-				<option value="sunday">Doubles (Dimanche)</option>
-			</select>
-      <div id="dateMatchError" hidden>
-        <span class="help-block" >Merci de préciser le tournoi</span>
-        <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-        <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-      </div>
-      <div id="dateMatchOK" hidden>
-        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-        <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-      </div>
-		</div>
-
-  <div class="form-group">
-      {{#each extras}}
-          <div class="form-group">
-            <label for="number">{{getName}} ({{getPrice}} euros)</label>
-                <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" value="0" class="form-control" style="width: 15%; display: inline">
-                <p style="font-size:100%">{{getComment}}</p>
+            </div>
+          </div>
         </div>
-
-      {{/each}}
-  </div>
-
-	<div class="row">
-		<div class="col-md-6">
-		<div class="form-group">
-  			<label for="playerWishes">Souhaits:</label>
-       		<textarea name="playerWishes" id="playerWishes" class="form-control"></textarea>
-  		</div>
-	</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-6">
-  		<div class="form-group">
-  			<label for="playerConstraints">Contraintes:</label>
-       		<textarea name="playerConstraints" id="playerConstraints" class="form-control"></textarea>
-  		</div>
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-5">
-		<div class="form-group has-feedback" id="emailPlayerDiv">
-          <label class="control-label" for="inputGroupSuccess1">Adresse email de votre coéquipier: </label>
-          <div class="input-group">
-            <span class="input-group-addon">@</span>
-            <input type="text" class="form-control" id="emailPlayer"> <!-- aria-describedby="inputGroupSuccess1Status"> -->
-            <div id="emailPlayerError" hidden>
+        <div class="col-sm-2">
+          <div class="form-group has-feedback" id="cityDiv">
+            <label for="text">Ville:</label>
+            <div class="input-group" style="display: inline">
+              <input type="text" class="form-control" id="city" value="{{city}}" name="city">
+              <div id="cityError" hidden>
+                <span class="help-block" >Merci d'entrer votre ville</span>
+                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+              </div>
+              <div id="cityOK" hidden>
+                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      	<div class="col-sm-2">
+      		<div class="form-group has-feedback" id="zipcodeDiv">
+      		  <label for="text">Zip code:</label>
+      		 	<div class="input-group">
+              <input type="number" min="0" step="1" class="form-control" id="zipcode" value="{{zipcode}}" name="zipcode">
+              <div id="zipcodeError" hidden>
+                <span class="help-block" >Merci d'entrer votre code postal</span>
+                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+              </div>
+              <div id="zipcodeOK" hidden>
+                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+              </div>
+            </div>
+          </div>
+      	</div>
+     	</div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-3">
+		      <div class="form-group has-feedback" id="AFTDiv">
+            <label for="playerRank">Classement :</label>
+            <br>
+            <select name="rank" id="rank"  class="form-control" style="width: 15%; display: inline">
+              <option value="" disabled="" selected="" hidden></option>
+				      <option value="NC">NC</option>
+				      <option value="C30.5 ">C30.5</option>
+				      <option value="C30.4">C30.4</option>
+				      <option value="C30.3">C30.3</option>
+				      <option value="C30.2">C30.2</option>
+				      <option value="C30.1">C30.1</option>
+				      <option value="C30">C30</option>
+				      <option value="C15.5">C15.5</option>
+				      <option value="C15.4">C15.4</option>
+				      <option value="C15.3">C15.3</option>
+				      <option value="C15.2">C15.2</option>
+				      <option value="C15.1">C15.1</option>
+				      <option value="C15">C15</option>
+				      <option value="B+4/6">B+4/6</option>
+				      <option value="B+2/6">B+2/6</option>
+				      <option value="B0">B0</option>
+				      <option value="moreRank">plus</option>
+            </select>
+            <div id="AFTError" hidden>
+              <span class="help-block" >Merci d'entrer votre classement</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
             </div>
-            <div id="emailPlayerOK" hidden>
+            <div id="AFTOK" hidden>
               <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
               <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
             </div>
           </div>
-          <div id="emailPlayerErrorMessage" hidden>
-            <span class="help-block emailPlayerError">Ce joueur n'existe pas ou n'a pas de compte</span>
+        </div>
+		  </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-3">
+          <div class="form-group has-feedback" id="dateMatchDiv">
+            <label for="dateMatch">S'incrire pour le tournoi:</label>
+            <br>
+            <select name="dateMatch" id="dateMatch"  class="form-control dateMatch" style="width: 15%; display: inline">
+              <option value="" disabled="" selected="" hidden></option>
+				      <option value="family">Tournoi des familles (Samedi)</option>
+				      <option value="saturday">Mixtes (Samedi)</option>
+				      <option value="sunday">Doubles (Dimanche)</option>
+            </select>
+            <div id="dateMatchError" hidden>
+              <span class="help-block" >Merci de préciser le tournoi</span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+            <div id="dateMatchOK" hidden>
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+            </div>
           </div>
         </div>
-	</div>
-</div>
-
-
+		  </div>
       <div class="row">
-        <div class="form-group col-md-3 checkboxAloneDiv" id="checkboxAloneDiv">
+        <div class="col-sm-6 col-sm-offset-3">
+            {{#each extras}}
+            <div class="form-group">
+              <label for="number">{{getName}} ({{getPrice}} euros)</label>
+              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" value="0" class="form-control" style="width: 15%; display: inline">
+              <p style="font-size:100%">{{getComment}}</p>
+            </div>
+            {{/each}}
+        </div>
+      </div>
+      <div class="row">
+		    <div class="col-sm-6 col-sm-offset-3">
+		      <div class="form-group">
+            <label for="playerWishes">Souhaits:</label>
+       	    <textarea name="playerWishes" id="playerWishes" class="form-control"></textarea>
+  		    </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+          <div class="form-group">
+            <label for="playerConstraints">Contraintes:</label>
+            <textarea name="playerConstraints" id="playerConstraints" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+		      <div class="form-group has-feedback" id="emailPlayerDiv">
+            <label class="control-label" for="inputGroupSuccess1">Adresse email de votre coéquipier: </label>
+            <div class="input-group">
+              <span class="input-group-addon">@</span>
+              <input type="text" class="form-control" id="emailPlayer"> <!-- aria-describedby="inputGroupSuccess1Status"> -->
+              <div id="emailPlayerError" hidden>
+                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+              </div>
+              <div id="emailPlayerOK" hidden>
+                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+              </div>
+            </div>
+            <div id="emailPlayerErrorMessage" hidden>
+              <span class="help-block emailPlayerError">Ce joueur n'existe pas ou n'a pas de compte</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-6 col-sm-offset-3 checkboxAloneDiv" id="checkboxAloneDiv">
           <label class="checkbox-inline"><input type="checkbox" value="" id="alone"> Je n'ai pas de partenaire (permet de choisir parmi les autres joueurs seuls)</label>
           <div id="alreadyRegisteredErrorMessage" hidden>
             <span class="help-block alreadyRegisteredError" >Vous êtes déjà inscrit !</span>
           </div>
         </div>
-        <div class="form-group checkboxLater col-md-4" id="checkboxLater" hidden>
+        <div class="form-group checkboxLater col-sm-6 col-sm-offset-3" id="checkboxLater" hidden>
           <label class="checkbox-inline"><input type="checkbox" value="" id="later">   Je veux choisir quelqu'un plus tard </label>
         </div>
-		<div id="refresh" hidden>
-		<button class="btn btn-default" data-action="refresh"> Actualiser </button>
-		</div>
-		<div id="refreshErrorMessage" hidden>
-			<span class="refreshMessage"> Veuillez vérifier le formulaire avant de pouvoir choisir un partenaire</span>
-		</div>
+		    <div id="refresh" hidden>
+          <div class="col-sm-6 col-sm-offset-3">
+		        <button class="btn btn-default" data-action="refresh"> Actualiser </button>
+          </div>
+		    </div>
+		    <div id="refreshErrorMessage" hidden>
+          <span class="refreshMessage"> Veuillez vérifier le formulaire avant de pouvoir choisir un partenaire.</span>
+		    </div>
       </div>
-
+      <br>
       <div class="panel panel-default" id="tableAlone" hidden>
           <!-- Default panel contents -->
-          <div class="panel-heading">Liste des joueurs en attente de partenaire :</div>
-
+        <div class="panel-heading">Liste des joueurs en attente de partenaire :</div>
           <!-- Table -->
           <div class="table-responsive">
           <table class="table table-hover">
@@ -375,7 +351,6 @@
               </tr>
             </thead>
             <tbody>
-
               {{#each alonePlayers}}
                 {{#with getPlayer player1._id}}
                     <tr class="aloneRow" id="{{../_id}}" style="cursor: pointer">
@@ -391,11 +366,12 @@
           </table>
         </div>
       </div>
-
-  		<button type="submit" class="btn btn-default" id="submit">Soumettre mon inscription</button>
-
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+  		    <button type="submit" class="btn btn-default" id="submit">Soumettre mon inscription</button>
+        </div>
+      </div>
+    </div>
 	</form>
-
 </div>
-
 </template>
