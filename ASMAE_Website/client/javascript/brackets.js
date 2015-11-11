@@ -94,9 +94,12 @@ var setPoints = function(pair, round, score){
       // Score already existed, but is now modified
       pair.tournament[round] = score;
     }
+
+
+    Pairs.update({"_id":pair._id}, {$set: {"tournament":pair.tournament}});
 }
 
-var getBracketData = function(pair, round){ // /!\ Round starts at 0 /!\
+var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 /!\
     /*
       Number of characters allowed for display. 
       When changing this value, don't forget to change the min-width of the g_gracket h3 css element in brackets.html too
@@ -117,7 +120,7 @@ var getBracketData = function(pair, round){ // /!\ Round starts at 0 /!\
             "id":pair._id, 
             "score": (pair.tournament==undefined || pair.tournament.length<=round) ? "en jeu" : getPoints(pair, round),
             "round":round,
-            "clickable":"true"
+            "clickable":clickable
     };
 
     return data;
@@ -137,7 +140,12 @@ var setRoundData = function(roundData){
 
   s = undefined;
 
-  if(round<roundData.pair.tournament.length){
+  tournamentLength = 0;
+  if(roundData.pair.tournament!=undefined){
+    tournamentLength = roundData.pair.tournament.length;
+  }
+
+  if(round<tournamentLength){
     s = getPoints(roundData.pair, round);
   }
   else{
@@ -145,7 +153,7 @@ var setRoundData = function(roundData){
   }
 
   // The score to display is the score of the next match !
-  newRoundData.data.score = round+1<roundData.pair.tournament.length ? roundData.pair.tournament[round+1] : 'en jeu';
+  newRoundData.data.score = round+1<tournamentLength ? roundData.pair.tournament[round+1] : 'en jeu';
   newRoundData.data.round = round+1;
   return {"s":s, "r":newRoundData};
 };
@@ -381,12 +389,12 @@ var makeBrackets = function(document){
   for(var i=0; i+1<allWinners.length;i+=2){ // Take them 2 by 2
     pairId = allWinners[i];
     pair1 = Pairs.findOne({_id:pairId},{reactive:false});
-    data1 = getBracketData(pair1,0);
+    data1 = getBracketData(pair1,0, "true");
 
     if(i+1<allWinners.length){
       pairId2 = allWinners[i+1];
       pair2 = Pairs.findOne({_id:pairId2},{reactive:false});  
-      data2 = getBracketData(pair2,0);
+      data2 = getBracketData(pair2,0, "true");
       a = {"pair":pair1, "data":data1};
       b = {"pair":pair2, "data":data2};
 
@@ -399,6 +407,21 @@ var makeBrackets = function(document){
       thisRound.push(b);
     }
   }
+
+  if(allWinners.length%2 != 0){
+      // Uneven number of pairs !
+      last = allWinners[allWinners.length-1];
+      lastPair = Pairs.findOne({_id:last},{reactive:false});
+      lastData = getBracketData(lastPair,0, "false");
+
+      setPoints(lastPair, 0, 0); // Set points for round 0 to 0, since this pair is forwarded to next round
+      lastData.score = 0;
+
+      a = {"pair":lastPair, "data":lastData};
+
+      thisRound.push(a);
+      firstRound.push([a.data, getPlaceHolder(0)]);
+    }
 
   totalMatches += firstRound.length;
 
@@ -431,19 +454,25 @@ var makeBrackets = function(document){
 
         if(hasPoints(best)){
           setPoints(best.pair, round+1, best.data.score);
-          Pairs.update({"_id":best.pair._id}, {$set: {"tournament":best.pair.tournament}});
         }
       }
-
       newRound.push(best); // best contains a pair and its display data
     }
 
     if(thisRound.length%2 != 0){
       // Uneven number of pairs !
       last = thisRound[thisRound.length-1];
-
       var last2 = undefined;
       if(last!=undefined) last2 = setRoundData(last).r;
+
+      // If, furthermore, this pair will not be able to play for this round (it will be with a placeHolder)
+      // Forward its points to the next round and set it as unclickable
+      if(newRound.length%2==0 &&  newRound.length!=1){
+        last2.data.clickable = "false";
+        setPoints(last2.pair, round+1, last.data.score);
+        last2.data.score = last.data.score;
+      }
+
       newRound.push(last2);
     }
 
@@ -464,6 +493,7 @@ var makeBrackets = function(document){
     if(newRound.length%2 != 0 && newRound.length!=1){
       // Uneven number of matches !
       last = newRound[newRound.length-1];
+
       if(hasPoints(last)) matchesCompleted += 1; // This is completed by default since there is no oppononent to fight
       nextRound.push([last==undefined ? empty:last.data, getPlaceHolder(round+1)]);
     }
@@ -501,7 +531,6 @@ var makeBrackets = function(document){
 
   completionPercentage = (totalMatches==0) ? 0 : matchesCompleted/totalMatches;
   setCompletion(completionPercentage);
-  // console.log("completion : " +completionPercentage);
 
   return brackets;
 }
@@ -550,7 +579,15 @@ Template.brackets.events({
       year = Session.get('PoolList/Year');
       type = Session.get('PoolList/Type');
       cat = Session.get('PoolList/Category');
-      Meteor.call('startTournament', year, type, cat, callback);
+
+      maxWinners = document.getElementById("winnersPerPool").value;
+     
+
+      if(maxWinners<1){
+        console.error("maxWinners can't be lower than 1");
+        return;
+      }
+      Meteor.call('startTournament', year, type, cat, maxWinners, callback);
   },
 
   'click #saveScore':function(event){
@@ -562,7 +599,6 @@ Template.brackets.events({
     score = document.getElementById("scoreInput").value;
     score = parseInt(score);
     setPoints(pair, round, score);
-    Pairs.update({"_id":pairId}, {$set: {"tournament":pair.tournament}});
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   }
 

@@ -47,8 +47,8 @@ var splitPairs = function(pairDiv){
 	*/
 	Meteor.call("removeAllMatchesWithPair", pairId, function(err, doc){
 		if(err){
-			console.log("splitPairs/removeAllMatchesWithPair error");
-			console.log(err);
+			console.error("splitPairs/removeAllMatchesWithPair error");
+			console.error(err);
 		}
 	});
 
@@ -57,7 +57,7 @@ var splitPairs = function(pairDiv){
 	*/
 	Pairs.update({"_id":pairId}, {$unset:{"player2":"", "tournamentCourts":"", "tournament":""}}, function(err, doc){
 		if(err){
-			console.log(err);
+			console.error(err);
 		}
 	});
 
@@ -71,8 +71,8 @@ var splitPairs = function(pairDiv){
 	*/
 	Meteor.call("updatePool", {"_id":startingPool, "pairs":[newPairId]}, function(err, poolId){
 		if(err){
-			console.log("splitPairs/updatePool error");
-			console.log(err);
+			console.error("splitPairs/updatePool error");
+			console.error(err);
 		}
 	});
 
@@ -589,9 +589,9 @@ Template.poolList.helpers({
 			for(var i=0;i<poolIdList.length;i++){
 				pool = Pools.findOne({_id: poolIdList[i]});
 				
-				totalNumberOfPairs += pool.pairs.length;
+				totalNumberOfPairs += pool.pairs==undefined ? 0 : pool.pairs.length;
 				poolCompletion = pool.completion;
-				totalCompletion += pool.pairs.length * (poolCompletion==undefined ? 0 : poolCompletion);
+				totalCompletion += (pool.pairs==undefined ? 0 : pool.pairs.length) * (poolCompletion==undefined ? 0 : poolCompletion);
 				
 				if(k>=MAXCOLUMNS){
 					poolList.push(column);
@@ -763,9 +763,7 @@ Template.poolItem.helpers({
 *******************************************************************************************************************/
 
 Template.poolContainerTemplate.onRendered(function(){
-	console.log("on rendered");
 	doc = document.querySelector('#a'+this.data.POOL._id);
-	console.log(doc);
   	drake.containers.push(doc); // Make the id this.data.ID draggable 
 });
 
@@ -905,7 +903,6 @@ Template.modalItem.helpers({
 			var selected = type===key ? true : false;
 			toReturn.push({"key":key, "value":typesTranslate[key], "selected":selected})
 		}
-		console.log(toReturn);
 		return toReturn;
 	},
 });

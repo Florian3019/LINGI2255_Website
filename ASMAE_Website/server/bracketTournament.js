@@ -6,16 +6,8 @@ var resetPairTournament = function(pairId){
 /*
   Returns the winners of the pool with id poolId. Helper of getCategoryWinners. Resets the tournament points.
 */
-var getPoolWinners = function(poolId){
-
+var getPoolWinners = function(poolId, MAXWINNERS){
   pool = Pools.findOne({_id:poolId}, {pairs:1});
-
-  const MAXWINNERS = 2; // Change this value if needed. Must be a multiple of 2
-
-  if(MAXWINNERS%2!=0){
-    console.error("MAXWINNERS must be a multiple of 2");
-    return;
-  }
 
   pairPoints = {}; // key = pair, value = total points
 
@@ -37,12 +29,13 @@ var getPoolWinners = function(poolId){
       match = m[j];
 
       // If the key doesn't exist yet, initialize it to 0
-      if(!pairPoints[pool.pairs[i]]){
+      if(pairPoints[pool.pairs[i]]==undefined){
         pairPoints[pool.pairs[i]] = 0;
       }
 
       // Increase that pair's total score
-      pairPoints[pool.pairs[i]] += match[pool.pairs[i]];
+      score = match[pool.pairs[i]];
+      pairPoints[pool.pairs[i]] += score>=0 ? score : 0;
     }
   }
   keys = Object.keys(pairPoints); // List of pairIds
@@ -58,9 +51,8 @@ var getPoolWinners = function(poolId){
 
   winners = [];
   var i = 0;
-  equals = false;
   // Select the winners from all the pairs. The best pairs are first in "keys"
-  for(i=0; (i<MAXWINNERS || equals) && i<keys.length; i++){
+  for(i=0; i<MAXWINNERS && i<keys.length; i++){
     winners.push(keys[i]);
     // TODO deal with equalities in the points
   }
@@ -72,10 +64,10 @@ var getPoolWinners = function(poolId){
   Give this function a category from Years->Types->Category = list of pool ids 
   and it will return a list of pairs that were winners in their pool
 */
-var getCategoryWinners = function(poolIdList){
+var getCategoryWinners = function(poolIdList, maxWinners){
   allWinners = []; // list of pairIds
   for(var i=0; i<poolIdList.length;i++){
-    poolWinners = getPoolWinners(poolIdList[i]);
+    poolWinners = getPoolWinners(poolIdList[i], maxWinners);
     for(var j=0; j<poolWinners.length;j++){
       allWinners.push(poolWinners[j]);
     }
@@ -85,9 +77,17 @@ var getCategoryWinners = function(poolIdList){
 };
 
 Meteor.methods({
-  'startTournament': function(year, type, category){
-    if(year==undefined || type==undefined || category==undefined){
-      console.error("startTournament : year, type or category is undefined");
+  'startTournament': function(year, type, category, maxWinners){
+    if(year==undefined || type==undefined || category==undefined || maxWinners==undefined){
+      console.error("startTournament : year, type or category or maxWinners is undefined");
+      console.error("year : "+year);
+      console.error("type : "+type);
+      console.error("category : "+category);
+      console.error("maxWinners : "+maxWinners);
+      return;
+    }
+    if(maxWinners<1){
+      console.error("maxWinners is smaller than 1");
       return;
     }
 
@@ -103,7 +103,7 @@ Meteor.methods({
     if(typeData==undefined) return;
     poolIdList = typeData[category];
     if(poolIdList==undefined) return;
-    var winners = getCategoryWinners(poolIdList);
+    var winners = getCategoryWinners(poolIdList, maxWinners);
 
 
     data = {"_id":typeId};
