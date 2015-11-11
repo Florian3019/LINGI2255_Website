@@ -624,6 +624,56 @@ Template.brackets.events({
     });
 
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
+  },
+
+  'click #getPDF':function(event){
+    generatePdf(document);
   }
 
 });
+
+
+var generatePdf = function(document){
+
+    
+
+
+    var source = document.getElementById("gracketContainer");
+
+    // pdf.fromHTML(
+    //   source,
+    //   15,
+    //   15,
+    //   {'width' : 180}
+    // );
+
+    /*
+      Unhide the pdf preview window
+    */
+    document.getElementsByClassName('preview-pane')[0].removeAttribute('hidden');
+
+    // var canvas = html2canvas(source);
+    // var imgData = canvas.toDataURL('image/jpeg');
+    // console.log('Report Image URL: '+imgData);
+
+    /*
+      Create the pdf
+    */
+    var pdf = new jsPDF('p','pt','a4');
+    // pdf.addImage(imgData, 'JPEG', 15, 40, 180, 180);
+    pdf.addHTML(source, 
+    200,
+    200,
+    // {
+    //   'width': 100
+    // },
+    function() {
+      /*
+      Display the pdf in the html
+      */
+      var string = pdf.output('datauristring');
+      document.getElementsByClassName('preview-pane')[0].setAttribute('src', string);
+    });
+
+
+}
