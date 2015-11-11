@@ -9,80 +9,85 @@
 <h3>Chef de poule: </h3>
 <address>
   <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
-                  <i class="fa fa-user fa-5x"></i><br/>
-                  <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
-                  {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
-                  {{getEmail this}}<br>
+    <i class="fa fa-user fa-5x"></i><br/>
+    <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
+    {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
+    {{getEmail this}}<br>
   </a>
-  <!-- <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
-  {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
-  <a href="mailto:{{getEmail this}}">{{getEmail this}}</a> -->
 </address>
 {{/with}}
 
-<table id='scoreTable' class='table'>
 
-{{#with getPairs this._id}}
-  <tr>
-    <th>
-      <div class="page-header">
-        <h1><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> VS <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> </h1>
-      </div>
-    </th>
-      {{#each this}}
-        <th>
-          <ul class="list-group">
-          {{#with getPlayer this.player1._id}}
-            <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
-          {{/with}}
-          {{#with getPlayer this.player2._id}}
-            <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
-          {{/with}}
-          </ul>
-        </th>
-      {{/each}}
-  </tr>
+  <div class="panel panel-primary">
+    <div class="panel-heading">Tableaux des résultats</div>
+    <table class="table table-bordered">
+      {{#with getPairs this._id}}
+      <thead>
+        <tr>
+          <th>
+              Les paires dans la colonne <br> ci-dessous jouent contre les <br> paires de la ligne ci-contre.
+              <h5><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> VS <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> </h5>
+          </th>
+            {{#each this}}
+              <th>
+                <ul class="list-group">
+                {{#with getPlayer this.player1._id}}
+                  <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
+                {{/with}}
+                {{#with getPlayer this.player2._id}}
+                  <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
+                {{/with}}
+                </ul>
+              </th>
+            {{/each}}
+        </tr>
+      </thead>
 
+      <tbody>
+        {{#each this}}
+          <tr>
+              <th>
+                <ul class="list-group">
+                {{#with getPlayer this.player1._id}}
+                  <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
+                {{/with}}
+                {{#with getPlayer this.player2._id}}
+                  <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
+                {{/with}}
+                </ul>
+              </th>
 
-  {{#each this}}
-    <tr>
-        <th>
-          <ul class="list-group">
-          {{#with getPlayer this.player1._id}}
-            <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
-          {{/with}}
-          {{#with getPlayer this.player2._id}}
-            <li class="list-group-item"> {{this.profile.firstName}} {{this.profile.lastName}} </li>
-          {{/with}}
-          </ul>
-        </th>
+              {{#each ..}}
+                {{#if equals this._id ../_id}}
+                <td class="selfMatch">
 
-        {{#each ..}}
-          {{#if equals this._id ../_id}}
-          <td class="selfMatch">
-
-          </td>
-          {{else}}
-          <td>
-            <div class="input-group" display="inline">
-              {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
-              <input
-                type="number"
-                min="0"
-                step="1"
-                class="form-control points"
-                data-matchid="{{this._id}}"
-                data-pairid="{{../../_id}}"
-                value="{{getPoints this ../../_id}}">
-              {{/with}}
-            </div>
-          </td>
-          {{/if}}
+                </td>
+                {{else}}
+                <td align="center">
+                  <div class="input-group inputscore" display="inline">
+                    {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      class="form-control points"
+                      data-matchid="{{this._id}}"
+                      data-pairid="{{../../_id}}"
+                      value="{{getPoints this ../../_id}}">
+                    {{/with}}
+                  </div>
+                </td>
+                {{/if}}
+              {{/each}}
+          </tr>
         {{/each}}
-    </tr>
-  {{/each}}
+      </tbody>
 {{/with}}
-</table>
+    </table>
+  </div>
+
+
+
 
   <button type="button" id="save" class="btn btn-default btn-lg">
     <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
