@@ -38,7 +38,6 @@ Template.profileEdit.events({
 			zipCode : $('[name=zipcode]').val(),
 			country : $('[name=country]').val()
 		};
-
 		Meteor.call('updateAddress',address,this.user._id, function(error, result){
 			if(error){
 				console.error('profileEdit adress error');
@@ -47,6 +46,7 @@ Template.profileEdit.events({
 			else if(result == null){
 				console.error("No result");
 			}
+			
 		});
 
 		var lastName = $('[name=lastname]').val();
@@ -83,6 +83,7 @@ Template.profileEdit.events({
 			}
 
 		});
+
 		Router.go('home');
 
 	}
