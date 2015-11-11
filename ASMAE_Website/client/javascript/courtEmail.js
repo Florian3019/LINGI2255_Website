@@ -5,8 +5,6 @@ Template.courtEmail.returnAllCourts = function(){
 Template.courtEmail.events({
 	'click .reactive-table tbody tr' : function(event){
 		var target = event.currentTarget;
-		console.log(target);
-		console.log(target.className);
 		var courtSelected = (' ' + target.className + ' ').indexOf(' courtSelected ') > -1;
 		if(courtSelected){
 			// Unselected it
@@ -31,10 +29,8 @@ Template.courtEmail.events({
 
 	     // And stick the checked ones onto an array...
 		//print des adresses mails correspondant aux checkbox checkées.
-		var em = Meteor.users.findOne({_id:Courts.findOne({_id : checkboxes[i].id}).ownerID}).emails[0].address
-		console.log(em)
+		var em = Meteor.users.findOne({_id:Courts.findOne({_id : checkboxes[i].id}).ownerID}).emails[0].address;
 		//Print du texte à envoyer
-		console.log(mail.value)
 	     	if(mail.value!=""){
 	     		Meteor.call('emailFeedback',em,"Charles De Lorraine : mail relatif à votre terrain",mail.value);
 			checkboxesChecked.push(checkboxes[i]);
