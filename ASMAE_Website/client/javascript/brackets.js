@@ -233,15 +233,6 @@ var setInfo = function(document, msg){
   if(g!=undefined) g.setAttribute("hidden","");
 };
 
-function getSelectedText(document, elementId) {
-    var elt = document.getElementById(elementId);
-    if(elt==undefined) return null;
-
-    if (elt.selectedIndex == -1)
-        return null;
-    return elt.options[elt.selectedIndex].text;
-}
-
 Template.brackets.helpers({
   'getGracketWidth':function(){
     return 270*Session.get('brackets/rounds');
@@ -313,7 +304,7 @@ var handleBracketErrors = function(document){
     typeId = yearData[type];
     if(typeId==undefined){
       console.info("No data found for type "+type);
-      setInfo(document, "Pas de données trouvées pour le type "+getSelectedText(document, "PoolType") + " de l'année "+year);
+      setInfo(document, "Pas de données trouvées pour le type "+typesTranslate[type] + " de l'année "+year);
       hideStuff([bracketOptions,pdfButton]);
       return;  
     } 
@@ -326,8 +317,8 @@ var handleBracketErrors = function(document){
     if(typeData[category]==undefined){
       console.info("No matches for pools of category "+category + ", type "+type, " at year "+year);
       setInfo(document, "Pas de données trouvées pour la catégorie "
-        + getSelectedText(document, "PoolCategory")  
-        + " du type "+getSelectedText(document, "PoolType") 
+        + categoriesTranslate[category]
+        + " du type "+typesTranslate[type]
         + " de l'année "+year);
       hideStuff([bracketOptions,pdfButton]);
       return;
@@ -354,8 +345,8 @@ var handleBracketErrors = function(document){
     if(allWinners.length==0){
       console.info("There are no matches for that year, type and category, did you create any ?");
       setInfo(document, "Pas de matchs pour l'année "+year
-        + " type " + getSelectedText(document, "PoolType")
-        + " de la catégorie " + getSelectedText(document, "PoolCategory")
+        + " type " + typesTranslate[type]
+        + " de la catégorie " + categoriesTranslate[category]
         + ". Si vous en avez créé, cliquez sur redémarrer le tournoi pour mettre à jour");
       return;
     }
