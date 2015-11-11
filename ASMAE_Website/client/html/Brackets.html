@@ -3,12 +3,14 @@
 		{{#with getYear}}
 			{{#with getType}}
 				{{#with getCategory}}
+				<div id="bracketOptions" style="display:none">
 				  <button type="button" id="start" class="btn btn-default btn-lg">
-				    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Start
+				    <span class="glyphicon glyphicon-star"></span> Start
 				  </button>
 
 				  <label>Gagnants par poule:</label>
 				  <input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline" value="2">
+	 			</div>
 	 			{{/with}}
 	 		{{/with}}
 		{{/with}}
@@ -89,8 +91,7 @@
     </div>
   </div>
 
-
-<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
+<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}" style="display:none">
 <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
 </button>
 

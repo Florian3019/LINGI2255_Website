@@ -281,6 +281,14 @@ Template.brackets.helpers({
 
 });
 
+var hideStuff = function(stuff){
+  for(s in stuff){
+    if(year!=undefined && type!=undefined && category!=undefined && stuff!=undefined){
+      s.style.display = 'none';
+    } 
+  }
+}
+
 // Helper of makeBrackets
 var handleBracketErrors = function(document){
     /********************************************
@@ -290,26 +298,29 @@ var handleBracketErrors = function(document){
     type = Session.get("PoolList/Type");
     category = Session.get("PoolList/Category");
 
+    pdfButton = document.getElementById("getPDF");
     startButton =  document.getElementById("start");
+    // winnersSelect =  document.getElementById("winnersPerPool");
+    bracketOptions = document.getElementById("bracketOptions");
 
     yearData = Years.findOne({_id:year},{reactive:false});
     if(yearData==undefined){
       console.info("No data found for year "+year);
       setInfo(document, "Pas de données trouvées pour l'année "+year);
-      if(year!=undefined && type!=undefined && category!=undefined && startButton!=undefined) startButton.style.visibility = 'hidden';
+      hideStuff([bracketOptions,pdfButton]);
       return;  
     } 
     typeId = yearData[type];
     if(typeId==undefined){
       console.info("No data found for type "+type);
       setInfo(document, "Pas de données trouvées pour le type "+getSelectedText(document, "PoolType") + " de l'année "+year);
-      if(year!=undefined && type!=undefined && category!=undefined && startButton!=undefined) startButton.style.visibility = 'hidden';
+      hideStuff([bracketOptions,pdfButton]);
       return;  
     } 
     typeData = Types.findOne({_id:typeId},{reactive:false});
     if(typeData==undefined){
       console.error("handleBracketErrors : id search on the Types DB failed");
-      if(year!=undefined && type!=undefined && category!=undefined && startButton!=undefined) startButton.style.visibility = 'hidden';
+      hideStuff([bracketOptions,pdfButton]);
       return;  
     }
     if(typeData[category]==undefined){
@@ -318,23 +329,26 @@ var handleBracketErrors = function(document){
         + getSelectedText(document, "PoolCategory")  
         + " du type "+getSelectedText(document, "PoolType") 
         + " de l'année "+year);
-      if(year!=undefined && type!=undefined && category!=undefined && startButton!=undefined) startButton.style.visibility = 'hidden';
+      hideStuff([bracketOptions,pdfButton]);
       return;
     }
 
     allWinners = typeData[category.concat("Bracket")]; // List of pairIds
     
+
     if(allWinners==undefined){
-      if(startButton!=undefined){
+      if(bracketOptions!=undefined){
         console.info("Tournament not started");
         startButton.innerHTML="Démarrer le tournoi";
-        startButton.style.visibility = 'visible';
+        bracketOptions.style.display = 'block';
+        pdfButton.style.display = 'block';
       }
       return;
     }
-    if(startButton!=undefined){
+    if(bracketOptions!=undefined){
       startButton.innerHTML="Redémarrer le tournoi";
-      startButton.style.visibility = 'visible';
+      bracketOptions.style.display = 'block';
+      pdfButton.style.display = 'block';
     } 
 
     if(allWinners.length==0){
