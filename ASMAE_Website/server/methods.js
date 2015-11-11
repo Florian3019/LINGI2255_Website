@@ -1556,12 +1556,13 @@ Meteor.methods({
 					   });
 			console.log("LOL");
 
-			var addressID = Meteor.call("updateAddress", addressData, userID, undefined);
+			var addressID = Addresses.insert(addressData)
 			console.log("LEL : "+addressID);
 			Meteor.call("updateUser", {_id:userID, profile:{addressID:addressID}});
 			console.log("OUPS");
 			Meteor.call("updatePair",{player1: {_id:userID}});
 			console.log("END");
+			// TODO: create tables of pairs
 		}
 	},
 
