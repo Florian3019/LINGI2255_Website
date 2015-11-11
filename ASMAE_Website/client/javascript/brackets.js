@@ -530,6 +530,8 @@ var makeBrackets = function(document){
     round++;
   }
 
+  Session.set("brackets/rounds",round+1);
+
   completionPercentage = (totalMatches==0) ? 0 : matchesCompleted/totalMatches;
   setCompletion(completionPercentage);
 
@@ -627,46 +629,20 @@ Template.brackets.events({
   },
 
   'click #getPDF':function(event){
-    generatePdf(document);
-  }
-
-});
-
-
-var generatePdf = function(document){
-
-    
-
-
-    var source = document.getElementById("gracketContainer");
-
-    // pdf.fromHTML(
-    //   source,
-    //   15,
-    //   15,
-    //   {'width' : 180}
-    // );
-
     /*
       Unhide the pdf preview window
     */
     document.getElementsByClassName('preview-pane')[0].removeAttribute('hidden');
 
-    // var canvas = html2canvas(source);
-    // var imgData = canvas.toDataURL('image/jpeg');
-    // console.log('Report Image URL: '+imgData);
 
+    var source = document.getElementById("gracketContainer");
     /*
       Create the pdf
     */
-    var pdf = new jsPDF('p','pt','a4');
-    // pdf.addImage(imgData, 'JPEG', 15, 40, 180, 180);
+    var pdf = new jsPDF('landscape','pt','a4');
     pdf.addHTML(source, 
-    200,
-    200,
-    // {
-    //   'width': 100
-    // },
+    30,
+    30,
     function() {
       /*
       Display the pdf in the html
@@ -674,6 +650,6 @@ var generatePdf = function(document){
       var string = pdf.output('datauristring');
       document.getElementsByClassName('preview-pane')[0].setAttribute('src', string);
     });
+  }
 
-
-}
+});
