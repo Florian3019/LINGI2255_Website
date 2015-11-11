@@ -243,6 +243,10 @@ function getSelectedText(document, elementId) {
 }
 
 Template.brackets.helpers({
+  'getGracketWidth':function(){
+    return 270*Session.get('brackets/rounds');
+  },
+
   'getType':function(){
     return Session.get('PoolList/Type');
   },
@@ -530,6 +534,8 @@ var makeBrackets = function(document){
     round++;
   }
 
+  Session.set("brackets/rounds",round+1);
+
   completionPercentage = (totalMatches==0) ? 0 : matchesCompleted/totalMatches;
   setCompletion(completionPercentage);
 
@@ -624,6 +630,30 @@ Template.brackets.events({
     });
 
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
+  },
+
+  'click #getPDF':function(event){
+    /*
+      Unhide the pdf preview window
+    */
+    document.getElementsByClassName('preview-pane')[0].removeAttribute('hidden');
+
+
+    var source = document.getElementById("gracketContainer");
+    /*
+      Create the pdf
+    */
+    var pdf = new jsPDF('portrait','pt','a4');
+    pdf.addHTML(source, 
+    0,
+    0,
+    function() {
+      /*
+      Display the pdf in the html
+      */
+      var string = pdf.output('datauristring');
+      document.getElementsByClassName('preview-pane')[0].setAttribute('src', string);
+    });
   }
 
 });
