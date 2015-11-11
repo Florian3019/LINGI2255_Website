@@ -1545,11 +1545,14 @@ Meteor.methods({
 				gender:genders[i]
 			};
 
+
 			var userID = Accounts.createUser({
 						   emails : emails[i],
 						   password : firstNames[i],
 						   profile  : profile
 					   });
+
+			//Meteor.call("updateUser", {_id:userID, profile:profile});
 
 			Meteor.call("updatePairs",{player1: {_id:userID}});
 		}
@@ -1581,7 +1584,7 @@ Meteor.methods({
 		}
 
 		data = {};
-		
+
 		data.userId = Meteor.userId();
 
 		var date = new Date();
