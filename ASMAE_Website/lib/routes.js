@@ -67,12 +67,7 @@ Router.route('/mon-inscription', {
 		}
 	}
 });
-<<<<<<< HEAD
-
-Router.route('/tournament-registration',  {
-=======
 Router.route('/inscription-tournoi',  {
->>>>>>> 8434f2a0e218c7cd2adf11152d74731d6866fc28
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
 	onBeforeAction: function() {
