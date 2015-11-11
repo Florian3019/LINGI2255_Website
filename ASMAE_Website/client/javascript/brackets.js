@@ -411,18 +411,13 @@ var makeBrackets = function(document){
   if(allWinners.length%2 != 0){
       // Uneven number of pairs !
       last = allWinners[allWinners.length-1];
-      // console.log(last);
       lastPair = Pairs.findOne({_id:last},{reactive:false});
-      // console.log(lastPair);
       lastData = getBracketData(lastPair,0, "false");
-      // console.log(lastData);
 
       setPoints(lastPair, 0, 0); // Set points for round 0 to 0, since this pair is forwarded to next round
       lastData.score = 0;
 
       a = {"pair":lastPair, "data":lastData};
-
-      console.log(a.pair);
 
       thisRound.push(a);
       firstRound.push([a.data, getPlaceHolder(0)]);
@@ -467,7 +462,6 @@ var makeBrackets = function(document){
     if(thisRound.length%2 != 0){
       // Uneven number of pairs !
       last = thisRound[thisRound.length-1];
-      console.log(last);
       var last2 = undefined;
       if(last!=undefined) last2 = setRoundData(last).r;
 
@@ -537,7 +531,6 @@ var makeBrackets = function(document){
 
   completionPercentage = (totalMatches==0) ? 0 : matchesCompleted/totalMatches;
   setCompletion(completionPercentage);
-  // console.log("completion : " +completionPercentage);
 
   return brackets;
 }
@@ -594,7 +587,6 @@ Template.brackets.events({
         console.error("maxWinners can't be lower than 1");
         return;
       }
- console.log(maxWinners);
       Meteor.call('startTournament', year, type, cat, maxWinners, callback);
   },
 
