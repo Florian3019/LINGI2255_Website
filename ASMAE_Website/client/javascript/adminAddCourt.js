@@ -106,6 +106,14 @@ Template.adminAddCourt.events({
                 else if(result == null){
                     console.error("No result");
                 }
+
+                Meteor.call("addToModificationsLog", 
+                {"opType":"Ajout d'un terrain", 
+                "details":
+                    "Id du Terrain: "+result +
+                    "Owner : "+currentOwnerID 
+                });
+
                 if(go) {
                     Router.go('confirmation_registration_court', {_id: result});
                 }
@@ -115,6 +123,7 @@ Template.adminAddCourt.events({
                     Session.set('address', address);
                 }
             });
+
     },  
     'click li': function() {
         var courtData = Session.get('courtData');

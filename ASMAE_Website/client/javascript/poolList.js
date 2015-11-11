@@ -13,9 +13,9 @@ var setInfo = function(document, msg){
 }
 
 var getStringOptions = function(){
-	return "\ncatégorie :"+Session.get("PoolList/Category")+
-			" type : "+Session.get("PoolList/Type") +
-			" année : "+Session.get("PoolList/Year");
+	return "\ncatégorie: "+Session.get("PoolList/Category")+
+			" type: "+Session.get("PoolList/Type") +
+			" année: "+Session.get("PoolList/Year");
 }
 
 var hideSuccessBox = function(document){
