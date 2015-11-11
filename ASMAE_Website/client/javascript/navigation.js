@@ -8,7 +8,7 @@ Template.navigation.helpers({
 		{
 			return false;
 		}
-		
+
 	},
 	'isAdmin':function(){
 		if(Meteor.user())
@@ -19,7 +19,16 @@ Template.navigation.helpers({
 		{
 			return false;
 		}
+	},
+	'registered': function() {
+		var id = Meteor.userId();
+		var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+		if (pair) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
-	
-});
 
+});
