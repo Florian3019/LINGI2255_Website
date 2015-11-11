@@ -67,8 +67,7 @@ Router.route('/mon-inscription', {
 		}
 	}
 });
-
-Router.route('/tournament-registration',  {
+Router.route('/inscription-tournoi',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
 	onBeforeAction: function() {

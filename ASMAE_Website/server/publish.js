@@ -37,16 +37,12 @@ Meteor.publish('Questions', function(){
 });
 
 Meteor.publish('Extras', function(){
-	if(this.userId) {
-        var user = Meteor.users.findOne(this.userId);
-        return Extras.find();
-    }
+	return Extras.find();
 });
 
 
 Meteor.publish('users', function () {
 	var res = Meteor.users.find({});
-
 	return res;
 });
 

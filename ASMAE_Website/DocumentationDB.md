@@ -151,7 +151,7 @@ A payment is structured as follows :
     _id:<id>,
     status:<status>, // paid or pending
     balance:<balance>,
-    date:<data>,
+    date:<date>,
     method:<method>, // Cash, CreditCard or BankTransfer
 }
 

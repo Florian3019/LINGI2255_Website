@@ -74,7 +74,12 @@ Template.courtSearch.helpers({
           }},
           { key: 'addressID', label: 'Addresse' , fn: function(value, object){
             addr = Addresses.findOne({"_id":value});
-            return addr.street + " " + addr.number + " " + addr.box + " " + addr.city + " " + addr.zipCode + " " + addr.country;
+            if (addr.box) {
+              return addr.street + ", " + addr.number + ", " + addr.box + ", " + addr.zipCode + ", " + addr.city +  ", " + addr.country;
+            }
+            else {
+              return addr.street + ", " + addr.number + ", " + addr.zipCode + ", " + addr.city  + ", " + addr.country;
+            }
           }},
           { key: 'surface', label: "Surface"},
           { key: 'dispoSamedi', label:"Samedi", tmpl:Template.dispoSaturdayLabel},
@@ -83,5 +88,11 @@ Template.courtSearch.helpers({
           { key: 'courtType', label:"Type"}
       ]
       }
+    }
+});
+
+Template.courtSearch.events({
+    'click .reactive-table tbody tr' : function(event){
+        Router.go('courtInfoPage',{_id:this._id});
     }
 });

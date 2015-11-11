@@ -1,4 +1,5 @@
 var gateway;
+const REGISTRATION_PRICE = 10; // Price of the tournament, in euros
 
 Meteor.startup(function () {
   var braintree = Meteor.npmRequire('braintree');
@@ -25,8 +26,15 @@ Meteor.methods({
   },
   createTransaction: function (data) {
     var transaction = Meteor.wrapAsync(gateway.transaction.sale, gateway.transaction);
-    // this is very naive, do not do this in production!
-    var amount = parseInt(data.quantity, 10) * 15;
+
+    //Calculate amount to pay
+    var amount = REGISTRATION_PRICE;
+    if(data.extras)
+    {
+      for(extra in data.extras){
+        amout += getPrice(extra);
+      }
+    }
 
     var response = transaction({
       amount: amount,
@@ -38,9 +46,9 @@ Meteor.methods({
       }
     });
 
-    // ...
+
     // perform a server side action with response
-    // ...
+    insert
 
     return response;
   }
