@@ -64,6 +64,8 @@ Template.playersInfo.helpers({
 
 Template.playersInfo.events({
     'click .reactive-table tbody tr' : function(event){
-        Router.go('profileEdit',{_id:this._id});
+        //Router.go('playerInfoPage',{_id:this._id});
+        Session.set('selected', this);
+        Router.go('playerInfoPage');
     }
 });
