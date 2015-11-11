@@ -27,63 +27,59 @@ Template.pairsToSplitContainerTemplate.onRendered(function(){
 });
 
 var splitPairs = function(pairDiv){
-	// pairsToSplit = document.getElementById("pairstosplit").getElementsByClassName("pairs");
+	var pairId = pairDiv.id;
+	var startingPool = pairDiv.dataset.startingpoolid;
 
-	// for(var i=0; i<pairsToSplit.length;i++){
-		var pairId = pairDiv.id;
-		var startingPool = pairDiv.dataset.startingpoolid;
+	if(startingPool==undefined){
+		console.error("splitPairs : startingpoolid is undefined");
+		return;	
+	} 
 
-		if(startingPool==undefined){
-			console.error("splitPairs : startingpoolid is undefined");
-			return;	
-		} 
+	var pair = Pairs.findOne({"_id":pairId});
 
-		var pair = Pairs.findOne({"_id":pairId});
+	if(pair==undefined){
+		console.error("splitPairs : pair is undefined");
+		return;	
+	} 
 
-		if(pair==undefined){
-			console.error("splitPairs : pair is undefined");
-			return;	
-		} 
+	/*
+		Remove any existing match with that pair
+	*/
+	Meteor.call("removeAllMatchesWithPair", pairId, function(err, doc){
+		if(err){
+			console.log("splitPairs/removeAllMatchesWithPair error");
+			console.log(err);
+		}
+	});
 
-		/*
-			Remove any existing match with that pair
-		*/
-		Meteor.call("removeAllMatchesWithPair", pairId, function(err, doc){
-			if(err){
-				console.log("splitPairs/removeAllMatchesWithPair error");
-				console.log(err);
-			}
-		});
+	/*
+		Remove the player 2 from the pair, as well as any tournament match/courts
+	*/
+	Pairs.update({"_id":pairId}, {$unset:{"player2":"", "tournamentCourts":"", "tournament":""}}, function(err, doc){
+		if(err){
+			console.log(err);
+		}
+	});
 
-		/*
-			Remove the player 2 from the pair, as well as any tournament match/courts
-		*/
-		Pairs.update({"_id":pairId}, {$unset:{"player2":"", "tournamentCourts":"", "tournament":""}}, function(err, doc){
-			if(err){
-				console.log(err);
-			}
-		});
+	/*
+		Create a new pair where player1 is the player2 of the pair
+	*/
+	var newPairId = Pairs.insert({"player1":pair.player2, "day":pair.day, "category":pair.category});
 
-		/*
-			Create a new pair where player1 is the player2 of the pair
-		*/
-		var newPairId = Pairs.insert({"player1":pair.player2, "day":pair.day, "category":pair.category});
+	/*
+		Add that newly created pair to the starting pool
+	*/
+	Meteor.call("updatePool", {"_id":startingPool, "pairs":[newPairId]}, function(err, poolId){
+		if(err){
+			console.log("splitPairs/updatePool error");
+			console.log(err);
+		}
+	});
 
-		/*
-			Add that newly created pair to the starting pool
-		*/
-		Meteor.call("updatePool", {"_id":startingPool, "pairs":[newPairId]}, function(err, poolId){
-			if(err){
-				console.log("splitPairs/updatePool error");
-				console.log(err);
-			}
-		});
-
-		/*
-			Make sure that the pool always has a valid leader
-		*/
-		findNewPoolLeader(startingPool, pair._id);
-	// }
+	/*
+		Make sure that the pool always has a valid leader
+	*/
+	findNewPoolLeader(startingPool, pair._id);
 }
 
 /******************************************************************************************************************
@@ -157,12 +153,6 @@ var mergePlayers = function(document){
 	*/
 	var pool = Pools.findOne({"_id":poolId1},{"leader":1});
 	if(pool.leader==undefined) Pools.update({_id:poolId1}, {$set:{"leader":pairId1}});
-
-	/*
-		Remove the elements from the html (twice the same, since it updates in between...)
-	*/
-	// parent.removeChild(playersToMerge[0]);
-	// parent.removeChild(playersToMerge[0]);
 }
 
 /******************************************************************************************************************
@@ -458,15 +448,7 @@ Template.poolList.events({
 		var category = Session.get('PoolList/Category');
 		var type = Session.get('PoolList/Type');
 		var year = Session.get('PoolList/Year');
-		/*
-			Move the pairs from that pool in the 'to remove pairs'
-		*/
-		// Start by finding the pool container of the pool we'd like to remove, and take the pairs inside it
-		// var pairsToRemove = document.getElementById("a"+poolId).children;
-		// if(pairsToRemove.length != 0){
-		// 	console.error("Can't remove a pool that is not empty");
-		// 	return;
-		// }
+
 
 		pool = Pools.findOne({"_id":poolId}, {"pairs":1});
 		pairsToRemove = pool.pairs;
@@ -477,7 +459,7 @@ Template.poolList.events({
 			typeData = Types.findOne({"_id":yearData[type]});
 			poolList = typeData[category];
 
-			if(poolList.length==0 && pairsToRemove.length != 0){
+			if(poolList.length==1 && pairsToRemove.length != 0){
 				console.error("Can't remove the last pool, there are still single players linked to it");
 				return;
 			}
