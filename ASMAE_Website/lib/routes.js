@@ -176,11 +176,7 @@ Router.route('/brackets', {
 	template: 'brackets'
 });
 
-<<<<<<< HEAD
 Router.route('/confirmation_registration_court/:_id', {
-=======
-Router.route('/confirmation-inscription-terrain/:_id', {
->>>>>>> 8434f2a0e218c7cd2adf11152d74731d6866fc28
 	name: 'confirmation_registration_court',
 	template: 'confirmation_registration_court',
 
