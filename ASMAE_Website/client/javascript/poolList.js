@@ -26,11 +26,10 @@ Template.pairsToSplitContainerTemplate.onRendered(function(){
   	drake.containers.push(document.querySelector('#pairstosplit'));
 });
 
-var splitPairs = function(document){
-	pairsToSplit = document.getElementById("pairstosplit").getElementsByClassName("pairs");
+var splitPairs = function(pairDiv){
+	// pairsToSplit = document.getElementById("pairstosplit").getElementsByClassName("pairs");
 
-	for(var i=0; i<pairsToSplit.length;i++){
-		var pairDiv = pairsToSplit[i];
+	// for(var i=0; i<pairsToSplit.length;i++){
 		var pairId = pairDiv.id;
 		var startingPool = pairDiv.dataset.startingpoolid;
 
@@ -84,7 +83,7 @@ var splitPairs = function(document){
 			Make sure that the pool always has a valid leader
 		*/
 		findNewPoolLeader(startingPool, pair._id);
-	}
+	// }
 }
 
 /******************************************************************************************************************
@@ -449,16 +448,6 @@ Template.poolList.events({
 		deleteAndMoveMatches(moves);
 
 		/*
-			Split pairs, if any
-		*/
-		splitPairs(document);
-
-		/*
-			Merge 2 players, if any
-		*/
-		mergePlayers(document);
-
-		/*
 			Display success message
 		*/
 		document.getElementById("successBox").removeAttribute("hidden");
@@ -698,7 +687,13 @@ Template.poolList.helpers({
 		).on('drag', function (el) {
 			hideSuccessBox(document);
   		  	el.className = el.className.replace('ex-moved', '');
-	  	}).on('drop', function (el) {
+	  	}).on('drop', function (el, target, source, sibling) {
+	  		if(target.id==="pairstosplit"){
+	  			splitPairs(el);
+	  		}
+	  		else if(target.id==="mergeplayers" && target.getElementsByClassName("pairs").length==2){
+	  			mergePlayers(document);
+	  		}
 	    	el.className += ' ex-moved';
 	  	}).on('over', function (el, container) {
 	    	container.className += ' ex-over';
@@ -834,9 +829,11 @@ Template.CategorySelect.helpers({
 				nonEmptyCat+=2;
 				typeCompletion += cPools;
 			}
-			var cBrackets = completionData["brackets"][categoriesKeys[i]];				
-			if(cBrackets!=undefined){
-				typeCompletion += cBrackets;
+			if(completionData["brackets"]!=undefined){
+				var cBrackets = completionData["brackets"][categoriesKeys[i]];				
+				if(cBrackets!=undefined){
+					typeCompletion += cBrackets;
+				}
 			}
 		}
 
