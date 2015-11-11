@@ -46,8 +46,8 @@
 	  <label> Date de naissance </label> <br>
 	  <div class="col-md-2">
      	<div class="form-group has-feedback" id="birthDayDiv">
-      		<label for="day">Jour</label>
-      		<div class="input-group">
+      	<label for="day">Jour</label>
+      	<div class="input-group">
           <input type="number" id="birthDay" class="form-control" min="1" value="{{date}}" name="jour de naissance">
           <div id="birthDayError" hidden>
             <span class="help-block" >Merci d'entrer le jour</span>
@@ -57,43 +57,43 @@
             <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
             <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
           </div>
+        </div>
+  	  </div>
+    </div>
+
+		<div class="col-md-2">
+      <div class="form-group has-feedback" id="birthMonthDiv">
+      	<label for="month">Mois</label>
+      	<div class="input-group">
+          <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{date}}" name="mois de naissance">
+          <div id="birthMonthError" hidden>
+            <span class="help-block" >Merci d'entrer le mois</span>
+            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
           </div>
+          <div id="birthMonthOK" hidden>
+            <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+            <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+          </div>
+        </div>
+      </div>
+	  </div>
+
+		<div class="col-md-2">
+      <div class="form-group has-feedback" id="birthYearDiv">
+        <label for="year">Année</label>
+       	<div class="input-group">
+          <input type="number" id="birthYear" class="form-control" min="1900" value="{{date}}" name="année de naissance">
+          <div id="birthYearError" hidden>
+            <span class="help-block" >Merci d'entrer l'année</span>
+            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+          </div>
+          <div id="birthYearOK" hidden>
+            <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+            <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
+          </div>
+        </div>
     	</div>
-	</div>
-
-		<div class="col-md-2">
-       	<div class="form-group has-feedback" id="birthMonthDiv">
-        		<label for="month">Mois</label>
-        		<div class="input-group">
-            <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{date}}" name="mois de naissance">
-            <div id="birthMonthError" hidden>
-              <span class="help-block" >Merci d'entrer le mois</span>
-              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-            </div>
-            <div id="birthMonthOK" hidden>
-              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-            </div>
-            </div>
-      	</div>
-	</div>
-
-		<div class="col-md-2">
-       	<div class="form-group has-feedback" id="birthYearDiv">
-        		<label for="year">Année</label>
-        		<div class="input-group">
-            <input type="number" id="birthYear" class="form-control" min="1900" value="{{date}}" name="année de naissance">
-            <div id="birthYearError" hidden>
-              <span class="help-block" >Merci d'entrer l'année</span>
-              <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-            </div>
-            <div id="birthYearOK" hidden>
-              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
-              <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-            </div>
-            </div>
-      	</div>
-	</div>
+	  </div>
 
 	<div class="col-md-3">
       <div class="form-group has-feedback" id="sexDiv">
