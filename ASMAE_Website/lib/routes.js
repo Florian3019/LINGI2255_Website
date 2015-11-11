@@ -67,7 +67,8 @@ Router.route('/mon-inscription', {
 		}
 	}
 });
-Router.route('/inscription-tournoi',  {
+
+Router.route('/tournament-registration',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
 	onBeforeAction: function() {
@@ -176,7 +177,7 @@ Router.route('/brackets', {
 	template: 'brackets'
 });
 
-Router.route('/confirmation-inscription-terrain/:_id', {
+Router.route('/confirmation_registration_court/:_id', {
 	name: 'confirmation_registration_court',
 	template: 'confirmation_registration_court',
 
@@ -243,4 +244,14 @@ Router.route('/confirmation-pair/:_id',{
 		data.idPair = this.params._id;
 		return data;
 	}
+});
+
+Router.route('/payment', {
+	name: 'payment',
+	template: 'payment'
+});
+
+Router.route('/paymentConfirmation', {
+  name: 'paymentConfirmation',
+	template: 'paymentConfirmation'
 });

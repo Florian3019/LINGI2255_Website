@@ -1,4 +1,3 @@
-
 Template.myRegistration.helpers({
   'setCurrentPlayer': function(){
   	return Meteor.userId();

@@ -1,0 +1,14 @@
+/* CSS declarations go here */
+
+.hide {
+  display:none;
+}
+
+.drop-in-container {
+  max-width: 500px;
+  margin: auto;
+  border: 1px solid #56535c;
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+}

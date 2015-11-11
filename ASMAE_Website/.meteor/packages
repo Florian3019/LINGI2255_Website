@@ -35,6 +35,11 @@ meteorhacks:ssr
 #velocity:html-reporter
 chipcastledotcom:jspdf
 jspdf:autotable
+anti:gagarin
+
+meteorhacks:npm
+nicktomlin:braintree-example
+npm-container
+
 anti:i18n
 aslagle:reactive-table
-anti:gagarin

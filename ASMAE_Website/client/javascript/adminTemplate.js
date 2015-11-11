@@ -2,25 +2,44 @@ Template.adminTemplate.showAll = function(){
 	return Meteor.users.find();
 }
 Session.setDefault("chosen","");
+
 Template.adminTemplate.events({
 	'click .btn':function(){
-		if(Meteor.user().profile.isAdmin){
-			if(Session.get("chosen")=="admin"&&Meteor.user()._id!=this._id){
-						Meteor.call('turnAdmin',this._id);
+		console.log("Validation");
+		event.preventDefault();
+		var selects = document.getElementsByName("mySelects");
+			  var selectsChanged = [];
+		  // loop over them all
+		  for (var i=0; i<selects.length; i++) {
+		     console.log(selects[i].value)
+		     console.log(selects[i].id)
+		     if(selects[i].id != Meteor.users.findOne()._id){
+		     		if(Meteor.users.findOne().profile.isAdmin){
+		     			if(selects[i].value=="Normal"){
+		     				Meteor.call('turnNormal',selects[i].id);
+		     			}
+		     			else if(selects[i].value=="Staff"){
+		     				Meteor.call('turnStaff',selects[i].id);
+		     			}
+		     			else if(selects[i].value=="Admin"){
+		     				Meteor.call('turnAdmin',selects[i].id);
+		     			}
+		     		}
+		     }
+		     else{
+		     	if(selects[i].value!=""){
+			     	alert("Vous ne pouvez pas changer vos propres permissions")
 			}
-			else if(Session.get("chosen")=="staff"&&Meteor.user()._id!=this._id){
-						Meteor.call('turnStaff',this._id);
-			}
-			else{
-				if(Meteor.user()._id!=this._id){
-						Meteor.call('turnNormal',this._id);		
-				}
-			}
-		
-		}
-		else{
-			alert("Vous êtes membre du Staff,\n Seul un administrateur peut changer les permissions d'un membre.\n\n Veuillez contacter un admin pour effectuer un changement")
-		}
+		     }
+	  	}
+	  	for (var i=0; i<selects.length; i++) {
+			selects[i].value=""
+		}  
+	  	if(Meteor.users.findOne().profile.isStaff){
+		     alert("Vous n'avez pas l'authorisation de faire des changements.\n Veuillez contacter un admin")
+		     }
+	  	
+	
 	
 	}
 	
@@ -28,6 +47,9 @@ Template.adminTemplate.events({
 });
 
 Template.adminTemplate.helpers({
+	'getId' : function(){
+		return this._id;
+	},
 	'getEmail' : function(){
 		return this.emails[0].address;
 	},

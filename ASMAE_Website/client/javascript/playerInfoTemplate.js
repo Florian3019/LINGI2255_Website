@@ -1,3 +1,61 @@
+Session.set('paymentFormStatus', null);
+var isBraintreeInitialized = false;
+
+// Create data object for payment
+function getFormData(){
+
+	var user = Meteor.user();
+	var extras = getExtras();
+	var quantity = 0;
+	if(extras)
+	{
+		quantity = extras.BBQ;					//TODO : gerer les extras dynamiquement + prix du tournoi
+	}
+
+  var data = {
+    firstName : user.profile.firstName,
+    lastName : user.profile.lastName,
+    email : user.emails[0].address,
+    quantity : quantity
+  };
+  return data;
+}
+
+function initializeBraintree (clientToken) {
+  if (isBraintreeInitialized) return;
+
+  braintree.setup(clientToken, 'dropin', {
+    container: 'dropin',
+    paymentMethodNonceReceived: function (event, nonce) {
+      Session.set('paymentFormStatus', true);
+
+      // we've received a payment nonce from braintree
+      // we need to send it to the server, along with any relevant form data
+      // to make a transaction
+      var data = getFormData();
+      data.nonce = nonce;
+
+      Meteor.call('createTransaction', data, function (err, result) {
+        Session.set('paymentFormStatus', null);
+        Router.go('paymentConfirmation');
+      });
+    }
+  });
+
+  isBraintreeInitialized = true;
+}
+
+function getExtras(){
+	var id = Meteor.userId();
+	var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+	if(pair.player1 && id === pair.player1._id){
+		return pair.player1.extras;
+	}
+	else {
+			return pair.player2.extras;
+	}
+}
+
 // Takes a player id as argument
 Template.playerInfoTemplate.helpers({
 
@@ -29,7 +87,8 @@ Template.playerInfoTemplate.helpers({
 			'birth': function(){
 			  var date = user.profile.birthDate;
 			  if(!date) return;
-			  return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+				month = date.getMonth()+1
+			  return date.getDate() + "/" + month + "/" + date.getFullYear();
 			},
 			'gender': function(){
 				return user.profile.gender;
@@ -52,7 +111,7 @@ Template.playerInfoTemplate.helpers({
 				return user.profile.AFT;
 			}
 		};
-	    return data;
+	  return data;
 	},
 
 	/*
@@ -72,6 +131,18 @@ Template.playerInfoTemplate.helpers({
 		if(Meteor.userId() == this.ID) callBack(undefined, true);
 		Meteor.call('isStaff', callBack);
 		Meteor.call('isAdmin', callBack);
+	},
+
+
+	'paymentStatusClass': function () {
+    return Session.get('paymentFormStatus') ? 'hide' : '';
+  },
+  'notPaymentStatusClass': function () {
+    return Session.get('paymentFormStatus') ? '' : 'hide';
+  },
+
+	'getExtras' : function() {
+		getExtras();
 	}
 
 });
@@ -89,4 +160,16 @@ Template.playerInfoTemplate.events({
 		console.log("clicked modifier");
 	},
 
-})
+});
+
+//For payments
+Template.myRegistration.rendered = function () {
+  Meteor.call('getClientToken', function (err, clientToken) {
+    if (err) {
+      console.log('There was an error', err);
+      return;
+    }
+
+    initializeBraintree(clientToken);
+  });
+};

@@ -56,8 +56,14 @@ Template.playersInfo.helpers({
                     return addr.street + " " + addr.number + " " + addr.box + " " + addr.city + " " + addr.zipCode + " " + addr.country;
                 }},
                 { key: 'profile.isStaff', label:'Staff'},
-                { key: 'profile.isAdmin', label:'Admin'}
+                { key: 'profile.isAdmin', label:'Admin'},
             ]
         }
+    }
+});
+
+Template.playersInfo.events({
+    'click .reactive-table tbody tr' : function(event){
+        Router.go('profileEdit',{_id:this._id});
     }
 });
