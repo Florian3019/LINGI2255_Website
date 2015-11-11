@@ -59,7 +59,7 @@ Template.courtEmail.events({
     'click #SelectAll':function(event){
     	console.log("SelectAll");
         event.preventDefault();
-        var checkboxes = document.getElementsByTagName("tbody");
+        var checkboxes = document.getElementsByTagName("tbody")[0].children;
  		for (var i=0; i<checkboxes.length; i++) {
 	     	// And stick the checked ones onto an array...
 	     	var target = checkboxes[i];
@@ -75,7 +75,7 @@ Template.courtEmail.events({
     'click #UnselectAll':function(event){
     	console.log("UnselectAll");
         event.preventDefault();
-         var checkboxes = document.getElementsByTagName("tbody");
+         var checkboxes = document.getElementsByTagName("tbody")[0].children;
 		 for (var i=0; i<checkboxes.length; i++) {
 		     // And stick the checked ones onto an array...
 	     	var target = checkboxes[i];
