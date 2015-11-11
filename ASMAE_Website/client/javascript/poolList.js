@@ -589,9 +589,9 @@ Template.poolList.helpers({
 			for(var i=0;i<poolIdList.length;i++){
 				pool = Pools.findOne({_id: poolIdList[i]});
 				
-				totalNumberOfPairs += pool.pairs.length;
+				totalNumberOfPairs += pool.pairs==undefined ? 0 : pool.pairs.length;
 				poolCompletion = pool.completion;
-				totalCompletion += pool.pairs.length * (poolCompletion==undefined ? 0 : poolCompletion);
+				totalCompletion += (pool.pairs==undefined ? 0 : pool.pairs.length) * (poolCompletion==undefined ? 0 : poolCompletion);
 				
 				if(k>=MAXCOLUMNS){
 					poolList.push(column);
