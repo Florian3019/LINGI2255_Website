@@ -1,13 +1,22 @@
 
 <!-- Takes 1 parameter : the poolId for this score table-->
 <template name="scoreTable">
+  <!-- link to style for button http://bootsnipp.com/snippets/featured/bootstrap-square-buttons -->
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+
 
 {{#with getLeader this._id}}
-<h5>Chef de poule: </h5>
+<h3>Chef de poule: </h3>
 <address>
-  <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
-  {{#unless equals this.profile.phone undefined}}<abbr title="Phone">P:</abbr> {{this.profile.phone}} <br>{{/unless}}
-  <a href="mailto:#">{{getEmail this}}</a>
+  <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
+                  <i class="fa fa-user fa-5x"></i><br/>
+                  <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
+                  {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
+                  {{getEmail this}}<br>
+  </a>
+  <!-- <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
+  {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
+  <a href="mailto:{{getEmail this}}">{{getEmail this}}</a> -->
 </address>
 {{/with}}
 
@@ -36,7 +45,7 @@
 
 
   {{#each this}}
-    <tr> 
+    <tr>
         <th>
           <ul class="list-group">
           {{#with getPlayer this.player1._id}}
@@ -51,17 +60,17 @@
         {{#each ..}}
           {{#if equals this._id ../_id}}
           <td class="selfMatch">
-            
+
           </td>
           {{else}}
           <td>
             <div class="input-group" display="inline">
               {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
-              <input 
+              <input
                 type="number"
                 min="0"
-                step="1" 
-                class="form-control points" 
+                step="1"
+                class="form-control points"
                 data-matchid="{{this._id}}"
                 data-pairid="{{../../_id}}"
                 value="{{getPoints this ../../_id}}">
