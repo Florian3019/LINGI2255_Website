@@ -141,10 +141,13 @@ Template.tournamentRegistration.helpers({
 		aloneDependency.depend(); // Refresh when button is hit
 
 		var check = checkErrors();
+		var e = document.getElementById("refreshErrorMessage");
 		if (check) { // An error occurred (mis-filled field)
-			var e = document.getElementById("refreshErrorMessage");
 			e.style.display = 'block';
 			return undefined;
+		}
+		else {
+			e.style.display = 'none';
 		}
 
 		var temp = document.getElementById("dateMatch");
@@ -439,6 +442,7 @@ Template.tournamentRegistration.events({
 		}else{
 			table.style.display = 'block';
 			refresh.style.display = 'block';
+			aloneDependency.changed();
 		}
     },
 
