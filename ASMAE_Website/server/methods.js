@@ -721,31 +721,34 @@ Meteor.methods({
 		if(!addressData._id){
 
 			if(userId && !courtId){
+				var addressID;
 				Addresses.insert(data, function(err, addrId){
 					if(err){
 						console.error('updateAddress error: while insert for courtId=false');
 						console.error(err);
 						return false;
 					}
+					addressID = addrId;
 					// Update addressID in the user
 	        		Meteor.call('updateUser', {_id:userId, profile:{addressID:addrId}});
 				});
 				// Done with new insert
-				return true;
+				return addressID;
 			}
 			if(courtId){
+				var addressID;
 				Addresses.insert(data, function(err, addrId){
 					if(err){
 						console.error('updateAddress error: while insert for courtId=true');
 						console.error(err);
 						return false;
 					}
-
+					addressID = addrId;
 					// Update addressID in the user
 	        		Meteor.call('updateCourt', {_id:courtId, ownerID:userId, addressID:addrId});
 				});
 				// Done with new insert
-				return true;
+				return addressID;
 			}
 		}
 
@@ -757,7 +760,7 @@ Meteor.methods({
 				return false;
 			}
 		});
-		return true;
+		return writeResult;
 	},
 
 	/*
@@ -1504,6 +1507,8 @@ Meteor.methods({
 	 * Insert some users in the DB
 	 */
 	'populateDB': function() {
+		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isStaff":true}});
+
 		var n = 20;
 
 		var firstNames = ["Jean-Pierre", "Antoine", "Marc", "André", "Kévin", "Fred", "Philippe", "Louis", "Pierre", "Jacques", "Marie", "Jeanne", "Madison", "Clothilde", "Barbara", "Sybille", "Hélène", "Priscilla", "Sophie", "Julie"];
@@ -1530,13 +1535,11 @@ Meteor.methods({
 				zipCode:zipCodes[i],
 				country:"Belgique"
 			};
-			var addressID = Meteor.call("updateAddress", addressData);
-			var emails = [{address:"user"+i+"@user.be"}];
+			var email = "user"+i+"@user.be";
 			var phone = Math.round(Math.random() * 1000000000); // 9 numbers
 			var profile = {
 				firstName:firstNames[i],
 				lastName:lastNames[i],
-				addressID:addressID,
 				phone:phone,
 				birthDate:date,
 				AFT:AFTs[i],
@@ -1545,16 +1548,20 @@ Meteor.methods({
 				gender:genders[i]
 			};
 
-
+			console.log("PLOP");
 			var userID = Accounts.createUser({
-						   emails : emails[i],
+						   email : email,
 						   password : firstNames[i],
-						   profile  : profile
+						   profile: profile
 					   });
+			console.log("LOL");
 
-			//Meteor.call("updateUser", {_id:userID, profile:profile});
-
+			var addressID = Meteor.call("updateAddress", addressData, userID, undefined);
+			console.log("LEL : "+addressID);
+			Meteor.call("updateUser", {_id:userID, profile:{addressID:addressID}});
+			console.log("OUPS");
 			Meteor.call("updatePair",{player1: {_id:userID}});
+			console.log("END");
 		}
 	},
 
