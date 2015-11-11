@@ -47,9 +47,12 @@
   <div>
     <center><a href="{{pathFor route='courtsList'}}" class="btn btn-default">Voir tous les terrains</a></center>
   </div> -->
-{{> reactiveTable collection=courtsCollection settings=settings fields=fields}}
+{{>allCourtsTable}}
 </template>
 
+<template name="allCourtsTable">
+{{> reactiveTable collection=courtsCollection settings=settings fields=fields}}
+</template>
 
 <template name="dispoSaturdayLabel">
   {{#if this.dispoSamedi}}

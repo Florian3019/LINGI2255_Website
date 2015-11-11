@@ -60,7 +60,7 @@
 //   }, 200)
 // });
 
-Template.courtSearch.helpers({
+Template.allCourtsTable.helpers({
     courtsCollection: function () {
         return Courts.find();
     },
