@@ -29,6 +29,11 @@ Router.route('/courtEmail', {
 	name: 'courtEmail'
 });
 
+Router.route('/modificationsLog', {
+	template: 'modificationsLog',
+	name: 'modificationsLog'
+});
+
 
 Router.route('/contacts', {
 	name: 'contacts',

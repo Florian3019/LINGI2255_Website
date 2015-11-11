@@ -55,6 +55,10 @@ Meteor.publish("Pairs", function () {
 	return res;
 });
 
+Meteor.publish("ModificationsLog", function(){
+	return ModificationsLog.find({});
+});
+
 	Pools.allow({
     	'insert': function (userId,doc) {
 	      	/* user and doc checks ,

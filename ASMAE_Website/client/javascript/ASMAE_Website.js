@@ -160,4 +160,5 @@ Tracker.autorun(function () {
   Meteor.subscribe("Types");
   Meteor.subscribe("Matches");
   Meteor.subscribe("Extras");
+  Meteor.subscribe("ModificationsLog");
 });

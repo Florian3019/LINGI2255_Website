@@ -12,6 +12,12 @@ var setInfo = function(document, msg){
   }
 }
 
+var getStringOptions = function(){
+	return "\ncatégorie :"+Session.get("PoolList/Category")+
+			" type : "+Session.get("PoolList/Type") +
+			" année : "+Session.get("PoolList/Year");
+}
+
 var hideSuccessBox = function(document){
 	var box = document.getElementById("successBox")
 	if(box!=undefined) box.setAttribute("hidden",""); // Hide success message if any
@@ -80,6 +86,12 @@ var splitPairs = function(pairDiv){
 		Make sure that the pool always has a valid leader
 	*/
 	findNewPoolLeader(startingPool, pair._id);
+
+	Meteor.call("addToModificationsLog", 
+		{"opType":"Séparation de paire", 
+		"details":
+			"Paire séparée : "+pairId + getStringOptions()
+		});
 }
 
 /******************************************************************************************************************
@@ -153,6 +165,12 @@ var mergePlayers = function(document){
 	*/
 	var pool = Pools.findOne({"_id":poolId1},{"leader":1});
 	if(pool.leader==undefined) Pools.update({_id:poolId1}, {$set:{"leader":pairId1}});
+
+	Meteor.call("addToModificationsLog", 
+		{"opType":"Fusion de 2 joueurs", 
+		"details":
+			"Joueurs : "+pair1.player1._id + " et " + pair2.player1._id +getStringOptions()
+		});
 }
 
 /******************************************************************************************************************
@@ -311,6 +329,13 @@ var movePairs = function(document){
 
 			// Set the new pool id to that pair :
 			document.getElementById(pairId).setAttribute("data-startingpoolid", newPoolId);
+
+
+			Meteor.call("addToModificationsLog", 
+				{"opType":"Mouvement paire", 
+				"details":
+					"Paire : "+pairId + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
+				});
 		}
 	}
 
@@ -488,6 +513,11 @@ Template.poolList.events({
 		}
 
 		Meteor.call('removePool', poolId, year, type, category);
+		Meteor.call("addToModificationsLog", 
+		{"opType":"Retirer poule", 
+		"details":
+			"Poule retirée : "+poolId+getStringOptions()
+		});
 	},
 
 	'click #addPool':function(event){
@@ -521,6 +551,12 @@ Template.poolList.events({
 		data.$push[category] = newPoolId;
 		/*	Add that pool to the list of pools of the corresponding type	*/
 		Types.update({_id:typeId},data);
+
+		Meteor.call("addToModificationsLog", 
+		{"opType":"Ajouter poule", 
+		"details":
+			"Poule ajoutée : "+newPoolId+getStringOptions()
+		});
 	}
 });
 

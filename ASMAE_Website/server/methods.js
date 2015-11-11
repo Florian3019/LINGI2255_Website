@@ -789,7 +789,8 @@ Meteor.methods({
 				constraint:<constraint>,
 				paymentID:<paymentID>
 			}
-			tournament :[<pointsRound1>, <pointsRound2>, ....]
+			tournament :[<pointsRound1>, <pointsRound2>, ....],
+			tournamentCourts:[<courtForRound1>, ...],
 			day: family | saturday | sunday
 			category: <category>
 		}
@@ -1552,8 +1553,44 @@ Meteor.methods({
 
 			Meteor.call("updatePairs",{player1: {_id:userID}});
 		}
+	},
+
+
+
+	/*
+		You can't modify these entries once they are added.
+
+		An entry is as follows :
+		{
+			userId : <userId> // Automatically generated
+			opType : <operationType> // String describing the type of the operation (mandatory)
+			details : <all usefull informations about the operation> // short String describing the operation (optional)
+			createdAt : <date> // automatically generated
+		}
+
+	*/
+	'addToModificationsLog':function(logData){
+		if(logData==undefined){
+			console.error("addToModificationsLog error : logData is undefined");
+			return;
+		}
+		if(logData.opType==undefined){
+			console.error("addToModificationsLog error : missing operation type");
+			console.log(logData);
+			return;
+		}
+
+		data = {};
+		
+		data.userId = Meteor.userId();
+
+		var date = new Date();
+		data.createdAt = date;
+
+		data.opType = logData.opType;
+		if(logData.details!=undefined) data.details = logData.details;
+
+		ModificationsLog.insert(data);
 	}
-
-
 
 });
