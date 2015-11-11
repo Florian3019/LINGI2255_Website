@@ -825,7 +825,7 @@ Template.tournamentRegistration.events({
 
         var callback = function(err, pairID){
         	if(err){
-        		console.log("error callback updatePairs");
+        		console.log("error callback updatePair");
         		console.log(err);
         		return;
         	}
@@ -854,7 +854,7 @@ Template.tournamentRegistration.events({
 
         console.log(pairData);
 
-        Meteor.call('updatePairs', pairData, callback);
+        Meteor.call('updatePair', pairData, callback);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
 
     	Router.go('myRegistration');

@@ -3,9 +3,9 @@
 {{#with getPlayer}}
  <div class="panel panel-info">
             <div class="panel-heading">
-              <h3 class="panel-title"><div align="left">{{firstName}} {{lastName}}</div>
-                <div align="right">
-                  <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
+              <h3 class="panel-title">
+                <div class="playerInfoTitle"><span class="playerInfoTitleName">{{firstName}} {{lastName}}</span>
+                  <button type="button" id="button_edit" class="btn btn-default pull-right" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
                 </div>
               </h3>
             </div>
@@ -53,6 +53,18 @@
                   </table>
                 </div>
               </div>
+
+              <form>
+              <div class="drop-in-container">
+                <div id="dropin"></div>
+                <br />
+                <center>
+                  <button type="submit" class="btn btn-primary {{paymentStatusClass}}">Payer</button>
+                  <p class="{{notPaymentStatusClass}}">Traitement en cours...</p>
+                </center>
+              </div>
+            </form>
+
             </div>
 </div>
 {{/with}}

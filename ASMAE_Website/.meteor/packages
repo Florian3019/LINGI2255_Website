@@ -36,3 +36,7 @@ meteorhacks:ssr
 chipcastledotcom:jspdf
 jspdf:autotable
 anti:gagarin
+
+meteorhacks:npm
+nicktomlin:braintree-example
+npm-container

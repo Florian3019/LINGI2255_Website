@@ -796,7 +796,7 @@ Meteor.methods({
 
 		@return : the pair id if successful, otherwise returns false
 	*/
-	'updatePairs' : function(pairData){
+	'updatePair' : function(pairData){
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
 		ID = {};
@@ -811,7 +811,7 @@ Meteor.methods({
 
 		const userIsOwner = ID['player1'] == Meteor.userId() || ID['player2'] == Meteor.userId();
 		if(!(userIsOwner || isAdmin || isStaff)){
-			console.error("updatePairs : You don't have the required permissions!");
+			console.error("updatePair : You don't have the required permissions!");
 			return false;
 		}
 
@@ -831,7 +831,7 @@ Meteor.methods({
 
 			var u = Meteor.users.findOne({_id:ID[player]});
 			if(!u){
-				console.error('updatePairs : player doesn\'t exist !');
+				console.error('updatePair : player doesn\'t exist !');
 				return false;
 			}
 
@@ -871,20 +871,20 @@ Meteor.methods({
 		var check2 = setPlayerData("player2");
 		if(check1 == false || check2 == false) return false;
 		if(check1==undefined && check2==undefined){
-			console.warn("No data about any player was provided to updatePairs");
+			console.warn("No data about any player was provided to updatePair");
 		}
 
 		if(!pairData._id){
 			return Pairs.insert(data, function(err, res){
 				if(err){
-					console.error("updatePairs error");
+					console.error("updatePair error");
 					console.error(err);
 				}
 			});
 		}
 		Pairs.update({_id: pairData['_id']} , {$set: data},function(err, count, status){
 			if(err){
-				console.error('updatePairs error');
+				console.error('updatePair error');
 				console.error(err);
 			}
 		});
@@ -898,7 +898,7 @@ Meteor.methods({
 			status:<status>, // paid or pending
 			balance:<balance>,
 			date:<data>,
-			method:<method>, // Cash, Visa or Banknumber
+			method:<method>, // Cash, CreditCard or BankTransfer
 		}
 
 		player : can either be player1 or player2
@@ -924,7 +924,7 @@ Meteor.methods({
 		const isStaff = Meteor.call('isStaff');
 
 		if(!(isAdmin || isStaff)){
-			console.error("updatePairs : You don't have the required permissions!");
+			console.error("updatePayment : You don't have the required permissions!");
 			return false;
 		}
 
@@ -932,7 +932,7 @@ Meteor.methods({
 		if(paymentData._id){
 			var str = "paymentID.";
 			var str2 = str.concat(player);
-			if(p[str.concat(player)] && paymentData._id != p[str2]){
+			if(p[str2] && paymentData._id != p[str2]){
 				console.error('updatePayment : trying to update a payment not belonging to the pair provided !');
 				return false;
 			}
@@ -963,7 +963,7 @@ Meteor.methods({
 				var upd = {};
 				upd["_id"] = pairId;
 				upd[str2] = paymId;
-        		Meteor.call('updatePair', upd);
+        Meteor.call('updatePair', upd);
 			});
 		}
 
@@ -1550,7 +1550,7 @@ Meteor.methods({
 						   profile  : profile
 					   });
 
-			Meteor.call("updatePairs",{player1: {_id:userID}});
+			Meteor.call("updatePair",{player1: {_id:userID}});
 		}
 	}
 
