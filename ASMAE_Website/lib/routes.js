@@ -3,6 +3,27 @@ Router.configure({
 	layoutTemplate: 'index'
 });
 
+function isRegistered() {
+	var id = Meteor.userId();
+	var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+	if (pair) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+Router.onBeforeAction(function() {
+	var currentUser = Meteor.userId();
+	if(currentUser){
+		this.next();
+	} else {
+		this.render("login");
+	}
+}, {except: ['home', 'rules']});
+
+
 // onStop hook is executed whenever we LEAVE a route
 Router.onStop(function(){
 	// register the previous route location in a session variable
@@ -15,9 +36,14 @@ Router.route('/', {
 	name: 'home'
 });
 
-Router.route('/courtEmail', {
+Router.route('/email-terrain', {
 	template: 'courtEmail',
 	name: 'courtEmail'
+});
+
+Router.route('/modificationsLog', {
+	template: 'modificationsLog',
+	name: 'modificationsLog'
 });
 
 
@@ -25,66 +51,56 @@ Router.route('/contacts', {
 	name: 'contacts',
 	template: 'contacts'
 });
-Router.route('/pictures', {
-	name: 'pictures',
-	template: 'pictures'
-});
-Router.route('/rules', {
+Router.route('/reglement', {
 	name: 'rules',
 	template: 'rules'
 });
-Router.route('/confirmation-inscription-tournoi', {
+Router.route('/mon-inscription', {
 	name: 'myRegistration',
-	template: 'myRegistration'
+	template: 'myRegistration',
+	onBeforeAction: function() {
+		if (isRegistered()) {
+			this.next();
+		}
+		else {
+			this.render("login");
+		}
+	}
 });
-Router.route('/tournament-registration',  {
+Router.route('/inscription-tournoi',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
-	onBeforeAction: function(){
-		var currentUser = Meteor.userId();
-		if(currentUser){
+	onBeforeAction: function() {
+		if (!isRegistered()) {
 			this.next();
-		} else {
+		}
+		else {
 			this.render("login");
 		}
 	}
 });
 
-Router.route('/poolList', {
+Router.route('/liste-poules', {
 	name: 'poolList',
 	template: 'poolList'
 });
 
-Router.route('/scoreTable', {
+Router.route('/table-scores', {
 	name: 'scoreTable',
 	template: 'scoreTable'
 });
 
-Router.route('/court-registration', {
+Router.route('/inscription-terrain', {
 	name: 'courtRegistration',
-	template: 'courtRegistration',
-	onBeforeAction: function(){
-		if(Meteor.userId()){
-			this.next();
-		} else {
-			this.render("login");
-		}
-	}
+	template: 'courtRegistration'
 });
 
-Router.route('/court-info', {
+Router.route('/info-terrain', {
 	name: 'courtInfo',
-	template: 'courtInfo',
-	onBeforeAction: function(){
-		if(Meteor.userId()){
-			this.next();
-		} else {
-			this.render("login");
-		}
-	}
+	template: 'courtInfo'
 });
 
-Router.route('/court/:_id', {
+Router.route('/terrain/:_id', {
 	name: 'courtInfoPage',
 	template: 'courtInfoPage',
 	data: function(){
@@ -99,13 +115,6 @@ Router.route('/court/:_id', {
 			return data;
 		}
 	},
-	onBeforeAction: function(){
-		if(Meteor.userId()){
-			this.next();
-		} else {
-			this.render("login");
-		}
-	},
 	waitOn: function(){
 		return [
 			Meteor.subscribe('Courts'),
@@ -115,36 +124,36 @@ Router.route('/court/:_id', {
 	}
 });
 
-Router.route('/my-courts', {
+Router.route('/mes-terrains', {
 	name: 'myCourts',
 	template: 'myCourts'
 });
 
-Router.route('/adminTemplate', {
+Router.route('/template-admin', {
 	name: 'adminTemplate',
 	template: 'adminTemplate'
 });
-Router.route('/adminAddCourt', {
+Router.route('/admin-ajout-terrain', {
 	name: 'adminAddCourt',
 	template: 'adminAddCourt'
 });
-Router.route('/players-info', {
+Router.route('/info-joueurs', {
 	name: 'playersInfo',
 	template: 'playersInfo'
 });
-Router.route('/player-info-page', {
+Router.route('/page-info-joueur', {
 	name: 'playerInfoPage',
 	template: 'playerInfoPage',
 });
-Router.route('/player-info-template', {
+Router.route('/template-info-joueur', {
 	name: 'playerInfoTemplate',
 	template: 'playerInfoTemplate',
 });
-Router.route('/staff-management', {
+Router.route('/gestion-staff', {
 	name: 'staffManagement',
 	template: 'staffManagement'
 });
-Router.route('/profileEdit/:_id', {
+Router.route('/editer-profil/:_id', {
 	name: 'profileEdit',
 	template: 'profileEdit',
 	data: function(){
@@ -157,13 +166,6 @@ Router.route('/profileEdit/:_id', {
 			return {ID:this.params._id};
 		}
 	},
-	onBeforeAction: function(){
-		if(Meteor.userId()){
-			this.next();
-		} else {
-			this.render("login");
-		}
-	},
 	waitOn: function(){
 		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users') ];
 	}
@@ -174,50 +176,7 @@ Router.route('/brackets', {
 	template: 'brackets'
 });
 
-Router.route('/confirmation_registration_player', {
-	name: 'confirmation_registration_player',
-	template: 'confirmation_registration_player',
-
-	data: function(){
-		var lastName = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.lastName':1})).profile.lastName;
-		var firstName = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.firstName':1})).profile.firstName;
-		var date = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1})).profile.birthDate;
-		date = date.substring(8,10) + "/" + date.substring(5,7) + "/" + date.substring(0,4);
-		var phone = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.phone':1})).profile.phone;
-		phone = phone.substring(0,4) + "/" + phone.substring(4,6) + "." + phone.substring(6,8) + "." + phone.substring(8,10);
-		var gender = (Meteor.users.findOne({_id:Meteor.userId()}, {'profile.gender':1})).profile.gender;
-		var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-		var addr = Addresses.findOne({_id:userData.profile.addressID});
-		if (addr.box) {
-			address = addr.number + ", " + addr.street + ". Boite " + addr.box;
-		}
-		else {
-			address = addr.number + ", " + addr.street;
-		}
-		var city = addr.zipCode + " " + addr.city;
-
-		var data = {};
-		data.lastName = lastName;
-		data.firstName = firstName;
-		data.birthDate = date;
-		data.phone = phone;
-		data.address = address;
-		data.city = city;
-		data.gender = gender;
-		return data;
-	},
-
-	onBeforeAction: function() {
-		var previousLocationPath=Session.get("previousLocationPath");
-		// Redirect to Home if we are not coming from the tournament registration page
-		if(previousLocationPath!="tournamentRegistration"){
-			this.redirect("/")
-		}
-		this.next();
-	}
-});
-
-Router.route('/confirmation_registration_court/:_id', {
+Router.route('/confirmation-inscription-terrain/:_id', {
 	name: 'confirmation_registration_court',
 	template: 'confirmation_registration_court',
 
@@ -238,7 +197,7 @@ Router.route('/confirmation_registration_court/:_id', {
 	}
 });
 
-Router.route('/modify-court/:_id', {
+Router.route('/modifier-terrain/:_id', {
 	name: 'modifyCourt',
 	template: 'courtRegistration',
 
@@ -254,30 +213,28 @@ Router.route('/modify-court/:_id', {
 			return data;
 		}
 	},
-	onBeforeAction: function(){
-		if(Meteor.userId()){
-			this.next();
-		} else {
-			this.render("login");
-		}
-	},
 	waitOn: function(){
 		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
 	}
 
 });
 
-Router.route('/search-court', {
+Router.route('/recherche-terrain', {
 	name: 'courtSearch',
 	template: 'courtSearch'
 });
 
-Router.route('/modify-extras',{
+Router.route('/terrains', {
+	name: 'courtsList',
+	template: 'courtsList'
+});
+
+Router.route('/modifier-extras',{
 	name: "modifyExtras",
 	template: 'modifyExtras'
 });
 
-Router.route('/confirm_pair/:_id',{
+Router.route('/confirmation-pair/:_id',{
 	name: 'confirmPair',
 	template: 'confirmPair',
 
@@ -285,12 +242,5 @@ Router.route('/confirm_pair/:_id',{
 		var data = {};
 		data.idPair = this.params._id;
 		return data;
-	},
-	onBeforeAction: function(){
-		if(Meteor.userId()){
-			this.next();
-		} else {
-			this.render("login");
-		}
 	}
 });

@@ -45,7 +45,6 @@ Meteor.publish('Extras', function(){
 
 
 Meteor.publish('users', function () {
-	//var res = Meteor.users.find({},{});
 	var res = Meteor.users.find({});
 
 	return res;
@@ -54,6 +53,10 @@ Meteor.publish('users', function () {
 Meteor.publish("Pairs", function () {
 	var res = Pairs.find({},{});
 	return res;
+});
+
+Meteor.publish("ModificationsLog", function(){
+	return ModificationsLog.find({});
 });
 
 	Pools.allow({
