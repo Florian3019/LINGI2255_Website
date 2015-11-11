@@ -3,6 +3,17 @@ Router.configure({
 	layoutTemplate: 'index'
 });
 
+function isRegistered() {
+	var id = Meteor.userId();
+	var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+	if (pair) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 Router.onBeforeAction(function() {
 	var currentUser = Meteor.userId();
 	if(currentUser){
@@ -11,6 +22,7 @@ Router.onBeforeAction(function() {
 		this.render("login");
 	}
 }, {except: ['home', 'rules']});
+
 
 // onStop hook is executed whenever we LEAVE a route
 Router.onStop(function(){
@@ -24,7 +36,7 @@ Router.route('/', {
 	name: 'home'
 });
 
-Router.route('/courtEmail', {
+Router.route('/email-terrain', {
 	template: 'courtEmail',
 	name: 'courtEmail'
 });
@@ -34,40 +46,56 @@ Router.route('/contacts', {
 	name: 'contacts',
 	template: 'contacts'
 });
-Router.route('/rules', {
+Router.route('/reglement', {
 	name: 'rules',
 	template: 'rules'
 });
-Router.route('/confirmation-inscription-tournoi', {
+Router.route('/mon-inscription', {
 	name: 'myRegistration',
-	template: 'myRegistration'
+	template: 'myRegistration',
+	onBeforeAction: function() {
+		if (isRegistered()) {
+			this.next();
+		}
+		else {
+			this.render("login");
+		}
+	}
 });
-Router.route('/tournament-registration',  {
+Router.route('/inscription-tournoi',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
+	onBeforeAction: function() {
+		if (!isRegistered()) {
+			this.next();
+		}
+		else {
+			this.render("login");
+		}
+	}
 });
 
-Router.route('/poolList', {
+Router.route('/liste-poules', {
 	name: 'poolList',
 	template: 'poolList'
 });
 
-Router.route('/scoreTable', {
+Router.route('/table-scores', {
 	name: 'scoreTable',
 	template: 'scoreTable'
 });
 
-Router.route('/court-registration', {
+Router.route('/inscription-terrain', {
 	name: 'courtRegistration',
 	template: 'courtRegistration'
 });
 
-Router.route('/court-info', {
+Router.route('/info-terrain', {
 	name: 'courtInfo',
 	template: 'courtInfo'
 });
 
-Router.route('/court/:_id', {
+Router.route('/terrain/:_id', {
 	name: 'courtInfoPage',
 	template: 'courtInfoPage',
 	data: function(){
@@ -91,36 +119,36 @@ Router.route('/court/:_id', {
 	}
 });
 
-Router.route('/my-courts', {
+Router.route('/mes-terrains', {
 	name: 'myCourts',
 	template: 'myCourts'
 });
 
-Router.route('/adminTemplate', {
+Router.route('/template-admin', {
 	name: 'adminTemplate',
 	template: 'adminTemplate'
 });
-Router.route('/adminAddCourt', {
+Router.route('/admin-ajout-terrain', {
 	name: 'adminAddCourt',
 	template: 'adminAddCourt'
 });
-Router.route('/players-info', {
+Router.route('/info-joueurs', {
 	name: 'playersInfo',
 	template: 'playersInfo'
 });
-Router.route('/player-info-page', {
+Router.route('/page-info-joueur', {
 	name: 'playerInfoPage',
 	template: 'playerInfoPage',
 });
-Router.route('/player-info-template', {
+Router.route('/template-info-joueur', {
 	name: 'playerInfoTemplate',
 	template: 'playerInfoTemplate',
 });
-Router.route('/staff-management', {
+Router.route('/gestion-staff', {
 	name: 'staffManagement',
 	template: 'staffManagement'
 });
-Router.route('/profileEdit/:_id', {
+Router.route('/editer-profil/:_id', {
 	name: 'profileEdit',
 	template: 'profileEdit',
 	data: function(){
@@ -143,7 +171,7 @@ Router.route('/brackets', {
 	template: 'brackets'
 });
 
-Router.route('/confirmation_registration_court/:_id', {
+Router.route('/confirmation-inscription-terrain/:_id', {
 	name: 'confirmation_registration_court',
 	template: 'confirmation_registration_court',
 
@@ -164,7 +192,7 @@ Router.route('/confirmation_registration_court/:_id', {
 	}
 });
 
-Router.route('/modify-court/:_id', {
+Router.route('/modifier-terrain/:_id', {
 	name: 'modifyCourt',
 	template: 'courtRegistration',
 
@@ -196,12 +224,12 @@ Router.route('/terrains', {
 	template: 'courtsList'
 });
 
-Router.route('/modify-extras',{
+Router.route('/modifier-extras',{
 	name: "modifyExtras",
 	template: 'modifyExtras'
 });
 
-Router.route('/confirm_pair/:_id',{
+Router.route('/confirmation-pair/:_id',{
 	name: 'confirmPair',
 	template: 'confirmPair',
 

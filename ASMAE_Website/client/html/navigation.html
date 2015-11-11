@@ -29,7 +29,7 @@
             </ul>
         </li>
 		{{/if}}
-        <li><a href="https://www.facebook.com/media/set/?set=a.10153598504984631.1073741844.9064359630&type=1&l=153e72eadf" target="_blank">Photos</a></li>
+        <li><a href="https://www.facebook.com/media/set/?set=a.10153598504984631.1073741844.9064359630&type=1&l=153e72eadf" target="_blank">Lien photos</a></li>
         <li><a href="{{pathFor route='rules'}}">Règlement</a></li>
 
         {{#if currentUser}}
@@ -38,9 +38,12 @@
         <li><a href="{{pathFor route='myCourts'}}">Mes terrains</a></li>
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Inscription <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="{{pathFor route='tournamentRegistration'}}">Inscription au tournoi</a></li>
+              {{#if registered}}
+              <li><a href="{{pathFor route='myRegistration'}}">Mon inscription</a></li>
+              {{else}}
+              <li><a href="{{pathFor route='tournamentRegistration'}}">Inscription au tournoi</a></li>
+              {{/if}}
             <li><a href="{{pathFor route='courtRegistration'}}">Inscription d'un terrain</a></li>
-            <li><a href="{{pathFor route='myRegistration'}}">Mon inscription</a></li>
           </ul>
         </li>
         {{/if}}
