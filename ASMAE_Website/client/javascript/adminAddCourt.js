@@ -63,7 +63,13 @@ Template.adminAddCourt.events({
         if(user.address){query["emails.address"] = user.address;}
         cursor = Meteor.users.find(query).fetch();
         var id, currentOwnerID; //Used for the update of an existing court
-        if(this.court){
+        console.log(this);
+        console.log(this.court);
+        console.log(user);
+        console.log(address);
+        
+        
+        if(this.court!=undefined){
             id = this.court._id;
             if(cursor.length > 0) {
                 currentOwnerID = cursor[0]._id;
@@ -73,7 +79,6 @@ Template.adminAddCourt.events({
                 currentOwnerID = this.court.ownerID;
                 go = true;
             }
-            
         }
         else {
             if(cursor.length > 0) {
@@ -106,6 +111,14 @@ Template.adminAddCourt.events({
                 else if(result == null){
                     console.error("No result");
                 }
+
+                Meteor.call("addToModificationsLog", 
+                {"opType":"Ajout d'un terrain", 
+                "details":
+                    "Id du Terrain: "+result +
+                    "Owner : "+currentOwnerID 
+                });
+
                 if(go) {
                     Router.go('confirmation_registration_court', {_id: result});
                 }
@@ -115,6 +128,7 @@ Template.adminAddCourt.events({
                     Session.set('address', address);
                 }
             });
+
     },  
     'click li': function() {
         var courtData = Session.get('courtData');

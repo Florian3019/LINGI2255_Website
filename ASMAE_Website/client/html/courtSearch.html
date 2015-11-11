@@ -1,6 +1,6 @@
 <template name="courtSearch">
   <h2>Recherche d'un terrain:</h2>
-  <center><input type="text" id="search-box" class="form-control" placeholder="Rechercher l'adresse d'un terrain" /></center>
+<!--   <center><input type="text" id="search-box" class="form-control" placeholder="Rechercher l'adresse d'un terrain" /></center>
   <div>
 
       <table class="table">
@@ -41,6 +41,31 @@
   <br />
   <div>
     <center><a href="{{pathFor route='courtsList'}}" class="btn btn-default">Voir tous les terrains</a></center>
-  </div>
+  </div> -->
+{{> reactiveTable collection=courtsCollection settings=settings fields=fields}}
+</template>
 
+
+<template name="dispoSaturdayLabel">
+  {{#if this.dispoSamedi}}
+    <span class="glyphicon glyphicon-ok lendOk"></span>
+  {{else}}
+    <span class="glyphicon-remove lendNot"></span>
+  {{/if}}
+</template>
+
+<template name="dispoSundayLabel">
+  {{#if this.dispoDimanche}}
+    <span class="glyphicon glyphicon-ok lendOk"></span>
+  {{else}}
+    <span class="glyphicon-remove lendNot"></span>
+  {{/if}}
+</template>
+
+<template name="dispoLendLabel">
+  {{#if this.lendThisYear}}
+    <span class="glyphicon glyphicon-ok lendOk"></span>
+  {{else}}
+    <span class="glyphicon-remove lendNot"></span>
+  {{/if}}
 </template>
