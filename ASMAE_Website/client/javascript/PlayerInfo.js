@@ -53,7 +53,26 @@ Template.playersInfo.helpers({
                 { key: 'profile.AFT', label: "AFT"},
                 { key: 'profile.addressID', label: "Addresse", fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
-                    return addr.street + " " + addr.number + " " + addr.box + " " + addr.city + " " + addr.zipCode + " " + addr.country;
+                    var ret = ""
+                    if(addr.street != undefined) {
+                        ret = ret+addr.street + ", ";
+                    }
+                    if(addr.number != undefined) {
+                        ret = ret+addr.number + ", ";
+                    }
+                    if(addr.box != undefined) {
+                        ret = ret+addr.box + ", ";
+                    }
+                    if(addr.city != undefined) {
+                        ret = ret+addr.city + ", ";
+                    }
+                    if(addr.zipCode != undefined) {
+                        ret = ret+addr.zipCode + ", ";
+                    }
+                    if(addr.country != undefined) {
+                        ret = ret+addr.country;
+                    }
+                    return ret
                 }},
                 { key: 'profile.isStaff', label:'Staff'},
                 { key: 'profile.isAdmin', label:'Admin'},
