@@ -70,6 +70,14 @@
   {{/if}}
 </template>
 
+<template name="freeLabel">
+  {{#if this.free}}
+    <span class="glyphicon glyphicon-ok lendOk"></span>
+  {{else}}
+    <span class="glyphicon-remove lendNot"></span>
+  {{/if}}
+</template>
+
 <template name="dispoLendLabel">
   {{#if this.lendThisYear}}
     <span class="glyphicon glyphicon-ok lendOk"></span>

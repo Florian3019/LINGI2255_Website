@@ -99,7 +99,11 @@ Template.allCourtsTable.helpers({
           { key: 'dispoSamedi', label:"Samedi", tmpl:Template.dispoSaturdayLabel},
           { key: 'dispoDimanche', label:"Dimanche", tmpl:Template.dispoSundayLabel},
           { key: 'lendThisYear', label:"Loué", tmpl:Template.dispoLendLabel},
-          { key: 'courtType', label:"Type"}
+          { key: 'free', label:"Libre", tmpl:Template.freeLabel},
+          { key: 'courtType', label:"Type"},
+          { key: 'instructions', label:"Instructions"},
+          { key: 'ownerComment', label:"Commentaire owner"},
+          { key: 'staffComment', label:"Commentaire staff"}
       ]
       }
     }
