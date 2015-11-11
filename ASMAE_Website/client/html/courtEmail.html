@@ -10,32 +10,9 @@
 <button type="button" id="UnselectAll" class="btn btn-default">Déselectionner tous les terrains ! </button>
 <br/>
 <br/>
-	<form action="">
-	<ul>
-	{{#each returnAllCourts}}
-		<li><input type="checkbox" id={{getId}} name="myCheckBoxes">
-Email du propriétaire  : {{getUserMail}} </li>
-		<li>Nom du propriétaire : {{getOwnerName}} </li>
-		<ul>
-			<li> surface : {{getSurfaceType}} </li>
-			<li> {{getTypeOfPrivacy}} </li>
-			<li> Instructions : {{SpecialInstructions}} </li>
-			<li> Commentaires : {{SpecialComments}} </li>
-			<li> Adresse : 
-				<ul>
-					{{#each GetAddress}}
-					<li> Rue : {{GetStreet}} </li>
-					<li> Numéro : {{GetPostalNumber}} {{GetBoxNumber}}</li>
-					<li> Code postal : {{GetPostCode}}</li>
-					<li> Ville :  {{GetCity}}</li>
-					<li> Pays : {{GetCountry}} </li>
-					{{/each}}
-				</ul>
-			 </li>
-		</ul>
-	{{/each}}
-	</ul>
-	</form>
+
+	{{>allCourtsTable}}
+
 	<button type="button" id="Boutton">Click Me!</button>
 </div>
 </template>

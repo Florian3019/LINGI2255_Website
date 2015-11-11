@@ -60,7 +60,7 @@
 //   }, 200)
 // });
 
-Template.courtSearch.helpers({
+Template.allCourtsTable.helpers({
     courtsCollection: function () {
         return Courts.find();
     },
@@ -74,18 +74,36 @@ Template.courtSearch.helpers({
           }},
           { key: 'addressID', label: 'Addresse' , fn: function(value, object){
             addr = Addresses.findOne({"_id":value});
-            if (addr.box) {
-              return addr.street + ", " + addr.number + ", " + addr.box + ", " + addr.zipCode + ", " + addr.city +  ", " + addr.country;
-            }
-            else {
-              return addr.street + ", " + addr.number + ", " + addr.zipCode + ", " + addr.city  + ", " + addr.country;
-            }
+            var ret = ""
+                    if(addr.street != undefined) {
+                        ret = ret+addr.street + ", ";
+                    }
+                    if(addr.number != undefined) {
+                        ret = ret+addr.number + ", ";
+                    }
+                    if(addr.box != undefined) {
+                        ret = ret+addr.box + ", ";
+                    }
+                    if(addr.city != undefined) {
+                        ret = ret+addr.city + ", ";
+                    }
+                    if(addr.zipCode != undefined) {
+                        ret = ret+addr.zipCode + ", ";
+                    }
+                    if(addr.country != undefined) {
+                        ret = ret+addr.country;
+                    }
+                    return ret
           }},
           { key: 'surface', label: "Surface"},
           { key: 'dispoSamedi', label:"Samedi", tmpl:Template.dispoSaturdayLabel},
           { key: 'dispoDimanche', label:"Dimanche", tmpl:Template.dispoSundayLabel},
           { key: 'lendThisYear', label:"Loué", tmpl:Template.dispoLendLabel},
-          { key: 'courtType', label:"Type"}
+          { key: 'free', label:"Libre", tmpl:Template.freeLabel},
+          { key: 'courtType', label:"Type"},
+          { key: 'instructions', label:"Instructions"},
+          { key: 'ownerComment', label:"Commentaire owner"},
+          { key: 'staffComment', label:"Commentaire staff"}
       ]
       }
     }
