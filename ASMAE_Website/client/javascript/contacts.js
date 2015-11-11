@@ -1,5 +1,6 @@
 Template.contacts.events({
-    'submit form': function(event){
+    'click #sub': function(event){
+	console.log("envoi d'une question");
         event.preventDefault();
         var currentdate = new Date();
 var datetime =    currentdate.getDate() + "/"
