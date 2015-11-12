@@ -1,5 +1,4 @@
 var aloneDependency = new Deps.Dependency();
-var tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 var tournamentYear = 2015;
 
 function closePopUp() {
@@ -105,42 +104,7 @@ Template.tournamentRegistration.helpers({
 			return false;
 		}
 
-		function getAge(birthDate){
-		    var age = tournamentDate.getFullYear() - birthDate.getFullYear();
-		    var m = tournamentDate.getMonth() - birthDate.getMonth();
-		    if (m < 0 || (m === 0 && tournamentDate.getDate() < birthDate.getDate())) {
-		        age--;
-		    }
-		    return age;
-		}
 
-		/*
-		* @param age is of type int
-		*/
-		function getCategory(age){
-			if(age < 9){
-				return undefined;
-			}
-			if(9 <= age && age <= 10){
-				return categoriesKeys[0];
-			}
-			if(11 <= age && age <= 12){
-				return categoriesKeys[1];
-			}
-			if(13 <= age && age <= 14){
-				return categoriesKeys[2];
-			}
-			if(15 <= age && age <= 16){
-				return categoriesKeys[3];
-			}
-			if(17 <= age && age <= 19){
-				return categoriesKeys[4];
-			}
-			if(20 <= age && age <= 40){
-				return categoriesKeys[5];
-			}
-			return categoriesKeys[6];
-		}
 
 		aloneDependency.depend(); // Refresh when button is hit
 
@@ -167,19 +131,15 @@ Template.tournamentRegistration.helpers({
 			sex = "F"
 		}
 		var category = getCategory(age);
-		console.log("User. dateMatch : "+tournamentDateMatch+", age : "+age+", sex : "+sex+", category : "+category);
 
 		var pairs = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}},
 		{"day":tournamentDateMatch}]}).fetch();
-		console.log("Pairs : ");
-		console.log(pairs);
 		var res = [];
 		for (var i = 0; i < pairs.length; i++) {
 			var aloneProfile = Meteor.users.findOne({_id:pairs[i].player1._id}).profile;
 			var aloneAge = getAge(aloneProfile.birthDate);
 			var aloneSex = aloneProfile.gender;
 			var aloneCategory = getCategory(aloneAge);
-			console.log("Other. age : "+aloneAge+", sex : "+aloneSex+", category : "+aloneCategory);
 
 			if (tournamentDateMatch==="family") {
 				if((age <= 15 && aloneAge > 25) || (age >= 25 && aloneAge <= 15)) {
@@ -588,7 +548,6 @@ Template.tournamentRegistration.events({
         }
         var phone = event.target.phone.value;
         var sex = event.target.sex.value;
-        console.log(sex)
         if(!sex){
         	errors.push({id:"sex", error:true});
         	hasError = true;
@@ -754,7 +713,6 @@ Template.tournamentRegistration.events({
 
 			var pair = Session.get("pair");
 
-			console.log(pair);
 
 			var pairData={
 					_id:pair._id,
@@ -855,12 +813,8 @@ Template.tournamentRegistration.events({
         		return;
         	}
 
-        	// Success
-        	console.log("tournamentRegistration pairID : " + pairID);
-
         	if(sendEmail){
 	        	body=body+Router.routes['confirmPair'].url({_id: pairID});
-		    		console.log(body);
 		    		var data = {
 		    			intro:"",
 						message:body};
@@ -871,13 +825,11 @@ Template.tournamentRegistration.events({
         		console.log("removing pair "+ remove);
         		Meteor.call('removePair',remove);
         	}
-			Meteor.call('addPairsToTournament', pairID, currentYear, dateMatch);
+			Meteor.call('addPairToTournament', pairID, currentYear, dateMatch);
         }
 
         body="Bonjour, \n " + event.target.firstname.value + " " +event.target.lastname.value + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
         to=event.target.emailPlayer.value; //address of the other player
-
-        console.log(pairData);
 
 
 		//For the payment

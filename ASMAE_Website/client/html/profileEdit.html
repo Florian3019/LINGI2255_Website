@@ -1,6 +1,6 @@
 <!-- Takes ID = <userID> as parameter -->
 <template name="profileEdit">
- 	<div class="container">
+	<div class="container">
 		<form role="form">
 			{{#with getPlayer}}
 			<div class="form-group">
@@ -78,7 +78,7 @@
 				</div>
 
 			<div class="row">
-				<div class="col-sm-2 col-sm-offset-3">
+				<div class="col-sm-3 col-sm-offset-3">
 					<div class="form-group" id="streetDiv">
 						<label for="text">Rue:</label>
 						<input type="text" class="form-control" id="street" value="{{address.street}}" name="street">
@@ -92,7 +92,7 @@
 					</div>
 				</div>
 
-				<div class="col-sm-2">
+				<div class="col-sm-1">
 					<div class="form-group">
 						<label for="text">Boite:</label>
 						<input type="text" class="form-control" id="box"  value="{{address.boxNumber}}" name="boxNumber">
