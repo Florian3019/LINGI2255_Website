@@ -1,6 +1,6 @@
 /* CSS declarations go here */
 
-/* 
+/*
 	Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris
 */
 .dropdown:hover .dropdown-menu {
@@ -27,8 +27,8 @@ body {
 }*/
 
 /*
-html { 
-  background: url(tennis.jpg) no-repeat center center fixed; 
+html {
+  background: url(tennis.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;

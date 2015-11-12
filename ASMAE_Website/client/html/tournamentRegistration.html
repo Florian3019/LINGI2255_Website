@@ -89,13 +89,12 @@
       <div class="row">
         <div class="col-sm-10 col-sm-offset-3">
           <div class="form-group has-feedback" id="sexDiv">
-            <label for="playerSex">Genre :</label>
-            <br>
-            <select name="sex" id="sex"  class="form-control" style="width: 15%; display: inline">
-              <option value="" disabled="" selected="" hidden></option>
-              <option value="H">Homme</option>
-              <option value="F">Femme</option>
-            </select>
+		        <label>Sexe: </label> <br>
+              <label class="radio-inline">
+                <input type="radio" name="sex" id="male" value="M" {{setGender 'true'}}>Homme</label>
+              <br>
+            <label class="radio-inline">
+            <input type="radio" name="sex" id="female" value="F" {{setGender 'false'}}>Femme</label>
             <div id="sexError" hidden>
               <span class="help-block" >Merci d'entrer votre sexe</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -107,14 +106,12 @@
           </div>
         </div>
       </div>
-
-
       <div class="row">
         <div class="col-sm-3 col-sm-offset-3">
           <div class="form-group">
 		        <label for="text">Numéro de téléphone:</label>
             <div class="input-group">
-              <span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
+              <span class="input-group-addon"><span class="glyphicon glyphicon-earphone"></span></span>
 		          <input type="number" class="form-control" id="phone" min="0" value="{{phone}}" name="phone">
             </div>
           </div>
@@ -217,9 +214,9 @@
             <label for="playerRank">Classement :</label>
             <br>
             <select name="rank" id="rank"  class="form-control" style="width: 15%; display: inline">
-              <option value="" disabled="" selected="" hidden></option>
-				      <option value="NC">NC</option>
-				      <option value="C30.5">C30.5</option>
+              <option value="" hidden></option>
+				      <option value="NC" selected="selected">NC</option>
+				      <option value="C30.5 ">C30.5</option>
 				      <option value="C30.4">C30.4</option>
 				      <option value="C30.3">C30.3</option>
 				      <option value="C30.2">C30.2</option>
@@ -252,9 +249,9 @@
           <div class="form-group has-feedback" id="dateMatchDiv">
             <label for="dateMatch">S'incrire pour le tournoi:</label>
             <br>
-            <select name="dateMatch" id="dateMatch"  class="form-control dateMatch" style="width: 15%; display: inline">
-              <option value="" disabled="" selected="" hidden></option>
-				      <option value="family">Tournoi des familles (Samedi)</option>
+            <select name="dateMatch" id="dateMatch"  class="form-control dateMatch" style="width: 30%; display: inline">
+              <option value="" hidden></option>
+				      <option value="family" selected="selected">Tournoi des familles (Samedi)</option>
 				      <option value="saturday">Mixtes (Samedi)</option>
 				      <option value="sunday">Doubles (Dimanche)</option>
             </select>

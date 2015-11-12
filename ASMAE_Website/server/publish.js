@@ -44,7 +44,7 @@ Meteor.publish('Extras', function(){
 
 Meteor.publish('users', function () {
 	//var options = {fields: {username: 1}};				//TODO: publier que les champs nécessaires
-	return Meteor.users.find({}, options);
+	return Meteor.users.find({});
 });
 
 Meteor.publish("Pairs", function () {
