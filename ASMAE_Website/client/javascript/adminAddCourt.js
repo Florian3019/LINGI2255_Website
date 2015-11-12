@@ -63,7 +63,10 @@ Template.adminAddCourt.events({
         if(user.address){query["emails.address"] = user.address;}
         cursor = Meteor.users.find(query).fetch();
         var id, currentOwnerID; //Used for the update of an existing court
-        
+        if(cursor.length == 0) {
+            alert("Personne ne correpond à votre recherche, veuillez vérifier les informations suivantes: \nNom,\nPrénom\nAddresse email.");
+            return;
+        }
         
         if(this.court!=undefined){
             id = this.court._id;
@@ -98,7 +101,6 @@ Template.adminAddCourt.events({
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
-
         Session.set('cursor1',cursor)
         Session.set('courtData', courtData);
         Session.set('address', address);
