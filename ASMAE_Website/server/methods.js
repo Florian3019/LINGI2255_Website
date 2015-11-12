@@ -324,6 +324,12 @@ Meteor.methods({
 				if(!data.$set) data['$set'] = {};
 				data.$set[b] = typeData[b];
 			}
+
+			var c = cat[i].concat("Courts");
+			if(typeData[c]!=undefined){
+				if(!data.$set) data['$set'] = {};
+				data.$set[c] = typeData[c];
+			}
 		}
 		if(!typeData._id){
 			return Types.insert(data);

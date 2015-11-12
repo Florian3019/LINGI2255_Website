@@ -26,7 +26,22 @@
           <div id="page-content-wrapper">
             <div class="container-fluid">
               <div class="col-lg-20">
-                <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+               <div class="row">
+                          <div class="col-md-3">
+                               <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+                          </div>
+                          <div class="col-md-3">
+                               <p style="font-size:100%">Nombre de poules: {{getNumberPools}}</p>
+                          </div>
+                          <div class="col-md-3">
+                               <p style="font-size:100%">Nombre de terrains: {{getNumberCourts}}</p>
+                          </div>
+                          <div class="col-md-3">
+                              <button type="button" id="assignCourts" class="btn btn-default btn-lg">
+                                    <span class="glyphicon" aria-hidden="true"></span> Assigner les terrains
+                                </button>
+                          </div>
+                       </div>
                 <div id="infoBox" class="alert alert-info" role="alert" hidden>
                   <h4>
                     <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>

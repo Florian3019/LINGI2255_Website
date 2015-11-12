@@ -47,7 +47,16 @@ Template.courtInfoPage.events({
         event.preventDefault();
 
         if (confirm('Etes-vous certain de vouloir supprimer définitivement ce terrain?\nToutes les données concernant ce terrain seront supprimées. Cette action est irréversible.')) {
-			Meteor.call('deleteCourt', this.court._id, function(error, result){
+			 
+        // Delete court from pool
+
+          var poolID = Pools.findOne({courtId:this.court._id},{_id:1});
+
+          if(poolID){
+            Pools.update({_id:poolID},{$unset: {courtId:""}}); 
+          }
+
+      Meteor.call('deleteCourt', this.court._id, function(error, result){
 	            if(error){
 	                console.error('deleteCourt error');
 	                console.error(error);
