@@ -12,7 +12,7 @@ const REGISTRATION_PRICE = 10;
 Meteor.methods({
 
 	//TODO: remove this when going to production !!!
-	'turnAdminInsecure' : function(){
+	'turnAdminInsecure' : function(nid){
 		Meteor.users.update({_id:nid}, {
 			$set: {"profile.isAdmin":1,"profile.isStaff":1}
 		});

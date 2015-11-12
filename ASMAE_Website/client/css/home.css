@@ -37,8 +37,7 @@ html {
 */
 
 .jumbotron {
-    margin-bottom: 0px;
-    background-image: url(tennis.jpg);
+    background: linear-gradient(#FF8000, #ED0CCF);
     background-position: 0% 25%;
     background-size: cover;
     background-repeat: no-repeat;
@@ -48,4 +47,6 @@ html {
 
 .homePage {
    background-image: url(main.jpg);
+   background-size: cover;
+   background-repeat: no-repeat;
 }

@@ -145,17 +145,24 @@ Template.playerInfoTemplate.helpers({
 	},
 
 	'paymentMethod' : function(){
-		switch(Payments.findOne({"userID": Meteor.userId()}).paymentMethod){
-			case "CreditCard":
-				return "Carte de crédit";
-				break;
-			case "BankTransfer":
-				return "Virement bancaire";
-				break;
-			case "Cash":
-				return "Cash";
-				break;
+		var payement = Payments.findOne({"userID": Meteor.userId()});
+		if(payment){
+			switch(.paymentMethod){
+				case "CreditCard":
+					return "Carte de crédit";
+					break;
+				case "BankTransfer":
+					return "Virement bancaire";
+					break;
+				case "Cash":
+					return "Cash";
+					break;
+			}
 		}
+		else {
+			console.error("No payment in database for this user!");
+		}
+
 	},
 
 	'paymentBalance' : function(){
