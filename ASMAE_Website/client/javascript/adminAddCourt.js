@@ -63,34 +63,14 @@ Template.adminAddCourt.events({
         if(user.address){query["emails.address"] = user.address;}
         cursor = Meteor.users.find(query).fetch();
         var id, currentOwnerID; //Used for the update of an existing court
-        console.log(this);
-        console.log(this.court);
-        console.log(user);
-        console.log(address);
-        
+        if(cursor.length == 0) {
+            alert("Personne ne correpond à votre recherche, veuillez vérifier les informations suivantes: \nNom,\nPrénom\nAddresse email.");
+            return;
+        }
         
         if(this.court!=undefined){
             id = this.court._id;
-            if(cursor.length > 0) {
-                currentOwnerID = cursor[0]._id;
-                go = true;
-            }
-            else {
-                currentOwnerID = this.court.ownerID;
-                go = true;
-            }
-        }
-        else {
-            if(cursor.length > 0) {
-                currentOwnerID = cursor[0]._id;
-                if(cursor.length == 1){
-                    go = true;
-                }
-            }
-            else {
-                currentOwnerID = this.court.ownerID;
-                go = true;
-            }
+            currentOwnerID = cursor[0]._id;
         }
         var courtData = {
             _id : id,
@@ -102,33 +82,9 @@ Template.adminAddCourt.events({
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
-        
-            Meteor.call('updateCourt', courtData, address, function(error, result){
-                if(error){
-                    console.error('CourtRegistration error');
-                    console.error(error);
-                }
-                else if(result == null){
-                    console.error("No result");
-                }
-
-                Meteor.call("addToModificationsLog", 
-                {"opType":"Ajout d'un terrain", 
-                "details":
-                    "Id du Terrain: "+result +
-                    "Owner : "+currentOwnerID 
-                });
-
-                if(go) {
-                    Router.go('confirmation_registration_court', {_id: result});
-                }
-                else {
-                    Session.set('cursor1',cursor)
-                    Session.set('courtData', courtData);
-                    Session.set('address', address);
-                }
-            });
-
+        Session.set('cursor1',cursor);
+        Session.set('courtData', courtData);
+        Session.set('address', address);
     },  
     'click li': function() {
         var courtData = Session.get('courtData');

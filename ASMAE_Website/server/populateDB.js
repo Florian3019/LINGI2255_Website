@@ -63,7 +63,6 @@ Meteor.methods({
                 }
             }
             return [new Date(year1, month1, day1), new Date(year2, month2, day2)];
-
         }
 
         var count = 0;

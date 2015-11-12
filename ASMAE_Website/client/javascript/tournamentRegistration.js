@@ -454,7 +454,7 @@ Template.tournamentRegistration.events({
 			This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
 			If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
     	*/
-    	function set_error(id,errorVisible) {
+    	function set_error(id, errorVisible) {
     		const error = "Error";
     		const OK = "OK";
     		const div = "Div";

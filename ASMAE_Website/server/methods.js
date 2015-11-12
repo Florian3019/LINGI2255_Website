@@ -12,9 +12,14 @@ const REGISTRATION_PRICE = 10;
 Meteor.methods({
 
 	//TODO: remove this when going to production !!!
-	'turnAdminInsecure' : function(){
+	'turnAdminInsecure' : function(nid){
 		Meteor.users.update({_id:nid}, {
 			$set: {"profile.isAdmin":1,"profile.isStaff":1}
+		});
+
+		GlobalValues.insert({
+			key: "nextCourtNumber",
+			value: 1
 		});
 	},
 
@@ -429,7 +434,34 @@ Meteor.methods({
 			}
 		}
 
+
+		if(courtData.numberOfCourts){
+			data.numberOfCourts = courtData.numberOfCourts;
+
+			//CourtNumber
+			var courtNumberArray = [];
+			var globalValueDocument = GlobalValues.findOne({key: "nextCourtNumber"})
+			nextCourtNumber = globalValueDocument.value;
+
+			for(var i = 0; i < data.numberOfCourts; i++){
+				courtNumberArray[i] = nextCourtNumber;
+				nextCourtNumber++;
+			}
+			data.courtNumber = courtNumberArray;
+
+			//Update nextCourtNumber global value
+			GlobalValues.update(globalValueDocument, {$set: {
+				value : nextCourtNumber
+			}}, function(err, result){
+				if(err){
+					throw new Meteor.Error("update GlobalValues error: ", err);
+				}
+			});
+		}
+		
+
 		if(!courtId){
+
 			// Check that a court with that address does not already exist :
 			if(address && Meteor.call('addressExists', address)){
 				console.log("Court already exists :");

@@ -1,5 +1,5 @@
 function closePopUp() {
-    $('#signModal').modal('hide'); 
+    $('#signModal').modal('hide');
 }
 
 Template.courtRegistration.helpers({
@@ -56,6 +56,7 @@ Template.courtRegistration.events({
 		var courtData = {
             surface : $('[name=surface]').val(),
         	courtType : $('[name=courtType]:checked').val(),
+            numberOfCourts : $('[name=numberOfCourts]').val(),
         	instructions : $('[name=instructions]').val(),
         	ownerComment : $('[name=ownerComment]').val(),
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
@@ -65,7 +66,9 @@ Template.courtRegistration.events({
         if(this.court){ //Used for the update of an existing court
             courtData._id = this.court._id;
             courtData.ownerID = this.court.ownerID;
+            courtData.courtNumber = this.court.courtNumber;
         }
+
 		Meteor.call('updateCourt', courtData, address, function(error, result){
             if(error){
                 console.error('CourtRegistration error');

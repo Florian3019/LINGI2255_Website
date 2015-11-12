@@ -10,3 +10,4 @@ Types = new Mongo.Collection('Types');
 Pools = new Mongo.Collection('Pools');
 Extras = new Mongo.Collection('Extras');
 ModificationsLog = new Mongo.Collection('ModificationsLog');
+GlobalValues = new Mongo.Collection('GlobalValues');
