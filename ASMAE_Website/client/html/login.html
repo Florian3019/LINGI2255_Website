@@ -1,84 +1,146 @@
 <template name="login">
-
+    
 	<!--  Logo resources :
 			https://www.facebookbrand.com/
-
+	
 	-->
-
-	<center>
+	
+	<center> 
 		<div class="header">
-			<h1>Veuillez vous connecter avant de poursuivre l'inscription</h1>
-		</div>
+			<h1>Veuillez vous connecter avant de poursuivre l'inscription</h1>  
+		</div> 
 	</center>
-
+	
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-4" h>
 			<form class="login">
 				<h2 class="login-heading">Connexion</h2>
+				
+                <div class="form-group" id="user">
+                  <input  name="email" class="form-control" placeholder="Nom d'utilisateur ou email" required autofocus>
+                  <span class="help-block" id="user-error-message" style="display: none">Utilisateur non trouvé</span>
+                </div>
 
-				<label for="inputEmail" class="sr-only">Addresse mail</label>
-				<input type="email" name="email" class="form-control" placeholder="Addresse mail" required autofocus>
-
-				<p> </p> <!-- Espace -->
-
-				<label for="inputPassword" class="sr-only">Mot de passe</label>
-				<input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
+                <div class="form-group" id="password">
+                 <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
+                  <span class="help-block" id="password-error-message" style="display: none">Mot de passe incorrect</span>
+                </div>
 
 				<div class="checkbox">
 					<label>
 						<input type="checkbox" value="remember-me"> Se souvenir de moi
 					</label>
 				</div>
+
 				<p><input class="btn btn-lg btn-primary btn-block" type="submit" value="Connexion"></p>
 			</form>
         </div>
-
+		
         <div class="col-md-4">
-			<h2>Avec Google</h2>
-			<img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="30%" height="30%">
+			<h2>Avec Google</h2> 
+			<img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="31%" height="31%">
 			<p> </p> <!-- Espace -->
-			<button id="google-login" class="btn btn-lg btn-danger">Se connecter avec Google</button>
+			<button id="google-login" class="btn btn-lg btn-danger btn-block">Se connecter avec Google</button>
         </div>
-
+	   
         <div class="col-md-4">
-			<h2>Avec Facebook</h2>
-		  	<img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="30%" height="30%">
+			<h2>Avec Facebook</h2> 
+		  	<img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="31%" height="31%">
 			<p> </p> <!-- Espace -->
-			<button id="facebook-login" class="btn btn-lg  btn-primary">Se connecter avec Facebook</button>
+			<button id="facebook-login" class="btn btn-lg  btn-primary btn-block">Se connecter avec Facebook</button>
         </div>
     </div>
-
+	  	
 	<p> </p> <!-- Espace -->
-
-	<center>
+    
+    <div class="modal fade alert" id="signModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="lineModalLabel">Inscription réussie</h3>
+                </div>
+                <div class="modal-body">
+                      <p id="welcom-message"> Bienvenue Surnom </p>
+                      <p> Votre compte à correctement été crée ! </p>
+                      <button onclick="closePopUp()" id="sign-up-ok" class="btn btn-primary center-block">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function closePopUp() {
+            $('#signModal').modal('hide'); 
+        }
+    </script>
+    
+    
+    
+	<center> 	
 		<a class="btn btn-outline btn-sm" data-toggle="collapse" data-target="#inscription">Pas encore inscrit ?</a>
 		<p> </p> <!-- Espace -->
 			<div class="collapse" id="inscription">
 			<div class="well well-lg">
-				<center>
 				<div class="row">
-					<div class="col-md-12">
+                    <div class="col-md-4 col-md-offset-4 column">
 						<form class="login">
 							<h2 class="lead">Inscription</h2>
-
-							<label for="inputUser" class="sr-only">Nom d'utilisateur</label>
-							<input type="userName" name="username-sign" class="form-control" placeholder="Nom d'utilisateur" required autofocus>
-
+                            
+							<label class="header pull-left" for="inputUser">Nom d'utilisateur :</label>
+							<input type="userName" id="inputUser" name="username-sign" class="form-control" placeholder="Nom d'utilisateur" required autofocus>
+							
 							<p> </p> <!-- Espace -->
-							<label for="inputEmail" class="sr-only">Addresse mail</label>
-							<input type="email" name="email-sign" class="form-control" placeholder="Adresse mail" required autofocus>
+							<label class="header pull-left" for="inputEmail">Addresse mail :</label>
+							<input type="email" id="inputEmail" name="email-sign" class="form-control" placeholder="Adresse mail" required autofocus>
 							<p> </p> <!-- Espace -->
-							<label for="inputPassword" class="sr-only">Mot de passe</label>
-							<input type="password" name="password-sign" class="form-control" placeholder="Mot de passe" required>
+							<label class="header pull-left" for="inputPassword">Mot de passe :</label>
+							<input type="password" id="inputPassword" name="password-sign" class="form-control" placeholder="Mot de passe" required>
 							<p> </p> <!-- Espace -->
+ 
+                            <div class="alert alert-success fade in" style="display:none;" id="sign-up-success" role="alert">
+                                <span class="glyphicon glyphicon-ok-sign"></span>
+                                <strong>Réussi !</strong> Vous êtes bien inscrit.
+                            </div>
+                            <div class="alert alert-danger fade in"  style="display:none;" id="no-username" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                <strong>Erreur :</strong> Veuillez entrer un nom d'utilisateur.
+                            </div>
+                            <div class="alert alert-danger fade in"  style="display:none;" id="not-valid-username" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                <strong>Erreur :</strong> Le nom d'utilisateur doit comporter au moins 3 caractères.
+                            </div>
+                            <div class="alert alert-danger fade in"  style="display:none;" id="existing-username" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                <strong>Erreur :</strong> Le nom d'utilisateur existe déjà.
+                            </div>
+                            <div class="alert alert-danger fade in"  style="display:none;" id="no-email" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                <strong>Erreur :</strong> Veuillez entrer une addresse mail.
+                            </div>
+                            <div class="alert alert-danger fade in"  style="display:none;" id="not-valid-email" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                <strong>Erreur :</strong> Veuillez entrer une addresse mail valide.
+                            </div>
+                            <div class="alert alert-danger fade in"  style="display:none;" id="existing-email" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                <strong>Erreur :</strong> L'addresse mail existe déjà.
+                            </div>
+                            <div class="alert alert-danger fade in"  style="display:none;" id="no-password" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                <strong>Erreur :</strong> Veuillez entrer un mot de passe.
+                            </div>
+                            <div class="alert alert-danger fade in"  style="display:none;" id="not-valid-password" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                <strong>Erreur :</strong> Le mot de passe doit comporter au moins 6 caractères.
+                            </div>
 
-							<button id="sign-up" class="btn btn-success" type="button" >S'inscrire</button>
+
+							<button id="sign-up" class="btn btn-success center-block" type="submit" >S'inscrire</button>
 						</form>
 					</div>
 				</div>
-				</center>
 			</div>
 		</div>
 
 	</center>
-</template>
+</template>	
