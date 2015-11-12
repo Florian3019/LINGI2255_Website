@@ -3,12 +3,10 @@ const REGISTRATION_PRICE = 10;
 
 
 /*
-
 	/!\
 	On the client, Meteor.call is asynchronous - it returns undefined and its return value can only be accesses via a callback.
 	Helpers, on the other hand, execute synchronously.
 	/!\
-
 */
 
 Meteor.methods({
@@ -217,7 +215,6 @@ Meteor.methods({
 		@param yearDate is structured as a year.
 		This is the top-level structure in the database
 		One "table" year per year
-
 		A year structure is as follows :
 		{
 			_id:<date>,
@@ -258,7 +255,6 @@ Meteor.methods({
 
 	/*
 		@param typeData is structured as a type
-
 		A type structure is as follows :
 		{
 			// Can only $addToSet
@@ -270,8 +266,6 @@ Meteor.methods({
 			juniors:<list of poolIDs>
 			seniors:<list of poolIDs>
 			elites:<list of poolIDs>
-
-
 			// Can only $set
 			preminimesBracket:<list of pairId>
 			minimesBracket:<list of pairId>
@@ -281,7 +275,6 @@ Meteor.methods({
 			seniorsBracket:<list of pairId>
 			elitesBracket:<list of pairId>
 			listBracket:<list of pairID>
-
 			NOTE : for the family tournament, only one list of pools :
 			list:<list of poolIDs>
 		}
@@ -320,9 +313,7 @@ Meteor.methods({
 		@param address is structured as an address
 		(fields can be missing, if the _id field is missing, a new address will be linked to this court,
 		erasing reference to previous addressID if existing). Can be null.
-
 		This function does a check to prevent a user from adding a new court with an existing court address (preventing duplicates)
-
 		A court structure is as follows :
 		{
 			_id:<courtId>,
@@ -361,7 +352,6 @@ Meteor.methods({
 
        		/*			TODO
        		ADD:
-
        		courtNumber
        		zone
        		mapNumber
@@ -499,7 +489,6 @@ Meteor.methods({
 
 	/*
 		@param : userData : javascript object containing the fields of the user. It must include at least the _id field.
-
 		User structure is as follows :
 		{
 			createdAt:<createdAt>,
@@ -527,11 +516,9 @@ Meteor.methods({
 				}
 			}
 		}
-
 		If the _id is not already in the DB, this will add that _id and all other fields of userData to the DB (creating a new user).
 		Missing fields will not be included (except for admin and staff which default to false).
 		The function will return true.
-
 		If the _id is already in the DB, this will update the fields of the existing in regard of the fields in userData.
 		Missing fields will be left as they were before.
 		The function will return false.
@@ -634,7 +621,6 @@ Meteor.methods({
 		@param AddressData : if it does not contain a field _id, this will
 		create a new address for the user or court (removing the reference to the previous one if there was one) and link its
 		_id to the profile.addressID field of the user or the .addressID field of the court.
-
 		The addressData structure is as follows :
 		{
 			_id:<id>, // Omit this if you want to create a new address, this will be auto-generated
@@ -645,10 +631,8 @@ Meteor.methods({
 			zipCode:<zipCode>,
 			country:<country>
 		}
-
 		If some fields are missing, they will be left untouched.
 		Returns false on failure and true on success
-
 	*/
 	'updateAddress' : function(addressData, userId, courtId){
 		if(!userId && !courtId){
@@ -721,31 +705,34 @@ Meteor.methods({
 		if(!addressData._id){
 
 			if(userId && !courtId){
+				var addressID;
 				Addresses.insert(data, function(err, addrId){
 					if(err){
 						console.error('updateAddress error: while insert for courtId=false');
 						console.error(err);
 						return false;
 					}
+					addressID = addrId;
 					// Update addressID in the user
 	        		Meteor.call('updateUser', {_id:userId, profile:{addressID:addrId}});
 				});
 				// Done with new insert
-				return true;
+				return addressID;
 			}
 			if(courtId){
+				var addressID;
 				Addresses.insert(data, function(err, addrId){
 					if(err){
 						console.error('updateAddress error: while insert for courtId=true');
 						console.error(err);
 						return false;
 					}
-
+					addressID = addrId;
 					// Update addressID in the user
 	        		Meteor.call('updateCourt', {_id:courtId, ownerID:userId, addressID:addrId});
 				});
 				// Done with new insert
-				return true;
+				return addressID;
 			}
 		}
 
@@ -757,7 +744,7 @@ Meteor.methods({
 				return false;
 			}
 		});
-		return true;
+		return writeResult;
 	},
 
 	/*
@@ -765,9 +752,7 @@ Meteor.methods({
 		If you supply the category (and no player), make sure it fits the category of both players --> not checked.
 		The category will be automatically checked and set if you provide at least a player.
 		The update fails if both players are not of the same category or if the supplied category does not fit the player.
-
 		/!\ For a the family type tournament, the category should be "none"
-
 		A pair is structured as follows:
 		{
 			_id:<id>,
@@ -792,7 +777,6 @@ Meteor.methods({
 			day: family | saturday | sunday
 			category: <category>
 		}
-
 		@return : the pair id if successful, otherwise returns false
 	*/
 	'updatePair' : function(pairData){
@@ -923,7 +907,6 @@ Meteor.methods({
 			date:<date>,
 			method:<method>, // Cash, CreditCard or BankTransfer
 		}
-
 		player : can either be player1 or player2
 	*/
 	'updatePayment' : function(paymentData, pairId, player){
@@ -1002,7 +985,6 @@ Meteor.methods({
 
 	/*
 		If no _id is provided, creates a new match. Else, updates it.
-
 		A match is structured as follows :
 		{
 			_id:<id>,
@@ -1012,7 +994,6 @@ Meteor.methods({
 			courtId:<courtID>,
 			day:<matchDate> // Saturday or Sunday
 		}
-
 		matchData is expected to be formated like this :
 		{
 			_id:<id>, // Optional
@@ -1020,11 +1001,8 @@ Meteor.methods({
 			pair1: {pairId: <pairID>, points:<points>}, // Note : the order pair1/pair2 is irrelevant and is just for the convenience of parsing the data
 			pair2: {pairId: <pairID>, points:<points>}
 		}
-
 		Automatically adds the match to the right pool if one is created (must provide pair1 and pair2 or creation will fail)
-
 		providing pair1, pair2 and the poolId is enough to update the right match without giving the id of the match
-
 		@return match id on success
 	*/
 	'updateMatch' : function(matchData){
@@ -1147,7 +1125,6 @@ Meteor.methods({
 			leader:<pairId>, // Leader is the player1 from the pair
 			courtId:<courtID>,
 		}
-
 		@return pool id on success
 	*/
 	'updatePool' : function(poolData){
@@ -1242,7 +1219,6 @@ Meteor.methods({
 
 	/*
 		@param pairID a valid ID for a pair that is the Pairs table
-
 		Category of the pair is automatically set
 		dateMatch : one of "saturday", "sunday", "family"
 		Adds the pair in the tournament on the right pool.
@@ -1310,7 +1286,6 @@ Meteor.methods({
 		@param year is the year of the tournament to consider
 		@param type is the type of the tournament to consider (men, mixed, women or family)
 		@param category is the age category of the tournament : preminimes, minimes, cadets, scholars, juniors, seniors or elites
-
 		Returns the ID of the current pool to fill.
 		The pools are filled one by one directly after a player has registered.
 		If the upper-level table does not exist (year or type), creates an empty one then adds the pair.
@@ -1349,7 +1324,6 @@ Meteor.methods({
 	/*
 		@param typeTable an object stored in the table Types
 		@param category : minimes, seniors,...
-
 		Helper of the *getPoolToFill* function
 		Returns the current pool on which a pair should be registered
 		This pool should be the first 'not full' pool it encounters while iterating over the list of pools
@@ -1526,6 +1500,8 @@ Meteor.methods({
 	 * Insert some users in the DB
 	 */
 	'populateDB': function() {
+		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isStaff":true}});
+
 		var n = 20;
 
 		var firstNames = ["Jean-Pierre", "Antoine", "Marc", "André", "Kévin", "Fred", "Philippe", "Louis", "Pierre", "Jacques", "Marie", "Jeanne", "Madison", "Clothilde", "Barbara", "Sybille", "Hélène", "Priscilla", "Sophie", "Julie"];
@@ -1552,13 +1528,11 @@ Meteor.methods({
 				zipCode:zipCodes[i],
 				country:"Belgique"
 			};
-			var addressID = Meteor.call("updateAddress", addressData);
-			var emails = [{address:"user"+i+"@user.be"}];
+			var email = "user"+i+"@user.be";
 			var phone = Math.round(Math.random() * 1000000000); // 9 numbers
 			var profile = {
 				firstName:firstNames[i],
 				lastName:lastNames[i],
-				addressID:addressID,
 				phone:phone,
 				birthDate:date,
 				AFT:AFTs[i],
@@ -1567,13 +1541,21 @@ Meteor.methods({
 				gender:genders[i]
 			};
 
+			console.log("PLOP");
 			var userID = Accounts.createUser({
-						   emails : emails[i],
+						   email : email,
 						   password : firstNames[i],
-						   profile  : profile
+						   profile: profile
 					   });
+			console.log("LOL");
 
+			var addressID = Addresses.insert(addressData)
+			console.log("LEL : "+addressID);
+			Meteor.call("updateUser", {_id:userID, profile:{addressID:addressID}});
+			console.log("OUPS");
 			Meteor.call("updatePair",{player1: {_id:userID}});
+			console.log("END");
+			// TODO: create tables of pairs
 		}
 	},
 
@@ -1581,7 +1563,6 @@ Meteor.methods({
 
 	/*
 		You can't modify these entries once they are added.
-
 		An entry is as follows :
 		{
 			userId : <userId> // Automatically generated
@@ -1589,7 +1570,6 @@ Meteor.methods({
 			details : <all usefull informations about the operation> // short String describing the operation (optional)
 			createdAt : <date> // automatically generated
 		}
-
 	*/
 	'addToModificationsLog':function(logData){
 		if(logData==undefined){

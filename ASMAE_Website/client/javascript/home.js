@@ -16,6 +16,11 @@ Template.home.events({
 		console.log("You are now normal");
 		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isStaff":false}});
 		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isAdmin":false}});
+	},
+
+	'click #popdb' : function(event) {
+		console.log("Populating DB");
+		Meteor.call("populateDB");
 	}
 
 });

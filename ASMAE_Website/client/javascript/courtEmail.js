@@ -2,89 +2,40 @@ Template.courtEmail.returnAllCourts = function(){
 	return Courts.find();
 }
 
-Template.courtEmail.helpers({
-	'getId' : function(){
-		return this._id;
-	},
-	'getUserId' : function(){
-		return this.ownerID;
-	},
-	'getUserMail': function(){
-		var ownID = this.ownerID;
-		console.log(Meteor.users.findOne({_id:this.ownerID}))
-		return Meteor.users.findOne({_id:this.ownerID}).emails[0].address
-	},
-	'getOwnerName' : function(){
-		var ownID = this.ownerID;
-		console.log(Meteor.users.findOne({_id:this.ownerID}).profile.name)
-		return Meteor.users.findOne({_id:this.ownerID}).profile.name
-	},
-	'getSurfaceType': function(){
-		return this.surface;
-	},
-	'getTypeOfPrivacy': function(){
-		return this.courtType;
-	},
-	'SpecialInstructions': function(){
-		return this.instructions
-	},
-	'SpecialComments': function(){
-		return this.ownerComment
-	},
-	'GetAddress' : function(){
-		var addressID = this.addressID
-		console.table(Addresses.findOne(addressID).street)
-		return Addresses.find(addressID)
-	},
-	'GetStreet' : function(){
-		return this.street
-	},
-	'GetPostalNumber' : function(){
-		return this.number
-	},
-	'GetBoxNumber': function(){
-		if(this.box!=null){
-			return ("/"+this.box)
+Template.courtEmail.events({
+	'click .reactive-table tbody tr' : function(event){
+		var target = event.currentTarget;
+		var courtSelected = (' ' + target.className + ' ').indexOf(' courtSelected ') > -1;
+		if(courtSelected){
+			// Unselected it
+			target.removeAttribute("id","");
+			target.className = target.className.replace('courtSelected', '');
 		}
 		else{
-			return "";
-		}
-	},
-	'GetPostCode': function(){
-		return this.zipCode
-	},
-	'GetCity': function(){
-		return this.city
-	},
-	'GetCountry': function(){
-		return this.country
-	}
-	
-	
+			// Select it
+       		target.className += ' courtSelected';
+       		target.id = this._id;
+       	}
+    },
 
-});
-
-Template.courtEmail.events({
     'click #Boutton': function(event){
 	console.log("Check d'une Check");
         event.preventDefault();
-         var checkboxes = document.getElementsByName("myCheckBoxes");
+         var checkboxes = document.getElementsByClassName("courtSelected");
+
 		  var checkboxesChecked = [];
 	  // loop over them all
 	  for (var i=0; i<checkboxes.length; i++) {
+
 	     // And stick the checked ones onto an array...
-	     if (checkboxes[i].checked) {
 		//print des adresses mails correspondant aux checkbox checkées.
-		var em = Meteor.users.findOne({_id:Courts.findOne({_id : checkboxes[i].id}).ownerID}).emails[0].address
-		console.log(em)
+		var em = Meteor.users.findOne({_id:Courts.findOne({_id : checkboxes[i].id}).ownerID}).emails[0].address;
 		//Print du texte à envoyer
-		console.log(mail.value)
 	     	if(mail.value!=""){
 	     		Meteor.call('emailFeedback',em,"Charles De Lorraine : mail relatif à votre terrain",mail.value);
 			checkboxesChecked.push(checkboxes[i]);
 	     		Meteor.call("addToModificationsLog", {"opType":"Envoi de mails aux courtsowners","details": "Mail envoyé : "+mail.value+"\n à : "+em});
 	     	}
-	     }
 	  }
 	  // Return the array if it is non-empty, or null
 	  if(checkboxesChecked.length > 0){		
@@ -104,21 +55,33 @@ Template.courtEmail.events({
     'click #SelectAll':function(event){
     	console.log("SelectAll");
         event.preventDefault();
-         var checkboxes = document.getElementsByName("myCheckBoxes");
-	 for (var i=0; i<checkboxes.length; i++) {
-	     // And stick the checked ones onto an array...
-	     checkboxes[i].checked= true;
-	  }
+        var checkboxes = document.getElementsByTagName("tbody")[0].children;
+ 		for (var i=0; i<checkboxes.length; i++) {
+	     	// And stick the checked ones onto an array...
+	     	var target = checkboxes[i];
+			var courtSelected = (' ' + target.className + ' ').indexOf(' courtSelected ') > -1;
+			if(!courtSelected){
+				// Select it
+	       		target.className += ' courtSelected';
+	       		target.id = this._id;
+	       	}
+	  	}
 	
     },
     'click #UnselectAll':function(event){
     	console.log("UnselectAll");
         event.preventDefault();
-         var checkboxes = document.getElementsByName("myCheckBoxes");
-	 for (var i=0; i<checkboxes.length; i++) {
-	     // And stick the checked ones onto an array...
-	     checkboxes[i].checked= false;
-	  }
+         var checkboxes = document.getElementsByTagName("tbody")[0].children;
+		 for (var i=0; i<checkboxes.length; i++) {
+		     // And stick the checked ones onto an array...
+	     	var target = checkboxes[i];
+			var courtSelected = (' ' + target.className + ' ').indexOf(' courtSelected ') > -1;
+			if(courtSelected){
+				// Unselected it
+				target.removeAttribute("id","");
+				target.className = target.className.replace('courtSelected', '');
+	       	}
+		  }
 	
     }
     

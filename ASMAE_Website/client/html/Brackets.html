@@ -3,12 +3,14 @@
 		{{#with getYear}}
 			{{#with getType}}
 				{{#with getCategory}}
+				<div id="bracketOptions" style="display:none">
 				  <button type="button" id="start" class="btn btn-default btn-lg">
-				    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Start
+				    <span class="glyphicon glyphicon-star"></span> Start
 				  </button>
 
 				  <label>Gagnants par poule:</label>
 				  <input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline" value="2">
+	 			</div>
 	 			{{/with}}
 	 		{{/with}}
 		{{/with}}
@@ -22,9 +24,21 @@
 	  </h4>
 	</div>
 
+	<div id="wrapper">
+	<!-- empty gracket element -->
+
+		{{#with getYear}}
+			{{#with getType}}
+				{{#with getCategory}}
+					{{>gracketTemplate ALLWINNERS=getAllWinners}}
+				{{/with}}
+			{{/with}}
+		{{/with}}
+	</div>
+
 	<!-- basic styles -->
 	<style type="text/css">
-		.g_gracket { width: 9999px; padding: 55px 15px 5px; line-height: 100%; position: relative; overflow: hidden;}
+		.g_gracket { width: {{getGracketWidth}}px; padding: 55px 15px 5px; line-height: 100%; position: relative; overflow: hidden;}
 		.g_round { float: left; margin-right: 70px; }
 		.g_game { position: relative; margin-bottom: 15px; }
 		.g_gracket h3 { margin: 0; padding: 10px 8px 8px; font-size: 18px; font-weight: normal; color: #fff; min-width:200px;}
@@ -37,18 +51,6 @@
 		.g_round_label { top: -5px; font-weight: normal; color: #CCC; text-align: center; font-size: 18px; }
 	</style>
 
-	<div id="wrapper">
-	<!-- empty gracket element -->
-		
-		{{#with getYear}}
-			{{#with getType}}
-				{{#with getCategory}}
-					{{>gracketTemplate ALLWINNERS=getAllWinners}}
-				{{/with}}
-			{{/with}}
-		{{/with}}
-	</div>
-
 	<div id="bracketModal" class="modal fade bracketModal" role="dialog" style="cursor:auto">
     <div class="modal-dialog">
 
@@ -60,19 +62,19 @@
             <h1><small>Modifier le score</small></h1>
           </div>
         </div>
-        
+
 
         <div class="modal-body">
 		    <label for="text">Score</label>
 			<div class="input-group">
-				<input 
-				type="number" 
-				min="0" 
-				step="1" 
-				class="form-control" 
-				id="scoreInput" 
-				value="{{getScore}}" 
-				placeholder="0" 
+				<input
+				type="number"
+				min="0"
+				step="1"
+				class="form-control"
+				id="scoreInput"
+				value="{{getScore}}"
+				placeholder="0"
 				autofocus
 				onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()"><br>
 		  	</div>
@@ -89,6 +91,13 @@
     </div>
   </div>
 
+<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}" style="display:none">
+<span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+</button>
+
+<!-- Frame for the pdf viewer -->
+<iframe class="preview-pane" type="application/pdf" height="650" width="100%" frameborder="0" hidden></iframe>
+<br>
 
 </template>
 

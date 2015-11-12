@@ -5,10 +5,10 @@
             <div class="panel-heading">
               <h3 class="panel-title">
                 <div class="playerInfoTitle"><span class="playerInfoTitleName">{{firstName}} {{lastName}}</span>
-                {{#if isCurrentUser id}}
-                  <button type="button" id="button_edit" class="btn btn-default pull-right" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
-                {{/if}}
                 </div>
+
+              <!--<h3 class="panel-title"><div align="left">{{firstName}} {{lastName}}</div>-->
+
               </h3>
             </div>
             <div class="panel-body">
@@ -67,6 +67,13 @@
               </div>
 
             </div>
+
+        {{#if isCurrentUser id}}
+            <center>
+              <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
+            </center>
+            <br />
+        {{/if}}
 </div>
 
 <!-- Modal -->
