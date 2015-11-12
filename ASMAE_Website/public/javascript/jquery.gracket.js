@@ -148,7 +148,7 @@
           //   '</h3>'
           // ].join("");
           var html = [
-            '<h3> Score: ' + data.score + ' </h3>',
+            '<h3> Score: ' + data.score + " " +data.courtId + '</h3>',
             '<ul class="list-group">',
               '<li class="list-group-item">' + data.player1 + '</li>',
               '<li class="list-group-item">' + data.player2 + '</li>',

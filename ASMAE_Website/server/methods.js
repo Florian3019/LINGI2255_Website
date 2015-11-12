@@ -470,8 +470,8 @@ Meteor.methods({
 
 			// Check that a court with that address does not already exist :
 			if(address && Meteor.call('addressExists', address)){
-				console.log("Court already exists :");
-				console.log(address);
+				console.error("Court already exists :");
+				console.error(address);
 				return null;
 			}
 
@@ -842,8 +842,6 @@ Meteor.methods({
 		@return : the pair id if successful, otherwise returns false
 	*/
 	'updatePair' : function(pairData){
-		console.log("updatePair : pairData ");
-		console.log(pairData);
 		if(typeof pairData === undefined){
 			console.error("updatePair : pairData is undefined");
 			return;
@@ -859,8 +857,6 @@ Meteor.methods({
 			P2_id = pairData.player2._id;
 			ID["player2"] = P2_id;
 		}
-		console.log("ID");
-		console.log(ID);
 		const userIsOwner = ID['player1'] == Meteor.userId() || ID['player2'] == Meteor.userId();
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updatePair : You don't have the required permissions!");
@@ -918,15 +914,15 @@ Meteor.methods({
 		}
 
 		var check1, check2;
-		if (typeof pairData["player1"] != undefined) {
+		if (typeof pairData["player1"] !== "undefined") {
 			check1 = setPlayerData("player1");
 		}
-		if (typeof pairData["player2"] != undefined) {
+		if (typeof pairData["player2"] !== "undefined") {
 			check2 = setPlayerData("player2");
 		}
 
 		if(check1 == false || check2 == false) return false; // an error occurred
-		if(typeof check1 === undefined && typeof check2 === undefined){
+		if(typeof check1 === "undefined" && typeof check2 === "undefined"){
 			console.warn("Warning : No data about any player was provided to updatePair. Ignore if intended.");
 		}
 
@@ -1214,6 +1210,11 @@ Meteor.methods({
 			set["leader"] = poolData.leader;
 		}
 
+		if(poolData.type){
+			if(!set) set = {};
+			set["type"] = poolData.type;
+		}
+
 		if(set) data["$set"] = set;
 
 		addToSet = undefined;
@@ -1349,6 +1350,7 @@ Meteor.methods({
 		pairs.push(pairID);
 		data = {};
 		data._id = poolID;
+		data.type=type;
 		data.pairs = pairs;
 		if(!pool.leader){
 			data.leader=pairID;
@@ -1422,7 +1424,7 @@ Meteor.methods({
 		}
 
 		// no 'not full' pool found, creating a new one
-		var poolID = Pools.insert({});
+		var poolID = Pools.insert({'type':type});
 
 		poolList = [poolID];
 		data = {};
@@ -1513,7 +1515,7 @@ Meteor.methods({
 									}
 								}
 								var onError = function(error, result) {
-									if(error) {console.log("Error: " + error)}
+									if(error) {console.error("Error: " + error)}
 								}
 
 								// Send the request

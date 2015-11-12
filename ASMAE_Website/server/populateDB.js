@@ -207,7 +207,7 @@ Meteor.methods({
         }
 
         // Men - Women - Mixed - Family
-        var nTypes = [50,50,50,50];
+        var nTypes = [80,20,0,0];
 
 
         for (var i=0; i<3; i++) {

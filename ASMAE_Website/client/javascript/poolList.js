@@ -403,6 +403,20 @@ var deleteAndMoveMatches = function(moves){
 	}
 }
 
+var getCourtNumbers = function(courts){
+			var result = [];
+
+			for(var k=0; k<courts.length;k++){
+				var courtsList = courts[k].courtNumber;
+
+				for(var t=0;t<courtsList.length;t++){
+					result.push(courtsList[t]);
+				}
+			}
+
+			return result;
+		}
+
 Template.poolList.onRendered(function() {
 	// Restore the state of the selects, in case the user wants to come back to this page 
 	// (usefull when he clicks on scoreboard and presses the back button)
@@ -498,20 +512,6 @@ Template.poolList.events({
 			Pairs.update({"_id":pairsToRemove[i]}, {$unset:{"tournament":"", "tournamentCourts":""}});
 		}
 
-		// the court assigned to this pair is now available
-
-		var pool = Pools.findOne({_id : poolId});
-
-		if(pool.courtId){
-
-			var court = Courts.findOne({_id : pool.courtId});
-			court.free = true;
-
-			console.log(court);
-
-			Meteor.call('updateCourt',court,null);
-		}
-
 		Meteor.call('removePool', poolId, year, type, category);
 		Meteor.call("addToModificationsLog", 
 		{"opType":"Retirer poule", 
@@ -545,8 +545,8 @@ Template.poolList.events({
 		}
 
 		/*	Create the new pool	*/
-		var newPoolId = Pools.insert({"pairs":[]});
-		Meteor.call('addCourtToPool',newPoolId,type);
+		var newPoolId = Pools.insert({"pairs":[],"type":type});
+
 		var data = {$push:{}}
 		data.$push[category] = newPoolId;
 		/*	Add that pool to the list of pools of the corresponding type	*/
@@ -572,25 +572,28 @@ Template.poolList.events({
 		var getNCourts = function(previouscourts, courts, n, start){
 			var result = [];
 
-			if(previouscourts == undefined){
-				for(var k=0; k<n;k++){
+			console.log(previouscourts + " n "   + n);
 
-					if(courts[(start+k) % courts.length].number!=null){
-						result.push(courts[(start+k) % courts.length].number);
-					}
-					else{
-						courts[(start+k) % courts.length].number = nextCourtNumber;
-						Meteor.call('updateCourt',courts[(start+k) % courts.length],null);
-						result.push(nextCourtNumber);
-						nextCourtNumber++;
-					}
+
+			if(typeof previouscourts === "undefined"){
+
+				for(var k=0; k<n;k++){
+					result.push(courts[(start+k) % courts.length]);
 				}
 			}
 			else{
 				var l = previouscourts.length-1;
-				for(var k=0; k<n;k++){	
+
+				var strt = 0;
+
+				if(previouscourts.length%2!=0){
+					strt=1
+				}
+
+				for(var k=strt; k<n+strt;k++){	
 					result.push(previouscourts[l-(2*k)]);	
-				}		
+				}	
+
 				result = result.reverse();	
 
 			}
@@ -626,8 +629,8 @@ Template.poolList.events({
 
 		var numberDays = 2; 
 
-		var courtsSat = Courts.find({dispoSamedi: true}).fetch();
-		var courtsSun = Courts.find({dispoDimanche: true}).fetch();
+		var courtsSat = getCourtNumbers(Courts.find({dispoSamedi: true}).fetch());
+		var courtsSun = getCourtNumbers(Courts.find({dispoDimanche: true}).fetch());
 		var courtsTable = [courtsSat,courtsSun];
 
 		var poolsSat = Pools.find({$or: [{type:"mixed"},{type:"family"}]}).fetch();
@@ -642,7 +645,7 @@ Template.poolList.events({
 		}
 
 		if(poolsSat.length<courtsSat.length){
-			console.log("Assign courts: " + (courtsSat.length-poolsSat.length) + " courts won't be assigned to any pool");
+			console.log("Assign courts: " + (courtsSat.length-poolsSat.length) + " courts won't be assigned to any pool (Saturday)");
 		}
 
 		if(poolsSun.length>courtsSun.length){
@@ -651,7 +654,7 @@ Template.poolList.events({
 		}
 
 		if(poolsSun.length<courtsSun.length){
-			console.log("Assign courts: " + (courtsSun.length-poolsSun.length) + " courts won't be assigned to any pool");
+			console.log("Assign courts: " + (courtsSun.length-poolsSun.length) + " courts won't be assigned to any pool (Sunday)");
 		}
 
 		for(var g=0;g<numberDays;g++){
@@ -663,7 +666,7 @@ Template.poolList.events({
 
 				var pool = pools[i];
 
-	        	pool.courtId = courts[i]._id;
+	        	pool.courtId = courts[i];
 	        	Meteor.call('updatePool',pool);
 
 	        	// add court to all the matches in the pool
@@ -671,7 +674,7 @@ Template.poolList.events({
 	        	var matches = Matches.find({"poolId" : pool._id}).fetch();
 
 	        	for(var f=0;f<matches.length;f++){
-	        		matches[f].courtId = courts[i]._id;
+	        		matches[f].courtId = courts[i];
 	        		Meteor.call('updateMatch',matches[f]);
 	        	}
 			}
@@ -683,7 +686,7 @@ Template.poolList.events({
 		var typesSaturday = ["mixed"];
 		var typesSunday = ["men","women"];
 		var typesTable = [typesSaturday,typesSunday];
-		var year = Years.findOne({_id:"2015"});
+		var year = Years.findOne({_id:""+new Date().getFullYear()});
 		var start = 0;
 
 		////////// Saturday and Sunday \\\\\\\\\\
@@ -691,11 +694,15 @@ Template.poolList.events({
 		var typesDocs= [];
 
 		for(var g=0;g<numberDays;g++){
-			typesDoc.push([]);
+			typesDocs.push([]);
 			var types = typesTable[g];
 			for(var k=0;k<types.length;k++){
 				if(year[types[k]]){
-					typesDocs[g].push(Types.findOne({_id:year[types[k]]}));
+					var temp = Types.findOne({_id:year[types[k]]});
+
+					if(typeof temp !== "undefined"){
+						typesDocs[g].push(temp);
+					}
 				} 
 			}
 		}
@@ -710,8 +717,8 @@ Template.poolList.events({
 			for(var g=0;g<numberDays;g++){
 
 				var typesDoc = typesDocs[g];
-
-				for(var k=0;k<typesTable[g].length;k++){
+			
+				for(var k=0;k<typesDoc.length;k++){
 
 					for(var t=0;t<categoriesKeys.length;t++){
 
@@ -736,14 +743,14 @@ Template.poolList.events({
 				}
 			}
 
-			first = false;
-			round++;
 			start = 0;
+			first=false;
+			round++;
 		}
 
 		for(var g=0;g<numberDays;g++){
-			for(var k=0;k<typesDoc[g].length;k++){
-				var types = typesDoc[g];
+			for(var k=0;k<typesDocs[g].length;k++){
+				var types = typesDocs[g];
 				Meteor.call('updateType',types[k]);
 			}
 		}
@@ -762,7 +769,7 @@ Template.poolList.helpers({
 	// Returns the number of courts
 
 	'getNumberCourts' : function(){
-		var courts = Courts.find().fetch();
+		var courts = getCourtNumbers(Courts.find().fetch());
 		return courts.length;
 	},
 	
