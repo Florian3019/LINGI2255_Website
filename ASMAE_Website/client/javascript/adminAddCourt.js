@@ -63,10 +63,6 @@ Template.adminAddCourt.events({
         if(user.address){query["emails.address"] = user.address;}
         cursor = Meteor.users.find(query).fetch();
         var id, currentOwnerID; //Used for the update of an existing court
-        console.log(this);
-        console.log(this.court);
-        console.log(user);
-        console.log(address);
         
         
         if(this.court!=undefined){
@@ -102,8 +98,13 @@ Template.adminAddCourt.events({
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
-        
+
+        Session.set('cursor1',cursor)
+        Session.set('courtData', courtData);
+        Session.set('address', address);
+        /*
             Meteor.call('updateCourt', courtData, address, function(error, result){
+                
                 if(error){
                     console.error('CourtRegistration error');
                     console.error(error);
@@ -111,14 +112,17 @@ Template.adminAddCourt.events({
                 else if(result == null){
                     console.error("No result");
                 }
-
+                
                 Meteor.call("addToModificationsLog", 
                 {"opType":"Ajout d'un terrain", 
                 "details":
                     "Id du Terrain: "+result +
                     "Owner : "+currentOwnerID 
                 });
-
+            Session.set('cursor1',cursor)
+            Session.set('courtData', courtData);
+            Session.set('address', address);
+                /*
                 if(go) {
                     Router.go('confirmation_registration_court', {_id: result});
                 }
@@ -126,8 +130,12 @@ Template.adminAddCourt.events({
                     Session.set('cursor1',cursor)
                     Session.set('courtData', courtData);
                     Session.set('address', address);
+
                 }
-            });
+                
+
+            });*/
+            
 
     },  
     'click li': function() {
