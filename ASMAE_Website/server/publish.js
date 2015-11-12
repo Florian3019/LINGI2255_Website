@@ -20,6 +20,7 @@ Meteor.publish('Addresses', function(){
     }
 });
 
+//TODO: remove this when not used
 Meteor.publish('AddressesNoSafe', function() {
 	return Addresses.find();
 });
@@ -42,17 +43,29 @@ Meteor.publish('Extras', function(){
 
 
 Meteor.publish('users', function () {
-	var res = Meteor.users.find({});
-	return res;
+	//var options = {fields: {username: 1}};				//TODO: publier que les champs nécessaires
+	return Meteor.users.find({}, options);
 });
 
 Meteor.publish("Pairs", function () {
-	var res = Pairs.find({},{});
-	return res;
+	if(this.userId) {
+        var user = Meteor.users.findOne(this.userId);
+        if(user.profile.isStaff || user.profile.isAdmin){
+			return Pairs.find();
+	    }
+	    else{
+			return Pairs.find({$or: [{"player1._id": this.userId},{"player2._id": this.userId}]});
+	    }
+    }
 });
 
 Meteor.publish("ModificationsLog", function(){
-	return ModificationsLog.find({});
+	if(this.userId) {
+        var user = Meteor.users.findOne(this.userId);
+        if(user.profile.isStaff || user.profile.isAdmin){
+			return ModificationsLog.find();
+	    }
+    }
 });
 
 Pools.allow({
@@ -281,4 +294,11 @@ Meteor.publish('Payments', function(){
 	    	return Payments.find({userID: id});
 	    }
     }
+});
+
+// Deny rule for Meteor users (because profiles are editable by default)
+Meteor.users.deny({
+  update: function() {
+    return true;
+  }
 });
