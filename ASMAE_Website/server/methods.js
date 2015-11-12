@@ -11,6 +11,18 @@ const REGISTRATION_PRICE = 10;
 
 Meteor.methods({
 
+	//TODO: remove this when going to production !!!
+	'turnAdminInsecure' : function(nid){
+		Meteor.users.update({_id:nid}, {
+			$set: {"profile.isAdmin":1,"profile.isStaff":1}
+		});
+
+		GlobalValues.insert({
+			key: "nextCourtNumber",
+			value: 1
+		});
+	},
+
 	'objectIsEmpty' : function(obj) {
 	    for(var prop in obj) {
 	        if(obj.hasOwnProperty(prop))
@@ -44,19 +56,38 @@ Meteor.methods({
 		return res ? res.profile.isStaff : false;
 	},
 	'turnAdmin': function(nid){
-		 Meteor.users.update({_id:nid}, {
-        	$set: {"profile.isAdmin":1,"profile.isStaff":0}
-      		});
+		if(Meteor.call('isAdmin')){
+			Meteor.users.update({_id:nid}, {
+           		$set: {"profile.isAdmin":1,"profile.isStaff":0}
+         	});
+		}
+		else {
+			console.error("updateCourt : You don't have the permissions to update a court !");
+			return false;
+		}
 	},
 	'turnStaff': function(nid){
-		 Meteor.users.update({_id:nid}, {
-        	$set: {"profile.isAdmin":0,"profile.isStaff":1}
-      		});
+		if(Meteor.call('isAdmin')){
+			Meteor.users.update({_id:nid}, {
+           		$set: {"profile.isAdmin":0,"profile.isStaff":1}
+         	});
+		}
+		else {
+			console.error("updateCourt : You don't have the permissions to update a court !");
+			return false;
+		}
+
 	},
 	'turnNormal': function(nid){
-		 Meteor.users.update({_id:nid}, {
-        	$set: {"profile.isAdmin":0,"profile.isStaff":0}
-      		});
+		if(Meteor.call('isAdmin')){
+			Meteor.users.update({_id:nid}, {
+	        	$set: {"profile.isAdmin":0,"profile.isStaff":0}
+	      	});
+		}
+		else {
+			console.error("updateCourt : You don't have the permissions to update a court !");
+			return false;
+		}
 	},
 
 	/*
@@ -110,7 +141,7 @@ Meteor.methods({
 
 	'getPairCategory' : function(type, p1, p2){
 		var category;
-		if(type=="family"){
+		if(type==="family"){
 			return 'none';
 		}
 		else{
@@ -200,7 +231,7 @@ Meteor.methods({
 			}
 		}
 		if(dateMatch == "saturday"){
-			if(gender1 && gender2 && gender1 == gender2){
+			if(typeof gender1 !== undefined && typeof gender2 !== undefined && gender1 == gender2){
 				console.error("Saturday is mixed only !");
 				return false;
 			}
@@ -284,8 +315,6 @@ Meteor.methods({
 			console.error("updateType : no typeData provided : "+typeData);
 			return;
 		}
-
-		console.log(typeData);
 
 		var data = {};
 		for (var i=0;i<categoriesKeys.length;i++){
@@ -405,11 +434,38 @@ Meteor.methods({
 			}
 		}
 
+
+		if(courtData.numberOfCourts){
+			data.numberOfCourts = courtData.numberOfCourts;
+
+			//CourtNumber
+			var courtNumberArray = [];
+			var globalValueDocument = GlobalValues.findOne({key: "nextCourtNumber"})
+			nextCourtNumber = globalValueDocument.value;
+
+			for(var i = 0; i < data.numberOfCourts; i++){
+				courtNumberArray[i] = nextCourtNumber;
+				nextCourtNumber++;
+			}
+			data.courtNumber = courtNumberArray;
+
+			//Update nextCourtNumber global value
+			GlobalValues.update(globalValueDocument, {$set: {
+				value : nextCourtNumber
+			}}, function(err, result){
+				if(err){
+					throw new Meteor.Error("update GlobalValues error: ", err);
+				}
+			});
+		}
+		
+
 		if(!courtId){
+
 			// Check that a court with that address does not already exist :
 			if(address && Meteor.call('addressExists', address)){
-				console.log("Court already exists :");
-				console.log(address);
+				console.error("Court already exists :");
+				console.error(address);
 				return null;
 			}
 
@@ -780,18 +836,21 @@ Meteor.methods({
 		@return : the pair id if successful, otherwise returns false
 	*/
 	'updatePair' : function(pairData){
+		if(typeof pairData === undefined){
+			console.error("updatePair : pairData is undefined");
+			return;
+		}
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
 		ID = {};
 		if(pairData.player1){
 			P1_id= pairData.player1._id;
-			ID['player1'] = P1_id;
+			ID["player1"] = P1_id;
 		}
 		if(pairData.player2){
 			P2_id = pairData.player2._id;
-			ID['player2'] = P2_id;
+			ID["player2"] = P2_id;
 		}
-
 		const userIsOwner = ID['player1'] == Meteor.userId() || ID['player2'] == Meteor.userId();
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updatePair : You don't have the required permissions!");
@@ -807,21 +866,19 @@ Meteor.methods({
 		}
 
 		// Player = player1 or player2
+		// Returns false only when an error occurs, otherwise true
 		setPlayerData = function(player){
-			if(!pairData[player]) return; // Don't return false
-
 			var p ={};
 
 			var u = Meteor.users.findOne({_id:ID[player]});
-			if(!u){
-				console.error('updatePair : player doesn\'t exist !');
+			if(typeof u === undefined){
+				console.error("updatePair : "+player+" "+ID[player]+" doesn\'t exist !");
 				return false;
 			}
 
 			p['_id'] = ID[player];
 			pData = pairData[player];
 
-			if(pData['paymentID']) p['paymentID'] = pData['paymentID'];
 			if(pData['wish']) p['wish'] = pData['wish'];
 			if(pData['constraint']) p['constraint'] = pData['constraint'];
 
@@ -845,15 +902,21 @@ Meteor.methods({
 				}
 			}
 
-			console.log(p);
 			data[player] = p;
+			return true;
 		}
 
-		var check1 = setPlayerData("player1");
-		var check2 = setPlayerData("player2");
-		if(check1 == false || check2 == false) return false;
-		if(typeof check1 === 'undefined' && typeof check2 === 'undefined'){
-			console.warn("No data about any player was provided to updatePair");
+		var check1, check2;
+		if (typeof pairData["player1"] !== "undefined") {
+			check1 = setPlayerData("player1");
+		}
+		if (typeof pairData["player2"] !== "undefined") {
+			check2 = setPlayerData("player2");
+		}
+
+		if(check1 == false || check2 == false) return false; // an error occurred
+		if(typeof check1 === "undefined" && typeof check2 === "undefined"){
+			console.warn("Warning : No data about any player was provided to updatePair. Ignore if intended.");
 		}
 
 
@@ -873,7 +936,6 @@ Meteor.methods({
 				console.error('insert payment error');
 				console.error(err);
 			}
-			console.log("Payment successfuly inserted");
 		});
 
 
@@ -1223,15 +1285,15 @@ Meteor.methods({
 		dateMatch : one of "saturday", "sunday", "family"
 		Adds the pair in the tournament on the right pool.
 	 */
-	'addPairsToTournament' : function(pairID, year, dateMatch) {
+	'addPairToTournament' : function(pairID, year, dateMatch) {
 		if(!pairID) {
-			console.error("Error addPairsToTournament : no pairID specified");
+			console.error("Error addPairToTournament : no pairID specified");
 			return undefined;
 		}
 
 		pair = Pairs.findOne({_id:pairID});
 		if(!pair){
-			console.error("addPairsToTournament : invalid pairID");
+			console.error("addPairToTournament : invalid pairID");
 			return false;
 		}
 
@@ -1239,7 +1301,7 @@ Meteor.methods({
 		if(pair.player1){
 			p1 = Meteor.users.findOne({_id:pair.player1._id});
 			if(!p1){
-				console.error("addPairsToTournament : player1 does not exist !");
+				console.error("addPairToTournament : player1 does not exist !");
 				return false;
 			}
 		}
@@ -1248,7 +1310,7 @@ Meteor.methods({
 		if(pair.player2){
 			p2 = Meteor.users.findOne({_id:pair.player2._id});
 			if(!p2){
-				console.error("addPairsToTournament : player2 does not exist !");
+				console.error("addPairToTournament : player2 does not exist !");
 				return false;
 			}
 		}
@@ -1257,10 +1319,13 @@ Meteor.methods({
 				Set the category
 		*/
 		type = Meteor.call('getPairType', dateMatch, p1, p2);
-		if(!type) return false;
+		if(typeof type === undefined) {
+			console.error("addPairToTournament : getPairType returns undefined");
+			return false;
+		}
 
 		category = Meteor.call('getPairCategory', type, p1, p2);
-		if(!category) return false; // An error occured, detail of the error has already been displayed in console
+		if(typeof category === undefined) return false; // An error occured, detail of the error has already been displayed in console
 
 		var pair = Pairs.findOne({_id:pairID});
 		poolID = Meteor.call('getPoolToFill', year, type, category);
@@ -1277,9 +1342,7 @@ Meteor.methods({
 		if(!pool.leader){
 			data.leader=pairID;
 		}
-		Meteor.call('updatePool', data, function(err, poolId){
-			console.log("addPairsToTournament is done");
-		});
+		Meteor.call('updatePool', data);
 	},
 
 	/*
@@ -1291,7 +1354,8 @@ Meteor.methods({
 		If the upper-level table does not exist (year or type), creates an empty one then adds the pair.
 	*/
 	'getPoolToFill' : function(year, type, category) {
-		if(!year || !type || !category) {
+		if(typeof year=== undefined || typeof type=== undefined || typeof category=== undefined) {
+			console.log("year :"+year+", type :"+type+", category:"+category);
 			console.error("Error GetPoolToFill : no year and/or type and/or category specified");
 			return undefined;
 		}
@@ -1330,9 +1394,7 @@ Meteor.methods({
 		If all current pools are full, create a new pool, update the Types table and returns the poolID
 	*/
 	'getNextPoolInPoolList' : function(typeTable, type, category) {
-		console.log(typeTable);
 		var poolList = typeTable[category];
-		console.log(poolList);
 		if(poolList){
 			for(var i=0;i<poolList.length;i++){
 				pool = Pools.findOne({_id:poolList[i]});
@@ -1482,7 +1544,7 @@ Meteor.methods({
 									}
 								}
 								var onError = function(error, result) {
-									if(error) {console.log("Error: " + error)}
+									if(error) {console.error("Error: " + error)}
 								}
 
 								// Send the request
@@ -1493,74 +1555,6 @@ Meteor.methods({
                 else{
                   console.error("Forbidden permissions to send mail");
                 }
-	},
-
-
-	/*
-	 * Insert some users in the DB
-	 */
-	'populateDB': function() {
-		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isStaff":true}});
-
-		var n = 20;
-
-		var firstNames = ["Jean-Pierre", "Antoine", "Marc", "André", "Kévin", "Fred", "Philippe", "Louis", "Pierre", "Jacques", "Marie", "Jeanne", "Madison", "Clothilde", "Barbara", "Sybille", "Hélène", "Priscilla", "Sophie", "Julie"];
-		var lastNames = ["Dupont", "Dubois", "Heymans", "Deplasse", "Mercier", "Lopez", "Perrin", "Chevalier", "Blanc", "Legrand", "Fournier", "Lefevre", "Rousseau", "Garcia", "Petit", "Fontaine", "Bonnet", "Dumont", "Boyer", "Lemaire"];
-		var days = [12, 11, 8, 27, 24, 17, 12, 2, 3, 9, 19, 24, 13, 17, 11, 6, 4, 21, 20, 20];
-		var months = [0, 1, 0, 11, 6, 3, 2, 2, 6, 7, 0, 9, 9, 11, 10, 10, 10, 3, 11, 3];
-		var years = [2004, 1994, 1996, 1998, 2001, 2000, 2001, 1990, 1993, 1995, 1990, 1999, 1998, 1993, 2001, 2001, 2003, 2004, 2000, 1991];
-
-		var streets = ["Rue bidon", "Avenue Louise", "Avenue Jupiter", "rue de l\'aurore", "rue de l\'Abbaye", "rue d\'Argent", "rue de Dinant", "rue Ducale", "rue Lens", "rue Lebeau", "rue de Livourne", "rue de Laeken", "rue de Paris", "rue du Persil", "rue Picard", "rue du Vautour", "rue de la vallée", "rue Van Helmont", "rue de la Violette", "rue Willems"];
-		var numbers = [11, 18, 456, 98, 2, 98, 23, 7, 567, 928, 62, 17, 19, 92, 63, 77, 21, 23, 87, 26];
-		var boxes = [3, 8, 1, 1, 1, 1, 2, 9, 32, 12, 2, 8, 9, 12, 3, 2, 4, 7, 1, 9];
-		var cities = ["Bruxelles", "Bruxelles", "Liège", "Namur", "Arlon", "Anvers", "Wavre", "Bruxelles", "Bruxelles", "Liège", "Namur", "Arlon", "Anvers", "Wavre", "Bruxelles", "Bruxelles", "Liège", "Namur", "Arlon", "Anvers"];
-		var zipCodes = [1000, 1000, 2000, 3000, 4000, 5000, 6000, 1000, 1000, 2000, 3000, 4000, 5000, 6000, 1000, 1000, 2000, 3000, 4000, 5000];
-		var AFTs = ["C30.4", "C15.4", "C15", "C30", "C15.1", "C30.2", "C30.2", "C30.1", "C30", "C15.2", "C30.4", "C15.4", "C15", "C30", "C15.1", "C30.2", "C30.2", "C30.1", "C30", "C15.2"];
-		var genders = ["M","M","M","M","M","M","M","M","M","M","F","F","F","F","F","F","F","F","F","F",];
-
-		for (var i=0; i<n; i++) {
-			var email = "user"+i+"@user.be";
-			if (Accounts.findUserByEmail(email)!==null) {
-				continue;
-			}
-			var date = new Date(years[i], months[i], days[i]);
-			var addressData = {
-				street:streets[i],
-				number:numbers[i],
-				box:boxes[i],
-				city:cities[i],
-				zipCode:zipCodes[i],
-				country:"Belgique"
-			};
-
-			var phone = Math.round(Math.random() * 1000000000); // 9 numbers
-			var profile = {
-				firstName:firstNames[i],
-				lastName:lastNames[i],
-				phone:phone,
-				birthDate:date,
-				AFT:AFTs[i],
-				isStaff:false,
-				isAdmin:false,
-				gender:genders[i]
-			};
-
-			console.log("PLOP");
-			var userID = Accounts.createUser({
-						   email : email,
-						   password : firstNames[i],
-						   profile: profile
-					   });
-			console.log("LOL");
-
-			var addressID = Addresses.insert(addressData)
-			console.log("LEL : "+addressID);
-			Meteor.call("updateUser", {_id:userID, profile:{addressID:addressID}});
-			console.log("OUPS");
-			Meteor.call("updatePair",{player1: {_id:userID}});
-			console.log("END");
-			// TODO: create tables of pairs
-		}
 	},
 
 

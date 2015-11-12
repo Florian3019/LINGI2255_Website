@@ -1,3 +1,4 @@
+
 Template.profileEdit.helpers({
 	mail : function(){
 		return this.user.emails[0].address;
@@ -12,7 +13,6 @@ Template.profileEdit.helpers({
     return this.user.profile.birthDate.getFullYear();
   },
 });
-
 
 Template.profileEdit.helpers({
 	'getPlayer' : function(){

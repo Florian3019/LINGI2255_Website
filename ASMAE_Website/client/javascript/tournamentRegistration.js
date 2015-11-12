@@ -1,9 +1,8 @@
 var aloneDependency = new Deps.Dependency();
-var tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 var tournamentYear = 2015;
 
 function closePopUp() {
-    $('#signModal').modal('hide'); 
+    $('#signModal').modal('hide');
 }
 
 Template.tournamentRegistration.helpers({
@@ -105,42 +104,7 @@ Template.tournamentRegistration.helpers({
 			return false;
 		}
 
-		function getAge(birthDate){
-		    var age = tournamentDate.getFullYear() - birthDate.getFullYear();
-		    var m = tournamentDate.getMonth() - birthDate.getMonth();
-		    if (m < 0 || (m === 0 && tournamentDate.getDate() < birthDate.getDate())) {
-		        age--;
-		    }
-		    return age;
-		}
 
-		/*
-		* @param age is of type int
-		*/
-		function getCategory(age){
-			if(age < 9){
-				return undefined;
-			}
-			if(9 <= age && age <= 10){
-				return categoriesKeys[0];
-			}
-			if(11 <= age && age <= 12){
-				return categoriesKeys[1];
-			}
-			if(13 <= age && age <= 14){
-				return categoriesKeys[2];
-			}
-			if(15 <= age && age <= 16){
-				return categoriesKeys[3];
-			}
-			if(17 <= age && age <= 19){
-				return categoriesKeys[4];
-			}
-			if(20 <= age && age <= 40){
-				return categoriesKeys[5];
-			}
-			return categoriesKeys[6];
-		}
 
 		aloneDependency.depend(); // Refresh when button is hit
 
@@ -167,19 +131,15 @@ Template.tournamentRegistration.helpers({
 			sex = "F"
 		}
 		var category = getCategory(age);
-		console.log("User. dateMatch : "+tournamentDateMatch+", age : "+age+", sex : "+sex+", category : "+category);
 
 		var pairs = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}},
 		{"day":tournamentDateMatch}]}).fetch();
-		console.log("Pairs : ");
-		console.log(pairs);
 		var res = [];
 		for (var i = 0; i < pairs.length; i++) {
 			var aloneProfile = Meteor.users.findOne({_id:pairs[i].player1._id}).profile;
 			var aloneAge = getAge(aloneProfile.birthDate);
 			var aloneSex = aloneProfile.gender;
 			var aloneCategory = getCategory(aloneAge);
-			console.log("Other. age : "+aloneAge+", sex : "+aloneSex+", category : "+aloneCategory);
 
 			if (tournamentDateMatch==="family") {
 				if((age <= 15 && aloneAge > 25) || (age >= 25 && aloneAge <= 15)) {
@@ -286,7 +246,7 @@ Template.tournamentRegistration.helpers({
 		else{
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
 			return userData ? userData.profile.birthDate.getDate() : "";
-    	}	
+    	}
   	},
   	'getMonth' : function(){
     	var user=Meteor.user();
@@ -297,7 +257,7 @@ Template.tournamentRegistration.helpers({
 		else{
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
 			return userData ? userData.profile.birthDate.getMonth()+1 : "";
-    	}	
+    	}
   	},
   	'getYear' : function(){
     	var user=Meteor.user();
@@ -308,7 +268,7 @@ Template.tournamentRegistration.helpers({
 		else{
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
 			return userData ? userData.profile.birthDate.getFullYear() : "";
-    	}	
+    	}
 	},
 	'street': function(){
 		var user=Meteor.user();
@@ -490,13 +450,11 @@ Template.tournamentRegistration.events({
     "submit form":function(){
 
       	event.preventDefault();
-      	Meteor.call('turnStaff',Meteor.userId());
-
     	/**
 			This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
 			If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
     	*/
-    	function set_error(id,errorVisible) {
+    	function set_error(id, errorVisible) {
     		const error = "Error";
     		const OK = "OK";
     		const div = "Div";
@@ -755,7 +713,6 @@ Template.tournamentRegistration.events({
 
 			var pair = Session.get("pair");
 
-			console.log(pair);
 
 			var pairData={
 					_id:pair._id,
@@ -856,12 +813,8 @@ Template.tournamentRegistration.events({
         		return;
         	}
 
-        	// Success
-        	console.log("tournamentRegistration pairID : " + pairID);
-
         	if(sendEmail){
 	        	body=body+Router.routes['confirmPair'].url({_id: pairID});
-		    		console.log(body);
 		    		var data = {
 		    			intro:"",
 						message:body};
@@ -872,13 +825,11 @@ Template.tournamentRegistration.events({
         		console.log("removing pair "+ remove);
         		Meteor.call('removePair',remove);
         	}
-			Meteor.call('addPairsToTournament', pairID, currentYear, dateMatch);
+			Meteor.call('addPairToTournament', pairID, currentYear, dateMatch);
         }
 
         body="Bonjour, \n " + event.target.firstname.value + " " +event.target.lastname.value + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
         to=event.target.emailPlayer.value; //address of the other player
-
-        console.log(pairData);
 
 
 		//For the payment

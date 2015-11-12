@@ -1,5 +1,32 @@
 <template name="navigation">
 
+<div class="modal fade alert" id="signModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="lineModalLabel">Votre inscription au site est bien enregistrée </h3>
+                </div>
+                <div class="modal-body">
+                      <p id="welcom-message"> Bienvenue Surnom </p>
+                      <p> Votre compte à correctement été crée ! </p>
+                      <p> Un e-mail automatique de confirmation vient d'être envoyé à votre adresse e-mail :</p>
+                      <a id="e-mail-registration" href="mailto:someone@example.com">someone@example.com</a>
+                      <hr>
+                      <p> Vous ne retrouvez pas notre e-mail de confirmation ?</p>
+                      <p> Merci de vérifier si vous ne l'avez pas reçu parmi vos "courriers indésiralbes ou spam".</p>
+                      <button onclick="closePopUp()" id="sign-up-ok" class="btn btn-primary center-block">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>  <!-- Pop up inscription -->
+    
+    <script>
+        function closePopUp() {
+            $('#signModal').modal('hide'); 
+        }
+    </script>
+
+
  <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">

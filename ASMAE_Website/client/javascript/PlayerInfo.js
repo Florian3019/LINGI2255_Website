@@ -15,7 +15,7 @@
 //         cursor = Meteor.users.find(query).fetch();
 //         Session.set('cursor', cursor);
 //         return false;
-//     },  
+//     },
 //     'click li': function() {
 //         Session.set('selected', this);
 //         Router.go('playerInfoPage');
@@ -44,12 +44,12 @@ Template.playersInfo.helpers({
             fields:[
                 { key: 'profile.firstName', label: 'Prénom'},
                 { key: 'profile.lastName', label: 'Nom'},
-                { key: 'emails', label: 'Email', fn: function(value, object){
+                { key: 'emaiushshls', label: 'Email', fn: function(value, object){
                     return value[0].address;
                 }},
                 { key: 'profile.gender', label:"Sexe"},
                 { key: 'profile.phone', label: "Numéro"},
-                { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return value.toLocaleDateString()}},
+                { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "undefined" : value.toLocaleDateString()}},
                 { key: 'profile.AFT', label: "AFT"},
                 { key: 'profile.addressID', label: "Addresse", fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
@@ -133,7 +133,7 @@ Template.mySpecialFilterFirstName.events({
 
 
 Template.playersInfo.events({
-    'click .reactive-table tbody tr' : function(event){
+    'click .playerInfoRow' : function(event){
         //Router.go('playerInfoPage',{_id:this._id});
         Session.set('selected', this);
         Router.go('playerInfoPage');

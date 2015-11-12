@@ -1,6 +1,6 @@
 /* CSS declarations go here */
 
-/* 
+/*
 	Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris
 */
 .dropdown:hover .dropdown-menu {
@@ -27,8 +27,8 @@ body {
 }*/
 
 /*
-html { 
-  background: url(tennis.jpg) no-repeat center center fixed; 
+html {
+  background: url(tennis.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -37,8 +37,7 @@ html {
 */
 
 .jumbotron {
-    margin-bottom: 0px;
-    background-image: url(tennis.jpg);
+    background: linear-gradient(#FF8000, #FFDEAD);     /* Choose 2 colors for the background gradient */
     background-position: 0% 25%;
     background-size: cover;
     background-repeat: no-repeat;
@@ -48,4 +47,6 @@ html {
 
 .homePage {
    background-image: url(main.jpg);
+   background-size: cover;
+   background-repeat: no-repeat;
 }
