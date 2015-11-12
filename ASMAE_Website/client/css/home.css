@@ -37,7 +37,8 @@ html {
 */
 
 .jumbotron {
-    background: linear-gradient(#FF8000, #FFDEAD);     /* Choose 2 colors for the background gradient */
+    /*background: linear-gradient(#FF8000, #ED0CCF);*/     /* Choose 2 colors for the background gradient */
+    background: linear-gradient(#FF8000, #FF4500);
     background-position: 0% 25%;
     background-size: cover;
     background-repeat: no-repeat;
