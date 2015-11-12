@@ -63,7 +63,8 @@ Meteor.methods({
 
     			var addressID = Addresses.insert(addressData)
     			Meteor.call("updateUser", {_id:userID, profile:{addressID:addressID}});
-    			Meteor.call("updatePair",{player1: {_id:userID}});
+    			var pairId = Meteor.call("updatePair",{player1: {_id:userID}});
+    			Meteor.call("addPairsToTournament",pairId, "2015", "saturday");
     			// TODO: create tables of pairs
     		}
         }
