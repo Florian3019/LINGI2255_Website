@@ -32,10 +32,20 @@
 // 		return this.emails[0].address;
 // 	}
 // });
-
+Template.mySpecialFilterEmail.events({
+    'change .emailFilter':function(event){
+        emailInput = event.currentTarget.value;
+        console.log(emailInput);
+        Session.set("playersInfo/emailInput", emailInput);
+    }
+});
 
 Template.playersInfo.helpers({
     userCollection: function () {
+        emailInput = Session.get("playersInfo/emailInput");
+        if(emailInput!=undefined && emailInput!=""){
+            return Meteor.users.find({$where: function(){return this.emails[0].address.indexOf(emailInput)>-1;}});
+        }
         return Meteor.users.find();
     },
 
@@ -44,7 +54,7 @@ Template.playersInfo.helpers({
             fields:[
                 { key: 'profile.firstName', label: 'Prénom'},
                 { key: 'profile.lastName', label: 'Nom'},
-                { key: 'emaiushshls', label: 'Email', fn: function(value, object){
+                { key: 'emails', label: 'Email', fn: function(value, object){
                     return value[0].address;
                 }},
                 { key: 'profile.gender', label:"Sexe"},
@@ -78,57 +88,57 @@ Template.playersInfo.helpers({
                 { key: 'profile.isStaff', label:'Staff'},
                 { key: 'profile.isAdmin', label:'Admin'},
             ],
-            filters: ['NomDeFamille','Prenom']
+            // filters: ['NomDeFamille','Prenom']
         }
     }
     
 });
 
-Template.mySpecialFilterLastName.created = function () {
-  this.filter = new ReactiveTable.Filter('NomDeFamille', ['profile.lastName']);
-};
+// Template.mySpecialFilterLastName.created = function () {
+//   this.filter = new ReactiveTable.Filter('NomDeFamille', ['profile.lastName']);
+// };
 
-Template.mySpecialFilterLastName.events({
-    "keyup":function(event,template){
-        console.log(event.target.value);
-        var input = event.target.value;
-        console.log(input)
-        console.table(Meteor.users.find({$where: function(){return this.profile.lastName.indexOf(input)>-1;}}).fetch())
-        template.filter.set(input);    
+// Template.mySpecialFilterLastName.events({
+//     "keyup":function(event,template){
+//         console.log(event.target.value);
+//         var input = event.target.value;
+//         console.log(input)
+//         console.table(Meteor.users.find({$where: function(){return this.profile.lastName.indexOf(input)>-1;}}).fetch())
+//         template.filter.set(input);    
         
         
-    }
+//     }
 
 
-});
+// });
 
-Template.mySpecialFilterFirstName.created = function () {
-  this.filter = new ReactiveTable.Filter('Prenom', ['_id']);
-};
+// Template.mySpecialFilterFirstName.created = function () {
+//   this.filter = new ReactiveTable.Filter('Prenom', ['_id']);
+// };
 
-Template.mySpecialFilterFirstName.events({
-    "keyup":function(event,template){
-        console.log(event.target.value);
-        var input = event.target.value;
-        console.log(input)
-        if(input!=""){
-        var userList = Meteor.users.find({$where: function(){return this.emails[0].address.indexOf(input)>-1;}}).fetch();
-        var monString = "";
-        for(var i = 0;i<userList.length;i++){
-            console.log("salut")
-            monString += userList[i]._id+" ";
-        }
+// Template.mySpecialFilterFirstName.events({
+//     "keyup":function(event,template){
+//         console.log(event.target.value);
+//         var input = event.target.value;
+//         console.log(input)
+//         if(input!=""){
+//         // var userList = Meteor.users.find().fetch();
+//         // var monString = "";
+//         // for(var i = 0;i<userList.length;i++){
+//         //     console.log("salut")
+//         //     monString += userList[i]._id+" ";
+//         // }
 
-        template.filter.set(monString);    
-        }
-        else{
-            template.filter.set('');
-        }
+//         template.filter.set({"$where": function(){return this.emails[0].address.indexOf(input)>-1;}});    
+//         }
+//         else{
+//             template.filter.set('');
+//         }
         
-    }
+//     }
 
 
-});
+// });
 
 
 
