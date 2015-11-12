@@ -1,90 +1,63 @@
-Template.adminTemplate.showAll = function(){
-	return Meteor.users.find();
-}
-Session.setDefault("chosen","");
+Template.adminTemplate.helpers({
+	setCurrentPermission:function(){
+    	user = Meteor.users.findOne({"_id":Meteor.userId()},{"profile.isAdmin":1});
+    	Session.set("adminTemplate/admin", user.profile.isAdmin==true); 
+	},
 
-Template.adminTemplate.events({
-	'click .btn':function(){
-		console.log("Validation");
-		event.preventDefault();
-		var selects = document.getElementsByName("mySelects");
-			  var selectsChanged = [];
-		  // loop over them all
-		  for (var i=0; i<selects.length; i++) {
-		     console.log(selects[i].value)
-		     console.log(selects[i].id)
-		     if(selects[i].id != Meteor.users.findOne()._id){
-		     		if(Meteor.users.findOne().profile.isAdmin){
-		     			if(selects[i].value=="Normal"){
-		     				Meteor.call('turnNormal',selects[i].id);
-		     			}
-		     			else if(selects[i].value=="Staff"){
-		     				Meteor.call('turnStaff',selects[i].id);
-		     			}
-		     			else if(selects[i].value=="Admin"){
-		     				Meteor.call('turnAdmin',selects[i].id);
-		     			}
-		     		}
-		     }
-		     else{
-		     	if(selects[i].value!=""){
-			     	alert("Vous ne pouvez pas changer vos propres permissions")
-			}
-		     }
-	  	}
-	  	for (var i=0; i<selects.length; i++) {
-			selects[i].value=""
-		}  
-	  	if(Meteor.users.findOne().profile.isStaff){
-		     alert("Vous n'avez pas l'authorisation de faire des changements.\n Veuillez contacter un admin")
-		     }
-	  	
-	
-	
-	}
-	
-	
+    userCollection: function () {
+        return Meteor.users.find();
+    },
+
+    settings : function(){
+        return {
+            fields:[
+                { key: 'profile.firstName', label: 'Prénom'},
+                { key: 'profile.lastName', label: 'Nom'},
+                { key: 'emails', label: 'Email', fn: function(value, object){
+                    return value[0].address;
+                }},
+                { key: 'profile.gender', label:"Sexe"},
+                { key: 'profile.phone', label: "Numéro"},
+                { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "undefined" : value.toLocaleDateString()}},
+                { key: 'profile.isStaff', label:'Staff', tmpl:Template.changePermissions},
+            ],
+            rowClass: 'adminTemplateTableRow'
+        }
+    }
+
 });
 
-Template.adminTemplate.helpers({
-	'getId' : function(){
-		return this._id;
-	},
-	'getEmail' : function(){
-		return this.emails[0].address;
-	},
-	'getUserName' : function(){
-		return this.username;
-	},
-	'isStaff' : function(){
-			if(this.profile.isStaff){
-				return "true";
-			}
-			else{
-				return "false";
-			}
-		
-	},
-	'isAdmin' : function(){
+Template.changePermissions.helpers({
+    isDisabled : function(userId){
+    	if(Meteor.userId()===userId) return "disabled"; // disallow user to change his own permissions
+    	if(Session.get("adminTemplate/admin")===true) return "";
+    	else return "disabled";
+    },
 
-		if(this.profile.isAdmin){
-			return "true";
+    getSelected : function(object, option){
+    	currentOption = object.profile.isAdmin==true ? "admin" : (object.profile.isStaff==true ? "staff" : "normal");
+
+    	if(option===currentOption){
+    		return "selected";
+    	}
+    	else{
+    		return "";
+    	}
+    }
+});
+
+Template.changePermissions.events({
+	'click .myPermissionSelects':function(event){
+	    var target = event.currentTarget;
+	    var value = event.currentTarget.value;
+	    if(value==="Normal"){
+			Meteor.call('turnNormal',target.id);
 		}
-		else{
-			return "false";
-		}	
-	},
-	'getCurrentState' : function(){
-		if(this.profile.isAdmin){
-			return "Admin";
+		else if(value==="Staff"){
+			Meteor.call('turnStaff',target.id);
 		}
-		else if(this.profile.isStaff){
-			return "Staff";
-		}
-		else{
-			return "Normal";
+		else if(value==="Admin"){
+			Meteor.call('turnAdmin',target.id);
 		}
 	}
-	
-
 });

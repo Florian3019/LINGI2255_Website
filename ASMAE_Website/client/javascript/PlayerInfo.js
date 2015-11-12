@@ -79,13 +79,15 @@ Template.playersInfo.helpers({
                 }},
                 { key: 'profile.isStaff', label:'Staff'},
                 { key: 'profile.isAdmin', label:'Admin'},
-            ]
+            ],
+            rowClass:"playerInfoRow"
+
         }
     }
 });
 
 Template.playersInfo.events({
-    'click .reactive-table tbody tr' : function(event){
+    'click .playerInfoRow' : function(event){
         //Router.go('playerInfoPage',{_id:this._id});
         Session.set('selected', this);
         Router.go('playerInfoPage');
