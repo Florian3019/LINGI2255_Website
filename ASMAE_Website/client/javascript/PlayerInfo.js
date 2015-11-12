@@ -33,7 +33,7 @@
 // 	}
 // });
 Template.mySpecialFilterEmail.events({
-    'change .emailFilter':function(event){
+    'keyup .emailFilter':function(event){
         emailInput = event.currentTarget.value;
         console.log(emailInput);
         Session.set("playersInfo/emailInput", emailInput);
