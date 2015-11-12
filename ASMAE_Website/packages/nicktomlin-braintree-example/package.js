@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'nicktomlin:braintree-example',
+  name: 'nicktomlin-braintree-example',
   summary: 'A sample integration with Braintree',
   version: '1.0.0',
   git: '/* todo */'

@@ -11,6 +11,13 @@ const REGISTRATION_PRICE = 10;
 
 Meteor.methods({
 
+	//TODO: remove this when going to production !!!
+	'turnAdminInsecure' : function(){
+		Meteor.users.update({_id:nid}, {
+			$set: {"profile.isAdmin":1,"profile.isStaff":1}
+		});
+	},
+
 	'objectIsEmpty' : function(obj) {
 	    for(var prop in obj) {
 	        if(obj.hasOwnProperty(prop))
@@ -44,19 +51,38 @@ Meteor.methods({
 		return res ? res.profile.isStaff : false;
 	},
 	'turnAdmin': function(nid){
-		 Meteor.users.update({_id:nid}, {
-        	$set: {"profile.isAdmin":1,"profile.isStaff":0}
-      		});
+		if(Meteor.call('isAdmin')){
+			Meteor.users.update({_id:nid}, {
+           		$set: {"profile.isAdmin":1,"profile.isStaff":0}
+         	});
+		}
+		else {
+			console.error("updateCourt : You don't have the permissions to update a court !");
+			return false;
+		}
 	},
 	'turnStaff': function(nid){
-		 Meteor.users.update({_id:nid}, {
-        	$set: {"profile.isAdmin":0,"profile.isStaff":1}
-      		});
+		if(Meteor.call('isAdmin')){
+			Meteor.users.update({_id:nid}, {
+           		$set: {"profile.isAdmin":0,"profile.isStaff":1}
+         	});
+		}
+		else {
+			console.error("updateCourt : You don't have the permissions to update a court !");
+			return false;
+		}
+
 	},
 	'turnNormal': function(nid){
-		 Meteor.users.update({_id:nid}, {
-        	$set: {"profile.isAdmin":0,"profile.isStaff":0}
-      		});
+		if(Meteor.call('isAdmin')){
+			Meteor.users.update({_id:nid}, {
+	        	$set: {"profile.isAdmin":0,"profile.isStaff":0}
+	      	});
+		}
+		else {
+			console.error("updateCourt : You don't have the permissions to update a court !");
+			return false;
+		}
 	},
 
 	/*

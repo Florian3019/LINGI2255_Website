@@ -12,7 +12,7 @@ Template.home.events({
 		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isAdmin":false}});
 	},
 
-	'click #becomeNormal' : function(event){
+	'click #inscriptionTournoi' : function(event){
 		console.log("You are now normal");
 		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isStaff":false}});
 		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isAdmin":false}});

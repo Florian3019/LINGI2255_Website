@@ -5,8 +5,7 @@
 # but you can also edit it by hand.
 
 iron:router
-houston:admin
-tinytest
+accounts-password
 accounts-google
 standard-minifiers
 meteor-base
@@ -31,14 +30,11 @@ meteorhacks:search-source
 email
 http
 meteorhacks:ssr
-#sanjo:jasmine
-#velocity:html-reporter
 chipcastledotcom:jspdf
 jspdf:autotable
-anti:gagarin
 
 meteorhacks:npm
-nicktomlin:braintree-example
+nicktomlin-braintree-example
 npm-container
 
 anti:i18n

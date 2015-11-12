@@ -2,6 +2,10 @@ var aloneDependency = new Deps.Dependency();
 var tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 var tournamentYear = 2015;
 
+function closePopUp() {
+    $('#signModal').modal('hide'); 
+}
+
 Template.tournamentRegistration.helpers({
 	'alonePlayers' : function(){
 
@@ -486,8 +490,6 @@ Template.tournamentRegistration.events({
     "submit form":function(){
 
       	event.preventDefault();
-      	Meteor.call('turnStaff',Meteor.userId());
-
     	/**
 			This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
 			If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
@@ -586,6 +588,7 @@ Template.tournamentRegistration.events({
         }
         var phone = event.target.phone.value;
         var sex = event.target.sex.value;
+        console.log(sex)
         if(!sex){
         	errors.push({id:"sex", error:true});
         	hasError = true;
