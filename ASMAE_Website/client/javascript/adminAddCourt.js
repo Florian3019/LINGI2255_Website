@@ -70,26 +70,7 @@ Template.adminAddCourt.events({
         
         if(this.court!=undefined){
             id = this.court._id;
-            if(cursor.length > 0) {
-                currentOwnerID = cursor[0]._id;
-                go = true;
-            }
-            else {
-                currentOwnerID = this.court.ownerID;
-                go = true;
-            }
-        }
-        else {
-            if(cursor.length > 0) {
-                currentOwnerID = cursor[0]._id;
-                if(cursor.length == 1){
-                    go = true;
-                }
-            }
-            else {
-                currentOwnerID = this.court.ownerID;
-                go = true;
-            }
+            currentOwnerID = cursor[0]._id;
         }
         var courtData = {
             _id : id,
@@ -101,44 +82,9 @@ Template.adminAddCourt.events({
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
-        Session.set('cursor1',cursor)
+        Session.set('cursor1',cursor);
         Session.set('courtData', courtData);
         Session.set('address', address);
-        /*
-            Meteor.call('updateCourt', courtData, address, function(error, result){
-                
-                if(error){
-                    console.error('CourtRegistration error');
-                    console.error(error);
-                }
-                else if(result == null){
-                    console.error("No result");
-                }
-                
-                Meteor.call("addToModificationsLog", 
-                {"opType":"Ajout d'un terrain", 
-                "details":
-                    "Id du Terrain: "+result +
-                    "Owner : "+currentOwnerID 
-                });
-            Session.set('cursor1',cursor)
-            Session.set('courtData', courtData);
-            Session.set('address', address);
-                /*
-                if(go) {
-                    Router.go('confirmation_registration_court', {_id: result});
-                }
-                else {
-                    Session.set('cursor1',cursor)
-                    Session.set('courtData', courtData);
-                    Session.set('address', address);
-
-                }
-                
-
-            });*/
-            
-
     },  
     'click li': function() {
         var courtData = Session.get('courtData');
