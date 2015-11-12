@@ -48,6 +48,10 @@ Template.changePermissions.helpers({
 
 Template.changePermissions.events({
 	'click .myPermissionSelects':function(event){
+        if(!Session.get("adminTemplate/admin")){
+            alert("Vous n'avez pas l'authorisation de faire des changements.\n Veuillez contacter un admin")
+            return;
+        }
 	    var target = event.currentTarget;
 	    var value = event.currentTarget.value;
 	    if(value==="Normal"){
