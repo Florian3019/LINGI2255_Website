@@ -273,7 +273,7 @@ Template.tournamentRegistration.helpers({
 			return userData ? userData.profile.phone : "";
 		}
 	},
-	'date': function(){
+	'getDate' : function(){
 		var user=Meteor.user();
 
 		if(user==null){
@@ -281,8 +281,30 @@ Template.tournamentRegistration.helpers({
 		}
 		else{
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-			return userData ? userData.profile.birthDate : "";
+			return userData ? userData.profile.birthDate.getDate() : "";
+    	}	
+  	},
+  	'getMonth' : function(){
+    	var user=Meteor.user();
+
+		if(user==null){
+			return "";
 		}
+		else{
+			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
+			return userData ? userData.profile.birthDate.getMonth()+1 : "";
+    	}	
+  	},
+  	'getYear' : function(){
+    	var user=Meteor.user();
+
+		if(user==null){
+			return "";
+		}
+		else{
+			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
+			return userData ? userData.profile.birthDate.getFullYear() : "";
+    	}	
 	},
 	'street': function(){
 		var user=Meteor.user();
