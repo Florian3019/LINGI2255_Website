@@ -99,7 +99,7 @@ Meteor.methods({
                     firstname1 = firstnamesM[getRandomInt(0,nData)];
                     firstname2 = firstnamesF[getRandomInt(0,nData)];
                     gen1 = "M";
-                    gen2 = "M";
+                    gen2 = "F";
                     break;
                 case typeKeys[3]: // Family
                     firstname1 = firstnames[getRandomInt(0,2*nData)];
