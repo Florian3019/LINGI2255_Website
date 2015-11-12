@@ -19,7 +19,7 @@ Template.adminTemplate.helpers({
                 { key: 'profile.gender', label:"Sexe"},
                 { key: 'profile.phone', label: "Numéro"},
                 { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "undefined" : value.toLocaleDateString()}},
-                { key: 'profile.isStaff', label:'Staff', tmpl:Template.changePermissions},
+                { key: 'profile.isStaff', label:'Permissions', tmpl:Template.changePermissions},
             ],
             rowClass: 'adminTemplateTableRow'
         }
