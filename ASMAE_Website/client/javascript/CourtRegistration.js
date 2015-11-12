@@ -61,7 +61,7 @@ Template.courtRegistration.events({
         	ownerComment : $('[name=ownerComment]').val(),
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked"),
-            free : true // the court isn't used yet
+
         };
         if(this.court){ //Used for the update of an existing court
             courtData._id = this.court._id;

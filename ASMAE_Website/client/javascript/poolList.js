@@ -403,6 +403,20 @@ var deleteAndMoveMatches = function(moves){
 	}
 }
 
+var getCourtNumbers = function(courts){
+			var result = [];
+
+			for(var k=0; k<courts.length;k++){
+				var courtsList = courts[k].courtNumber;
+
+				for(var t=0;t<courtsList.length;t++){
+					result.push(courtsList[t]);
+				}
+			}
+
+			return result;
+		}
+
 Template.poolList.onRendered(function() {
 	// Restore the state of the selects, in case the user wants to come back to this page 
 	// (usefull when he clicks on scoreboard and presses the back button)
@@ -498,20 +512,6 @@ Template.poolList.events({
 			Pairs.update({"_id":pairsToRemove[i]}, {$unset:{"tournament":"", "tournamentCourts":""}});
 		}
 
-		// the court assigned to this pair is now available
-
-		var pool = Pools.findOne({_id : poolId});
-
-		if(pool.courtId){
-
-			var court = Courts.findOne({_id : pool.courtId});
-			court.free = true;
-
-			console.log(court);
-
-			Meteor.call('updateCourt',court,null);
-		}
-
 		Meteor.call('removePool', poolId, year, type, category);
 		Meteor.call("addToModificationsLog", 
 		{"opType":"Retirer poule", 
@@ -545,8 +545,8 @@ Template.poolList.events({
 		}
 
 		/*	Create the new pool	*/
-		var newPoolId = Pools.insert({"pairs":[]});
-		Meteor.call('addCourtToPool',newPoolId,type);
+		var newPoolId = Pools.insert({"pairs":[],"type":type});
+
 		var data = {$push:{}}
 		data.$push[category] = newPoolId;
 		/*	Add that pool to the list of pools of the corresponding type	*/
@@ -557,10 +557,222 @@ Template.poolList.events({
 		"details":
 			"Poule ajoutée : "+newPoolId+getStringOptions()
 		});
+	},
+
+	/*
+		Assign courts
+	*/
+
+	'click #assignCourts':function(event){
+
+		/*
+			Return N courts, starting at index start and using a modulo to loop through the array
+			nextNumber is the next number to assign to the court if it hasn't a number yet
+		*/
+		var getNCourts = function(previouscourts, courts, n, start){
+			var result = [];
+
+			console.log(previouscourts + " n "   + n);
+
+
+			if(typeof previouscourts === "undefined"){
+
+				for(var k=0; k<n;k++){
+					result.push(courts[(start+k) % courts.length]);
+				}
+			}
+			else{
+				var l = previouscourts.length-1;
+
+				var strt = 0;
+
+				if(previouscourts.length%2!=0){
+					strt=1
+				}
+
+				for(var k=strt; k<n+strt;k++){	
+					result.push(previouscourts[l-(2*k)]);	
+				}	
+
+				result = result.reverse();	
+
+			}
+			
+			return result;
+		}
+
+		/*
+			Return the number of matches to play for this round
+		*/
+
+		var getNumberMatches = function(nbrPools,round){
+
+			if(round<0){
+				return 0;
+			}
+
+			var rem=0;
+
+			for(var k=0;k<round;k++){
+				if((nbrPools % 2)==0){
+					nbrPools = nbrPools/2 + rem;
+					rem = Math.max(rem-1,0);
+				}
+				else{
+					nbrPools = (nbrPools-1)/2;
+					rem=1;
+				}
+			}
+
+			return nbrPools;
+		}
+
+		var numberDays = 2; 
+
+		var courtsSat = getCourtNumbers(Courts.find({dispoSamedi: true}).fetch());
+		var courtsSun = getCourtNumbers(Courts.find({dispoDimanche: true}).fetch());
+		var courtsTable = [courtsSat,courtsSun];
+
+		var poolsSat = Pools.find({$or: [{type:"mixed"},{type:"family"}]}).fetch();
+		var poolsSun = Pools.find({$or: [{type:"men"},{type:"women"}]}).fetch();
+		var poolsTable = [poolsSat,poolsSun];
+
+		////////// Assign courts to pools \\\\\\\\\\
+		
+		if(poolsSat.length>courtsSat.length){
+			console.error("Assign courts: Not enough courts for saturday morning ("+ (poolsSat.length-courtsSat.length)+" missing)");
+			return;
+		}
+
+		if(poolsSat.length<courtsSat.length){
+			console.log("Assign courts: " + (courtsSat.length-poolsSat.length) + " courts won't be assigned to any pool (Saturday)");
+		}
+
+		if(poolsSun.length>courtsSun.length){
+			console.error("Assign courts: Not enough courts for sunday morning ("+(poolsSun.length-courtsSun.length) +" missing)");
+			return;
+		}
+
+		if(poolsSun.length<courtsSun.length){
+			console.log("Assign courts: " + (courtsSun.length-poolsSun.length) + " courts won't be assigned to any pool (Sunday)");
+		}
+
+		for(var g=0;g<numberDays;g++){
+
+			var pools = poolsTable[g];
+			var courts = courtsTable[g];
+
+			for(var i=0;i<pools.length;i++){
+
+				var pool = pools[i];
+
+	        	pool.courtId = courts[i];
+	        	Meteor.call('updatePool',pool);
+
+	        	// add court to all the matches in the pool
+
+	        	var matches = Matches.find({"poolId" : pool._id}).fetch();
+
+	        	for(var f=0;f<matches.length;f++){
+	        		matches[f].courtId = courts[i];
+	        		Meteor.call('updateMatch',matches[f]);
+	        	}
+			}
+
+		}
+
+		////////// KnockOff Tournament \\\\\\\\\\
+
+		var typesSaturday = ["mixed"];
+		var typesSunday = ["men","women"];
+		var typesTable = [typesSaturday,typesSunday];
+		var year = Years.findOne({_id:""+new Date().getFullYear()});
+		var start = 0;
+
+		////////// Saturday and Sunday \\\\\\\\\\
+
+		var typesDocs= [];
+
+		for(var g=0;g<numberDays;g++){
+			typesDocs.push([]);
+			var types = typesTable[g];
+			for(var k=0;k<types.length;k++){
+				if(year[types[k]]){
+					var temp = Types.findOne({_id:year[types[k]]});
+
+					if(typeof temp !== "undefined"){
+						typesDocs[g].push(temp);
+					}
+				} 
+			}
+		}
+
+		var finished = false;
+		var first = true;
+		var round = 0;
+
+		while(!finished){
+			finished = true;
+
+			for(var g=0;g<numberDays;g++){
+
+				var typesDoc = typesDocs[g];
+			
+				for(var k=0;k<typesDoc.length;k++){
+
+					for(var t=0;t<categoriesKeys.length;t++){
+
+						if(typesDoc[k][categoriesKeys[t]]!=null){
+				 			var nameField = categoriesKeys[t]+"Courts";
+
+				 			var nbr = getNumberMatches(typesDoc[k][categoriesKeys[t]].length,round);
+
+				 			if(!first &&typesDoc[k][nameField].length<(2*typesDoc[k][categoriesKeys[t]].length-1)){
+				 				typesDoc[k][nameField]=typesDoc[k][nameField].concat(getNCourts(typesDoc[k][nameField],courtsTable[g],nbr,start));
+				 				finished=false;
+				 			}
+
+				 			if(first){
+				 				typesDoc[k][nameField] = getNCourts(undefined, courtsTable[g],nbr,start);
+				 				finished = false;
+				 			}
+
+				 			start=(start+nbr) % courtsTable[g].length;
+				 		}
+					}
+				}
+			}
+
+			start = 0;
+			first=false;
+			round++;
+		}
+
+		for(var g=0;g<numberDays;g++){
+			for(var k=0;k<typesDocs[g].length;k++){
+				var types = typesDocs[g];
+				Meteor.call('updateType',types[k]);
+			}
+		}
 	}
 });
 
 Template.poolList.helpers({
+
+	// Returns the number of pools
+
+	'getNumberPools' : function(){
+		var pools = Pools.find().fetch();
+		return pools.length;
+	},
+
+	// Returns the number of courts
+
+	'getNumberCourts' : function(){
+		var courts = getCourtNumbers(Courts.find().fetch());
+		return courts.length;
+	},
+	
 	// // Returns a yearData with id year
 	'getYear' : function(){
 		var year = Session.get('PoolList/Year');

@@ -327,6 +327,12 @@ Meteor.methods({
 				if(!data.$set) data['$set'] = {};
 				data.$set[b] = typeData[b];
 			}
+
+			var c = categoriesKeys[i].concat("Courts");
+			if(typeData[c]!=undefined){
+				if(!data.$set) data['$set'] = {};
+				data.$set[c] = typeData[c];
+			}
 		}
 		if(!typeData._id){
 			return Types.insert(data);
@@ -871,6 +877,7 @@ Meteor.methods({
 			var p ={};
 
 			var u = Meteor.users.findOne({_id:ID[player]});
+
 			if(typeof u === undefined){
 				console.error("updatePair : "+player+" "+ID[player]+" doesn\'t exist !");
 				return false;
@@ -1203,6 +1210,11 @@ Meteor.methods({
 			set["leader"] = poolData.leader;
 		}
 
+		if(poolData.type){
+			if(!set) set = {};
+			set["type"] = poolData.type;
+		}
+
 		if(set) data["$set"] = set;
 
 		addToSet = undefined;
@@ -1338,6 +1350,7 @@ Meteor.methods({
 		pairs.push(pairID);
 		data = {};
 		data._id = poolID;
+		data.type=type;
 		data.pairs = pairs;
 		if(!pool.leader){
 			data.leader=pairID;
@@ -1411,11 +1424,7 @@ Meteor.methods({
 		}
 
 		// no 'not full' pool found, creating a new one
-		var poolID = Pools.insert({});
-
-		// Assign a court to the new pool
-
-		Meteor.call('addCourtToPool',poolID,type);
+		var poolID = Pools.insert({'type':type});
 
 		poolList = [poolID];
 		data = {};
@@ -1439,44 +1448,6 @@ Meteor.methods({
 			list.push(data._id);
 		})
 	},
-
-	'addCourtToPool' : function(PoolID, type) {
-
-        if(!PoolID){
-            console.error("addCourtToPool: This is not a valid pool");
-            return;
-        }
-
-        var pool = Pools.findOne({_id: PoolID});
-
-        if(!pool){
-            console.error("addCourtToPool: This is not a valid pool");
-            return;
-        }
-
-        var court;
-
-        if(type=="mixed" || type=="family"){
-        	// find a court available on Saturday
-        	court = Courts.findOne({$and: [{'dispoSamedi': true},{'free':true}]});
-        }
-        else{
-			// find a court available on Sunday
-			court = Courts.findOne({$and: [{'dispoDimanche': true},{'free':true}]});
-        }
-
-        if(court){
-        	// a court was found
-        	pool.courtId = court._id;
-        	Meteor.call('updatePool',pool);
-        	court.free=false;
-        	Meteor.call('updateCourt',court,null);
-        }
-        else{
-        	console.log("addCourtToPool: No court was found")
-        }
-
-    },
 
 	'removePair' : function(pairId){
 		Pairs.remove({_id:pairId});

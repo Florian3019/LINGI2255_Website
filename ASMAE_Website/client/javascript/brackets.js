@@ -9,8 +9,8 @@ var canModifyCourt = function(pair, round){
 }
 
 // Takes 2 round data, and returns which court to use for this match.
-var getCourt = function(roundData1, roundData2, round){
-  return "hello"; // TODO
+var getCourt = function(courts,num){
+  return (courts == undefined ) ? "?" : " (terrain: " + courts[num]+")";
 }
 
 /*
@@ -18,7 +18,7 @@ var getCourt = function(roundData1, roundData2, round){
   This function must edit roundData1.data.courtId and roundData2.data.courtId
   and reflect the changes made in the database
 */
-var setCourt = function(roundData1, roundData2, round){
+var setCourt = function(roundData1, roundData2, round,courts, num){
   if(a == undefined || b==undefined){
     return;
   }
@@ -34,7 +34,7 @@ var setCourt = function(roundData1, roundData2, round){
   // Can only modify courts in increasing round order (i.e. can't modify round 5 if round 4 is not set)
   if(canModifyCourt(pair1, round) && canModifyCourt(pair2, round)){
     // Automatically set the courtId, or leave it undefined
-    automaticCourtId = getCourt(roundData1, roundData2, round);
+    automaticCourtId = getCourt(courts,num);
     if(automaticCourtId!=undefined){
       if(pair1.tournamentCourts==undefined) pair1.tournamentCourts = [];
       if(pair2.tournamentCourts==undefined) pair2.tournamentCourts = [];
@@ -374,6 +374,19 @@ var hasPoints = function(pairData){
   return score === parseInt(score, 10); // Test if points is an integer
 }
 
+var getCourts = function(){
+  year = Session.get("PoolList/Year");
+  type = Session.get("PoolList/Type");
+  category = Session.get("PoolList/Category");
+
+  var yearD = Years.findOne({"_id":year},{reactive:false});
+  var typeId = yearData[type];
+  var typeD = Types.findOne({"_id":typeId},{reactive:false});
+  var cat = category+"Courts";
+
+  return typeD[cat];
+}
+
 var makeBrackets = function(document){
   allWinners = handleBracketErrors(document); // Table of winner pair Id
   if(allWinners==undefined) return;
@@ -389,8 +402,11 @@ var makeBrackets = function(document){
   */
   firstRound = [];
 
+  var courts = getCourts();
+
   var matchesCompleted = 0;
   var totalMatches = 0;
+  var nextMatchNum = 0;
 
   /*
     Create the firstRound
@@ -409,11 +425,12 @@ var makeBrackets = function(document){
 
       if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
 
-      setCourt(a, b, 0);
+      setCourt(a, b, 0, courts,nextMatchNum);
       firstRound.push([a.data, b.data]);
 
       thisRound.push(a);
       thisRound.push(b);
+      nextMatchNum++;
     }
   }
 
@@ -492,9 +509,12 @@ var makeBrackets = function(document){
       a = newRound[i];
       b = newRound[i+1];
 
-      setCourt(a, b, round+1); // Define which court to use for that match
+      setCourt(a, b, round+1,courts,nextMatchNum); // Define which court to use for that match
 
       if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
+
+      empty = {"player1":"?", "player2":"?", "id":undefined, "score":"?", "round":undefined, 'courtId': courts== undefined ? "(terrain: ?)" : " (terrain: " + courts[nextMatchNum]+")"};
+      nextMatchNum++;
 
       nextRound.push([a==undefined ? empty:a.data, b==undefined ? empty:b.data]);
     }
@@ -530,6 +550,7 @@ var makeBrackets = function(document){
           a.data.score = '?';
         }
       }
+      empty = {"player1":"?", "player2":"?", "id":undefined, "score":"?", "round":undefined, 'courtId':""};
       ultimateWinner = [a==undefined ? empty:a.data];
       brackets.push([ultimateWinner]); // Only one pair: the winner
     }
