@@ -243,51 +243,6 @@
             </div>
           </div>
         </div>
-<<<<<<< HEAD
-
-      {{/each}}
-  </div>
-
-  <div class="form-group">
-	  <h5><b>Méthode de paiement:</b></h5>
-	  <div class="radio">
-		  <label><input type="radio" name="paymentMethod" value="CreditCard" checked="checked" />Carte de crédit (MasterCard, Visa, American Express, Paypal,...)</label>
-	  </div>
-	  <div class="radio">
-		  <label><input type="radio" name="paymentMethod" value="BankTransfer" />Virement bancaire</label>
-	  </div>
-	  <div class="radio">
-		  <label><input type="radio" name="paymentMethod" value="Cash" />Cash (le jour même)</label><br />
-	  </div>
-  </div>
-
-	<div class="row">
-		<div class="col-md-6">
-		<div class="form-group">
-  			<label for="playerWishes">Souhaits:</label>
-       		<textarea name="playerWishes" id="playerWishes" class="form-control" placeholder="Facultatif"></textarea>
-  		</div>
-	</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-6">
-  		<div class="form-group">
-  			<label for="playerConstraints">Contraintes:</label>
-       		<textarea name="playerConstraints" id="playerConstraints" class="form-control" placeholder="Facultatif"></textarea>
-  		</div>
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-5">
-		<div class="form-group has-feedback" id="emailPlayerDiv">
-          <label class="control-label" for="inputGroupSuccess1">Adresse email de votre coéquipier: </label>
-          <div class="input-group">
-            <span class="input-group-addon">@</span>
-            <input type="text" class="form-control" id="emailPlayer"> <!-- aria-describedby="inputGroupSuccess1Status"> -->
-            <div id="emailPlayerError" hidden>
-=======
 		  </div>
       <div class="row">
         <div class="col-sm-10 col-sm-offset-3">
@@ -303,7 +258,6 @@
             <div id="dateMatchError" hidden>
               <span class="help-block" >Merci de préciser le tournoi</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
->>>>>>> 49c676d8a4fd9155aceae6ebab458a5458905253
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
             </div>
             <div id="dateMatchOK" hidden>
@@ -324,6 +278,20 @@
             {{/each}}
         </div>
       </div>
+
+      <div class="form-group">
+    	  <h5><b>Méthode de paiement:</b></h5>
+    	  <div class="radio">
+    		  <label><input type="radio" name="paymentMethod" value="CreditCard" checked="checked" />Carte de crédit (MasterCard, Visa, American Express, Paypal,...)</label>
+    	  </div>
+    	  <div class="radio">
+    		  <label><input type="radio" name="paymentMethod" value="BankTransfer" />Virement bancaire</label>
+    	  </div>
+    	  <div class="radio">
+    		  <label><input type="radio" name="paymentMethod" value="Cash" />Cash (le jour même)</label><br />
+    	  </div>
+      </div>
+
       <div class="row">
 		    <div class="col-sm-6 col-sm-offset-3">
 		      <div class="form-group">
