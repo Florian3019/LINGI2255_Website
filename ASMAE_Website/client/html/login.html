@@ -4,7 +4,35 @@
 			https://www.facebookbrand.com/
 	
 	-->
-	
+ <div id="LoginWrapper">
+    
+    <div class="modal fade alert" id="signModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="lineModalLabel">Votre inscription au site est bien enregistrée </h3>
+                </div>
+                <div class="modal-body">
+                      <p id="welcom-message"> Bienvenue Surnom </p>
+                      <p> Votre compte à correctement été crée ! </p>
+                      <p> Un e-mail automatique de confirmation vient d'être envoyé à votre adresse e-mail :</p>
+                      <a id="e-mail-registration" href="mailto:someone@example.com">someone@example.com</a>
+                      <hr>
+                      <p> Vous ne retrouvez pas notre e-mail de confirmation ?</p>
+                      <p> Merci de vérifier si vous ne l'avez pas reçu parmi vos "courriers indésiralbes ou spam".</p>
+                      <button onclick="closePopUp()" id="sign-up-ok" class="btn btn-primary center-block">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Pop up inscription -->
+    
+    <script>
+        function closePopUp() {
+            $('#signModal').modal('hide'); 
+        }
+    </script>
+    
+    
 	<center> 
 		<div class="header">
 			<h1>Veuillez vous connecter avant de poursuivre l'inscription</h1>  
@@ -50,33 +78,10 @@
 			<button id="facebook-login" class="btn btn-lg  btn-primary btn-block">Se connecter avec Facebook</button>
         </div>
     </div>
-	  	
-	<p> </p> <!-- Espace -->
     
-    <div class="modal fade alert" id="signModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="lineModalLabel">Inscription réussie</h3>
-                </div>
-                <div class="modal-body">
-                      <p id="welcom-message"> Bienvenue Surnom </p>
-                      <p> Votre compte à correctement été crée ! </p>
-                      <button onclick="closePopUp()" id="sign-up-ok" class="btn btn-primary center-block">Ok</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <p> </p> <!-- Espace -->
+	<center>
     
-    <script>
-        function closePopUp() {
-            $('#signModal').modal('hide'); 
-        }
-    </script>
-    
-    
-    
-	<center> 	
 		<a class="btn btn-outline btn-sm" data-toggle="collapse" data-target="#inscription">Pas encore inscrit ?</a>
 		<p> </p> <!-- Espace -->
 			<div class="collapse" id="inscription">
@@ -134,7 +139,6 @@
                                 <strong>Erreur :</strong> Le mot de passe doit comporter au moins 6 caractères.
                             </div>
 
-
 							<button id="sign-up" class="btn btn-success center-block" type="submit" >S'inscrire</button>
 						</form>
 					</div>
@@ -143,4 +147,5 @@
 		</div>
 
 	</center>
+</div>
 </template>	
