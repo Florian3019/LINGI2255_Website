@@ -53,6 +53,7 @@ Template.playersInfo.helpers({
                 { key: 'profile.AFT', label: "AFT"},
                 { key: 'profile.addressID', label: "Addresse", fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
+                    if(addr==undefined) return "Pas défini";
                     var ret = ""
                     if(addr.street != undefined) {
                         ret = ret+addr.street + ", ";
@@ -61,7 +62,7 @@ Template.playersInfo.helpers({
                         ret = ret+addr.number + ", ";
                     }
                     if(addr.box != undefined) {
-                        ret = ret+addr.box + ", ";
+                            ret = ret+addr.box + ", ";
                     }
                     if(addr.city != undefined) {
                         ret = ret+addr.city + ", ";
@@ -76,10 +77,60 @@ Template.playersInfo.helpers({
                 }},
                 { key: 'profile.isStaff', label:'Staff'},
                 { key: 'profile.isAdmin', label:'Admin'},
-            ]
+            ],
+            filters: ['NomDeFamille','Prenom']
         }
     }
+    
 });
+
+Template.mySpecialFilterLastName.created = function () {
+  this.filter = new ReactiveTable.Filter('NomDeFamille', ['profile.lastName']);
+};
+
+Template.mySpecialFilterLastName.events({
+    "keyup":function(event,template){
+        console.log(event.target.value);
+        var input = event.target.value;
+        console.log(input)
+        console.table(Meteor.users.find({$where: function(){return this.profile.lastName.indexOf(input)>-1;}}).fetch())
+        template.filter.set(input);    
+        
+        
+    }
+
+
+});
+
+Template.mySpecialFilterFirstName.created = function () {
+  this.filter = new ReactiveTable.Filter('Prenom', ['_id']);
+};
+
+Template.mySpecialFilterFirstName.events({
+    "keyup":function(event,template){
+        console.log(event.target.value);
+        var input = event.target.value;
+        console.log(input)
+        if(input!=""){
+        var userList = Meteor.users.find({$where: function(){return this.emails[0].address.indexOf(input)>-1;}}).fetch();
+        var monString = "";
+        for(var i = 0;i<userList.length;i++){
+            console.log("salut")
+            monString += userList[i]._id+" ";
+        }
+
+        template.filter.set(monString);    
+        }
+        else{
+            template.filter.set('');
+        }
+        
+    }
+
+
+});
+
+
 
 Template.playersInfo.events({
     'click .reactive-table tbody tr' : function(event){
