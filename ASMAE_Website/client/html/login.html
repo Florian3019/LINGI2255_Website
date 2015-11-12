@@ -1,29 +1,29 @@
 <template name="login">
-    
+
 	<!--  Logo resources :
 			https://www.facebookbrand.com/
-	
+
 	-->
-	
-	<center> 
+
+	<center>
 		<div class="header">
-			<h1>Veuillez vous connecter avant de poursuivre l'inscription</h1>  
-		</div> 
+			<h1>Veuillez vous connecter avant de poursuivre l'inscription</h1>
+		</div>
 	</center>
-	
+
 	<div class="row">
 		<div class="col-md-4">
 			<form class="login">
-				<h2 class="login-heading">Connection</h2>
-				
+				<h2 class="login-heading">Connexion</h2>
+
 				<label for="inputEmail" class="sr-only">Addresse mail</label>
 				<input type="email" name="email" class="form-control" placeholder="Addresse mail" required autofocus>
-				
+
 				<p> </p> <!-- Espace -->
-				
+
 				<label for="inputPassword" class="sr-only">Mot de passe</label>
 				<input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
-				
+
 				<div class="checkbox">
 					<label>
 						<input type="checkbox" value="remember-me"> Se souvenir de moi
@@ -32,38 +32,38 @@
 				<p><input class="btn btn-lg btn-primary btn-block" type="submit" value="Connexion"></p>
 			</form>
         </div>
-		
+
         <div class="col-md-4">
-			<h2>Avec Google</h2> 
+			<h2>Avec Google</h2>
 			<img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="30%" height="30%">
 			<p> </p> <!-- Espace -->
 			<button id="google-login" class="btn btn-lg btn-danger">Se connecter avec Google</button>
         </div>
-	   
+
         <div class="col-md-4">
-			<h2>Avec Facebook</h2> 
+			<h2>Avec Facebook</h2>
 		  	<img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="30%" height="30%">
 			<p> </p> <!-- Espace -->
 			<button id="facebook-login" class="btn btn-lg  btn-primary">Se connecter avec Facebook</button>
         </div>
     </div>
-	  	
+
 	<p> </p> <!-- Espace -->
 
-	<center> 	
+	<center>
 		<a class="btn btn-outline btn-sm" data-toggle="collapse" data-target="#inscription">Pas encore inscrit ?</a>
 		<p> </p> <!-- Espace -->
 			<div class="collapse" id="inscription">
 			<div class="well well-lg">
-				<center> 
+				<center>
 				<div class="row">
 					<div class="col-md-12">
 						<form class="login">
 							<h2 class="lead">Inscription</h2>
-							
+
 							<label for="inputUser" class="sr-only">Nom d'utilisateur</label>
 							<input type="userName" name="username-sign" class="form-control" placeholder="Nom d'utilisateur" required autofocus>
-							
+
 							<p> </p> <!-- Espace -->
 							<label for="inputEmail" class="sr-only">Addresse mail</label>
 							<input type="email" name="email-sign" class="form-control" placeholder="Adresse mail" required autofocus>
@@ -81,4 +81,4 @@
 		</div>
 
 	</center>
-</template>	
+</template>

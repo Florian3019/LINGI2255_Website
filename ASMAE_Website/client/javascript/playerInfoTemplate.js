@@ -1,12 +1,11 @@
 Session.set('paymentFormStatus', null);
-var isBraintreeInitialized = false;
 
 // Create data object for payment
 function getFormData(){
 
 	var user = Meteor.user();
 	var extras = getExtras();
-	
+
 					//TODO : gerer les extras dynamiquement + prix du tournoi
 
   var data = {
@@ -22,7 +21,6 @@ function getFormData(){
 }
 
 function initializeBraintree (clientToken) {
-  if (isBraintreeInitialized) return;
 
   braintree.setup(clientToken, 'dropin', {
     container: 'dropin',
@@ -37,12 +35,11 @@ function initializeBraintree (clientToken) {
 
       Meteor.call('createTransaction', data, function (err, result) {
         Session.set('paymentFormStatus', null);
+		$("#dropinModal").modal("hide");
         Router.go('paymentConfirmation');
       });
     }
   });
-
-  isBraintreeInitialized = true;
 }
 
 function getExtras(){
@@ -69,15 +66,10 @@ Template.playerInfoTemplate.helpers({
 		if(!user) return;
 		var addr = Addresses.findOne({_id:user.profile.addressID});
 		data = {
-			'firstName': function(){
-				return user.profile.firstName;
-			},
-			'lastName': function(){
-				return user.profile.lastName;
-			},
-			'emails': function(){
-				return user.emails[0].address;
-			},
+			'id' : this.ID,
+			'firstName' : user.profile.firstName,
+			'lastName': user.profile.lastName,
+			'emails': user.emails[0].address,
 			'phone': function(){
 			  var phone = user.profile.phone;
 			  if(!phone) return;
@@ -107,11 +99,18 @@ Template.playerInfoTemplate.helpers({
 			'land': function(){
 				if(addr) return addr.country;
 			},
-			'rank': function(){
-				return user.profile.AFT;
-			}
+			'rank': user.profile.AFT
 		};
 	  return data;
+	},
+
+	'isCurrentUser' : function(passedID){
+		if(Meteor.userId() === passedID){
+			return true;
+		}
+		else{
+			return false;
+		}
 	},
 
 	/*
@@ -135,15 +134,53 @@ Template.playerInfoTemplate.helpers({
 
 
 	'paymentStatusClass': function () {
-    return Session.get('paymentFormStatus') ? 'hide' : '';
-  },
-  'notPaymentStatusClass': function () {
-    return Session.get('paymentFormStatus') ? '' : 'hide';
-  },
+		return Session.get('paymentFormStatus') ? 'hide' : '';
+	},
+ 	'notPaymentStatusClass': function () {
+    	return Session.get('paymentFormStatus') ? '' : 'hide';
+ 	},
 
 	'getExtras' : function() {
 		getExtras();
-	}
+	},
+
+	'paymentMethod' : function(){
+		switch(Payments.findOne({"userID": Meteor.userId()}).paymentMethod){
+			case "CreditCard":
+				return "Carte de crédit";
+				break;
+			case "BankTransfer":
+				return "Virement bancaire";
+				break;
+			case "Cash":
+				return "Cash";
+				break;
+		}
+	},
+
+	'paymentBalance' : function(){
+		var payment = Payments.findOne({"userID": Meteor.userId()});
+		if(payment)
+		{
+			return payment.balance;
+		}
+	},
+
+	'notPaid' : function(passedID){
+		if(Meteor.userId() === passedID){
+			var payment = Payments.findOne({"userID" : Meteor.userId()});
+			if(payment)
+			{
+				return (payment.status !== "paid");
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			return false;
+		}
+	},
 
 });
 
@@ -162,8 +199,9 @@ Template.playerInfoTemplate.events({
 
 });
 
+
 //For payments
-Template.myRegistration.rendered = function () {
+Template.myRegistration.onRendered(function () {
   Meteor.call('getClientToken', function (err, clientToken) {
     if (err) {
       console.log('There was an error', err);
@@ -172,4 +210,4 @@ Template.myRegistration.rendered = function () {
 
     initializeBraintree(clientToken);
   });
-};
+});

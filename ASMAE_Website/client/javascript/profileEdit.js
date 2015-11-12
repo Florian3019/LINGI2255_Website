@@ -38,8 +38,8 @@ Template.profileEdit.events({
 			zipCode : $('[name=zipcode]').val(),
 			country : $('[name=country]').val()
 		};
-
-		Meteor.call('updateAddress',address,this.user._id, function(error, result){
+		console.log(this.ID)
+			Meteor.call('updateAddress',address,this.ID, function(error, result){
 			if(error){
 				console.error('profileEdit adress error');
 				console.error(error);
@@ -47,6 +47,7 @@ Template.profileEdit.events({
 			else if(result == null){
 				console.error("No result");
 			}
+			
 		});
 
 		var lastName = $('[name=lastname]').val();
@@ -62,7 +63,7 @@ Template.profileEdit.events({
     var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
 
 		var userData = {
-			_id: this.user._id,
+			_id: this.ID,
 			profile:{
 				lastName : lastName,
 				firstName : firstName,
@@ -83,6 +84,7 @@ Template.profileEdit.events({
 			}
 
 		});
+
 		Router.go('home');
 
 	}

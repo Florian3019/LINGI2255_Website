@@ -46,7 +46,7 @@
         <div class="col-sm-2 col-sm-offset-3">
      	    <div class="form-group has-feedback" id="birthDayDiv">
             <label for="day">Jour:</label>
-            <input type="number" id="birthDay" class="form-control" min="1" value="{{date}}" name="jour de naissance">
+            <input type="number" id="birthDay" class="form-control" min="1" value="{{getDate}}" name="jour de naissance">
             <div id="birthDayError" hidden>
               <span class="help-block" >Merci d'entrer le jour</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -60,7 +60,7 @@
         <div class="col-sm-2">
           <div class="form-group has-feedback" id="birthMonthDiv">
             <label for="month">Mois:</label>
-            <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{date}}" name="mois de naissance">
+            <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{getMonth}}" name="mois de naissance">
             <div id="birthMonthError" hidden>
               <span class="help-block" >Merci d'entrer le mois</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -74,7 +74,7 @@
 		    <div class="col-sm-2">
           <div class="form-group has-feedback" id="birthYearDiv">
             <label for="year">Année:</label>
-            <input type="number" id="birthYear" class="form-control" min="1900" value="{{date}}" name="année de naissance">
+            <input type="number" id="birthYear" class="form-control" min="1900" value="{{getYear}}" name="année de naissance">
             <div id="birthYearError" hidden>
               <span class="help-block" >Merci d'entrer l'année</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -278,6 +278,20 @@
             {{/each}}
         </div>
       </div>
+
+      <div class="form-group">
+    	  <h5><b>Méthode de paiement:</b></h5>
+    	  <div class="radio">
+    		  <label><input type="radio" name="paymentMethod" value="CreditCard" checked="checked" />Carte de crédit (MasterCard, Visa, American Express, Paypal,...)</label>
+    	  </div>
+    	  <div class="radio">
+    		  <label><input type="radio" name="paymentMethod" value="BankTransfer" />Virement bancaire</label>
+    	  </div>
+    	  <div class="radio">
+    		  <label><input type="radio" name="paymentMethod" value="Cash" />Cash (le jour même)</label><br />
+    	  </div>
+      </div>
+
       <div class="row">
 		    <div class="col-sm-6 col-sm-offset-3">
 		      <div class="form-group">

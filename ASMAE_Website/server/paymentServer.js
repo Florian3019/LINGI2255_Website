@@ -29,12 +29,14 @@ Meteor.methods({
 
     //Calculate amount to pay
     var amount = REGISTRATION_PRICE;
+    /*
     if(data.extras)
     {
       for(extra in data.extras){
-        amout += getPrice(extra);
+        amout += getPrice(extra);           //TODO
       }
     }
+    */
 
     var response = transaction({
       amount: amount,
@@ -47,8 +49,19 @@ Meteor.methods({
     });
 
 
-    // perform a server side action with response
-    insert
+    // Perform a server side action with response
+    var currentDate = new Date();
+    var data = {
+        status : "paid",
+        date: currentDate
+    };
+
+    Payments.update({"userID": Meteor.userId()} , {$set: data}, function(err, result){
+        if(err){
+            console.error('Payments.update error after transaction');
+            console.error(err);
+        }
+    });
 
     return response;
   }

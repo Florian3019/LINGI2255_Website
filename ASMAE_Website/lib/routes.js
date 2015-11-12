@@ -15,11 +15,10 @@ function isRegistered() {
 }
 
 Router.onBeforeAction(function() {
-	var currentUser = Meteor.userId();
-	if(currentUser){
-		this.next();
-	} else {
+	if(!Meteor.isServer && !Meteor.userId()){
 		this.render("login");
+	} else {
+		this.next();
 	}
 }, {except: ['home', 'rules']});
 
@@ -67,6 +66,7 @@ Router.route('/mon-inscription', {
 		}
 	}
 });
+
 Router.route('/inscription-tournoi',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
