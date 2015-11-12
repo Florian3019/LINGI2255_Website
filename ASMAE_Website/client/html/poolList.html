@@ -171,17 +171,12 @@
       <div class='poolContainer' id='alonepairs'>
           {{#each getAlonePairs TYPEDATA}}
             <div id="{{this.pair._id}}" class="pairs" data-startingPoolId="{{this.startingPoolId}}">
-              <ul class="list-group" data-target="#pairModal{{this.pair._id}}" data-toggle="modal">
-                {{#with getPlayer this.pair.player1._id}}
+              {{#with getPlayer this.pair.player1._id}}
+              <ul class="list-group" data-target="#pairModal{{../pair._id}}" data-toggle="modal">
                   <li class="list-group-item pairPlayer {{getColor ../pair/player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}}</li>
-                {{/with}}
-
-                {{#with getPlayer this.pair.player2._id}}
-                  <li class="list-group-item pairPlayer {{getColor ../pair/player2}}" id="{{this.player2._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}}</li>
-                {{/with}}
               </ul>
-
-              {{>modalItem PAIR=this.pair}}
+                {{>modalItem PAIR=../pair POOL=../startingPoolId SEX=profile.gender}}
+              {{/with}}
             </div>
           {{/each}}
           <!-- Empty -->
@@ -228,11 +223,11 @@
                 {{#if equals PAIR.player2._id undefined}}
                   <div class="dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      TODO
+                      Changer ce joueur de type
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                      {{#each getAvailableTypes}}
+                      {{#each getAvailableTypes PAIR._id POOL SEX}}
                         <li><a href="#" class="typeChosing">{{this.value}}</a></li>
                       {{/each}}
                     </ul>
@@ -276,6 +271,8 @@
               {{/with}}
             </ul>
           </div>
-          {{>modalItem PAIR=this}}
+          {{#unless equals this.player2._id undefined}} 
+            {{>modalItem PAIR=this}} <!-- Don't set POOL here, since we should not be able to change the type of the pair -->
+          {{/unless}}
         {{/with}}
 </template>
