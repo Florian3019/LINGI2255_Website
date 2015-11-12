@@ -328,7 +328,7 @@ Meteor.methods({
 				data.$set[b] = typeData[b];
 			}
 
-			var c = cat[i].concat("Courts");
+			var c = categoriesKeys[i].concat("Courts");
 			if(typeData[c]!=undefined){
 				if(!data.$set) data['$set'] = {};
 				data.$set[c] = typeData[c];
@@ -842,18 +842,25 @@ Meteor.methods({
 		@return : the pair id if successful, otherwise returns false
 	*/
 	'updatePair' : function(pairData){
+		console.log("updatePair : pairData ");
+		console.log(pairData);
+		if(typeof pairData === undefined){
+			console.error("updatePair : pairData is undefined");
+			return;
+		}
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
 		ID = {};
 		if(pairData.player1){
 			P1_id= pairData.player1._id;
-			ID['player1'] = P1_id;
+			ID["player1"] = P1_id;
 		}
 		if(pairData.player2){
 			P2_id = pairData.player2._id;
-			ID['player2'] = P2_id;
+			ID["player2"] = P2_id;
 		}
-
+		console.log("ID");
+		console.log(ID);
 		const userIsOwner = ID['player1'] == Meteor.userId() || ID['player2'] == Meteor.userId();
 		if(!(userIsOwner || isAdmin || isStaff)){
 			console.error("updatePair : You don't have the required permissions!");
@@ -874,8 +881,9 @@ Meteor.methods({
 			var p ={};
 
 			var u = Meteor.users.findOne({_id:ID[player]});
-			if(typeof u ===undefined){
-				console.error('updatePair : player doesn\'t exist !');
+
+			if(typeof u === undefined){
+				console.error("updatePair : "+player+" "+ID[player]+" doesn\'t exist !");
 				return false;
 			}
 
@@ -910,15 +918,15 @@ Meteor.methods({
 		}
 
 		var check1, check2;
-		if (typeof pairData["player1"] !== undefined) {
+		if (typeof pairData["player1"] != undefined) {
 			check1 = setPlayerData("player1");
 		}
-		if (typeof pairData["player2"] !== undefined) {
+		if (typeof pairData["player2"] != undefined) {
 			check2 = setPlayerData("player2");
 		}
 
 		if(check1 == false || check2 == false) return false; // an error occurred
-		if(typeof check1 === 'undefined' && typeof check2 === 'undefined'){
+		if(typeof check1 === undefined && typeof check2 === undefined){
 			console.warn("Warning : No data about any player was provided to updatePair. Ignore if intended.");
 		}
 
@@ -1416,10 +1424,6 @@ Meteor.methods({
 		// no 'not full' pool found, creating a new one
 		var poolID = Pools.insert({});
 
-		// Assign a court to the new pool
-
-		Meteor.call('addCourtToPool',poolID,type);
-
 		poolList = [poolID];
 		data = {};
 		data._id = typeTable._id;
@@ -1442,44 +1446,6 @@ Meteor.methods({
 			list.push(data._id);
 		})
 	},
-
-	'addCourtToPool' : function(PoolID, type) {
-
-        if(!PoolID){
-            console.error("addCourtToPool: This is not a valid pool");
-            return;
-        }
-
-        var pool = Pools.findOne({_id: PoolID});
-
-        if(!pool){
-            console.error("addCourtToPool: This is not a valid pool");
-            return;
-        }
-
-        var court;
-
-        if(type=="mixed" || type=="family"){
-        	// find a court available on Saturday
-        	court = Courts.findOne({$and: [{'dispoSamedi': true},{'free':true}]});
-        }
-        else{
-			// find a court available on Sunday
-			court = Courts.findOne({$and: [{'dispoDimanche': true},{'free':true}]});
-        }
-
-        if(court){
-        	// a court was found
-        	pool.courtId = court._id;
-        	Meteor.call('updatePool',pool);
-        	court.free=false;
-        	Meteor.call('updateCourt',court,null);
-        }
-        else{
-        	console.log("addCourtToPool: No court was found")
-        }
-
-    },
 
 	'removePair' : function(pairId){
 		Pairs.remove({_id:pairId});
