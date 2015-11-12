@@ -1,7 +1,4 @@
 <template name="poolList">
-  <div class="container">    
-    <form role="form">
-      <div class="form-group">
         <div id="PoolListWrapper">
           <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
@@ -98,15 +95,9 @@
             $("#PoolListWrapper").toggleClass("toggled");
           });
         </script>
-      </div>
-    </form>
-  </div>
 </template>
 <!-- Param : TYPE -->
 <template name="CategorySelect">
-  <div class="container">    
-    <form role="form">
-      <div class="form-group">
         <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span> 
         <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
         <ul class="nav collapse CategoryOption" id="{{TYPE}}" role="menu" aria-labelledby="btn-{{TYPE}}">
@@ -114,15 +105,9 @@
             <li>{{>poolBracketsSelect ID=../TYPE CAT=this.key DESC=this.value}}</li>
           {{/each}}
         </ul>
-      </div>
-    </form>
-  </div>
 </template>
 
 <template name="poolBracketsSelect">
-  <div class="container">    
-    <form role="form">
-      <div class="form-group">
         <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_category" style="display:none;"></span> 
         <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory" data-target="#{{this.ID}}_{{this.CAT}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
         <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
@@ -135,16 +120,10 @@
             Tournoi {{getBracketCompletion this.ID this.CAT}}
           </li>
         </ul>
-      </div>
-    </form>
-  </div>
 </template>
 
 <!-- Takes 1 argument : the pool -->
 <template name="poolContainerTemplate">
-  <div class="container">    
-    <form role="form">
-      <div class="form-group">
         <td>
           <div class='parent'>
             <h3>
@@ -169,15 +148,9 @@
             </div>
           </div>
         </td>
-      </div>
-    </form>
-  </div>
 </template>
 
 <template name="pairsToSplitContainerTemplate">
-  <div class="container">    
-    <form role="form">
-      <div class="form-group">
         <div class='parent' id='pairstosplitparent'>
           <h3><label class='label label-primary' for='hy'>Paires à séparer</label></h3>
           <div class='PoolWrapper'>
@@ -186,16 +159,10 @@
             </div>
           </div>
         </div>
-      </div>
-    </form>
-  </div>
 </template>
 
 <!-- Takes 1 argument : the typeData -->
 <template name="alonePairsContainerTemplate">
-     <div class="container">    
-    <form role="form">
-      <div class="form-group">
   <div class='parent' id='alonepairsparent'>
     <h3>
       <label class='label label-primary' for='hy'>Joueurs seuls</label>
@@ -221,15 +188,9 @@
       </div>
     </div>
   </div>
-                          </div>
-            </form>
-        </div>
 </template>
 
 <template name="mergePlayersContainerTemplate">
-  <div class="container">    
-    <form role="form">
-      <div class="form-group">
         <div class='parent' id='mergeplayersparent'>
           <h3><label class='label label-primary' for='hy'>Fusionner 2 joueurs</label></h3>
           <div class='PoolWrapper'>
@@ -238,15 +199,9 @@
             </div>
           </div>
         </div>
-      </div>
-    </form>
-  </div>
 </template>
 
 <template name="modalItem">
-  <div class="container">    
-    <form role="form">
-      <div class="form-group">
         <!-- Modal -->
         <div id="pairModal{{PAIR._id}}" class="modal fade pairInfoModal " role="dialog" style="cursor:auto">
           <div class="modal-dialog">
@@ -302,9 +257,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </form>
-  </div>
 </template>
 
 <!-- 
@@ -313,9 +265,6 @@
   - POOLID : the id of the pool of this pair 
 -->
 <template name="poolItem">
-   <div class="container">    
-    <form role="form">
-      <div class="form-group">
         {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
           <div id="{{this._id}}" class="pairs" data-startingPoolId="{{../POOLID}}">
             <ul class="list-group" data-target="#pairModal{{this._id}}" data-toggle="modal">
@@ -329,7 +278,4 @@
           </div>
           {{>modalItem PAIR=this}}
         {{/with}}
-      </div>
-    </form>
-  </div>
 </template>
