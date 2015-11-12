@@ -712,12 +712,9 @@ Template.tournamentRegistration.events({
 		*/
 		var playerData = {
 			_id:Meteor.userId(),
-			extras:{
-
-			},
+			extras : {},
 			wish:playerWishes,
 			constraint:playerConstraints
-			// paymentID:<paymentID>
 		};
 
 		var extras = Extras.find().fetch();
@@ -727,7 +724,6 @@ Template.tournamentRegistration.events({
 			extrasPlayer[extras[i].name]=document.getElementById(extras[i]._id).value;
 		}
 
-		console.log(extrasPlayer);
 		if(!$(emailPlayerDiv).is(":visible")){
 			// the user wants to confirm his registration with a pair that already exists
 
@@ -857,6 +853,12 @@ Template.tournamentRegistration.events({
         to=event.target.emailPlayer.value; //address of the other player
 
         console.log(pairData);
+
+
+		//For the payment
+		//Remark: we pass the paymentMethod to pairData but it won't be linked with the Pair in the database)
+		//		  This is because a player can have multiple Pairs (multiple tournaments).
+		pairData.paymentMethod = $('[name=paymentMethod]:checked').val();
 
         Meteor.call('updatePair', pairData, callback);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again

@@ -161,4 +161,5 @@ Tracker.autorun(function () {
   Meteor.subscribe("Matches");
   Meteor.subscribe("Extras");
   Meteor.subscribe("ModificationsLog");
+  Meteor.subscribe("Payments");
 });

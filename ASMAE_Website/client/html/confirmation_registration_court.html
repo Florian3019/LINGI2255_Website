@@ -13,27 +13,17 @@
                   <table class="table table-user-information">
                     <tbody>
                       <tr>
-                        <td class="item">Proriétaire</td>
-                        <td>{{owner.username}}</td>
-                      </tr>
-                      <!--
-                      {{#if owner.profile.firstName}}
-                      <tr>
                         <td>Proriétaire </td>
-                        <td>{{owner.profile.firstName}} {{owner.profile.lastName}}</td>
+                        <td>{{ownerFirstName owner}} {{ownerLastName owner}}</td>
                       </tr>
-                      {{/if}}
                       <tr>
                         <td>Email </td>
-                        <td>{{owner.emails[0].address}}</td>
+                        <td>{{ownerEmail owner}}</td>
                       </tr>
-                      {{#if owner.profile.phone}}
                       <tr>
                         <td>Téléphone </td>
-                        <td>{{owner.profile.phone}}</td>
+                        <td>{{ownerPhone owner}}</td>
                       </tr>
-                      {{/if}}
-                    -->
                       <tr>
                         <td class="item">Rue</td>
                         <td>{{address.street}}</td>

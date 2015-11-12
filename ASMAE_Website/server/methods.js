@@ -1,4 +1,4 @@
-
+const REGISTRATION_PRICE = 10;
 // Useful link : http://stackoverflow.com/questions/16439055/retrieve-id-after-insert-in-a-meteor-method-call
 
 
@@ -777,8 +777,7 @@ Meteor.methods({
 					BBQ:<bbq>
 				},
 				wish:<wish>,
-				constraint:<constraint>,
-				paymentID:<paymentID>
+				constraint:<constraint>
 			}
 			player2:{
 				_id:<userID>,
@@ -786,8 +785,7 @@ Meteor.methods({
 					BBQ:<bbq>
 				},
 				wish:<wish>,
-				constraint:<constraint>,
-				paymentID:<paymentID>
+				constraint:<constraint>
 			}
 			tournament :[<pointsRound1>, <pointsRound2>, ....],
 			tournamentCourts:[<courtForRound1>, ...],
@@ -851,7 +849,6 @@ Meteor.methods({
 				var extras = Extras.find().fetch();
 
 				for(var i=0;i<extras.length;i++){
-					console.log(dataExtras);
 
 					if(dataExtras[extras[i].name]){
 						extr[extras[i].name] = dataExtras[extras[i].name];
@@ -871,9 +868,31 @@ Meteor.methods({
 		var check1 = setPlayerData("player1");
 		var check2 = setPlayerData("player2");
 		if(check1 == false || check2 == false) return false;
-		if(check1==undefined && check2==undefined){
+		if(typeof check1 === 'undefined' && typeof check2 === 'undefined'){
 			console.warn("No data about any player was provided to updatePair");
 		}
+
+
+		//Payments: add to the Payments collection
+		var amount = REGISTRATION_PRICE;
+
+		//TODO: add extras to amount
+
+		paymentData = {
+			userID : Meteor.userId(),
+			status : "pending",
+			paymentMethod : pairData.paymentMethod,
+			balance : amount
+		};
+		Payments.insert(paymentData, function(err, paymId){
+			if(err){
+				console.error('insert payment error');
+				console.error(err);
+			}
+			console.log("Payment successfuly inserted");
+		});
+
+
 
 		if(!pairData._id){
 			return Pairs.insert(data, function(err, res){
@@ -883,22 +902,25 @@ Meteor.methods({
 				}
 			});
 		}
-		Pairs.update({_id: pairData['_id']} , {$set: data},function(err, count, status){
+		Pairs.update({_id: pairData['_id']} , {$set: data}, function(err, count, status){
 			if(err){
 				console.error('updatePair error');
 				console.error(err);
 			}
 		});
+
 		return pairData['_id'];
 	},
 
 	/*
+		TODO: deprecated version (we don't use Pairs anymore)
+
 		A payment is structured as follows :
 		{
 			_id:<id>,
 			status:<status>, // paid or pending
 			balance:<balance>,
-			date:<data>,
+			date:<date>,
 			method:<method>, // Cash, CreditCard or BankTransfer
 		}
 
@@ -964,8 +986,8 @@ Meteor.methods({
 				var upd = {};
 				upd["_id"] = pairId;
 				upd[str2] = paymId;
-        Meteor.call('updatePair', upd);
-			});
+        			Meteor.call('updatePair', upd);
+				});
 		}
 
 		Payments.update({_id: paymentData._id} , {$set: data}, function(err, count, status){
@@ -1581,7 +1603,7 @@ Meteor.methods({
 		}
 
 		data = {};
-		
+
 		data.userId = Meteor.userId();
 
 		var date = new Date();

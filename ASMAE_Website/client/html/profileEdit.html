@@ -13,7 +13,7 @@
 			<div class="form-group has-feedback" id="lastnameDiv">
 				<label for="text">Nom</label>
 				<div class="input-group">
-					<input type="text" class="form-control" id="lastname" name="lastname" value="{{user.profile.lastName}}" placeholder="Demesmaeker" ><br>
+					<input type="text" class="form-control" id="lastname" name="lastname" value="{{user.profile.lastName}}" ><br>
 					<!-- <div id="lastnameError" hidden>
 						<span class="help-block" >Merci d'entrer votre nom</span>
 						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -28,7 +28,7 @@
 			<div class="form-group has-feedback" id="firstnameDiv">
 				<label for="text">Prénom</label>
 				<div class="input-group">
-					<input type="text" class="form-control" id="firstname" placeholder="Florian" value="{{user.profile.firstName}}" name="firstname">
+					<input type="text" class="form-control" id="firstname" value="{{user.profile.firstName}}" name="firstname">
 					<!-- <div id="firstnameError" hidden>
 						<span class="help-block" >Merci d'entrer votre prénom</span>
 						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -43,14 +43,14 @@
 				<label for="text">Numéro de téléphone</label>
 				<div class="input-group">
 					<span class="glyphicon glyphicon-earphone input-group-addon" aria-hidden="true"></span>
-					<input type="text" class="form-control" id="phone" placeholder="0473/38.31.43" value="{{user.profile.phone}}" name="phone">
+					<input type="text" class="form-control" id="phone" value="{{user.profile.phone}}" name="phone">
 				</div>
 			</div>
 
 			<div class="form-group has-feedback" id="birthDiv">
 				<label for="date">Date de naissance</label>
 				<div class="input-group">
-					<input type="birth" id="birth" class="form-control" placeholder="1990-01-01" value="{{user.profile.birthDate}}" name="birth">
+					<input type="birth" id="birth" class="form-control" value="{{user.profile.birthDate}}" name="birth">
 					<!-- <div id="birthError" hidden>
 						<span class="help-block" >Merci d'entrer votre date de naissance</span>
 						<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -84,7 +84,7 @@
 					<div class="form-group has-feedback" id="streetDiv">
 						<label for="text">Adresse</label>
 						<div class="input-group" style="display: inline">
-							<input type="text" class="form-control" id="street" placeholder="Rue des deux chapelles" value="{{address.street}}" name="street">
+							<input type="text" class="form-control" id="street"  value="{{address.street}}" name="street">
 							<!-- <div id="streetError" hidden>
 								<span class="help-block" >Merci d'entrer votre rue</span>
 								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -101,7 +101,7 @@
 					<div class="form-group has-feedback" id="numberDiv">
 						<label for="text">Numéro</label>
 						<div class="input-group">
-							<input type="number" min="0" step="1" class="form-control" id="addressnumber" placeholder="20" value="{{address.number}}" name="addressNumber">
+							<input type="number" min="0" step="1" class="form-control" id="addressnumber" value="{{address.number}}" name="addressNumber">
 							<!-- <div id="numberError" hidden>
 								<span class="help-block" >Merci d'entrer votre numéro</span>
 								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -118,7 +118,7 @@
 				<div class="col-md-2">
 					<div class="form-group">
 						<label for="text">Boite</label>
-						<input type="text" class="form-control" id="box" placeholder="105b" value="{{address.boxNumber}}" name="boxNumber">
+						<input type="text" class="form-control" id="box" value="{{address.boxNumber}}" name="boxNumber">
 					</div>
 				</div>
 			</div>
@@ -128,7 +128,7 @@
 					<div class="form-group has-feedback" id="zipcodeDiv">
 						<label for="text">Code Postal</label>
 						<div class="input-group">
-							<input type="number" min="0" step="1" class="form-control" id="zipcode" placeholder="6230" value="{{address.zipCode}}" name="zipcode">
+							<input type="number" min="0" step="1" class="form-control" id="zipcode" value="{{address.zipCode}}" name="zipcode">
 							<!-- <div id="zipcodeError" hidden>
 								<span class="help-block" >Merci d'entrer votre code postal</span>
 								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -145,7 +145,7 @@
 					<div class="form-group has-feedback" id="cityDiv">
 						<label for="text">Localité</label>
 						<div class="input-group" style="display: inline">
-							<input type="text" class="form-control" id="city" placeholder="Obaix" value="{{address.city}}" name="city">
+							<input type="text" class="form-control" id="city" value="{{address.city}}" name="city">
 							<!-- <div id="cityError" hidden>
 								<span class="help-block" >Merci d'entrer votre ville</span>
 								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -162,7 +162,7 @@
 					<div class="form-group has-feedback" id="countryDiv">
 						<label for="text">Pays</label>
 						<div class="input-group">
-							<input type="text" class="form-control" id="country" placeholder="Belgique" value="{{address.country}}" name="country">
+							<input type="text" class="form-control" id="country" value="{{address.country}}" name="country">
 							<!-- <div id="countryError" hidden>
 								<span class="help-block" >Merci d'entrer votre pays</span>
 								<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
