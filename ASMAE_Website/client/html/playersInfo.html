@@ -76,6 +76,25 @@
     <br>
   </div>
 </div>
-{{> reactiveTable collection=userCollection settings=settings fields=fields}}
+{{> mySpecialFilterLastName id="NomDeFamille"}}
+{{> mySpecialFilterFirstName id="Prenom"}}
+{{> reactiveTable collection=userCollection settings=settings fields=fields }}
+</template>
 
+<template name="mySpecialFilterLastName">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <span>Filtre nom de famille </span>
+      </span>
+      <input class="form-control greater-than-filter-input" type="text"/>
+    </div>
+</template>
+
+<template name="mySpecialFilterFirstName">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <span>Filtre Prénom </span>
+      </span>
+      <input class="form-control greater-than-filter-input" type="text"/>
+    </div>
 </template>

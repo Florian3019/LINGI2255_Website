@@ -1142,21 +1142,50 @@ Template.poolBracketsSelect.helpers({
 *******************************************************************************************************************/
 
 Template.modalItem.helpers({
-	'getAvailableTypes':function(){
+	'getAvailableTypes':function(pairId, poolId, sex){
 		var toReturn = [];
 		var type = Session.get("PoolList/Type");
+
+		gender = sex==='F' ? "women" : "men";
 
 		for(var i=0; i<typeKeys.length;i++){
 			var key = typeKeys[i];
 			var selected = type===key ? true : false;
-			toReturn.push({"key":key, "value":typesTranslate[key], "selected":selected})
+			if( type!==key && ((key==="women" && gender==="women") || (key==="men"&&gender==="men") || key==="family" || key=="mixed")){
+
+				if(key!=="family"){
+					toReturn.push({"key":key, "value":typesTranslate[key], "selected":selected, "pairId":pairId, "poolId":poolId});
+				}
+				else{
+					// TODO, implement family !!!
+				}
+			}
 		}
 		return toReturn;
 	},
 });
 
-// Template.modalItem.events({
-// 	'click .typeChosing' :function(event){
-// 		console.log(event);
-// 	}
-// })
+Template.modalItem.events({
+	'click .typeChosing' :function(event){
+		// Remove this pair from the pool (pair is alone)
+		Pools.update({"_id":this.poolId},{"$pull":{"pairs":this.pairId}});
+
+		type = this.key;
+		dateMatch = undefined;
+		if(type==="women" || type==="men"){
+			dateMatch="sunday";
+		}
+		else if(type==="mixed"){
+			dateMatch = "saturday";
+		}
+		else if(type==="family"){
+			dateMatch = "family";
+		}
+
+		year = Session.get("PoolList/Year");
+
+		// Add the pair to the new type:
+		Meteor.call("addPairToTournament",this.pairId, year, dateMatch);
+		$('#pairModal'+this.pairId).modal('hide');
+	}
+})
