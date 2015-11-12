@@ -136,7 +136,7 @@ Meteor.methods({
 
 	'getPairCategory' : function(type, p1, p2){
 		var category;
-		if(type=="family"){
+		if(type==="family"){
 			return 'none';
 		}
 		else{
@@ -226,7 +226,7 @@ Meteor.methods({
 			}
 		}
 		if(dateMatch == "saturday"){
-			if(gender1 && gender2 && gender1 == gender2){
+			if(typeof gender1 !== undefined && typeof gender2 !== undefined && gender1 == gender2){
 				console.error("Saturday is mixed only !");
 				return false;
 			}
@@ -310,8 +310,6 @@ Meteor.methods({
 			console.error("updateType : no typeData provided : "+typeData);
 			return;
 		}
-
-		console.log(typeData);
 
 		var data = {};
 		for (var i=0;i<categoriesKeys.length;i++){
@@ -833,9 +831,8 @@ Meteor.methods({
 		}
 
 		// Player = player1 or player2
+		// Returns false only when an error occurs, otherwise true
 		setPlayerData = function(player){
-			if(!pairData[player]) return; // Don't return false
-
 			var p ={};
 
 			var u = Meteor.users.findOne({_id:ID[player]});
@@ -871,15 +868,21 @@ Meteor.methods({
 				}
 			}
 
-			console.log(p);
 			data[player] = p;
+			return true;
 		}
 
-		var check1 = setPlayerData("player1");
-		var check2 = setPlayerData("player2");
-		if(check1 == false || check2 == false) return false;
+		var check1, check2;
+		if (typeof pairData["player1"] !== undefined) {
+			check1 = setPlayerData("player1");
+		}
+		if (typeof pairData["player2"] !== undefined) {
+			check2 = setPlayerData("player2");
+		}
+
+		if(check1 == false || check2 == false) return false; // an error occurred
 		if(typeof check1 === 'undefined' && typeof check2 === 'undefined'){
-			console.warn("No data about any player was provided to updatePair");
+			console.warn("Warning : No data about any player was provided to updatePair. Ignore if intended.");
 		}
 
 
@@ -899,7 +902,6 @@ Meteor.methods({
 				console.error('insert payment error');
 				console.error(err);
 			}
-			console.log("Payment successfuly inserted");
 		});
 
 
@@ -1249,15 +1251,15 @@ Meteor.methods({
 		dateMatch : one of "saturday", "sunday", "family"
 		Adds the pair in the tournament on the right pool.
 	 */
-	'addPairsToTournament' : function(pairID, year, dateMatch) {
+	'addPairToTournament' : function(pairID, year, dateMatch) {
 		if(!pairID) {
-			console.error("Error addPairsToTournament : no pairID specified");
+			console.error("Error addPairToTournament : no pairID specified");
 			return undefined;
 		}
 
 		pair = Pairs.findOne({_id:pairID});
 		if(!pair){
-			console.error("addPairsToTournament : invalid pairID");
+			console.error("addPairToTournament : invalid pairID");
 			return false;
 		}
 
@@ -1265,7 +1267,7 @@ Meteor.methods({
 		if(pair.player1){
 			p1 = Meteor.users.findOne({_id:pair.player1._id});
 			if(!p1){
-				console.error("addPairsToTournament : player1 does not exist !");
+				console.error("addPairToTournament : player1 does not exist !");
 				return false;
 			}
 		}
@@ -1274,7 +1276,7 @@ Meteor.methods({
 		if(pair.player2){
 			p2 = Meteor.users.findOne({_id:pair.player2._id});
 			if(!p2){
-				console.error("addPairsToTournament : player2 does not exist !");
+				console.error("addPairToTournament : player2 does not exist !");
 				return false;
 			}
 		}
@@ -1283,10 +1285,13 @@ Meteor.methods({
 				Set the category
 		*/
 		type = Meteor.call('getPairType', dateMatch, p1, p2);
-		if(!type) return false;
+		if(typeof type === undefined) {
+			console.error("addPairToTournament : getPairType returns undefined");
+			return false;
+		}
 
 		category = Meteor.call('getPairCategory', type, p1, p2);
-		if(!category) return false; // An error occured, detail of the error has already been displayed in console
+		if(typeof category === undefined) return false; // An error occured, detail of the error has already been displayed in console
 
 		var pair = Pairs.findOne({_id:pairID});
 		poolID = Meteor.call('getPoolToFill', year, type, category);
@@ -1303,9 +1308,7 @@ Meteor.methods({
 		if(!pool.leader){
 			data.leader=pairID;
 		}
-		Meteor.call('updatePool', data, function(err, poolId){
-			console.log("addPairsToTournament is done");
-		});
+		Meteor.call('updatePool', data);
 	},
 
 	/*
@@ -1317,7 +1320,8 @@ Meteor.methods({
 		If the upper-level table does not exist (year or type), creates an empty one then adds the pair.
 	*/
 	'getPoolToFill' : function(year, type, category) {
-		if(!year || !type || !category) {
+		if(typeof year=== undefined || typeof type=== undefined || typeof category=== undefined) {
+			console.log("year :"+year+", type :"+type+", category:"+category);
 			console.error("Error GetPoolToFill : no year and/or type and/or category specified");
 			return undefined;
 		}
@@ -1356,9 +1360,7 @@ Meteor.methods({
 		If all current pools are full, create a new pool, update the Types table and returns the poolID
 	*/
 	'getNextPoolInPoolList' : function(typeTable, type, category) {
-		console.log(typeTable);
 		var poolList = typeTable[category];
-		console.log(poolList);
 		if(poolList){
 			for(var i=0;i<poolList.length;i++){
 				pool = Pools.findOne({_id:poolList[i]});

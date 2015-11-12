@@ -15,7 +15,7 @@
 //         cursor = Meteor.users.find(query).fetch();
 //         Session.set('cursor', cursor);
 //         return false;
-//     },  
+//     },
 //     'click li': function() {
 //         Session.set('selected', this);
 //         Router.go('playerInfoPage');
@@ -53,6 +53,9 @@ Template.playersInfo.helpers({
                 { key: 'profile.AFT', label: "AFT"},
                 { key: 'profile.addressID', label: "Addresse", fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
+                    if (typeof addr === undefined) {
+                        return "undefined";
+                    }
                     var ret = ""
                     if(addr.street != undefined) {
                         ret = ret+addr.street + ", ";
