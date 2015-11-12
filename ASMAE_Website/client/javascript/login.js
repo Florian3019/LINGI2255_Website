@@ -94,6 +94,8 @@ Template.login.events({
                     }
                     $('#sign-up-success').show();
                     document.getElementById("welcom-message").innerHTML = "Bienvenue " + userName;
+                    document.getElementById("e-mail-registration").href="mailto:"+email;
+                    document.getElementById("e-mail-registration").innerHTML=email;
                     $('#signModal').modal('show');
                 }
             });
