@@ -147,7 +147,7 @@ Template.playerInfoTemplate.helpers({
 	'paymentMethod' : function(){
 		var payement = Payments.findOne({"userID": Meteor.userId()});
 		if(payment){
-			switch(.paymentMethod){
+			switch(payment.paymentMethod){
 				case "CreditCard":
 					return "Carte de crédit";
 					break;
