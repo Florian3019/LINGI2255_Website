@@ -49,7 +49,7 @@ Template.playersInfo.helpers({
                 }},
                 { key: 'profile.gender', label:"Sexe"},
                 { key: 'profile.phone', label: "Numéro"},
-                { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return value.toLocaleDateString()}},
+                { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "undefined" : value.toLocaleDateString()}},
                 { key: 'profile.AFT', label: "AFT"},
                 { key: 'profile.addressID', label: "Addresse", fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
