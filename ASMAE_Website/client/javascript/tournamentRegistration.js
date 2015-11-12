@@ -2,6 +2,10 @@ var aloneDependency = new Deps.Dependency();
 var tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 var tournamentYear = 2015;
 
+function closePopUp() {
+    $('#signModal').modal('hide'); 
+}
+
 Template.tournamentRegistration.helpers({
 	'alonePlayers' : function(){
 
