@@ -1526,6 +1526,10 @@ Meteor.methods({
 		var genders = ["M","M","M","M","M","M","M","M","M","M","F","F","F","F","F","F","F","F","F","F",];
 
 		for (var i=0; i<n; i++) {
+			var email = "user"+i+"@user.be";
+			if (Accounts.findUserByEmail(email)!==null) {
+				continue;
+			}
 			var date = new Date(years[i], months[i], days[i]);
 			var addressData = {
 				street:streets[i],
@@ -1535,7 +1539,7 @@ Meteor.methods({
 				zipCode:zipCodes[i],
 				country:"Belgique"
 			};
-			var email = "user"+i+"@user.be";
+
 			var phone = Math.round(Math.random() * 1000000000); // 9 numbers
 			var profile = {
 				firstName:firstNames[i],
