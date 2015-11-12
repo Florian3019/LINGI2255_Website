@@ -53,7 +53,7 @@ Template.playersInfo.helpers({
                 { key: 'profile.AFT', label: "AFT"},
                 { key: 'profile.addressID', label: "Addresse", fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
-                    if (typeof addr === undefined) {
+                    if (typeof addr === "undefined") {
                         return "undefined";
                     }
                     var ret = ""
