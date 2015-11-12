@@ -63,5 +63,12 @@ Template.changePermissions.events({
 		else if(value==="Admin"){
 			Meteor.call('turnAdmin',target.id);
 		}
+
+		Meteor.call("addToModificationsLog", 
+		{"opType":"Changement de permission", 
+		"details":
+			this.profile.firstName + " " + this.profile.lastName + " est passé en mode "+value
+		});
+
 	}
 });
