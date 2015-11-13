@@ -40,7 +40,7 @@ Router.route('/email-terrain', {
 	name: 'courtEmail'
 });
 
-Router.route('/modificationsLog', {
+Router.route('/modifications-log', {
 	template: 'modificationsLog',
 	name: 'modificationsLog'
 });
@@ -176,9 +176,9 @@ Router.route('/brackets', {
 	template: 'brackets'
 });
 
-Router.route('/confirmation_registration_court/:_id', {
-	name: 'confirmation_registration_court',
-	template: 'confirmation_registration_court',
+Router.route('/confirmation-registration-court/:_id', {
+	name: 'confirmationRegistrationCourt',
+	template: 'confirmationRegistrationCourt',
 
 	data: function(){
 		if (this.ready()) {
@@ -250,7 +250,7 @@ Router.route('/payment', {
 	template: 'payment'
 });
 
-Router.route('/paymentConfirmation', {
+Router.route('/payment-confirmation', {
   name: 'paymentConfirmation',
 	template: 'paymentConfirmation'
 });

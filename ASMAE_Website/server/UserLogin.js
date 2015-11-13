@@ -43,13 +43,37 @@ if (isProdEnv()) {
     });
 }
 
-
 /*
     Ask for email verification --> TODO, currently doesn't forbid the client
     from logging in if email is not verified (nor does it erase the account after some time has passed)
     See this link on some ideas on how to do that : http://stackoverflow.com/questions/15383273/force-email-validation-before-login-meteor
 */
+
 Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false});
+
+/* Only allow to log in if user mail is verified */
+Accounts.validateLoginAttempt(function(type){
+    if(type.user && type.user.emails && !type.user.emails[0].verified )
+        throw new Meteor.Error(100002, "Email not verified." );
+    return true;
+});
+
+Meteor.setInterval(function() {
+    
+    var three_days_ago = new Date();
+    three_days_ago.setDate(three_days_ago.getDate() - 3);
+    // three_days_ago.setSeconds(three_days_ago.getSeconds() - 10); // 10 seconds ago
+    
+    var invalidUsers = Meteor.users.find({
+                        createdAt: { $lte: three_days_ago }, // Users created more than 3 days ago
+                        'emails.0.verified': false           // Users who still not have valided email
+    })
+    
+    invalidUsers.forEach(function(user) {
+        Meteor.users.remove({_id: user._id}) // Remove 'user' that has not verified email for 3 days
+    });
+    
+}, 3600000); // Check every hours
 
 /*
     @param
@@ -124,6 +148,7 @@ addDefaultFields = function(user){
 Accounts.onCreateUser(function (options, user) {
 	user.profile = {}; // To avoid TypeError : Cannot set 'isStaff' and 'isAdmin' of undefined when invoking function addDefaultFields
     // Check if the user logged in via a service (google or facebook)
+    
     if (user.services) {
         if (options.profile) {
             user.profile = options.profile
@@ -198,6 +223,5 @@ Accounts.onCreateUser(function (options, user) {
     }
 
     return addDefaultFields(user);
-
 
 });

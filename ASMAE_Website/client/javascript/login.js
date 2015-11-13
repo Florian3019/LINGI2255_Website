@@ -87,16 +87,19 @@ Template.login.events({
                         $('#existing-username').show();
                     if(error.reason == "Email already exists.")
                         $('#existing-email').show();
+                    if(error.reason == "Email not verified.") {
+                        $('#sign-up-success').show();
+                        document.getElementById("welcom-message").innerHTML = "Bienvenue " + userName;
+                        document.getElementById("e-mail-registration").href="mailto:"+email;
+                        document.getElementById("e-mail-registration").innerHTML=email;
+                        $('#signModal').modal('show');
+                    }
                 } else {
                     var currentRoute = Router.current().route.getName();
                     if(currentRoute == "login"){		//Else : don't redirect
                         Router.go("home");
                     }
-                    $('#sign-up-success').show();
-                    document.getElementById("welcom-message").innerHTML = "Bienvenue " + userName;
-                    document.getElementById("e-mail-registration").href="mailto:"+email;
-                    document.getElementById("e-mail-registration").innerHTML=email;
-                    $('#signModal').modal('show');
+                    
                 }
             });
         }

@@ -1,4 +1,4 @@
-Template.confirmation_registration_court.helpers({
+Template.confirmationRegistrationCourt.helpers({
     'ownerLastName' : function(owner){
         if(owner.profile.lastName){
             return owner.profile.lastName;
