@@ -87,10 +87,15 @@ var splitPairs = function(pairDiv){
 	*/
 	findNewPoolLeader(startingPool, pair._id);
 
+	var player1 = Meteor.users.findOne({"_id":pair.player1._id},{"profile":1});
+	var player2 = Meteor.users.findOne({"_id":pair.player2._id},{"profile":1});
+	
+
 	Meteor.call("addToModificationsLog", 
 		{"opType":"Séparation de paire", 
 		"details":
-			"Paire séparée : "+pairId + getStringOptions()
+			"Paire séparée : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			 " et " + player2.profile.firstName +" " + player2.profile.lastName + getStringOptions()
 		});
 }
 
@@ -169,7 +174,8 @@ var mergePlayers = function(document){
 	Meteor.call("addToModificationsLog", 
 		{"opType":"Fusion de 2 joueurs", 
 		"details":
-			"Joueurs : "+pair1.player1._id + " et " + pair2.player1._id +getStringOptions()
+			"Joueurs : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			 " et " + player2.profile.firstName +" " + player2.profile.lastName +getStringOptions()
 		});
 }
 
@@ -330,11 +336,16 @@ var movePairs = function(document){
 			// Set the new pool id to that pair :
 			document.getElementById(pairId).setAttribute("data-startingpoolid", newPoolId);
 
+			pair = Pairs.findOne({"_id":pairId});
+			var player1 = Meteor.users.findOne({"_id":pair.player1._id},{"profile":1});
+			var player2 = Meteor.users.findOne({"_id":pair.player2._id},{"profile":1});
+	
 
 			Meteor.call("addToModificationsLog", 
 				{"opType":"Mouvement paire", 
 				"details":
-					"Paire : "+pairId + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
+					"Paire : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			 		" et " + player2.profile.firstName +" " + player2.profile.lastName + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
 				});
 		}
 	}
