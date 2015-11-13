@@ -99,7 +99,7 @@ Template.adminAddCourt.events({
             else if(result == null){
                 console.error("No result");
             }
-            Router.go('confirmation_registration_court', {_id: result});
+            Router.go('confirmationRegistrationCourt', {_id: result});
         });
 
     }

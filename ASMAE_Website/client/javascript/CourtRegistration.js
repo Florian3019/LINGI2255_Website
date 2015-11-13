@@ -87,7 +87,7 @@ Template.courtRegistration.events({
 			};
 			Meteor.call('emailFeedback',Meteor.user().emails[0].address,"Concernant le prêt de votre terrain",data);}
 
-			Router.go('confirmation_registration_court', {_id: result});
+			Router.go('confirmationRegistrationCourt', {_id: result});
 	    });
 
 

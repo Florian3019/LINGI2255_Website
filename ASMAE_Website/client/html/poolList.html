@@ -1,23 +1,23 @@
 <template name="poolList">
-  <div id="PoolListWrapper">
-    <div id="sidebar-wrapper">
-      <ul class="sidebar-nav">
-        <li class="sidebar-brand"> Poules </li>
-        <li>
-          <select class="form-control Year" id="Year" style="width:50%;" text-align="center">
-            <option value="" disabled="" selected="" hidden>Année</option>
-            <option value="2015"> 2015 </option>
-          </select>
-        </li>
-        {{#with getYear}}
-        <li>{{>CategorySelect TYPE="men" DESC="Homme"}}</li>
-        <li>{{>CategorySelect TYPE="women" DESC="Femme"}}</li>
-        <li>{{>CategorySelect TYPE="mixed" DESC="Mixte"}}</li>
-        <li>{{>CategorySelect TYPE="family" DESC="Familles"}}</li>
-        {{/with}}
-      </ul>
-    </div>
-    <!-- /#sidebar-wrapper -->
+        <div id="PoolListWrapper">
+          <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+              <li class="sidebar-brand"> Poules </li>
+                <li>
+                  <select class="form-control Year" id="Year" style="width:50%;" text-align="center">
+                    <option value="" disabled="" selected="" hidden>Année</option>
+                    <option value="2015"> 2015 </option>
+                  </select>
+                </li>
+                {{#with getYear}}
+                  <li>{{>CategorySelect TYPE="men" DESC="Homme"}}</li>
+                  <li>{{>CategorySelect TYPE="women" DESC="Femme"}}</li>
+                  <li>{{>CategorySelect TYPE="mixed" DESC="Mixte"}}</li>
+                  <!-- <li>{{>CategorySelect TYPE="family" DESC="Familles"}}</li> -->
+                {{/with}}
+            </ul>
+          </div>
+        <!-- /#sidebar-wrapper -->
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
