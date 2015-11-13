@@ -2,6 +2,8 @@ typeKeys = ["men", "women", "mixed", "family"];
 categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites"];
 categoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites"};
 typesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
+paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
+paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 
 tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 tournamentYear = "2015";
