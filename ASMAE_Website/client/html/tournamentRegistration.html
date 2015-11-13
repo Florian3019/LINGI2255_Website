@@ -285,13 +285,13 @@
               <div class="form-group">
             	  <h5><b>Méthode de paiement:</b></h5>
             	  <div class="radio">
-            		  <label><input type="radio" name="paymentMethod" value="CreditCard" checked="checked" />Carte de crédit (MasterCard, Visa, American Express, Paypal,...)</label>
+            		  <label><input type="radio" name="paymentMethod" value="{{getPay1}}" checked="checked" />Carte de crédit (MasterCard, Visa, American Express, Paypal,...)</label>
             	  </div>
             	  <div class="radio">
-            		  <label><input type="radio" name="paymentMethod" value="BankTransfer" />Virement bancaire</label>
+            		  <label><input type="radio" name="paymentMethod" value="{{getPay2}}" />Virement bancaire</label>
             	  </div>
             	  <div class="radio">
-            		  <label><input type="radio" name="paymentMethod" value="Cash" />Cash (le jour même)</label><br />
+            		  <label><input type="radio" name="paymentMethod" value="{{getPay3}}" />Cash (le jour même)</label><br />
             	  </div>
               </div>
         </div>

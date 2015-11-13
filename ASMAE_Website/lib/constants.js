@@ -2,6 +2,8 @@ typeKeys = ["men", "women", "mixed", "family"];
 categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites"];
 categoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites"};
 typesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
+paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
+paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 
 tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 tournamentYear = "2015";
@@ -83,4 +85,13 @@ getAgeNoDate = function(year, month, day){
         age--;
     }
     return age;
+}
+
+/*
+ *  @param email string
+ *  Check if it is a good email
+ */
+isValidEmail = function (email) {
+    var re = new RegExp('^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$','i');
+    return re.test(email);
 }
