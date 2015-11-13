@@ -47,6 +47,10 @@
   <div>
     <center><a href="{{pathFor route='courtsList'}}" class="btn btn-default">Voir tous les terrains</a></center>
   </div> -->
+
+{{> mySpecialFilterAddressCourt}}
+{{> mySpecialFilterSurface}}
+{{> mySpecialFilterPrivate}}
 {{>allCourtsTable}}
 </template>
 
@@ -77,4 +81,32 @@
   {{else}}
     <span class="glyphicon-remove lendNot"></span>
   {{/if}}
+</template>
+
+<template name="mySpecialFilterAddressCourt">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <span>Recherche d'adresse</span>
+      </span>
+      <input class="form-control addressFilter" type="text"/>
+    </div>
+</template>
+
+<template name="mySpecialFilterSurface">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <span>Recherche surface</span>
+      </span>
+      <input class="form-control surfaceFilter" type="text"/>
+    </div>
+</template>
+
+
+<template name="mySpecialFilterPrivate">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <span>Recherche Privé/public</span>
+      </span>
+      <input class="form-control privateFilter" type="text"/>
+    </div>
 </template>

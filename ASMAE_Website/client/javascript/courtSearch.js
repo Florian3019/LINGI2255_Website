@@ -59,9 +59,63 @@
 //     CourtSearch.search(text);
 //   }, 200)
 // });
+Template.mySpecialFilterAddressCourt.events({
+    'keyup .addressFilter':function(event){
+        addressInput = event.currentTarget.value;
+        console.log(addressInput);
+        Session.set("playersInfo/addressInput", addressInput);
+    }
+});
+
+Template.mySpecialFilterSurface.events({
+    'keyup .surfaceFilter':function(event){
+        surfInput = event.currentTarget.value;
+        console.log(surfInput);
+        Session.set("playersInfo/surfInput", surfInput);
+    }
+});
+
+
+Template.mySpecialFilterPrivate.events({
+    'keyup .privateFilter':function(event){
+        privInput = event.currentTarget.value;
+        console.log(privInput);
+        Session.set("playersInfo/privInput", privInput);
+    }
+});
+
 
 Template.allCourtsTable.helpers({
     courtsCollection: function () {
+        addressInput = Session.get("playersInfo/addressInput");
+        if(addressInput!=undefined && addressInput!="" ){
+            return Courts.find({$where:function(){
+                var addid = this.addressID
+                var theAddress = Addresses.findOne({_id:addid})
+                var theString = "";
+                if(theAddress!=undefined &&theAddress!=null){
+                    theString +=theAddress.city+" "
+                    theString +=theAddress.street+" "
+                    theString += theAddress.country+" "
+                    theString += theAddress.box+" "
+                    theString += theAddress.number+" "
+                    theString += theAddress.zipCode+" " 
+                }
+                if(theString!=null && theString !=""){
+                    console.log(theString)
+                    return (theString.indexOf(addressInput)>-1)
+                }
+                }});
+        }
+        surfInput = Session.get("playersInfo/surfInput");
+        if(surfInput!=undefined && surfInput!=""){
+            return Courts.find({$where: function(){if(this.surface!=null){return this.surface.indexOf(surfInput)>-1;}}});
+        }
+        privInput = Session.get("playersInfo/privInput");
+        if(privInput!=undefined && privInput!=""){
+            return Courts.find({$where: function(){if(this.courtType!=null){return this.courtType.indexOf(privInput)>-1;}}});
+        }
+
         return Courts.find();
     },
 
@@ -103,7 +157,8 @@ Template.allCourtsTable.helpers({
           { key: 'instructions', label:"Instructions"},
           { key: 'ownerComment', label:"Commentaire owner"},
           { key: 'staffComment', label:"Commentaire staff"}
-      ]
+      ],
+             filters: ['NomDeFamille']
       }
     }
 });
