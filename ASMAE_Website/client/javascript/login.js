@@ -1,10 +1,10 @@
-
-
 Template.login.events({
     
     'click #connexion': function(event){
         document.getElementById("user").className = "form-group";
         document.getElementById("user-error-message").style.display = "none";
+        document.getElementById("no-user-message").style.display = "none";
+
         document.getElementById("password").className = "form-group";
         document.getElementById("password-error-message").style.display = "none";
         document.getElementById("no-password-error-message").style.display = "none";
@@ -13,27 +13,33 @@ Template.login.events({
         var email = $('[name=email]').val().trim();
         var password = $('[name=password]').val().trim();
         Meteor.loginWithPassword(email, password, function(error){
-    		if(error){
-        		console.log(error.reason);
-                if(error.reason == "User not found"){
-                    document.getElementById("user-error-message").style.display = "block";
-                    document.getElementById("user").className = "form-group has-error";                 
-                }
-                if(error.reason == "Incorrect password"){
-                    document.getElementById("password-error-message").style.display = "block";
-                    document.getElementById("password").className = "has-error";
-                }
-                if(error.reason == "User has no password set") {
-                    document.getElementById("no-password-error-message").style.display = "block";
-                    document.getElementById("user").className = "has-error";
-                }        
-    		} 
+            if(email == "") {
+                document.getElementById("no-user-message").style.display = "block";
+                document.getElementById("user").className = "form-group has-error";
+            }
             else {
-        		var currentRoute = Router.current().route.getName();
-        		if(currentRoute == "login"){		//Else : don't redirect
-            		Router.go("home");
-        		}
-    		}
+                if(error){
+                    console.log(error.reason);
+                    if(error.reason == "User not found"){
+                        document.getElementById("user-error-message").style.display = "block";
+                        document.getElementById("user").className = "form-group has-error";                 
+                    }
+                    if(error.reason == "Incorrect password"){
+                        document.getElementById("password-error-message").style.display = "block";
+                        document.getElementById("password").className = "form-group has-error";
+                    }
+                    if(error.reason == "User has no password set") {
+                        document.getElementById("no-password-error-message").style.display = "block";
+                        document.getElementById("user").className = "form-group has-error";
+                    }        
+                } 
+                else {
+                    var currentRoute = Router.current().route.getName();
+                    if(currentRoute == "login"){		//Else : don't redirect
+                        Router.go("home");
+                    }
+                }
+            }
 		});
     },
 	
@@ -74,6 +80,7 @@ Template.login.events({
 		var userName = $('[name=username-sign]').val().trim();
 		var email = $('[name=email-sign]').val().trim();
         var password = $('[name=password-sign]').val().trim();
+        
         if(userName == "") {
             $('#no-username').show();
             document.getElementById("inputUserGroup").className = "form-group has-error";

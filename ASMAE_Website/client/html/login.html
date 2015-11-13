@@ -89,71 +89,73 @@
 			<h2>Veuillez vous connecter avant de poursuivre</h2>  
 		</div> 
 	</center>
-    
+    <br>
+    <br>
     <div class="row">
-    <div class="row-height">
-        <div class="col-md-5">
-            <div class="inside">
-                <div class="content">
-                    <h2 class="login-heading">Connexion</h2>
-                        
-                    <div class="form-group" id="user">
-                        <input type="email" name="email" class="form-control" placeholder="Nom d'utilisateur ou email" required autofocus>
-                        <span class="help-block" id="user-error-message" style="display: none">Utilisateur non trouvé</span>
-                        <span class="help-block" id="no-password-error-message" style="display: none">Cette user n'a pas de mot de passe, connecter vous via google ou facebook</span>
-                    </div>
-                        
-                    <p> </p> <!-- Espace -->
-                        
-                    <div class="form-group" id="password">
-                        <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
-                        <span class="help-block" id="password-error-message" style="display: none">Mot de passe incorrect</span>
-                    </div>
-                                        
-                    <p>
-                        <input class="btn btn-lg btn-primary btn-block" id="connexion" type="submit" value="Connexion">
-                    </p>
-                                        
-                    <div class="forgotten">
-                        <a href="#" onclick="forgottenPassword()">Mot de passe oublié ?</a>
+        <div class="row-height">
+            <div class="col-md-5">
+                <div class="inside">
+                    <form class="login">
+                        <h3 class="login-heading">Connexion</h3>
+                         
+                        <div class="form-group" id="user">
+                            <input id="balb" name="email" class="form-control" placeholder="Nom d'utilisateur ou email" required autofocus>
+                            <span class="help-block" id="no-user-message" style="display: none">Veuillez insérer un nom d'utilisateur ou un email</span>
+                            <span class="help-block" id="user-error-message" style="display: none">Utilisateur non trouvé</span>
+                            <span class="help-block" id="no-password-error-message" style="display: none">Cette user n'a pas de mot de passe, connecter vous via google ou facebook</span>
+                        </div>
+                            
+                        <p> </p> <!-- Espace -->
+                            
+                        <div class="form-group" id="password">
+                            <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
+                            <span class="help-block" id="password-error-message" style="display: none">Mot de passe incorrect</span>
+                        </div>
+                                            
+                        <div style="padding-bottom:7px;">
+                            <button class="btn btn-lg btn-primary btn-block" id="connexion" type="submit">Connexion</button>
+                        </div>
+                                            
+                        <div class="forgotten">
+                            <a href="#" onclick="forgottenPassword()">Mot de passe oublié ?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-2 col-middle">
+                <div class="inside">
+                    <div class="content">
+                        <h3>Essayer aussi</h3>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <button id="google-login" class="btn btn-lg btn-danger btn-block">Se connecter avec Google</button>
+                            </div>
+                            <div class="col-md-2">
+                                <img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="90%" height="90%%">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <button id="facebook-login" class="btn btn-lg  btn-primary btn-block">Se connecter avec Facebook</button>
+                            </div>
+                            <div class="col-md-2">
+                                <img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="90%" height="90%">
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <br>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-5 col-md-offset-2 col-middle">
-            <div class="inside">
-                <div class="content">
-                    <h2>Essayer aussi</h2>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <button id="google-login" class="btn btn-lg btn-danger btn-block">Se connecter avec Google</button>
-                        </div>
-                        <div class="col-md-2">
-                            <img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="90%" height="90%%">
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <button id="facebook-login" class="btn btn-lg  btn-primary btn-block">Se connecter avec Facebook</button>
-                        </div>
-                        <div class="col-md-2">
-                            <img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="90%" height="90%">
-                        </div>
-                    </div>
-                    <br>
-                    <br>
-                    <br>
-                </div>
-            </div>
-        </div>
-     </div>
-  </div>
- 
-    <p> </p> <!-- Espace -->
-	<center>
-    
+    </div>
+    <br>
+    <br>
+    <br>
+	<center>   
 		<a class="btn btn-outline btn-sm" data-toggle="collapse" data-target="#inscription">Pas encore inscrit ?</a>
 		<p> </p> <!-- Espace -->
 			<div class="collapse" id="inscription">
@@ -227,7 +229,6 @@
 				</div>
 			</div>
 		</div>
-
 	</center>
 </div>
 </template>	
