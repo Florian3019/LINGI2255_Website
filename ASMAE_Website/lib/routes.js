@@ -18,6 +18,9 @@ Router.onBeforeAction(function() {
 	if(!Meteor.isServer && !Meteor.userId()){
 		this.render("login");
 	} else {
+        if(!(Meteor.user().emails[0].verified))
+            this.render("emailVerification");
+        else
 		this.next();
 	}
 }, {except: ['home', 'rules']});
@@ -45,15 +48,21 @@ Router.route('/modifications-log', {
 	name: 'modificationsLog'
 });
 
-
 Router.route('/contacts', {
 	name: 'contacts',
 	template: 'contacts'
 });
+
 Router.route('/reglement', {
 	name: 'rules',
 	template: 'rules'
 });
+
+Router.route('/email-verification', {
+	template: 'emailVerification',
+	name: 'emailVerification'
+});
+
 Router.route('/mon-inscription', {
 	name: 'myRegistration',
 	template: 'myRegistration',
