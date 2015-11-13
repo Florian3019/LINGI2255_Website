@@ -23,7 +23,7 @@ Router.onBeforeAction(function() {
         else
 		this.next();
 	}
-}, {except: ['home', 'rules']});
+}, {except: ['home', 'rules', 'myRegistration']});
 
 
 // onStop hook is executed whenever we LEAVE a route

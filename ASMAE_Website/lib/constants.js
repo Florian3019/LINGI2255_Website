@@ -86,3 +86,12 @@ getAgeNoDate = function(year, month, day){
     }
     return age;
 }
+
+/*
+ *  @param email string
+ *  Check if it is a good email
+ */
+isValidEmail = function (email) {
+    var re = new RegExp('^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$','i');
+    return re.test(email);
+}

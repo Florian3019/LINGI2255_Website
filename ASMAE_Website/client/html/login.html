@@ -4,82 +4,153 @@
 			https://www.facebookbrand.com/
 	
 	-->
+ 
+ <script>
+    function forgottenPassword() {        
+        
+        $('#forgotten').modal('show');    
+        document.getElementById('send-email').style.display = "initial";
+        
+        var email = $('[name=email]').val().trim();
+        document.getElementById("email-forgotten-password").value = email;
+    }
+ </script>
+    
  <div id="LoginWrapper">
     
     <div class="modal fade alert" id="signModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="lineModalLabel">Votre inscription au site est bien enregistrée </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="lineModalLabel">Votre inscription au site est bien enregistrée.</h3>
                 </div>
                 <div class="modal-body">
                       <p id="welcom-message"> Bienvenue Surnom </p>
-                      <p> Votre compte à correctement été crée ! </p>
-                      <p> Un e-mail automatique de confirmation vient d'être envoyé à votre adresse e-mail :</p>
+                      <p> Votre compte a correctement été créé ! </p>
+                      <p> Un email automatique de confirmation vient d'être envoyé à votre adresse email :</p>
                       <a id="e-mail-registration" href="mailto:someone@example.com">someone@example.com</a>
-                      <p> Un e-mail automatique de confirmation vient d'être envoyé à votre adresse e-mail :</p>
                       <hr>
-                      <p> Vous ne retrouvez pas notre e-mail de confirmation ?</p>
+                      <p> Vous ne retrouvez pas notre email de confirmation ?</p>
                       <p> Merci de vérifier si vous ne l'avez pas reçu parmi vos "courriers indésiralbes ou spam".</p>
-                      <button onclick="closePopUp()" id="sign-up-ok" class="btn btn-primary center-block">Ok</button>
+                      <button id="sign-up-ok" class="btn btn-primary center-block" data-dismiss="modal">Ok</button>
                 </div>
             </div>
         </div>
     </div> <!-- Pop up inscription -->
+  
+    <div class="modal fade" id="forgotten" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="lineModalLabel">Changement de mot de passe</h3>
+                </div>
+                <div class="modal-body">
+                    <p> Un email sera envoyer à l'adresse suivante afin de réinitialiser votre mot de passe:</p>
+                    <label class=" pull-left" for="email-forgotten-password">Addresse mail :</label>
+                    
+                    <div class="form-group" id="email-forgotten-password-group">
+                        <input  id="email-forgotten-password" name="email-forgotten-password" class="form-control" placeholder="Email" required autofocus>
+                    </div>
+                    <p> </p> <!-- Espace -->
+                      
+                    <div class="alert alert-success fade in" style="display:none;" id="email-send-success" role="alert">
+                        <span class="glyphicon glyphicon-ok-sign"></span>
+                        <strong>Réussi !</strong> Email envoyé, vérifier votre boite mail.
+                    </div>
+                    <div class="alert alert-danger fade in"  style="display:none;" id="no-existing-email" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                        <strong>Erreur :</strong> Cette adresse mail n'existe pas.
+                    </div>
+                    <div class="alert alert-danger fade in"  style="display:none;" id="no-email-forgotten" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                        <strong>Erreur :</strong> Veuillez entrer une addresse mail.
+                    </div>
+                    <div class="alert alert-danger fade in"  style="display:none;" id="not-valid-email-forgotten" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                        <strong>Erreur :</strong> Veuillez entrer une addresse mail valide.
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                      <button id="send-email" class="btn btn-primary" type="submit" >Envoyer</button>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Pop up forgotten password -->
     
-    <script>
-        function closePopUp() {
-            $('#signModal').modal('hide'); 
-        }
-    </script>
     
-    
+    <!-- Body -->
+  
 	<center> 
 		<div class="header">
-			<h2>Veuillez vous connecter avant de poursuivre l'inscription</h2>  
+			<h2>Veuillez vous connecter avant de poursuivre</h2>  
 		</div> 
 	</center>
-	
-	<div class="row">
-		<div class="col-md-4" h>
-			<form class="login">
-				<h2 class="login-heading">Connexion</h2>
-				
-                <div class="form-group" id="user">
-                  <input  name="email" class="form-control" placeholder="Nom d'utilisateur ou email" required autofocus>
-                  <span class="help-block" id="user-error-message" style="display: none">Utilisateur non trouvé</span>
-                </div>
-
-                <div class="form-group" id="password">
-                 <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
-                  <span class="help-block" id="password-error-message" style="display: none">Mot de passe incorrect</span>
-                </div>
-
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" value="remember-me"> Se souvenir de moi
-					</label>
-				</div>
-
-				<p><input class="btn btn-lg btn-primary btn-block" type="submit" value="Connexion"></p>
-			</form>
-        </div>
-		
-        <div class="col-md-4">
-			<h2>Avec Google</h2> 
-			<img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="31%" height="31%">
-			<p> </p> <!-- Espace -->
-			<button id="google-login" class="btn btn-lg btn-danger btn-block">Se connecter avec Google</button>
-        </div>
-	   
-        <div class="col-md-4">
-			<h2>Avec Facebook</h2> 
-		  	<img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="31%" height="31%">
-			<p> </p> <!-- Espace -->
-			<button id="facebook-login" class="btn btn-lg  btn-primary btn-block">Se connecter avec Facebook</button>
-        </div>
-    </div>
     
+    <div class="row">
+    <div class="row-height">
+        <div class="col-md-5">
+            <div class="inside">
+                <div class="content">
+                    <h2 class="login-heading">Connexion</h2>
+                        
+                    <div class="form-group" id="user">
+                        <input type="email" name="email" class="form-control" placeholder="Nom d'utilisateur ou email" required autofocus>
+                        <span class="help-block" id="user-error-message" style="display: none">Utilisateur non trouvé</span>
+                        <span class="help-block" id="no-password-error-message" style="display: none">Cette user n'a pas de mot de passe, connecter vous via google ou facebook</span>
+                    </div>
+                        
+                    <p> </p> <!-- Espace -->
+                        
+                    <div class="form-group" id="password">
+                        <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
+                        <span class="help-block" id="password-error-message" style="display: none">Mot de passe incorrect</span>
+                    </div>
+                                        
+                    <p>
+                        <input class="btn btn-lg btn-primary btn-block" id="connexion" type="submit" value="Connexion">
+                    </p>
+                                        
+                    <div class="forgotten">
+                        <a href="#" onclick="forgottenPassword()">Mot de passe oublié ?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-md-offset-2 col-middle">
+            <div class="inside">
+                <div class="content">
+                    <h2>Essayer aussi</h2>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <button id="google-login" class="btn btn-lg btn-danger btn-block">Se connecter avec Google</button>
+                        </div>
+                        <div class="col-md-2">
+                            <img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="90%" height="90%%">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <button id="facebook-login" class="btn btn-lg  btn-primary btn-block">Se connecter avec Facebook</button>
+                        </div>
+                        <div class="col-md-2">
+                            <img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="90%" height="90%">
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <br>
+                </div>
+            </div>
+        </div>
+     </div>
+  </div>
+ 
     <p> </p> <!-- Espace -->
 	<center>
     
@@ -93,14 +164,24 @@
 							<h2 class="lead">Inscription</h2>
                             
 							<label class="header pull-left" for="inputUser">Nom d'utilisateur :</label>
-							<input type="userName" id="inputUser" name="username-sign" class="form-control" placeholder="Nom d'utilisateur" required autofocus>
-							
+                            <div class="form-group" id="inputUserGroup">
+                                <input type="userName" id="inputUser" name="username-sign" class="form-control" placeholder="Nom d'utilisateur" required autofocus>
+							</div>
+                            
 							<p> </p> <!-- Espace -->
+                            
 							<label class="header pull-left" for="inputEmail">Addresse mail :</label>
-							<input type="email" id="inputEmail" name="email-sign" class="form-control" placeholder="Adresse mail" required autofocus>
+                            <div class="form-group" id="inputEmailGroup">
+                                <input type="email" id="inputEmail" name="email-sign" class="form-control" placeholder="Email" required autofocus>
+                            </div>
+                            
 							<p> </p> <!-- Espace -->
+                            
 							<label class="header pull-left" for="inputPassword">Mot de passe :</label>
-							<input type="password" id="inputPassword" name="password-sign" class="form-control" placeholder="Mot de passe" required>
+                            <div class="form-group" id="inputPasswordGroup">
+                                <input type="password" id="inputPassword" name="password-sign" class="form-control" placeholder="Mot de passe" required>
+                            </div>
+                            
 							<p> </p> <!-- Espace -->
  
                             <div class="alert alert-success fade in" style="display:none;" id="sign-up-success" role="alert">
