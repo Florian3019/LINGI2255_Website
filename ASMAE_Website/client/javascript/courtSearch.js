@@ -126,7 +126,7 @@ Template.allCourtsTable.helpers({
             user= Meteor.users.findOne({_id:value},{"profile":1});
             return user.profile.firstName + " " + user.profile.lastName;
           }},
-          { key: 'addressID', label: 'Addresse' , fn: function(value, object){
+          { key: 'addressID', label: 'Adresse' , fn: function(value, object){
             addr = Addresses.findOne({"_id":value});
             var ret = ""
                     if(addr.street != undefined) {

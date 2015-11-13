@@ -47,10 +47,20 @@
   <div>
     <center><a href="{{pathFor route='courtsList'}}" class="btn btn-default">Voir tous les terrains</a></center>
   </div> -->
-
-{{> mySpecialFilterAddressCourt}}
-{{> mySpecialFilterSurface}}
-{{> mySpecialFilterPrivate}}
+<div class="row">
+  <div class="col-sm-3 col-sm-offset-3">
+    {{> mySpecialFilterAddressCourt}}
+  </div>
+  <div class="col-sm-3">
+    {{> mySpecialFilterSurface}}
+  </div>
+</div>
+<br>
+<div class="row">
+  <div class="col-sm-3 col-sm-offset-3">
+    {{> mySpecialFilterPrivate}}
+  </div>
+</div>
 {{>allCourtsTable}}
 </template>
 
@@ -84,29 +94,14 @@
 </template>
 
 <template name="mySpecialFilterAddressCourt">
-    <div class="input-group">
-      <span class="input-group-addon">
-        <span>Recherche d'adresse</span>
-      </span>
-      <input class="form-control addressFilter" type="text"/>
-    </div>
+  <input class="form-control addressFilter" type="text" placeholder="Adresse:"/>
 </template>
 
 <template name="mySpecialFilterSurface">
-    <div class="input-group">
-      <span class="input-group-addon">
-        <span>Recherche surface</span>
-      </span>
-      <input class="form-control surfaceFilter" type="text"/>
-    </div>
+  <input class="form-control surfaceFilter" type="text" placeholder="Surface:"/>
 </template>
 
 
 <template name="mySpecialFilterPrivate">
-    <div class="input-group">
-      <span class="input-group-addon">
-        <span>Recherche Privé/public</span>
-      </span>
-      <input class="form-control privateFilter" type="text"/>
-    </div>
+  <input class="form-control privateFilter" type="text" placeholder="Privé/public:"/>
 </template>

@@ -129,8 +129,8 @@ Template.playersInfo.helpers({
     settings : function(){
         return {
             fields:[
-                { key: 'profile.firstName', label: 'Prénom'},
                 { key: 'profile.lastName', label: 'Nom'},
+                { key: 'profile.firstName', label: 'Prénom'},
                 { key: 'emails', label: 'Email', fn: function(value, object){
                     return value[0].address;
                 }},
@@ -138,7 +138,7 @@ Template.playersInfo.helpers({
                 { key: 'profile.phone', label: "Numéro"},
                 { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "undefined" : value.toLocaleDateString()}},
                 { key: 'profile.AFT', label: "AFT"},
-                { key: 'profile.addressID', label: "Addresse", fn: function(value, object){
+                { key: 'profile.addressID', label: "Adresse", fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
                     if(addr==undefined) return "Pas défini";
                     var ret = ""
