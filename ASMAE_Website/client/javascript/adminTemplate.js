@@ -1,10 +1,60 @@
+
+
 Template.adminTemplate.helpers({
 	setCurrentPermission:function(){
     	user = Meteor.users.findOne({"_id":Meteor.userId()},{"profile.isAdmin":1});
     	Session.set("adminTemplate/admin", user.profile.isAdmin==true); 
 	},
 
+
+    // Reuses the playersInfo search !
     userCollection: function () {
+        emailInput = Session.get("playersInfo/emailInput");
+        if(emailInput!=undefined && emailInput!=""){
+            return Meteor.users.find({$where: function(){if(this.emails[0].address!=null){return this.emails[0].address.indexOf(emailInput)>-1;}}});
+        }
+        firstNameInput = Session.get("playersInfo/firstNameInput");
+        if(firstNameInput!=undefined && firstNameInput!=""){
+            return Meteor.users.find({$where:function(){if(this.profile.firstName!=null){return this.profile.firstName.indexOf(firstNameInput)>-1}}});
+        }
+        lastNameInput = Session.get("playersInfo/lastNameInput");
+        if(lastNameInput!=undefined && lastNameInput!=""){
+            return Meteor.users.find({$where:function(){if(this.profile.lastName!=null){return this.profile.lastName.indexOf(lastNameInput)>-1}}});
+        }
+        phoneInput = Session.get("playersInfo/phoneInput");
+        if(phoneInput!=undefined && phoneInput!="" ){
+            return Meteor.users.find({$where:function(){
+                if(this.profile.phone!=null){
+                return this.profile.phone.indexOf(phoneInput)>-1}}});
+        }
+        rankInput = Session.get("playersInfo/rankInput");
+        if(rankInput!=undefined && rankInput!="" ){
+            return Meteor.users.find({$where:function(){
+                if(this.profile.AFT!=null){
+                return this.profile.AFT.indexOf(rankInput)>-1}}});
+        }
+
+        addressInput = Session.get("playersInfo/addressInput");
+        if(addressInput!=undefined && addressInput!="" ){
+            return Meteor.users.find({$where:function(){
+                var addid = this.profile.addressID
+                var theAddress = Addresses.findOne({_id:addid})
+                var theString = "";
+                if(theAddress!=undefined &&theAddress!=null){
+                    theString +=theAddress.city+" "
+                    theString +=theAddress.street+" "
+                    theString += theAddress.country+" "
+                    theString += theAddress.box+" "
+                    theString += theAddress.number+" "
+                    theString += theAddress.zipCode+" " 
+                }
+                if(theString!=null && theString !=""){
+                    console.log(theString)
+                    return (theString.indexOf(addressInput)>-1)
+                }
+                }});
+        }
+
         return Meteor.users.find();
     },
 
@@ -21,7 +71,8 @@ Template.adminTemplate.helpers({
                 { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "undefined" : value.toLocaleDateString()}},
                 { key: 'profile.isStaff', label:'Permissions', tmpl:Template.changePermissions},
             ],
-            rowClass: 'adminTemplateTableRow'
+            rowClass: 'adminTemplateTableRow',
+            showFilter: false
         }
     }
 

@@ -1,5 +1,32 @@
 <template name="adminTemplate">
 	{{setCurrentPermission}}
+
+		<div class="row">
+	  <div class="col-sm-6 col-sm-offset-3">
+	    <h2>Changement de permissions:</h2>
+	    <br>
+	  </div>
+	</div>
+	    {{showValue}}
+	<div class="row">
+	  <div class="col-sm-3 col-sm-offset-3">
+	    {{> mySpecialFilterLastName}}
+	    
+	  </div>
+	  <div class="col-sm-3">
+	    {{> mySpecialFilterFirstName}}
+	  </div>
+	</div>
+	<br>
+	<div class="row">
+	  <div class="col-sm-3 col-sm-offset-3">
+	    {{> mySpecialFilterEmail}}
+	  </div>
+	  <div class="col-sm-3">
+	    {{> mySpecialFilterPhone}}
+	  </div>
+	</div>
+	<br>
 	{{> reactiveTable collection=userCollection settings=settings fields=fields}}
 </template>
 
