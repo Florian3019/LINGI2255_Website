@@ -139,7 +139,10 @@ Router.route('/admin-ajout-terrain', {
 });
 Router.route('/info-joueurs', {
 	name: 'playersInfo',
-	template: 'playersInfo'
+	template: 'playersInfo',
+	waitOn: function() {
+		return Meteor.subscribe('Addresses');
+	}
 });
 Router.route('/page-info-joueur', {
 	name: 'playerInfoPage',
