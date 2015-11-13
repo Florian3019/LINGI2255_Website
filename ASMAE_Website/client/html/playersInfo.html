@@ -76,25 +76,22 @@
     <br>
   </div>
 </div>
+
+{{showValue}}
 {{> mySpecialFilterEmail}}
-{{> mySpecialFilterLastName id="NomDeFamille"}}
-{{> mySpecialFilterFirstName id="Prenom"}}
+{{> mySpecialFilterFirstName}}
+{{> mySpecialFilterLastName}}
+{{> mySpecialFilterPhone}}
+{{> mySpecialFilterRank}}
+{{> mySpecialFilterAddress}}
 {{> reactiveTable collection=userCollection settings=settings fields=fields }}
 </template>
 
-<template name="mySpecialFilterLastName">
-    <div class="input-group">
-      <span class="input-group-addon">
-        <span>Filtre nom de famille </span>
-      </span>
-      <input class="form-control greater-than-filter-input" type="text"/>
-    </div>
-</template>
 
 <template name="mySpecialFilterEmail">
-    <div class="input-group">
+    <div class="input-group" >
       <span class="input-group-addon">
-        <span>Filtre email </span>
+        <span>Recherche d'email </span>
       </span>
       <input class="form-control emailFilter" type="text"/>
     </div>
@@ -103,8 +100,45 @@
 <template name="mySpecialFilterFirstName">
     <div class="input-group">
       <span class="input-group-addon">
-        <span>Filtre Prénom </span>
+        <span>Recherche de prénom </span>
       </span>
-      <input class="form-control greater-than-filter-input" type="text"/>
+      <input class="form-control firstNameFilter" type="text"/>
+    </div>
+</template>
+
+<template name="mySpecialFilterLastName">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <span>Recherche de Nom </span>
+      </span>
+      <input class="form-control lastNameFilter" type="text"/>
+    </div>
+</template>
+
+<template name="mySpecialFilterPhone">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <span>Recherche de téléphone </span>
+      </span>
+      <input class="form-control phoneFilter" type="text"/>
+    </div>
+</template>
+
+<template name="mySpecialFilterRank">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <span>Recherche de classement </span>
+      </span>
+      <input class="form-control rankFilter" type="text"/>
+    </div>
+</template>
+
+
+<template name="mySpecialFilterAddress">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <span>Recherche d'adresse</span>
+      </span>
+      <input class="form-control addressFilter" type="text"/>
     </div>
 </template>

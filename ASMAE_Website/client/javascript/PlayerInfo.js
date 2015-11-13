@@ -39,13 +39,90 @@ Template.mySpecialFilterEmail.events({
         Session.set("playersInfo/emailInput", emailInput);
     }
 });
+Template.mySpecialFilterFirstName.events({
+    'keyup .firstNameFilter':function(event){
+        firstNameInput = event.currentTarget.value;
+        console.log(firstNameInput);
+        Session.set("playersInfo/firstNameInput", firstNameInput);
+    }
+});
+Template.mySpecialFilterLastName.events({
+    'keyup .lastNameFilter':function(event){
+        lastNameInput = event.currentTarget.value;
+        console.log(lastNameInput);
+        Session.set("playersInfo/lastNameInput", lastNameInput);
+    }
+});
+Template.mySpecialFilterPhone.events({
+    'keyup .phoneFilter':function(event){
+        phoneInput = event.currentTarget.value;
+        console.log(phoneInput);
+        Session.set("playersInfo/phoneInput", phoneInput);
+    }
+});
+Template.mySpecialFilterRank.events({
+    'keyup .rankFilter':function(event){
+        rankInput = event.currentTarget.value;
+        console.log(rankInput);
+        Session.set("playersInfo/rankInput", rankInput);
+    }
+});
+Template.mySpecialFilterAddress.events({
+    'keyup .addressFilter':function(event){
+        addressInput = event.currentTarget.value;
+        console.log(addressInput);
+        Session.set("playersInfo/addressInput", addressInput);
+    }
+});
 
 Template.playersInfo.helpers({
     userCollection: function () {
         emailInput = Session.get("playersInfo/emailInput");
         if(emailInput!=undefined && emailInput!=""){
-            return Meteor.users.find({$where: function(){return this.emails[0].address.indexOf(emailInput)>-1;}});
+            return Meteor.users.find({$where: function(){if(this.emails[0].address!=null){return this.emails[0].address.indexOf(emailInput)>-1;}}});
         }
+        firstNameInput = Session.get("playersInfo/firstNameInput");
+        if(firstNameInput!=undefined && firstNameInput!=""){
+            return Meteor.users.find({$where:function(){if(this.profile.firstName!=null){return this.profile.firstName.indexOf(firstNameInput)>-1}}});
+        }
+        lastNameInput = Session.get("playersInfo/lastNameInput");
+        if(lastNameInput!=undefined && lastNameInput!=""){
+            return Meteor.users.find({$where:function(){if(this.profile.lastName!=null){return this.profile.lastName.indexOf(lastNameInput)>-1}}});
+        }
+        phoneInput = Session.get("playersInfo/phoneInput");
+        if(phoneInput!=undefined && phoneInput!="" ){
+            return Meteor.users.find({$where:function(){
+                if(this.profile.phone!=null){
+                return this.profile.phone.indexOf(phoneInput)>-1}}});
+        }
+        rankInput = Session.get("playersInfo/rankInput");
+        if(rankInput!=undefined && rankInput!="" ){
+            return Meteor.users.find({$where:function(){
+                if(this.profile.AFT!=null){
+                return this.profile.AFT.indexOf(rankInput)>-1}}});
+        }
+
+        addressInput = Session.get("playersInfo/addressInput");
+        if(addressInput!=undefined && addressInput!="" ){
+            return Meteor.users.find({$where:function(){
+                var addid = this.profile.addressID
+                var theAddress = Addresses.findOne({_id:addid})
+                var theString = "";
+                if(theAddress!=undefined &&theAddress!=null){
+                    theString +=theAddress.city+" "
+                    theString +=theAddress.street+" "
+                    theString += theAddress.country+" "
+                    theString += theAddress.box+" "
+                    theString += theAddress.number+" "
+                    theString += theAddress.zipCode+" " 
+                }
+                if(theString!=null && theString !=""){
+                    console.log(theString)
+                    return (theString.indexOf(addressInput)>-1)
+                }
+                }});
+        }
+
         return Meteor.users.find();
     },
 
@@ -88,7 +165,7 @@ Template.playersInfo.helpers({
                 { key: 'profile.isStaff', label:'Staff'},
                 { key: 'profile.isAdmin', label:'Admin'},
             ],
-            // filters: ['NomDeFamille','Prenom']
+             filters: ['NomDeFamille']
         }
     }
     
