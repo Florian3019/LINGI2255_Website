@@ -913,17 +913,22 @@ Template.poolList.helpers({
 		    		return true; // All other elements are draggable
 		  		},
 		  		accepts: function (el, target, source, sibling) {
-		    		var isFromPoule = (' ' + source.className + ' ').indexOf(' poule ') > -1;
-		    		if(isFromPoule && target.id==="mergeplayers") return false;
-		    		if(isFromPoule && target.id==="alonepairs") return false;
-		    		var isFromAlone = source.id==="alonepairs";
 		    		var isToPoule = (' ' + target.className + ' ').indexOf(' poule ') > -1;
-		    		if(isFromAlone && (isToPoule || target.id==="pairstosplit")) return false;
-		    		if(isFromAlone && target.children.length>=2) return false; // Can only have 2 players in merge players
-		    		var isFromSplit = source.id === "pairstosplit";
-		    		if(isFromSplit && !isToPoule) return false;
+		    		var isToAlone = target.id==="alonepairs";
+		    		var isToSplit = target.id==="pairstosplit";
+		    		var isToMerge = target.id==="mergeplayers";
 
-    				return true; // elements can be dropped in any of the `containers` by default
+		    		var isFromPoule = (' ' + source.className + ' ').indexOf(' poule ') > -1;
+		    		var isFromAlone = source.id==="alonepairs";
+		    		var isFromSplit = source.id === "pairstosplit";
+		    		var isFromMerge = source.id==="mergeplayers";
+
+		    		if(isFromPoule && (isToAlone || isToMerge)) return false;
+		    		if(isFromAlone && (isToPoule || isToSplit)) return false;
+		    		if(isFromSplit && (isToAlone || isToMerge)) return false;
+		    		if(isFromMerge && (isToPoule || isToSplit)) return false;
+		    		if(isToMerge && target.children.length>=2) return false;
+		    		return true;
   				},
 			}
 		).on('drag', function (el) {
