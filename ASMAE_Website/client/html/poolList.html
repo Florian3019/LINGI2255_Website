@@ -236,6 +236,7 @@
         </div>
         <div class="modal-body">
           <div class="panel panel-primary pairInfoBox">
+            <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player1._id}}" data-player="{{PAIR.player1._id}}" data-poolid="{{POOL}}">Choisir comme leader</button>
             {{>playerInfoTemplate ID=PAIR.player1._id MODAL=getModalId}}
             {{#if PAIR.player1.wish}}
             <h3>Souhaits</h3>
@@ -260,6 +261,7 @@
           </div>
           {{else}}
           <div class="panel panel-primary pairInfoBox">
+            <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player2._id}}" data-player="{{PAIR.player2._id}}" data-poolid="{{POOL}}">Choisir comme leader</button>
             {{>playerInfoTemplate ID=PAIR.player2._id MODAL='pairModal'}}
             {{#if PAIR.player2.wish}}
             <h3>Souhaits</h3>
@@ -287,18 +289,18 @@ Takes 2 arguments :
 -->
 <template name="poolItem">
   {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
-  <div id="{{this._id}}" class="pairs" data-startingPoolId="{{../POOLID}}">
-    <ul class="list-group" data-target="#pairModal{{this._id}}" data-toggle="modal">
-      {{#with getPlayer this.player1._id}}
-      <li class="list-group-item pairPlayer {{getColor ../player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}} {{#if equals ../_id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
-      {{/with}}
-      {{#with getPlayer this.player2._id}}
-      <li class="list-group-item pairPlayer {{getColor ../player2}}" id="{{this.player2._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}}</li>
-      {{/with}}
-    </ul>
-  </div>
-  {{#unless equals this.player2._id undefined}}
-  {{>modalItem PAIR=this}} <!-- Don't set POOL here, since we should not be able to change the type of the pair -->
-  {{/unless}}
+    <div id="{{this._id}}" class="pairs" data-startingPoolId="{{../POOLID}}">
+      <ul class="list-group" data-target="#pairModal{{this._id}}" data-toggle="modal">
+        {{#with getPlayer this.player1._id}}
+        <li class="list-group-item pairPlayer {{getColor ../player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
+        {{/with}}
+        {{#with getPlayer this.player2._id}}
+        <li class="list-group-item pairPlayer {{getColor ../player2}}" id="{{this.player2._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}} {{#if equals ../player2._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
+        {{/with}}
+      </ul>
+    </div>
+    {{#unless equals this.player2._id undefined}}
+    {{>modalItem PAIR=this POOL=../POOLID}} <!-- Don't set SEX here, since we should not be able to change the type of the pair -->
+    {{/unless}}
   {{/with}}
 </template>

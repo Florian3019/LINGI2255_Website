@@ -59,6 +59,11 @@ var splitPairs = function(pairDiv){
 	});
 
 	/*
+		Make sure that the pool always has a valid leader
+	*/
+	findNewPoolLeader(startingPool, pair._id);
+
+	/*
 		Remove the player 2 from the pair, as well as any tournament match/courts
 	*/
 	Pairs.update({"_id":pairId}, {$unset:{"player2":"", "tournamentCourts":"", "tournament":""}}, function(err, doc){
@@ -81,12 +86,6 @@ var splitPairs = function(pairDiv){
 			console.error(err);
 		}
 	});
-
-	/*
-		Make sure that the pool always has a valid leader
-	*/
-	findNewPoolLeader(startingPool, pair._id);
-
 
 	var player1 = Meteor.users.findOne({"_id":pair.player1._id},{"profile":1});
 	var player2 = Meteor.users.findOne({"_id":pair.player2._id},{"profile":1});
@@ -112,14 +111,14 @@ Template.mergePlayersContainerTemplate.onRendered(function(){
 var mergePlayers = function(document){
 	var parent = document.getElementById("mergeplayers");
 	var playersToMerge = parent.getElementsByClassName("pairs");
+	length = playersToMerge.length;
+	if(length==0 || length == 1) return;
 
-	if(playersToMerge.length==0) return;
-
-	if(playersToMerge.length!=2){
+	if(length!=2){
 		console.error("Can only have 2 players in merge players");
 		return;
 	}
-
+	console.log(playersToMerge);
 	type = Session.get("PoolList/Type");
 	var pairId1 = playersToMerge[0].id;
 	var poolId1 = playersToMerge[0].dataset.startingpoolid;
@@ -170,7 +169,9 @@ var mergePlayers = function(document){
 		Check if this pair is the only eligible pair as pool leader
 	*/
 	var pool = Pools.findOne({"_id":poolId1},{"leader":1});
-	if(pool.leader==undefined) Pools.update({_id:poolId1}, {$set:{"leader":pairId1}});
+	if(pool.leader==undefined){
+		Pools.update({_id:poolId1}, {$set:{"leader":pair1.player1._id}});	
+	} 
 
 	Meteor.call("addToModificationsLog",
 		{"opType":"Fusion de 2 joueurs",
@@ -255,15 +256,18 @@ var collapseMenus = function(document, event){
 *******************************************************************************************************************/
 
 var findNewPoolLeader = function(poolId, removedPairId){
+	pair = Pairs.findOne({_id:removedPairId});
 	prevPool = Pools.findOne({_id:poolId}, {pairs:1, leader:1});
 
-	leaderFound = false;
-	if(prevPool.leader==undefined || prevPool.leader==removedPairId){
-		// Find the first pair in the pool that has 2 players (that is a valid pair) and set it as new leader
+	// console.log(pair.player2._id);
+	if(prevPool.leader==undefined || prevPool.leader===pair.player1._id || ((pair.player2==undefined) ? false : prevPool.leader===pair.player2._id)){
+		leaderFound = false;
+		// Find the first pair in the pool that has 2 players (that is a valid pair) and set player1 as new leader
 		for(var j=0;j<prevPool.pairs.length;j++){
+			if(prevPool.pairs[j]===removedPairId) continue;
 			p = Pairs.findOne({_id:prevPool.pairs[j]});
 			if(p.player1 && p.player2 && p.player1._id && p.player2._id){
-				Pools.update({_id:poolId}, {$set:{leader:p._id}});
+				Pools.update({_id:poolId}, {$set:{leader:p.player1._id}});
 				leaderFound = true;
 				break;
 			}
@@ -328,7 +332,8 @@ var movePairs = function(document){
 			newPool = Pools.findOne({_id:newPoolId}, {leader:1});
 
 			if(newPool.leader==undefined){
-				Pools.update({_id:newPoolId}, {$set:{leader:pairId}});
+				pair = Pairs.findOne({_id:pairId},{"player1":1});
+				Pools.update({_id:newPoolId}, {$set:{leader:pair.player1._id}}); // Set player1 of the pair as new leader
 			}
 
 			// Add that pair to the new pool
@@ -920,7 +925,7 @@ Template.poolList.helpers({
 
 		    		var isFromPoule = (' ' + source.className + ' ').indexOf(' poule ') > -1;
 		    		var isFromAlone = source.id==="alonepairs";
-		    		var isFromSplit = source.id === "pairstosplit";
+		    		var isFromSplit = source.id==="pairstosplit";
 		    		var isFromMerge = source.id==="mergeplayers";
 
 		    		if(isFromPoule && (isToAlone || isToMerge)) return false;
@@ -1248,5 +1253,12 @@ Template.modalItem.events({
 		// Add the pair to the new type:
 		Meteor.call("addPairToTournament",this.pairId, year, dateMatch);
 		$('#pairModal'+this.pairId).modal('hide');
+	},
+
+	'click .setLeader':function(event){
+		target = event.currentTarget;
+		poolId = target.dataset.poolid;
+		playerId = target.dataset.player;
+		pool = Pools.update({_id:poolId},{$set:{"leader":playerId}});
 	}
 })
