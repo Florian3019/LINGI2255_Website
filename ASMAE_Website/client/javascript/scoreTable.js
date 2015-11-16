@@ -4,7 +4,7 @@ Template.scoreTable.helpers({
     if(poolId==undefined) return undefined;
     pool = Pools.findOne({_id:poolId},{leader:1});
     if(pool.leader!=undefined){
-        user = Meteor.users.findOne({_id:pool.leader},{profile:1});
+        user = Meteor.users.findOne({_id:pool.leader});
         return user;
     }
     return undefined;

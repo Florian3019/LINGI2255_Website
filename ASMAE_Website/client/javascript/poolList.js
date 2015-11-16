@@ -118,7 +118,6 @@ var mergePlayers = function(document){
 		console.error("Can only have 2 players in merge players");
 		return;
 	}
-	console.log(playersToMerge);
 	type = Session.get("PoolList/Type");
 	var pairId1 = playersToMerge[0].id;
 	var poolId1 = playersToMerge[0].dataset.startingpoolid;
@@ -259,7 +258,6 @@ var findNewPoolLeader = function(poolId, removedPairId){
 	pair = Pairs.findOne({_id:removedPairId});
 	prevPool = Pools.findOne({_id:poolId}, {pairs:1, leader:1});
 
-	// console.log(pair.player2._id);
 	if(prevPool.leader==undefined || prevPool.leader===pair.player1._id || ((pair.player2==undefined) ? false : prevPool.leader===pair.player2._id)){
 		leaderFound = false;
 		// Find the first pair in the pool that has 2 players (that is a valid pair) and set player1 as new leader
