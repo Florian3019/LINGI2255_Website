@@ -3,12 +3,9 @@ Template.scoreTable.helpers({
   'getLeader' : function(poolId){
     if(poolId==undefined) return undefined;
     pool = Pools.findOne({_id:poolId},{leader:1});
-    if(pool.leader){
-      pair = Pairs.findOne({_id:pool.leader},{player1:1});
-      if(pair && pair.player1 && pair.player1._id){
-        user = Meteor.users.findOne({_id:pair.player1._id});
+    if(pool.leader!=undefined){
+        user = Meteor.users.findOne({_id:pool.leader});
         return user;
-      }
     }
     return undefined;
   },
@@ -182,11 +179,8 @@ Template.scoreTable.events({
     */
     leader = undefined;
     // Fetch the leader
-    if(pool.leader){
-      pair = Pairs.findOne({_id:pool.leader},{player1:1});
-      if(pair && pair.player1 && pair.player1._id){
-        leader = Meteor.users.findOne({_id:pair.player1._id});
-      }
+    if(pool.leader!=undefined){
+        leader = Meteor.users.findOne({_id:pool.leader});
     }
     console.log(pool);
     courtAddress = undefined;

@@ -1359,7 +1359,7 @@ Meteor.methods({
 		data.type=type;
 		data.pairs = pairs;
 		if(!pool.leader){
-			data.leader=pairID;
+			data.leader=pair.player1._id;
 		}
 		Meteor.call('updatePool', data);
 	},
