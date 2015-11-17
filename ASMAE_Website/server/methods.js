@@ -464,7 +464,7 @@ Meteor.methods({
 				}
 			});
 		}
-		
+
 
 		if(!courtId){
 
@@ -663,7 +663,13 @@ Meteor.methods({
 		}
 
 		// Write data on the DB
-		var writeResult = Meteor.users.update({_id: userData._id} , {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, $set: data}, {upsert: true});
+		var writeResult;
+		if(data["profile.isStaff"]!=undefined || data["profile.isAdmin"]!= undefined) {
+			writeResult = Meteor.users.update({_id: userData._id} , {$setOnInsert: { 'profile.isAdmin':data["profile.isAdmin"] , 'profile.isStaff': data["profile.isStaff"]}, $set: data}, {upsert: true});
+		}
+		else {
+			writeResult = Meteor.users.update({_id: userData._id} , {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, $set: data}, {upsert: true});
+		}
 		if(writeResult.writeConcernError){
 			console.error('updateUser : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;

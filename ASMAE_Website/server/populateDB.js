@@ -268,5 +268,55 @@ Meteor.methods({
             createPair(typeKeys[3],"none");
         }
         console.log("popDB done");
+
+		for (var j=0; j<10; j++) {
+			var profile = {
+                firstName: firstnames[getRandomInt(0,2*nData)],
+                lastName:lastnames[getRandomInt(0,nData)],
+                phone:"0499112233",
+                birthDate:new Date(1990,8,21),
+                AFT:AFTs[getRandomInt(0,n_AFTs)],
+                isStaff:1,
+                isAdmin:false,
+                gender:"M"
+            };
+			var email = "staff"+j+"@staff.com";
+			if (Accounts.findUserByEmail(email)!==undefined) {
+                continue;
+            }
+			var userID = Accounts.createUser({
+                           email : email,
+                           password : "passpass",
+                           profile: profile
+                       });
+			Accounts.addEmail(userID, email, true);
+			Meteor.users.update({_id: userID}, {$set: {"profile.isStaff":true}});
+		}
+
+		for (var j=0; j<3; j++) {
+			var profile = {
+                firstName: firstnames[getRandomInt(0,2*nData)],
+                lastName:lastnames[getRandomInt(0,nData)],
+                phone:"0499112233",
+                birthDate:new Date(1990,8,21),
+                AFT:AFTs[getRandomInt(0,n_AFTs)],
+                isStaff:1,
+                isAdmin:1,
+                gender:"M"
+            };
+			var email = "admin"+j+"@admin.com";
+			if (Accounts.findUserByEmail(email)!==undefined) {
+                continue;
+            }
+			var userID = Accounts.createUser({
+                           email : email,
+                           password : "passpass",
+                           profile: profile
+                       });
+			Accounts.addEmail(userID, email, true);
+			Meteor.users.update({_id: userID}, {$set: {"profile.isStaff":true}});
+			Meteor.users.update({_id: userID}, {$set: {"profile.isAdmin":true}});
+		}
+
 	},
 });
