@@ -600,6 +600,7 @@ var makeBrackets = function(document){
       a.data.court = "";
       ultimateWinner = [a.data];
       brackets.push([ultimateWinner]); // Only one pair: the winner
+      newRound = []; // Stop further rounds
     }
 
     thisRound = newRound;
