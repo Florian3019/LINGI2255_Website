@@ -591,8 +591,6 @@ var makeBrackets = function(document){
     // If newRound.length == 1 --> we are at the last 2 pairs of the tournament and need to display the winner
     if(thisRound.length==2){
       a = getBestFrom2(thisRound[0], thisRound[1], round);
-      console.log(a);
-      console.log(thisRound);
       if(getPoints(a.pair, round)!==undefined){
         a.data.score = 'Gagnant';
       }
