@@ -580,7 +580,6 @@ var makeBrackets = function(document){
       }
 
       if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
-      // TODO : increase matchesCompleted if a or b is a placeHolder
 
       displayData.push([a.data, b.data]);
     }
