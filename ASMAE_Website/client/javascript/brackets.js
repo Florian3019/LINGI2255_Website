@@ -2,16 +2,16 @@
 // Do Session.set('brackets/update',Session.get('brackets/update') when you want to update the brackets (and only then).
 
 const react = {reactive: false};
-const emptyCourt = "terrain ?";
-const courtName = "terrain";
+const emptyCourt = "Terrain ?";
+const courtName = "Terrain";
 const emptyScore = "";
 const emptyPlayer = "?";
-const placeHolderScore = "/";
+const placeHolderScore = "";
 const placeHolderPlayer = "/";
 const placeHolderCourt = "";
-const inGame = "En jeu au ";
+const inGame = "En jeu";
 const playerPlaceHolderScore = "Score: --";
-const waiting = "En attente au ";
+const waiting = "En attente";
 
 
 var canModifyCourt = function(pair, round){
@@ -97,15 +97,15 @@ var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 
       Number of characters allowed for display.
       When changing this value, don't forget to change the min-width of the g_gracket h3 css element in brackets.html too
     */
-    const MAXSIZE = 25;
+    const MAXSIZE = 15;
 
     if(pair==undefined || pair.player1==undefined || pair.player2==undefined) return;
 
     pairPlayer1 = Meteor.users.findOne({_id:pair.player1._id},{profile:1});
     pairPlayer2 = Meteor.users.findOne({_id:pair.player2._id},{profile:1});
 
-    pairPlayer1String = pairPlayer1.profile.firstName + " " + pairPlayer1.profile.lastName;
-    pairPlayer2String = pairPlayer2.profile.firstName + " " + pairPlayer2.profile.lastName;
+    pairPlayer1String = pairPlayer1.profile.firstName.substring(0,1) + ". " + pairPlayer1.profile.lastName;
+    pairPlayer2String = pairPlayer2.profile.firstName.substring(0,1) + ". " + pairPlayer2.profile.lastName;
 
     data = {
             "player1":pairPlayer1String.substring(0, MAXSIZE),
@@ -114,6 +114,7 @@ var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 
             "score": (pair.tournament==undefined || pair.tournament.length<=round) ? inGame : getPoints(pair, round),
             "round":round,
             "display":"block",
+            "placeHolder":false,
             "clickable":clickable
     };
 
@@ -131,6 +132,7 @@ var getPlaceHolder = function(round){
       "round":round, 
       "display":"block",
       "clickable":false,
+      "placeHolder":true,
       "court":placeHolderCourt}
     };
 }
@@ -146,6 +148,7 @@ var getEmpty = function(round, court){
       "display":"block",
       "round":round,
       "clickable":false,
+      "placeHolder":false,
       "court": court
     }
   };
@@ -162,6 +165,7 @@ var setRoundData = function(roundData){
       "score":undefined, 
       "display":"block",
       "round":round+1,
+      "placeHolder":false,
       "clickable":roundData.clickable,
       "court": emptyCourt
     }
@@ -305,8 +309,22 @@ Template.brackets.helpers({
     return Session.get('PoolList/Year');
   },
 
-  'getScore':function(){
-    pairId = Session.get('brackets/clicked');
+  'getPairs':function(){
+    pairs = Session.get('brackets/clicked');
+    pair0 = Pairs.findOne({"_id":pairs[0]});
+    pair1 = Pairs.findOne({"_id":pairs[1]});
+    return [pair0,pair1];
+  },
+
+  'getPlayer':function(playerId){
+    return Meteor.users.findOne({"_id":playerId},{"profile":1});
+  },
+
+  'getIndex':function(array, index){
+    return array[index];
+  },
+
+  'getScore':function(pairId){
     if(pairId==undefined) return;
     pair = Pairs.findOne({"_id":pairId}, {"tournament":1});
 
@@ -583,6 +601,9 @@ var makeBrackets = function(document){
 
       if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
 
+      a.data.pair2 = b.data.id;
+      b.data.pair1 = a.data.id;
+
       displayData.push([a.data, b.data]);
     }
 
@@ -651,9 +672,19 @@ Template.brackets.events({
     round = event.currentTarget.dataset.round; // if undefined --> means '?'
     // court = event.currentTarget.dataset.court; // can be undefined
 
+    p1 = event.currentTarget.dataset.pair1;
+    if(p1!=undefined){
+      // pairId is the second pair
+      x = [p1, pairId]
+    }
+    else{
+      // pairId is the first pair
+      x= [pairId, event.currentTarget.dataset.pair2];
+    }
+
     // Display modal to edit the score
     if(round!=undefined){ // Only allow to click on pairs that are not "?"
-      Session.set('brackets/clicked', pairId);
+      Session.set('brackets/clicked', x);
       Session.set('brackets/round', round);
       $("#bracketModal").modal('show');
     }
@@ -687,22 +718,41 @@ Template.brackets.events({
   },
 
   'click #saveScore':function(event){
-    pairId = Session.get('brackets/clicked');
+    pairs = Session.get('brackets/clicked');
     if(pairId==undefined) return;
-    pair = Pairs.findOne({_id:pairId}, {tournament:1});
+    pair0 = Pairs.findOne({_id:pairs[0]});
+    pair1 = Pairs.findOne({_id:pairs[1]});
 
     round = Session.get('brackets/round');
-    score = document.getElementById("scoreInput").value;
-    score = parseInt(score);
-    setPoints(pair, round, score);
+    score0 = document.getElementById("scoreInput0").value;
+    score0 = parseInt(score0);
+    setPoints(pair0, round, score0);
 
-    Meteor.call("addToModificationsLog",
-    {"opType":"Modification points match knock-off",
-    "details":
-        "Round: "+round+
-        " PairId"+pairId+
-        " Points: "+score+getStringOptions()
-    });
+    score1 = document.getElementById("scoreInput1").value;
+    score1 = parseInt(score1);
+    setPoints(pair1, round, score1);
+
+    // u01 = Meteor.users.findOne("_id":pair0.player1._id},{"profile":1});
+    // u02 = Meteor.users.findOne("_id":pair0.player2._id},{"profile":1});
+    // u11 = Meteor.users.findOne("_id":pair1.player1._id},{"profile":1});
+    // u12 = Meteor.users.findOne("_id":pair1.player2._id},{"profile":1});
+
+    // Meteor.call("addToModificationsLog",
+    // {"opType":"Modification points match knock-off",
+    // "details":
+    //     "Round: "+round+
+    //     " Paire "+u01.profile.firstName.substring(0,1) + ". " + u01.profile.lastName + " et "+u02.profile.firstName.substring(0,1) + ". " + u02.profile.lastName +
+    //     " Points: "+score0+getStringOptions()
+    // });
+
+    // Meteor.call("addToModificationsLog",
+    // {"opType":"Modification points match knock-off",
+    // "details":
+    //     "Round: "+round+
+    //     " Paire "+u11.profile.firstName.substring(0,1) + ". " + u11.profile.lastName + " et "+u12.profile.firstName.substring(0,1) + ". " + u12.profile.lastName +
+    //     " Points: "+score1+getStringOptions()
+    // });
+
 
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   },

@@ -101,7 +101,7 @@
             team_count = data[r][g].length;
             for (var t=0; t < team_count; t++) {
     
-              var team_html = helpers.build.team(data[r][g][t], this.gracket.settings);
+              var team_html = helpers.build.team(data[r][g][t], this.gracket.settings, t%2==0);
               game_html.append(team_html);
 
               var team_width = team_html.outerWidth(true);
@@ -135,7 +135,7 @@
     // Private methods
     var helpers = {
       build : {
-        team : function(data, node){
+        team : function(data, node, isFirst){
           // var html = [
           //   '<h3' +((typeof data.score === "undefined") ? "" : " title=\"Score: " + data.score + "\"") +'>',
           //     '<span class="' + node.seedClass + '">',
@@ -147,16 +147,17 @@
           //     '</font>',
           //   '</h3>'
           // ].join("");
+          var c = (isFirst? '<span class="pull-right">' +data.court+'</span>' : "");
           if(isNaN(data.score) || data.score===""){
-            s = '<h3> '+ data.score + " " + data.court + ' </h3>';
+            s = '<h3> '+ data.score + c + ' </h3>';
           }
           else{
-            s = '<h3> Score: ' + data.score + " " +data.court + '</h3>';
+            s = '<h3> Score: ' + data.score + c + '</h3>';
           }
           var html = [
             s,
             '<ul class="list-group">',
-              '<li class="list-group-item">' + data.player1 + ' | ' + data.player2+ '</li>',
+              '<li class="list-group-item" align="center">' + data.player1 + ' | ' + data.player2+ '</li>',
               // '<li class="list-group-item">' + data.player2 + '</li>',
             '</ul>'
           ].join("");
@@ -165,9 +166,12 @@
             "html" : html,
             "style" : "display:"+data.display+";",
             "data-clickable": data.clickable,
+            "placeHolder":data.placeHolder,
             "class" : node.teamClass + " " + (data.id || "id_null"),
             "id" : data.id,
             "data-round":data.round,
+            "data-pair1":data.pair1,
+            "data-pair2":data.pair2
             // "data-court":data.court
           });
         },

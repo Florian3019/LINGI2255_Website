@@ -38,17 +38,18 @@
 
 	<!-- basic styles -->
 	<style type="text/css">
-		.g_gracket { margin-top:50px; width: {{getGracketWidth}}px; padding: 60px 0px 5px; line-height: 150%; position: relative; overflow: hidden;}
+		.g_gracket { margin-top:50px;  width: {{getGracketWidth}}px; padding: 60px 0px 5px; line-height: 150%; position: relative; overflow: hidden;}
 		.g_round { float: left; margin-right: 70px; }
 		.g_game { position: relative; margin-bottom: 50px; }
-		.g_gracket h3 { margin: 0; padding: 10px 8px 8px; font-size: 18px; font-weight: normal; color: #fff; width:270px; min-height:35px;}
+		.g_gracket h3 { margin: 0; padding: 10px 8px 8px; font-size: 18px; font-weight: normal; color: #fff; width:200px; min-height:35px;}
 		.g_team { background: #0000ff;}
 		.g_team:last-child {  background: #ff6600;}
+		.g_team[placeHolder="true"]{background : #ff0000;}
 		.g_round:last-child { margin-right: 20px; }
 		.g_winner { background: #444; }
 		.g_winner .g_team { background: none; }
 		.g_current { cursor: pointer; background: #A0B43C!important; }
-		.g_round_label { top: -5px; min-width: 265px; font-weight: normal; color: #CCC; text-align: center; font-size: 20px; }
+		.g_round_label { top: -5px; width: 200px; font-weight: normal; color: #CCC; text-align: center; font-size: 20px; }
 	</style>
 
 	<div id="bracketModal" class="modal fade bracketModal" role="dialog" style="cursor:auto">
@@ -66,17 +67,54 @@
 
         <div class="modal-body">
 		    <label for="text">Score</label>
-			<div class="input-group">
-				<input
-				type="number"
-				min="0"
-				step="1"
-				class="form-control"
-				id="scoreInput"
-				value="{{getScore}}"
-				placeholder="0"
-				autofocus
-				onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()"><br>
+			<div display="align:center;">
+
+		    {{#with getPairs}}
+		    	{{#with getIndex this 0}}
+			    	{{#with getPlayer this.player1._id}}
+			    		{{this.profile.firstName}} {{this.profile.lastName}} 
+			    	{{/with}}
+		    		,
+			    	{{#with getPlayer this.player2._id}}
+			    		{{this.profile.firstName}} {{this.profile.lastName}} 
+			    	{{/with}}
+					<input
+						type="number"
+						display="inline"
+						min="0"
+						step="1"
+						class="form-control"
+						id="scoreInput0"
+						value="{{getScore this}}"
+						style="width: 15%;"
+						placeholder="0"
+						autofocus
+						onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()">
+			  		
+		    	{{/with}}
+			  	            - 
+			  	{{#with getIndex this 1}}
+  				  	<input
+						type="number"
+						display="inline"
+						min="0"
+						step="1"
+						class="form-control"
+						id="scoreInput1"
+						value="{{getScore this}}"
+						style="width: 15%;"
+						placeholder="0"
+						autofocus
+						onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()">
+				  	{{#with getPlayer this.player1._id}}
+			    		{{this.profile.firstName}} {{this.profile.lastName}} 
+			    	{{/with}}
+		    		,
+			    	{{#with getPlayer this.player2._id}}
+			    		{{this.profile.firstName}} {{this.profile.lastName}} 
+			    	{{/with}}
+		    	{{/with}}
+		  	{{/with}}
 		  	</div>
 	  		  <button type="button" id="saveScore" class="btn btn-default btn-lg" data-dismiss="modal">
 			    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
