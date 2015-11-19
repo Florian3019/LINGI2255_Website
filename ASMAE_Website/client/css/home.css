@@ -28,7 +28,6 @@ body {
 
 
 .jumbotron {
-    height: 650px;
     background: linear-gradient(#FF8000, #FFDEAD);
     background-position: 0% 25%;
     color: white;
@@ -36,10 +35,10 @@ body {
 }
 
 .homePage {
-   background-image: url(main2.jpg);
-   -webkit-background-size: cover;
-   -moz-background-size: cover;
-   -o-background-size: cover;
-   background-size: cover;
-   background-repeat: no-repeat;
+    min-height: 650px;
+    background: url(main2.jpg) no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
