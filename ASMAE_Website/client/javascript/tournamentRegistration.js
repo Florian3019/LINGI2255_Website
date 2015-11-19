@@ -6,6 +6,18 @@ function closePopUp() {
 }
 
 Template.tournamentRegistration.helpers({
+    'getPay1' : function() {
+        return paymentTypes[0];
+    },
+
+    'getPay2' : function() {
+        return paymentTypes[1];
+    },
+
+    'getPay3' : function() {
+        return paymentTypes[2];
+    },
+
 	'alonePlayers' : function(){
 
 		if (Session.get("firstTime")) {

@@ -52,11 +52,11 @@ if (isProdEnv()) {
 Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false});
 
 /* Only allow to log in if user mail is verified */
-Accounts.validateLoginAttempt(function(type){
+/*Accounts.validateLoginAttempt(function(type){
     if(type.user && type.user.emails && !type.user.emails[0].verified )
         throw new Meteor.Error(100002, "Email not verified." );
     return true;
-});
+}); */
 
 Meteor.setInterval(function() {
     

@@ -147,11 +147,17 @@
           //     '</font>',
           //   '</h3>'
           // ].join("");
+          if(isNaN(data.score) || data.score===""){
+            s = '<h3> '+ data.score + " " + data.court + ' </h3>';
+          }
+          else{
+            s = '<h3> Score: ' + data.score + " " +data.court + '</h3>';
+          }
           var html = [
-            '<h3> Score: ' + data.score + " " +data.courtId + '</h3>',
+            s,
             '<ul class="list-group">',
-              '<li class="list-group-item">' + data.player1 + '</li>',
-              '<li class="list-group-item">' + data.player2 + '</li>',
+              '<li class="list-group-item">' + data.player1 + ' | ' + data.player2+ '</li>',
+              // '<li class="list-group-item">' + data.player2 + '</li>',
             '</ul>'
           ].join("");
 
@@ -162,7 +168,7 @@
             "class" : node.teamClass + " " + (data.id || "id_null"),
             "id" : data.id,
             "data-round":data.round,
-            "data-courtid":data.courtId
+            // "data-court":data.court
           });
         },
         game : function(node){
@@ -365,8 +371,9 @@
         // 1. Hover Trail
         var _gameSelector = "." + node.teamClass + " > h3";
         $.each($(_gameSelector), function(e){
-          var id = "." + $(this).parent().attr("class").split(" ")[1];
-          if (id !== undefined) {
+          var parent = $(this).parent();
+          var id = "." + parent.attr("class").split(" ")[1];
+          if (id !== undefined && parent.attr("id") != undefined) {
             $(id).hover(function(){
               $(id).addClass(node.currentClass);
             }, function(){

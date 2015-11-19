@@ -38,15 +38,15 @@ var splitPairs = function(pairDiv){
 
 	if(startingPool==undefined){
 		console.error("splitPairs : startingpoolid is undefined");
-		return;	
-	} 
+		return;
+	}
 
 	var pair = Pairs.findOne({"_id":pairId});
 
 	if(pair==undefined){
 		console.error("splitPairs : pair is undefined");
-		return;	
-	} 
+		return;
+	}
 
 	/*
 		Remove any existing match with that pair
@@ -57,6 +57,11 @@ var splitPairs = function(pairDiv){
 			console.error(err);
 		}
 	});
+
+	/*
+		Make sure that the pool always has a valid leader
+	*/
+	findNewPoolLeader(startingPool, pair._id);
 
 	/*
 		Remove the player 2 from the pair, as well as any tournament match/courts
@@ -82,15 +87,15 @@ var splitPairs = function(pairDiv){
 		}
 	});
 
-	/*
-		Make sure that the pool always has a valid leader
-	*/
-	findNewPoolLeader(startingPool, pair._id);
+	var player1 = Meteor.users.findOne({"_id":pair.player1._id},{"profile":1});
+	var player2 = Meteor.users.findOne({"_id":pair.player2._id},{"profile":1});
 
-	Meteor.call("addToModificationsLog", 
-		{"opType":"Séparation de paire", 
+
+	Meteor.call("addToModificationsLog",
+		{"opType":"Séparation de paire",
 		"details":
-			"Paire séparée : "+pairId + getStringOptions()
+			"Paire séparée : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			 " et " + player2.profile.firstName +" " + player2.profile.lastName + getStringOptions()
 		});
 }
 
@@ -106,14 +111,13 @@ Template.mergePlayersContainerTemplate.onRendered(function(){
 var mergePlayers = function(document){
 	var parent = document.getElementById("mergeplayers");
 	var playersToMerge = parent.getElementsByClassName("pairs");
+	length = playersToMerge.length;
+	if(length==0 || length == 1) return;
 
-	if(playersToMerge.length==0) return;
-
-	if(playersToMerge.length!=2){
+	if(length!=2){
 		console.error("Can only have 2 players in merge players");
 		return;
 	}
-
 	type = Session.get("PoolList/Type");
 	var pairId1 = playersToMerge[0].id;
 	var poolId1 = playersToMerge[0].dataset.startingpoolid;
@@ -164,12 +168,15 @@ var mergePlayers = function(document){
 		Check if this pair is the only eligible pair as pool leader
 	*/
 	var pool = Pools.findOne({"_id":poolId1},{"leader":1});
-	if(pool.leader==undefined) Pools.update({_id:poolId1}, {$set:{"leader":pairId1}});
+	if(pool.leader==undefined){
+		Pools.update({_id:poolId1}, {$set:{"leader":pair1.player1._id}});	
+	} 
 
-	Meteor.call("addToModificationsLog", 
-		{"opType":"Fusion de 2 joueurs", 
+	Meteor.call("addToModificationsLog",
+		{"opType":"Fusion de 2 joueurs",
 		"details":
-			"Joueurs : "+pair1.player1._id + " et " + pair2.player1._id +getStringOptions()
+			"Joueurs : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			 " et " + player2.profile.firstName +" " + player2.profile.lastName +getStringOptions()
 		});
 }
 
@@ -248,15 +255,17 @@ var collapseMenus = function(document, event){
 *******************************************************************************************************************/
 
 var findNewPoolLeader = function(poolId, removedPairId){
+	pair = Pairs.findOne({_id:removedPairId});
 	prevPool = Pools.findOne({_id:poolId}, {pairs:1, leader:1});
-			
-	leaderFound = false;
-	if(prevPool.leader==undefined || prevPool.leader==removedPairId){
-		// Find the first pair in the pool that has 2 players (that is a valid pair) and set it as new leader
+
+	if(prevPool.leader==undefined || prevPool.leader===pair.player1._id || ((pair.player2==undefined) ? false : prevPool.leader===pair.player2._id)){
+		leaderFound = false;
+		// Find the first pair in the pool that has 2 players (that is a valid pair) and set player1 as new leader
 		for(var j=0;j<prevPool.pairs.length;j++){
+			if(prevPool.pairs[j]===removedPairId) continue;
 			p = Pairs.findOne({_id:prevPool.pairs[j]});
 			if(p.player1 && p.player2 && p.player1._id && p.player2._id){
-				Pools.update({_id:poolId}, {$set:{leader:p._id}});
+				Pools.update({_id:poolId}, {$set:{leader:p.player1._id}});
 				leaderFound = true;
 				break;
 			}
@@ -302,10 +311,10 @@ var movePairs = function(document){
 			move = {"oldPoolId":previousPoolId, "pairId":pairId};
 			if(!moves[newPoolId]){
 				moves[newPoolId] = [move]; // Create a new entry
-			} 
+			}
 			else{
 				moves[newPoolId].push(move);
-			} 
+			}
 
 			// Remove that pair from the previous pool
 			Pools.update({_id:previousPoolId},{$pull : {pairs: pairId}});
@@ -314,14 +323,15 @@ var movePairs = function(document){
 				If the pair we moved was a leader, update the new leader of the old pool
 			*/
 			findNewPoolLeader(previousPoolId, pairId);
-			
+
 			/*
 				If this is the only valid pair in the new pool, set the pair as leader of the new pool
 			*/
 			newPool = Pools.findOne({_id:newPoolId}, {leader:1});
 
 			if(newPool.leader==undefined){
-				Pools.update({_id:newPoolId}, {$set:{leader:pairId}});
+				pair = Pairs.findOne({_id:pairId},{"player1":1});
+				Pools.update({_id:newPoolId}, {$set:{leader:pair.player1._id}}); // Set player1 of the pair as new leader
 			}
 
 			// Add that pair to the new pool
@@ -330,11 +340,16 @@ var movePairs = function(document){
 			// Set the new pool id to that pair :
 			document.getElementById(pairId).setAttribute("data-startingpoolid", newPoolId);
 
+			pair = Pairs.findOne({"_id":pairId});
+			var player1 = Meteor.users.findOne({"_id":pair.player1._id},{"profile":1});
+			var player2 = Meteor.users.findOne({"_id":pair.player2._id},{"profile":1});
 
-			Meteor.call("addToModificationsLog", 
-				{"opType":"Mouvement paire", 
+
+			Meteor.call("addToModificationsLog",
+				{"opType":"Mouvement paire",
 				"details":
-					"Paire : "+pairId + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
+					"Paire : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			 		" et " + player2.profile.firstName +" " + player2.profile.lastName + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
 				});
 		}
 	}
@@ -351,8 +366,8 @@ var deleteAndMoveMatches = function(moves){
 	for(var i=0; i<keys.length;i++){
 		key = keys[i]; // New pool id
 		move = moves[key]; // List of pairs that moved
-		/* 
-			For every pair that moved to that new pool 
+		/*
+			For every pair that moved to that new pool
 		*/
 		for(var j = 0; j<move.length ;j++){
 			pairId = move[j].pairId; // Pair that moved
@@ -364,7 +379,7 @@ var deleteAndMoveMatches = function(moves){
 			data[pairId] = {$exists:true};
 			matchesWithThatPair = Matches.find(data).fetch();
 
-			/* 
+			/*
 				For every match of the previous pool that contains that pair
 			*/
 			for(var k=0; k<matchesWithThatPair.length;k++){
@@ -383,7 +398,7 @@ var deleteAndMoveMatches = function(moves){
 						/*
 							testPair and pairId moved to the same pool together
 						*/
-						
+
 						// Update the poolId of the match to be the new pool
 						Matches.update({_id:match._id}, {$set:{"poolId":key}});
 
@@ -418,7 +433,7 @@ var getCourtNumbers = function(courts){
 		}
 
 Template.poolList.onRendered(function() {
-	// Restore the state of the selects, in case the user wants to come back to this page 
+	// Restore the state of the selects, in case the user wants to come back to this page
 	// (usefull when he clicks on scoreboard and presses the back button)
 	Session.set("PoolList/ChosenScorePool","");
 	Session.set("PoolList/ChosenBrackets","");
@@ -470,7 +485,7 @@ Template.poolList.events({
 			Move the pairs in their new pool
 		*/
 		moves = movePairs(document);
-		
+
 		/*
 			Delete / Move the matches to be consistent with the pair changes !
 		*/
@@ -513,8 +528,8 @@ Template.poolList.events({
 		}
 
 		Meteor.call('removePool', poolId, year, type, category);
-		Meteor.call("addToModificationsLog", 
-		{"opType":"Retirer poule", 
+		Meteor.call("addToModificationsLog",
+		{"opType":"Retirer poule",
 		"details":
 			"Poule retirée : "+poolId+getStringOptions()
 		});
@@ -552,8 +567,8 @@ Template.poolList.events({
 		/*	Add that pool to the list of pools of the corresponding type	*/
 		Types.update({_id:typeId},data);
 
-		Meteor.call("addToModificationsLog", 
-		{"opType":"Ajouter poule", 
+		Meteor.call("addToModificationsLog",
+		{"opType":"Ajouter poule",
 		"details":
 			"Poule ajoutée : "+newPoolId+getStringOptions()
 		});
@@ -572,14 +587,12 @@ Template.poolList.events({
 		var getNCourts = function(previouscourts, courts, n, start){
 			var result = [];
 
-			console.log(previouscourts + " n "   + n);
-
-
 			if(typeof previouscourts === "undefined"){
 
 				for(var k=0; k<n;k++){
 					result.push(courts[(start+k) % courts.length]);
 				}
+
 			}
 			else{
 				var l = previouscourts.length-1;
@@ -590,14 +603,21 @@ Template.poolList.events({
 					strt=1
 				}
 
-				for(var k=strt; k<n+strt;k++){	
-					result.push(previouscourts[l-(2*k)]);	
-				}	
+				if(previouscourts.length<=n){
+					for(var k=0; k<n;k++){
+						result.push(previouscourts[l-k]);
+					}
+				}
+				else{
+					for(var k=strt; k<n+strt;k++){
+						result.push(previouscourts[l-(2*k)]);
+					}
+				}
 
-				result = result.reverse();	
+				result = result.reverse();
 
 			}
-			
+
 			return result;
 		}
 
@@ -609,6 +629,13 @@ Template.poolList.events({
 
 			if(round<0){
 				return 0;
+			}
+
+			if(round==0 && nbrPools>1 && (nbrPools % 2)!=0){
+					nbrPools = nbrPools - 1;
+			}
+			if(nbrPools>1 && (nbrPools % 2)!=0){
+					nbrPools = nbrPools + 1;
 			}
 
 			var rem=0;
@@ -624,10 +651,16 @@ Template.poolList.events({
 				}
 			}
 
+			if(round==0 && nbrPools>1){
+				if((nbrPools % 2)!=0){
+					nbrPools = nbrPools - 1;
+				}
+			}
+
 			return nbrPools;
 		}
 
-		var numberDays = 2; 
+		var numberDays = 2;
 
 		var courtsSat = getCourtNumbers(Courts.find({dispoSamedi: true}).fetch());
 		var courtsSun = getCourtNumbers(Courts.find({dispoDimanche: true}).fetch());
@@ -638,7 +671,7 @@ Template.poolList.events({
 		var poolsTable = [poolsSat,poolsSun];
 
 		////////// Assign courts to pools \\\\\\\\\\
-		
+
 		if(poolsSat.length>courtsSat.length){
 			console.error("Assign courts: Not enough courts for saturday morning ("+ (poolsSat.length-courtsSat.length)+" missing)");
 			return;
@@ -703,7 +736,7 @@ Template.poolList.events({
 					if(typeof temp !== "undefined"){
 						typesDocs[g].push(temp);
 					}
-				} 
+				}
 			}
 		}
 
@@ -717,7 +750,7 @@ Template.poolList.events({
 			for(var g=0;g<numberDays;g++){
 
 				var typesDoc = typesDocs[g];
-			
+
 				for(var k=0;k<typesDoc.length;k++){
 
 					for(var t=0;t<categoriesKeys.length;t++){
@@ -772,7 +805,7 @@ Template.poolList.helpers({
 		var courts = getCourtNumbers(Courts.find().fetch());
 		return courts.length;
 	},
-	
+
 	// // Returns a yearData with id year
 	'getYear' : function(){
 		var year = Session.get('PoolList/Year');
@@ -788,7 +821,7 @@ Template.poolList.helpers({
 
 		return y;
 	},
-	
+
 	// Returns a typeData
 	'getType' : function(yearData){
 		var type = Session.get('PoolList/Type');
@@ -826,7 +859,7 @@ Template.poolList.helpers({
 		category = Session.get('PoolList/Category');
 		poolIdList = typeData[category];
 		poolList = [];
-		
+
 		totalNumberOfPairs = 0;
 		totalCompletion = 0;
 
@@ -836,11 +869,11 @@ Template.poolList.helpers({
 		if(poolIdList){
 			for(var i=0;i<poolIdList.length;i++){
 				pool = Pools.findOne({_id: poolIdList[i]});
-				
+
 				totalNumberOfPairs += pool.pairs==undefined ? 0 : pool.pairs.length;
 				poolCompletion = pool.completion;
 				totalCompletion += (pool.pairs==undefined ? 0 : pool.pairs.length) * (poolCompletion==undefined ? 0 : poolCompletion);
-				
+
 				if(k>=MAXCOLUMNS){
 					poolList.push(column);
 					column = [];
@@ -890,7 +923,7 @@ Template.poolList.helpers({
 	*/
 	'resetDrake' : function(){
 		drake = dragula(
-			{	
+			{
 				/*	Defines what can be moved/dragged	*/
 				moves : function(el, source, handle, sibling) {
 					var isPairModal = (' ' + el.className + ' ').indexOf(' pairInfoModal ') > -1;
@@ -901,17 +934,22 @@ Template.poolList.helpers({
 		    		return true; // All other elements are draggable
 		  		},
 		  		accepts: function (el, target, source, sibling) {
-		    		var isFromPoule = (' ' + source.className + ' ').indexOf(' poule ') > -1;
-		    		if(isFromPoule && target.id==="mergeplayers") return false;
-		    		if(isFromPoule && target.id==="alonepairs") return false;
-		    		var isFromAlone = source.id==="alonepairs";
 		    		var isToPoule = (' ' + target.className + ' ').indexOf(' poule ') > -1;
-		    		if(isFromAlone && (isToPoule || target.id==="pairstosplit")) return false;
-		    		if(isFromAlone && target.children.length>=2) return false; // Can only have 2 players in merge players
-		    		var isFromSplit = source.id === "pairstosplit";
-		    		if(isFromSplit && !isToPoule) return false;
+		    		var isToAlone = target.id==="alonepairs";
+		    		var isToSplit = target.id==="pairstosplit";
+		    		var isToMerge = target.id==="mergeplayers";
 
-    				return true; // elements can be dropped in any of the `containers` by default
+		    		var isFromPoule = (' ' + source.className + ' ').indexOf(' poule ') > -1;
+		    		var isFromAlone = source.id==="alonepairs";
+		    		var isFromSplit = source.id==="pairstosplit";
+		    		var isFromMerge = source.id==="mergeplayers";
+
+		    		if(isFromPoule && (isToAlone || isToMerge)) return false;
+		    		if(isFromAlone && (isToPoule || isToSplit)) return false;
+		    		if(isFromSplit && (isToAlone || isToMerge)) return false;
+		    		if(isFromMerge && (isToPoule || isToSplit)) return false;
+		    		if(isToMerge && target.children.length>=2) return false;
+		    		return true;
   				},
 			}
 		).on('drag', function (el) {
@@ -944,7 +982,7 @@ Template.alonePairsContainerTemplate.onRendered(function(){
 });
 
 var hasBothPlayers = function(pair){
-	return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined; 
+	return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
 }
 
 Template.alonePairsContainerTemplate.helpers({
@@ -995,7 +1033,7 @@ Template.poolItem.helpers({
 		// Add this pair to the list of alone pairs, if this pair is not full
 		if(!hasBothPlayers(pair)){
 			return undefined;
-		} 
+		}
 		return pair;
 	},
 
@@ -1012,7 +1050,7 @@ Template.poolItem.helpers({
 
 Template.poolContainerTemplate.onRendered(function(){
 	doc = document.querySelector('#a'+this.data.POOL._id);
-  	drake.containers.push(doc); // Make the id this.data.ID draggable 
+  	drake.containers.push(doc); // Make the id this.data.ID draggable
 });
 
 Template.poolContainerTemplate.helpers({
@@ -1022,7 +1060,51 @@ Template.poolContainerTemplate.helpers({
 			if(hasBothPlayers(pair)) return true;
 		}
 		return false;
-	}
+	},
+  'getStreet' : function(courtId){
+      if(courtId ==undefined){
+        return "Pas de terrain assigné";
+      }
+      else{
+        var court = Courts.findOne({"courtNumber":pool.courtId});
+        if(court.addressID==undefined){
+          return "";
+        }
+        else{
+          var address = Addresses.findOne({_id:court.addressID});
+          if(address == undefined){
+            return "";
+          }
+          else{
+            return address.street+" "+address.number;
+          }}}
+  },
+  'getTown' : function(courtId){
+      if(courtId ==undefined){
+        return "";
+      }
+      else{
+        var court = Courts.findOne({"courtNumber":pool.courtId});
+        if(court.addressID==undefined){
+          return "";
+        }
+        else{
+          var address = Addresses.findOne({_id:court.addressID});
+          if(address == undefined){
+            return "";
+          }
+          else{
+            return address.zipCode+" "+address.city;
+          }}}
+  },
+  'hasCourt' : function(address){
+    if (address==undefined) {
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
 });
 
 Template.poolContainerTemplate.events({
@@ -1058,7 +1140,7 @@ Template.CategorySelect.helpers({
 				typeCompletion += cPools;
 			}
 			if(completionData["brackets"]!=undefined){
-				var cBrackets = completionData["brackets"][categoriesKeys[i]];				
+				var cBrackets = completionData["brackets"][categoriesKeys[i]];
 				if(cBrackets!=undefined){
 					typeCompletion += cBrackets;
 				}
@@ -1187,5 +1269,12 @@ Template.modalItem.events({
 		// Add the pair to the new type:
 		Meteor.call("addPairToTournament",this.pairId, year, dateMatch);
 		$('#pairModal'+this.pairId).modal('hide');
+	},
+
+	'click .setLeader':function(event){
+		target = event.currentTarget;
+		poolId = target.dataset.poolid;
+		playerId = target.dataset.player;
+		pool = Pools.update({_id:poolId},{$set:{"leader":playerId}});
 	}
 })
