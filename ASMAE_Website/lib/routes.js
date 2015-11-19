@@ -23,7 +23,7 @@ Router.onBeforeAction(function() {
         else
 		this.next();
 	}
-}, {except: ['home', 'rules', 'myRegistration']});
+}, {except: ['home', 'rules', 'login']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -75,6 +75,13 @@ Router.route('/mon-inscription', {
 		}
 	}
 });
+
+Router.route('/login', {
+	name: 'login',
+	template: 'login'
+});
+
+
 
 Router.route('/inscription-tournoi',  {
 	name: 'tournamentRegistration',
