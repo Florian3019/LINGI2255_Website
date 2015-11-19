@@ -57,6 +57,58 @@ Meteor.methods({
 			}
 		}
 
+		function insertStaffAndAdminMembers(nbrStaff, nbrAdmin) {
+			// Add some staff members
+			for (var j=0; j<nbrStaff; j++) {
+				var profile = {
+	                firstName: firstnames[getRandomInt(0,2*nData)],
+	                lastName:lastnames[getRandomInt(0,nData)],
+	                phone:"0499112233",
+	                birthDate:new Date(1990,8,21),
+	                AFT:AFTs[getRandomInt(0,n_AFTs)],
+	                isStaff:1,
+	                isAdmin:false,
+	                gender:"M"
+	            };
+				var email = "staff"+j+"@staff.com";
+				if (Accounts.findUserByEmail(email)!==undefined) {
+	                continue;
+	            }
+				var userID = Accounts.createUser({
+	                           email : email,
+	                           password : "passpass",
+	                           profile: profile
+	                       });
+				Accounts.addEmail(userID, email, true);
+				Meteor.users.update({_id: userID}, {$set: {"profile.isStaff":true}});
+			}
+
+			// Add some admin members
+			for (var j=0; j<nbrAdmin; j++) {
+				var profile = {
+	                firstName: firstnames[getRandomInt(0,2*nData)],
+	                lastName:lastnames[getRandomInt(0,nData)],
+	                phone:"0499112233",
+	                birthDate:new Date(1990,8,21),
+	                AFT:AFTs[getRandomInt(0,n_AFTs)],
+	                isStaff:1,
+	                isAdmin:1,
+	                gender:"M"
+	            };
+				var email = "admin"+j+"@admin.com";
+				if (Accounts.findUserByEmail(email)!==undefined) {
+	                continue;
+	            }
+				var userID = Accounts.createUser({
+	                           email : email,
+	                           password : "passpass",
+	                           profile: profile
+	                       });
+				Accounts.addEmail(userID, email, true);
+				Meteor.users.update({_id: userID}, {$set: {"profile.isStaff":true}});
+				Meteor.users.update({_id: userID}, {$set: {"profile.isAdmin":true}});
+			}
+		}
         /*
          * Returns two dates for players competing in a certain type and a certain category
          */
@@ -90,6 +142,29 @@ Meteor.methods({
             return [new Date(year1, month1, day1), new Date(year2, month2, day2)];
         }
 
+		function insertCourts(nbr) {
+			for (var j=0; j<nbr; j++) {
+				var addressID = insertAddress();
+
+			}
+		}
+		function insertAddress() {
+			var addressData = {
+                street:streets[getRandomInt(0,nStreets)],
+                number:getRandomInt(1,200),
+                box:getRandomInt(1,10).toString(),
+                city:cities[getRandomInt(0,nData)],
+                zipCode:getRandomInt(1000,6000),
+                country:"Belgique"
+            };
+			var addressID = Addresses.insert(addressData);
+			if (typeof addressID1 === undefined) {
+				console.log("Error popDB inserting address : "+addressData);
+				return undefined;
+			}
+			return addressID;
+		}
+
         var count = 0;
         // type = Men | Women | Mixed | Family
         function createPair(type, category, alone) {
@@ -113,26 +188,32 @@ Meteor.methods({
 
             var firstname1, firstname2;
             var gen1, gen2;
+			var dateMatch;
+			// Determine genders and dateMatch
             switch (type) {
                 case typeKeys[0]: // Men
+					dateMatch="sunday";
                     firstname1 = firstnamesM[getRandomInt(0,nData)];
                     firstname2 = firstnamesM[getRandomInt(0,nData)];
                     gen1 = "M";
                     gen2 = "M";
                     break;
                 case typeKeys[1]: // Women
+					dateMatch="sunday";
                     firstname1 = firstnamesF[getRandomInt(0,nData)];
                     firstname2 = firstnamesF[getRandomInt(0,nData)];
                     gen1 = "F";
                     gen2 = "F";
                     break;
                 case typeKeys[2]: // Mixed
+					dateMatch="saturday";
                     firstname1 = firstnamesM[getRandomInt(0,nData)];
                     firstname2 = firstnamesF[getRandomInt(0,nData)];
                     gen1 = "M";
                     gen2 = "F";
                     break;
                 case typeKeys[3]: // Family
+					dateMatch="family";
                     firstname1 = firstnames[getRandomInt(0,2*nData)];
                     firstname2 = firstnames[getRandomInt(0,2*nData)];
                     if (firstnamesM.indexOf(firstname1) > -1) {
@@ -152,29 +233,10 @@ Meteor.methods({
                     console.error("Error populateDB : createPair : type is not good");
             }
 
-
-            var addressData1 = {
-                street:streets[getRandomInt(0,nStreets)],
-                number:getRandomInt(1,200),
-                box:getRandomInt(1,10).toString(),
-                city:cities[getRandomInt(0,nData)],
-                zipCode:getRandomInt(1000,6000),
-                country:"Belgique"
-            };
-
-            var addressData2 = {
-                street:streets[getRandomInt(0,nStreets)],
-                number:getRandomInt(1,200),
-                box:getRandomInt(1,10).toString(),
-                city:cities[getRandomInt(0,nData)],
-                zipCode:getRandomInt(1000,6000),
-                country:"Belgique"
-            };
-
-            var addressID1 = Addresses.insert(addressData1);
+            var addressID1 = insertAddress();
 			var addressID2;
 			if (!alone) {
-				addressID2 = Addresses.insert(addressData2);
+				addressID2 = insertAddress();
 			}
 
             var phone1 = "04"+getRandomInt(10000000,99999999).toString();
@@ -232,31 +294,14 @@ Meteor.methods({
 				pairID = Meteor.call("updatePair", {player1: {_id:userID1}, wish:wish1, extras:extra1});
 			}
 
-
-            var dateMatch;
-            switch (type) {
-                case typeKeys[0]:
-                    dateMatch="sunday";
-                    break;
-                case typeKeys[1]:
-                    dateMatch = "sunday";
-                    break;
-                case typeKeys[2]:
-                    dateMatch = "saturday";
-                    break;
-                case typeKeys[3]:
-                    dateMatch = "family";
-                    break;
-                default:
-                    dateMatch = undefined;
-            }
             Meteor.call("addPairToTournament", pairID, tournamentYear, dateMatch);
         } // End createPair
 
 
         // Men - Women - Mixed - Family
-        var nTypes = [80,20,50,0];
+        var nTypes = [150,150,150,25];
 
+		// Create the pairs
         for (var i=0; i<3; i++) {
             for (var j=0; j<nTypes[i]/7; j++) {
                 for (var k=0; k < 7; k++) {
@@ -264,9 +309,14 @@ Meteor.methods({
                 }
             }
         }
+		// Family
         for (var j=0; j<nTypes[3]; j++) {
             createPair(typeKeys[3],"none");
         }
-        console.log("popDB done");
+
+		insertStaffAndAdminMembers(10,3);
+		//insertCourts(70);
+
+		console.log("popDB done");
 	},
 });

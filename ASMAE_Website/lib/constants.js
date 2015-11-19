@@ -4,6 +4,7 @@ categoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets"
 typesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
 paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
+surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
 tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 tournamentYear = "2015";
