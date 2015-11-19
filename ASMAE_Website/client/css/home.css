@@ -26,28 +26,25 @@ body {
 	line-height: 6px;
 }*/
 
-/*
-html {
-  background: url(tennis.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-*/
 
 .jumbotron {
-    /*background: linear-gradient(#FF8000, #ED0CCF);*/     /* Choose 2 colors for the background gradient */
     background: linear-gradient(#FF8000, #FFDEAD);
     background-position: 0% 25%;
-    background-size: cover;
-    background-repeat: no-repeat;
     color: white;
     /*text-shadow: black 0.3em 0.3em 0.3em;*/
 }
 
 .homePage {
-   background-image: url(main.jpg);
-   background-size: cover;
-   background-repeat: no-repeat;
+    min-height: 650px;
+    background: url(main2.jpg) no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+@media (min-width: 1400px) {
+	.homePage {
+		min-height: 850px;
+	}
 }
