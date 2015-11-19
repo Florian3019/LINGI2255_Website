@@ -156,8 +156,8 @@
           var html = [
             s,
             '<ul class="list-group">',
-              '<li class="list-group-item">' + data.player1 + '</li>',
-              '<li class="list-group-item">' + data.player2 + '</li>',
+              '<li class="list-group-item">' + data.player1 + ' | ' + data.player2+ '</li>',
+              // '<li class="list-group-item">' + data.player2 + '</li>',
             '</ul>'
           ].join("");
 
