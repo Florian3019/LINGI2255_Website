@@ -39,19 +39,19 @@ var setCourt = function(roundData1, roundData2, round,courts, num){
   */
   // if we can't modify the court, either we already did this computation or the user manually set the court --> don't touch it
   // Can only modify courts in increasing round order (i.e. can't modify round 5 if round 4 is not set)
-  if(canModifyCourt(pair1, round) && canModifyCourt(pair2, round)){
-    // Automatically set the court, or leave it undefined
-    automaticCourt = getCourt(courts,num);
-    if(automaticCourt!=emptyCourt){
-      if(pair1.tournamentCourts==undefined) pair1.tournamentCourts = [];
-      if(pair2.tournamentCourts==undefined) pair2.tournamentCourts = [];
+//  if(canModifyCourt(pair1, round) && canModifyCourt(pair2, round)){
+  //   // Automatically set the court, or leave it undefined
+     automaticCourt = getCourt(courts,num);
+  //   if(automaticCourt!=emptyCourt){
+//       if(pair1.tournamentCourts==undefined) pair1.tournamentCourts = [];
+//       if(pair2.tournamentCourts==undefined) pair2.tournamentCourts = [];
 
-      pair1.tournamentCourts.push(automaticCourt);
-      pair2.tournamentCourts.push(automaticCourt);
-      Pairs.update({"_id":pair1._id},{$set:{"tournamentCourts":pair1.tournamentCourts}}); // update the db
-      Pairs.update({"_id":pair2._id},{$set:{"tournamentCourts":pair2.tournamentCourts}}); // update the db
-    }
-  }
+    //   pair1.tournamentCourts.push(automaticCourt);
+    //   pair2.tournamentCourts.push(automaticCourt);
+     //  Pairs.update({"_id":pair1._id},{$set:{"tournamentCourts":pair1.tournamentCourts}}); // update the db
+     //  Pairs.update({"_id":pair2._id},{$set:{"tournamentCourts":pair2.tournamentCourts}}); // update the db
+  //   }
+//   }
 
   // if(pair1.tournamentCourts==undefined){
   //   // No data
