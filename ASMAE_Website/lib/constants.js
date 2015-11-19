@@ -7,7 +7,6 @@ paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Vireme
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
 tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
-tournamentYear = "2015";
 
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;
