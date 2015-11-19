@@ -90,55 +90,6 @@ Meteor.methods({
 		}
 	},
 
-	/*
-	* @param birthDate is of type Date
-	* @param todayDate give an optional today date (e. g. date of the tournament)
-	*/
-	'getAge' : function(birthDate, todayDate){
-		var today;
-		if (todayDate) {
-			today = todayDate;
-		}
-		else {
-			today = new Date();
-		}
-	    var age = today.getFullYear() - birthDate.getFullYear();
-	    var m = today.getMonth() - birthDate.getMonth();
-	    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-	        age--;
-	    }
-	    return age;
-	},
-
-	/*
-	* @param birthDate is of type Date
-	*/
-	'getCategory' : function(birthDate){
-		var age = Meteor.call('getAge', birthDate, undefined);
-		if(age < 9){
-			return undefined;
-		}
-		if(9 <= age && age <= 10){
-			return categoriesKeys[0];
-		}
-		if(11 <= age && age <= 12){
-			return categoriesKeys[1];
-		}
-		if(13 <= age && age <= 14){
-			return categoriesKeys[2];
-		}
-		if(15 <= age && age <= 16){
-			return categoriesKeys[3];
-		}
-		if(17 <= age && age <= 19){
-			return categoriesKeys[4];
-		}
-		if(20 <= age && age <= 40){
-			return categoriesKeys[5];
-		}
-		return categoriesKeys[6];
-	},
-
 	'getPairCategory' : function(type, p1, p2){
 		var category;
 		if(type==="family"){
@@ -152,9 +103,9 @@ Meteor.methods({
 				// We need the birthDate
 				if(p1.profile.birthDate){
 					// Fetch the category corresponding to that date
-					cat1 = Meteor.call('getCategory', p1.profile.birthDate);
+					cat1 = getCategory(p1.profile.birthDate);
 					if(!cat1){
-						console.error("Player does not fit in any category (too young)");
+						console.error("Player 1 does not fit in any category (too young). Age : "+getAge(p1.profile.birthDate()));
 						return false;
 					}
 				}
@@ -163,9 +114,9 @@ Meteor.methods({
 				// We need the birthDate
 				if(p2.profile.birthDate){
 					// Fetch the category corresponding to that date
-					cat2 = Meteor.call('getCategory', p2.profile.birthDate);
+					cat2 = getCategory(p2.profile.birthDate);
 					if(!cat2){
-						console.error("Player does not fit in any category (too young)");
+						console.error("Player 2 does not fit in any category (too young). Age : "+getAge(p2.profile.birthDate));
 						return false;
 					}
 				}
@@ -200,17 +151,17 @@ Meteor.methods({
 	'getPairType' : function(dateMatch, p1, p2){
 		var type;
 
-		if(dateMatch == typeKeys[3]){ // Family
-			return typeKeys[3];
-		}
-
 		var gender1;
 		var gender2;
+		var birthDate1;
+		var birthDate2;
 
 		if(p1){
+			birthDate1 = p1.profile.birthDate;
 			gender1 = p1.profile.gender;
 		}
 		if(p2){
+			birthDate2 = p2.profile.birthDate;
 			gender2 = p2.profile.gender;
 		}
 
@@ -230,7 +181,7 @@ Meteor.methods({
 				return gender2=="M" ? typeKeys[0] : typeKeys[1]; // men or women
 			}
 		}
-		if(dateMatch == "saturday"){
+		else if(dateMatch == "saturday"){ // Mixed
 			if(typeof gender1 !== undefined && typeof gender2 !== undefined && gender1 == gender2){
 				console.error("Saturday is mixed only !");
 				return false;
@@ -239,6 +190,15 @@ Meteor.methods({
 				console.warn("No information on the gender available, setting type to mixed");
 			}
 			return typeKeys[2]; //mixed
+		}
+		else if (dateMatch == "family") {
+			if((p1 && p2 && !acceptPairForFamily(birthDate1, birthDate2)) || (!p1 && !acceptForFamily(birthDate2)) || (!p2 && !acceptForFamily(birthDate1))) {
+				console.error("Error registering a pair for the family tournament, ages are "+birthDate1+" and "+birthDate2);
+				return false;
+			}
+			else {
+				return typeKeys[3]; // family
+			}
 		}
 	},
 
@@ -1328,8 +1288,8 @@ Meteor.methods({
 		}
 
 		pair = Pairs.findOne({_id:pairID});
-		if(!pair){
-			console.error("addPairToTournament : invalid pairID");
+		if(typeof pair === 'undefined'){
+			console.error("addPairToTournament : invalid pairID, "+pairID+"/ "+pair);
 			return false;
 		}
 
