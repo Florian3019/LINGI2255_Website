@@ -721,7 +721,7 @@ Template.poolList.events({
 
 		////////// KnockOff Tournament \\\\\\\\\\
 
-		var typesSaturday = ["mixed"];
+		var typesSaturday = ["mixed","family"];
 		var typesSunday = ["men","women"];
 		var typesTable = [typesSaturday,typesSunday];
 		var year = Years.findOne({_id:""+new Date().getFullYear()});
@@ -730,6 +730,14 @@ Template.poolList.events({
 		////////// Saturday and Sunday \\\\\\\\\\
 
 		var typesDocs= [];
+
+		var categories = ["all"];
+
+		for(var i=0;i<categoriesKeys.length;i++){
+			categories.push(categoriesKeys[i]);
+		}
+
+		console.log(categories);
 
 		for(var g=0;g<numberDays;g++){
 			typesDocs.push([]);
@@ -758,14 +766,14 @@ Template.poolList.events({
 
 				for(var k=0;k<typesDoc.length;k++){
 
-					for(var t=0;t<categoriesKeys.length;t++){
+					for(var t=0;t<categories.length;t++){
 
-						if(typesDoc[k][categoriesKeys[t]]!=null){
-				 			var nameField = categoriesKeys[t]+"Courts";
+						if(typesDoc[k][categories[t]]!=null){
+				 			var nameField = categories[t]+"Courts";
 
-				 			var nbr = getNumberMatches(typesDoc[k][categoriesKeys[t]].length,round);
+				 			var nbr = getNumberMatches(typesDoc[k][categories[t]].length,round);
 
-				 			if(!first &&typesDoc[k][nameField].length<(2*typesDoc[k][categoriesKeys[t]].length-1)){
+				 			if(!first &&typesDoc[k][nameField].length<(2*typesDoc[k][categories[t]].length-1)){
 				 				typesDoc[k][nameField]=typesDoc[k][nameField].concat(getNCourts(typesDoc[k][nameField],courtsTable[g],nbr,start));
 				 				finished=false;
 				 			}
