@@ -587,14 +587,12 @@ Template.poolList.events({
 		var getNCourts = function(previouscourts, courts, n, start){
 			var result = [];
 
-			console.log(previouscourts + " n "   + n);
-
-
 			if(typeof previouscourts === "undefined"){
 
 				for(var k=0; k<n;k++){
 					result.push(courts[(start+k) % courts.length]);
 				}
+
 			}
 			else{
 				var l = previouscourts.length-1;
@@ -605,8 +603,15 @@ Template.poolList.events({
 					strt=1
 				}
 
-				for(var k=strt; k<n+strt;k++){
-					result.push(previouscourts[l-(2*k)]);
+				if(previouscourts.length<=n){
+					for(var k=0; k<n;k++){
+						result.push(previouscourts[l-k]);
+					}
+				}
+				else{
+					for(var k=strt; k<n+strt;k++){
+						result.push(previouscourts[l-(2*k)]);
+					}
 				}
 
 				result = result.reverse();
@@ -626,6 +631,13 @@ Template.poolList.events({
 				return 0;
 			}
 
+			if(round==0 && nbrPools>1 && (nbrPools % 2)!=0){
+					nbrPools = nbrPools - 1;
+			}
+			if(nbrPools>1 && (nbrPools % 2)!=0){
+					nbrPools = nbrPools + 1;
+			}
+
 			var rem=0;
 
 			for(var k=0;k<round;k++){
@@ -636,6 +648,12 @@ Template.poolList.events({
 				else{
 					nbrPools = (nbrPools-1)/2;
 					rem=1;
+				}
+			}
+
+			if(round==0 && nbrPools>1){
+				if((nbrPools % 2)!=0){
+					nbrPools = nbrPools - 1;
 				}
 			}
 

@@ -20,7 +20,7 @@
       One of 'USERNAME_AND_EMAIL', 'USERNAME_AND_OPTIONAL_EMAIL',
       'USERNAME_ONLY', or 'EMAIL_ONLY'
     */
-    passwordSignupFields: 'USERNAME_AND_EMAIL',
+    passwordSignupFields: 'EMAIL_ONLY',
 
 
 
