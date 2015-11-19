@@ -5,7 +5,7 @@
 	
 	-->
  
- <script>
+<script>
     function forgottenPassword() {        
         
         $('#forgotten').modal('show');    
@@ -14,9 +14,9 @@
         var email = $('[name=email]').val().trim();
         document.getElementById("email-forgotten-password").value = email;
     }
- </script>
+</script>
     
- <div id="LoginWrapper">
+<div id="LoginWrapper">
     
     <div class="modal fade alert" id="signModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -26,7 +26,7 @@
                     <h3 class="modal-title" id="lineModalLabel">Votre inscription au site est bien enregistrée.</h3>
                 </div>
                 <div class="modal-body">
-                      <p id="welcom-message"> Bienvenue Surnom </p>
+                      <p id="welcom-message"> Bienvenue </p>
                       <p> Votre compte a correctement été créé ! </p>
                       <p> Un email automatique de confirmation vient d'être envoyé à votre adresse email :</p>
                       <a id="e-mail-registration" href="mailto:someone@example.com">someone@example.com</a>
@@ -99,8 +99,8 @@
                         <h3 class="login-heading">Connexion</h3>
                          
                         <div class="form-group" id="user">
-                            <input id="balb" name="email" class="form-control" placeholder="Nom d'utilisateur ou email" required autofocus>
-                            <span class="help-block" id="no-user-message" style="display: none">Veuillez insérer un nom d'utilisateur ou un email</span>
+                            <input id="balb" name="email" class="form-control" placeholder="Email" required autofocus>
+                            <span class="help-block" id="no-user-message" style="display: none">Veuillez une addresse email</span>
                             <span class="help-block" id="user-error-message" style="display: none">Utilisateur non trouvé</span>
                             <span class="help-block" id="no-password-error-message" style="display: none">Cette user n'a pas de mot de passe, connecter vous via google ou facebook</span>
                         </div>
@@ -165,13 +165,6 @@
 						<form class="login">
 							<h2 class="lead">Inscription</h2>
                             
-							<label class="header pull-left" for="inputUser">Nom d'utilisateur :</label>
-                            <div class="form-group" id="inputUserGroup">
-                                <input type="userName" id="inputUser" name="username-sign" class="form-control" placeholder="Nom d'utilisateur" required autofocus>
-							</div>
-                            
-							<p> </p> <!-- Espace -->
-                            
 							<label class="header pull-left" for="inputEmail">Addresse mail :</label>
                             <div class="form-group" id="inputEmailGroup">
                                 <input type="email" id="inputEmail" name="email-sign" class="form-control" placeholder="Email" required autofocus>
@@ -189,18 +182,6 @@
                             <div class="alert alert-success fade in" style="display:none;" id="sign-up-success" role="alert">
                                 <span class="glyphicon glyphicon-ok-sign"></span>
                                 <strong>Réussi !</strong> Vous êtes bien inscrit.
-                            </div>
-                            <div class="alert alert-danger fade in"  style="display:none;" id="no-username" role="alert">
-                                <span class="glyphicon glyphicon-exclamation-sign"></span>
-                                <strong>Erreur :</strong> Veuillez entrer un nom d'utilisateur.
-                            </div>
-                            <div class="alert alert-danger fade in"  style="display:none;" id="not-valid-username" role="alert">
-                                <span class="glyphicon glyphicon-exclamation-sign"></span>
-                                <strong>Erreur :</strong> Le nom d'utilisateur doit comporter au moins 3 caractères.
-                            </div>
-                            <div class="alert alert-danger fade in"  style="display:none;" id="existing-username" role="alert">
-                                <span class="glyphicon glyphicon-exclamation-sign"></span>
-                                <strong>Erreur :</strong> Le nom d'utilisateur existe déjà.
                             </div>
                             <div class="alert alert-danger fade in"  style="display:none;" id="no-email" role="alert">
                                 <span class="glyphicon glyphicon-exclamation-sign"></span>
