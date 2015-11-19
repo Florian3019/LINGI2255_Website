@@ -1,5 +1,4 @@
 var aloneDependency = new Deps.Dependency();
-var tournamentYear = 2015;
 
 function closePopUp() {
     $('#signModal').modal('hide');
@@ -83,7 +82,7 @@ Template.tournamentRegistration.helpers({
 	        else{
 	        	errors.push({id:"birthMonth", error:false});
 	        }
-			if(!birthYear || birthYear < 1900 || birthYear > tournamentYear - 9){
+			if(!birthYear || birthYear < 1900 || birthYear > tournamentDate.getFullYear() - 9){
 	        	errors.push({id:"birthYear", error:true});
 	        	hasError = true;
 	        }
@@ -586,7 +585,7 @@ Template.tournamentRegistration.events({
         else{
         	errors.push({id:"birthMonth", error:false});
         }
-		if(!birthYear || birthYear < 1900 || birthYear > tournamentYear - 9){
+		if(!birthYear || birthYear < 1900 || birthYear > tournamentDate.getFullYear() - 9){
         	errors.push({id:"birthYear", error:true});
         	hasError = true;
         }

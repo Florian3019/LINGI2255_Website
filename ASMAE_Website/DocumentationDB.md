@@ -123,7 +123,7 @@ A pair is structured as follows:
     player1:{
         _id:<userID>,
         extras:{
-            BBQ:<bbq>
+            <name>:<number>
         },
         wish:<wish>,
         constraint:<constraint>,
@@ -132,7 +132,7 @@ A pair is structured as follows:
     player2:{
         _id:<userID>,
         extras:{
-            BBQ:<bbq>
+            <name>:<number>
         },
         wish:<wish>,
         constraint:<constraint>,

@@ -62,7 +62,7 @@ Meteor.methods({
          	});
 		}
 		else {
-			console.error("updateCourt : You don't have the permissions to update a court !");
+			console.error("Error turning admin");
 			return false;
 		}
 	},
@@ -73,7 +73,7 @@ Meteor.methods({
          	});
 		}
 		else {
-			console.error("updateCourt : You don't have the permissions to update a court !");
+			console.error("Error turnning staff");
 			return false;
 		}
 
@@ -85,7 +85,7 @@ Meteor.methods({
 	      	});
 		}
 		else {
-			console.error("updateCourt : You don't have the permissions to update a court !");
+			console.error("Error turning normal");
 			return false;
 		}
 	},
@@ -113,7 +113,7 @@ Meteor.methods({
 	/*
 	* @param birthDate is of type Date
 	*/
-	'getCategory' : function(birthDate, family){
+	'getCategory' : function(birthDate){
 		var age = Meteor.call('getAge', birthDate, undefined);
 		if(age < 9){
 			return undefined;
@@ -142,7 +142,7 @@ Meteor.methods({
 	'getPairCategory' : function(type, p1, p2){
 		var category;
 		if(type==="family"){
-			return 'none';
+			return 'all';
 		}
 		else{
 			var cat1;
@@ -307,7 +307,7 @@ Meteor.methods({
 			elitesBracket:<list of pairId>
 			listBracket:<list of pairID>
 			NOTE : for the family tournament, only one list of pools :
-			list:<list of poolIDs>
+			all:<list of poolIDs>
 		}
 	*/
 	'updateType' : function(typeData) {
@@ -464,7 +464,7 @@ Meteor.methods({
 				}
 			});
 		}
-		
+
 
 		if(!courtId){
 
@@ -663,7 +663,13 @@ Meteor.methods({
 		}
 
 		// Write data on the DB
-		var writeResult = Meteor.users.update({_id: userData._id} , {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, $set: data}, {upsert: true});
+		var writeResult;
+		if(data["profile.isStaff"]!=undefined || data["profile.isAdmin"]!= undefined) {
+			writeResult = Meteor.users.update({_id: userData._id} , {$setOnInsert: { 'profile.isAdmin':data["profile.isAdmin"] , 'profile.isStaff': data["profile.isStaff"]}, $set: data}, {upsert: true});
+		}
+		else {
+			writeResult = Meteor.users.update({_id: userData._id} , {$setOnInsert: { 'profile.isAdmin': false, 'profile.isStaff': false }, $set: data}, {upsert: true});
+		}
 		if(writeResult.writeConcernError){
 			console.error('updateUser : ' + writeResult.writeConcernError.code + " " + writeResult.writeConcernError.errmsg);
 			return;
@@ -814,29 +820,29 @@ Meteor.methods({
 		If you supply the category (and no player), make sure it fits the category of both players --> not checked.
 		The category will be automatically checked and set if you provide at least a player.
 		The update fails if both players are not of the same category or if the supplied category does not fit the player.
-		/!\ For a the family type tournament, the category should be "none"
+		/!\ For a the family type tournament, the category should be "all"
 		A pair is structured as follows:
 		{
 			_id:<id>,
 			player1:{
 				_id:<userID>,
 				extras:{
-					BBQ:<bbq>
+					<name>:<number>
 				},
 				wish:<wish>,
 				constraint:<constraint>
-			}
+			},
 			player2:{
 				_id:<userID>,
 				extras:{
-					BBQ:<bbq>
+					<name>:<number>
 				},
 				wish:<wish>,
 				constraint:<constraint>
-			}
+			},
 			tournament :[<pointsRound1>, <pointsRound2>, ....],
 			tournamentCourts:[<courtForRound1>, ...],
-			day: family | saturday | sunday
+			day: family | saturday | sunday ,
 			category: <category>
 		}
 		@return : the pair id if successful, otherwise returns false
@@ -871,6 +877,9 @@ Meteor.methods({
 			data.category = pairData.category;
 		}
 
+		//Amount for extras
+		var extrasAmount = [];
+
 		// Player = player1 or player2
 		// Returns false only when an error occurs, otherwise true
 		setPlayerData = function(player){
@@ -892,6 +901,9 @@ Meteor.methods({
 			if(pData['extras']){
 				extr = {};
 				var count = 0;
+
+				var extrAmount = 0;
+
 				var dataExtras = pData['extras'];
 
 				var extras = Extras.find().fetch();
@@ -899,7 +911,10 @@ Meteor.methods({
 				for(var i=0;i<extras.length;i++){
 
 					if(dataExtras[extras[i].name]){
-						extr[extras[i].name] = dataExtras[extras[i].name];
+						var currentExtraNumber = dataExtras[extras[i].name]
+						extr[extras[i].name] = currentExtraNumber;
+
+						extrAmount += currentExtraNumber * extras[i].price;			// Add number * price to amount
 						count = count+1;
 					}
 				}
@@ -907,6 +922,7 @@ Meteor.methods({
 				if(count>0){
 					p['extras'] = extr;
 				}
+				extrasAmount[player] = extrAmount;
 			}
 
 			data[player] = p;
@@ -930,7 +946,15 @@ Meteor.methods({
 		//Payments: add to the Payments collection
 		var amount = REGISTRATION_PRICE;
 
-		//TODO: add extras to amount
+		//Add extras to amount
+		if(check1 && pairData["player1"].extras)
+		{
+			amount += extrasAmount["player1"];
+		}
+		else if(check2 && pairData["player2"].extras)
+		{
+			amount += extrasAmount["player2"];
+		}
 
 		paymentData = {
 			userID : Meteor.userId(),
@@ -1352,7 +1376,7 @@ Meteor.methods({
 		data._id = poolID;
 		data.type=type;
 		data.pairs = pairs;
-		if(!pool.leader){
+		if(pool.leader==undefined){
 			data.leader=pair.player1._id;
 		}
 		Meteor.call('updatePool', data);

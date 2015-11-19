@@ -1,12 +1,34 @@
 typeKeys = ["men", "women", "mixed", "family"];
-categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites"];
-categoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites"};
+categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites", "all"];
+categoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites", "all":"familyCategory"};
 typesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
 paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
+surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
 tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
-tournamentYear = "2015";
+
+// One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
+MAX_FAMILY_AGE = 15;
+MIN_FAMILY_AGE = 25;
+
+/*
+    @param birthDate of the player for which we want to know if he is accepted into the family tournament
+*/
+acceptForFamily = function(birthDate){
+    age = getAge(birthDate);
+    return age<=MAX_FAMILY_AGE || age>=MIN_FAMILY_AGE;
+}
+
+/*
+    @returns true if the 2 players whose birthDates are given can play together at the family tournament
+*/
+acceptPairForFamily = function(birthDate1, birthDate2){
+    age1 = getAge(birthDate1);
+    age2 = getAge(birthDate2);
+
+    return (age1<=MAX_FAMILY_AGE && age2>= MIN_FAMILY_AGE) || (age2<=MAX_FAMILY_AGE && age1>= MIN_FAMILY_AGE);
+}
 
 /*
 * @param age is of type int
@@ -61,6 +83,8 @@ getCategory = function(age){
             return undefined;
     }
 }
+
+
 
 /*
  *  @param birthDate is of type Date

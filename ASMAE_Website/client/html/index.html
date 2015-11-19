@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="icon" href="/favicon.ico" />
 </head>
 
 <template name="index">
@@ -33,6 +34,9 @@
             <li><a href="https://twitter.com/asmae_ong" target="_blank">Twitter</a></li>
             <li><a href="https://plus.google.com/111823322896172247261/about" target="_blank"> Google+ </a></li>
           </ul>
+          {{#if currentUser}}
+    	  <button id="popdb" class="btn btn-lg btn-default" style="margin-left: 20px" type="button"> populateDB</button>
+    	  {{/if}}
         </div>
         <div class="col-md-4">
         <h3>Présentation</h3>
