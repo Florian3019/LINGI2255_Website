@@ -6,13 +6,11 @@ function getFormData(){
 	var user = Meteor.user();
 	var extras = getExtras();
 
-					//TODO : gerer les extras dynamiquement + prix du tournoi
-
-  var data = {
-    firstName : user.profile.firstName,
-    lastName : user.profile.lastName,
-    email : user.emails[0].address,
-  };
+  	var data = {
+    	firstName : user.profile.firstName,
+    	lastName : user.profile.lastName,
+    	email : user.emails[0].address,
+  	};
 	if(extras)
 	{
 		data.extras = extras;

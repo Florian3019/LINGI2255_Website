@@ -464,7 +464,7 @@ Meteor.methods({
 				}
 			});
 		}
-		
+
 
 		if(!courtId){
 
@@ -821,22 +821,22 @@ Meteor.methods({
 			player1:{
 				_id:<userID>,
 				extras:{
-					BBQ:<bbq>
+					<name>:<number>
 				},
 				wish:<wish>,
 				constraint:<constraint>
-			}
+			},
 			player2:{
 				_id:<userID>,
 				extras:{
-					BBQ:<bbq>
+					<name>:<number>
 				},
 				wish:<wish>,
 				constraint:<constraint>
-			}
+			},
 			tournament :[<pointsRound1>, <pointsRound2>, ....],
 			tournamentCourts:[<courtForRound1>, ...],
-			day: family | saturday | sunday
+			day: family | saturday | sunday ,
 			category: <category>
 		}
 		@return : the pair id if successful, otherwise returns false
@@ -871,6 +871,9 @@ Meteor.methods({
 			data.category = pairData.category;
 		}
 
+		//Amount for extras
+		var extrasAmount = [];
+
 		// Player = player1 or player2
 		// Returns false only when an error occurs, otherwise true
 		setPlayerData = function(player){
@@ -892,6 +895,9 @@ Meteor.methods({
 			if(pData['extras']){
 				extr = {};
 				var count = 0;
+
+				var extrAmount = 0;
+
 				var dataExtras = pData['extras'];
 
 				var extras = Extras.find().fetch();
@@ -899,7 +905,10 @@ Meteor.methods({
 				for(var i=0;i<extras.length;i++){
 
 					if(dataExtras[extras[i].name]){
-						extr[extras[i].name] = dataExtras[extras[i].name];
+						var currentExtraNumber = dataExtras[extras[i].name]
+						extr[extras[i].name] = currentExtraNumber;
+
+						extrAmount += currentExtraNumber * extras[i].price;			// Add number * price to amount
 						count = count+1;
 					}
 				}
@@ -907,6 +916,7 @@ Meteor.methods({
 				if(count>0){
 					p['extras'] = extr;
 				}
+				extrasAmount[player] = extrAmount;
 			}
 
 			data[player] = p;
@@ -930,7 +940,15 @@ Meteor.methods({
 		//Payments: add to the Payments collection
 		var amount = REGISTRATION_PRICE;
 
-		//TODO: add extras to amount
+		//Add extras to amount
+		if(check1 && pairData["player1"].extras)
+		{
+			amount += extrasAmount["player1"];
+		}
+		else if(check2 && pairData["player2"].extras)
+		{
+			amount += extrasAmount["player2"];
+		}
 
 		paymentData = {
 			userID : Meteor.userId(),
