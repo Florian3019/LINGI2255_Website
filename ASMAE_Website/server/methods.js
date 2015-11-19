@@ -62,7 +62,7 @@ Meteor.methods({
          	});
 		}
 		else {
-			console.error("updateCourt : You don't have the permissions to update a court !");
+			console.error("Error turning admin");
 			return false;
 		}
 	},
@@ -73,7 +73,7 @@ Meteor.methods({
          	});
 		}
 		else {
-			console.error("updateCourt : You don't have the permissions to update a court !");
+			console.error("Error turnning staff");
 			return false;
 		}
 
@@ -85,7 +85,7 @@ Meteor.methods({
 	      	});
 		}
 		else {
-			console.error("updateCourt : You don't have the permissions to update a court !");
+			console.error("Error turning normal");
 			return false;
 		}
 	},
@@ -113,7 +113,7 @@ Meteor.methods({
 	/*
 	* @param birthDate is of type Date
 	*/
-	'getCategory' : function(birthDate, family){
+	'getCategory' : function(birthDate){
 		var age = Meteor.call('getAge', birthDate, undefined);
 		if(age < 9){
 			return undefined;
@@ -142,7 +142,7 @@ Meteor.methods({
 	'getPairCategory' : function(type, p1, p2){
 		var category;
 		if(type==="family"){
-			return 'none';
+			return 'all';
 		}
 		else{
 			var cat1;
@@ -307,7 +307,7 @@ Meteor.methods({
 			elitesBracket:<list of pairId>
 			listBracket:<list of pairID>
 			NOTE : for the family tournament, only one list of pools :
-			list:<list of poolIDs>
+			all:<list of poolIDs>
 		}
 	*/
 	'updateType' : function(typeData) {
@@ -820,7 +820,7 @@ Meteor.methods({
 		If you supply the category (and no player), make sure it fits the category of both players --> not checked.
 		The category will be automatically checked and set if you provide at least a player.
 		The update fails if both players are not of the same category or if the supplied category does not fit the player.
-		/!\ For a the family type tournament, the category should be "none"
+		/!\ For a the family type tournament, the category should be "all"
 		A pair is structured as follows:
 		{
 			_id:<id>,
