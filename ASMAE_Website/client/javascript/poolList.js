@@ -446,7 +446,12 @@ Template.poolList.events({
 		var category = event.currentTarget.dataset.category;
 		hideSuccessBox(document);
 		Session.set('PoolList/Category', category);
-		Session.set('PoolList/Type', type);
+		if(category==="all"){
+			Session.set('PoolList/Type', "family");
+		}
+		else{
+			Session.set('PoolList/Type', type);
+		}
 		Session.set("PoolList/ChosenScorePool","");
 		Session.set("PoolList/ChosenBrackets","");
 
@@ -1117,41 +1122,45 @@ Template.poolContainerTemplate.events({
 											CategorySelect
 *******************************************************************************************************************/
 
-Template.CategorySelect.helpers({
-	'getTypeCompletion' : function(type){
-		year = Session.get("PoolList/Year");
-		yearSearchData = {};
-		yearSearchData[type] = 1;
-		yearData = Years.findOne({"_id":year}, yearSearchData);
-		typeId = yearData[type];
-		typeData = Types.findOne({"_id":typeId},{"completion":1});
-		if(typeData==undefined || typeData.completion==undefined) return "(?)";
+var typeCompletion = function(type){
+	year = Session.get("PoolList/Year");
+	yearSearchData = {};
+	yearSearchData[type] = 1;
+	yearData = Years.findOne({"_id":year}, yearSearchData);
+	typeId = yearData[type];
+	typeData = Types.findOne({"_id":typeId},{"completion":1});
+	if(typeData==undefined || typeData.completion==undefined) return "(?)";
 
-		typeCompletion = 0;
-		nonEmptyCat = 0;
+	typeCompletion = 0;
+	nonEmptyCat = 0;
 
-		var completionData = typeData["completion"];
-		if(completionData==undefined) return "(?)";
+	var completionData = typeData["completion"];
+	if(completionData==undefined) return "(?)";
 
-		for(var i=0; i<categoriesKeys.length;i++){
-			var cPools = completionData["pools"][categoriesKeys[i]];
-			if(cPools!=undefined){
-				nonEmptyCat+=2;
-				typeCompletion += cPools;
-			}
-			if(completionData["brackets"]!=undefined){
-				var cBrackets = completionData["brackets"][categoriesKeys[i]];
-				if(cBrackets!=undefined){
-					typeCompletion += cBrackets;
-				}
+	for(var i=0; i<categoriesKeys.length;i++){
+		var cPools = completionData["pools"][categoriesKeys[i]];
+		if(cPools!=undefined){
+			nonEmptyCat+=2;
+			typeCompletion += cPools;
+		}
+		if(completionData["brackets"]!=undefined){
+			var cBrackets = completionData["brackets"][categoriesKeys[i]];
+			if(cBrackets!=undefined){
+				typeCompletion += cBrackets;
 			}
 		}
+	}
 
-		completion = (nonEmptyCat==0) ? 0 : typeCompletion/nonEmptyCat;
+	completion = (nonEmptyCat==0) ? 0 : typeCompletion/nonEmptyCat;
 
-		var perc = completion*100;
-		var toReturn = "("+perc.toFixed(0)+"%)";
-		return toReturn;
+	var perc = completion*100;
+	var toReturn = "("+perc.toFixed(0)+"%)";
+	return toReturn;
+}
+
+Template.CategorySelect.helpers({
+	'getTypeCompletion' : function(type){
+		return typeCompletion(type);
 	},
 
 	'getCategories' : function(){
