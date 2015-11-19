@@ -18,9 +18,4 @@ Template.home.events({
 		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isAdmin":false}});
 	},
 
-	'click #popdb' : function(event) {
-		console.log("Populating DB");
-		Meteor.call("populateDB");
-	}
-
 });
