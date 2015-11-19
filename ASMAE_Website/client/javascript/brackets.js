@@ -311,6 +311,7 @@ Template.brackets.helpers({
 
   'getPairs':function(){
     pairs = Session.get('brackets/clicked');
+    if(pairs==undefined) return;
     pair0 = Pairs.findOne({"_id":pairs[0]});
     pair1 = Pairs.findOne({"_id":pairs[1]});
     return [pair0,pair1];

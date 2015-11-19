@@ -13,7 +13,7 @@
                   <li>{{>CategorySelect TYPE="men" DESC="Homme"}}</li>
                   <li>{{>CategorySelect TYPE="women" DESC="Femme"}}</li>
                   <li>{{>CategorySelect TYPE="mixed" DESC="Mixte"}}</li>
-                  <li>{{>poolBracketsSelect ID=TYPE CAT="all" DESC="Familles"}}</li>
+                  <li>{{>poolBracketsSelect ID="family" CAT="all" DESC="Familles"}}</li>
                 {{/with}}
             </ul>
           </div>
@@ -117,7 +117,9 @@
   <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
   <ul class="nav collapse CategoryOption" id="{{TYPE}}" role="menu" aria-labelledby="btn-{{TYPE}}">
     {{#each getCategories}}
-    <li>{{>poolBracketsSelect ID=../TYPE CAT=this.key DESC=this.value}}</li>
+    {{#unless equals this.key "all"}} <!-- avoid family category -->
+      <li>{{>poolBracketsSelect ID=../TYPE CAT=this.key DESC=this.value}}</li>
+    {{/unless}}
     {{/each}}
   </ul>
 </template>
@@ -203,7 +205,7 @@
           <ul class="list-group" data-target="#pairModal{{../pair._id}}" data-toggle="modal">
             <li class="list-group-item pairPlayer {{getColor ../pair/player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}}</li>
           </ul>
-          {{>modalItem PAIR=../pair POOL=../startingPoolId SEX=profile.gender}}
+          {{>modalItem PAIR=../pair POOL=../startingPoolId SEX=profile.gender BIRTHDATE=profile.birthDate}}
           {{/with}}
         </div>
         {{/each}}
@@ -256,7 +258,7 @@
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-              {{#each getAvailableTypes PAIR._id POOL SEX}}
+              {{#each getAvailableTypes PAIR._id POOL SEX BIRTHDATE}}
               <li><a href="#" class="typeChosing">{{this.value}}</a></li>
               {{/each}}
             </ul>

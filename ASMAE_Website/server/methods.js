@@ -1376,7 +1376,7 @@ Meteor.methods({
 		data._id = poolID;
 		data.type=type;
 		data.pairs = pairs;
-		if(!pool.leader){
+		if(pool.leader==undefined){
 			data.leader=pair.player1._id;
 		}
 		Meteor.call('updatePool', data);

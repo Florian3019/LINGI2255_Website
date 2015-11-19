@@ -151,8 +151,10 @@ var mergePlayers = function(document){
 		}
 	}
 	else if(type=="family"){
-		// TODO
-		console.warn("family not yet implemented !");
+		if(!acceptPairForFamily(player1.profile.birthDate, player2.profile.birthDate)){ //(method in constants)
+			console.error("These players can't play together for the family tournament !");
+			return;
+		}
 	}
 
 	// Remove pair2 from pool2
@@ -192,7 +194,7 @@ var updateArrow = function(document, info){
 	if(prevInfo!=undefined){
 		// 1rst level
 		var prevSelected = document.getElementById(prevInfo.type+"_glyphicon_type");
-		prevSelected.setAttribute("style","display:none;");
+		if(prevSelected!=null) prevSelected.setAttribute("style","display:none;");
 		// 2nd level
 		var prevSelected = document.getElementById(prevInfo.type+"_"+prevInfo.category+"_glyphicon_category");
 		prevSelected.setAttribute("style","display:none;");
@@ -203,7 +205,7 @@ var updateArrow = function(document, info){
 
 	// 1rst level
 	var selected = document.getElementById(info.type+"_glyphicon_type");
-	selected.setAttribute("style","display:inline;");
+	if(selected!=null) selected.setAttribute("style","display:inline;");
 	// 2nd level
 	var selected = document.getElementById(info.type+"_"+info.category+"_glyphicon_category");
 	selected.setAttribute("style","display:inline;");
@@ -447,11 +449,9 @@ Template.poolList.events({
 		hideSuccessBox(document);
 		Session.set('PoolList/Category', category);
 		if(category==="all"){
-			Session.set('PoolList/Type', "family");
+			type="family";
 		}
-		else{
-			Session.set('PoolList/Type', type);
-		}
+		Session.set('PoolList/Type', type);
 		Session.set("PoolList/ChosenScorePool","");
 		Session.set("PoolList/ChosenBrackets","");
 
@@ -464,6 +464,9 @@ Template.poolList.events({
 		var category = event.currentTarget.dataset.category;
 		hideSuccessBox(document);
 		Session.set('PoolList/Category', category);
+		if(category==="all"){
+			type="family";
+		}
 		Session.set('PoolList/Type', type);
 		Session.set("PoolList/ChosenBrackets","true");
 		Session.set("PoolList/ChosenScorePool","");
@@ -853,8 +856,9 @@ Template.poolList.helpers({
 
 	'thereIsNoPool' : function(typeData){
 		category = Session.get('PoolList/Category');
+
 		poolList = typeData[category];
-		if(poolList==undefined || poolList.length==0 && category!=undefined){
+		if((poolList==undefined || poolList.length==0) && category!=undefined){
 			setInfo(document, "Pas de poules trouvées pour la catégorie " + categoriesTranslate[Session.get("PoolList/Category")]
 				+ " du type " + typesTranslate[Session.get("PoolList/Type")]
 				+ " de l'année "+Session.get('PoolList/Year'));
@@ -1241,7 +1245,7 @@ Template.poolBracketsSelect.helpers({
 *******************************************************************************************************************/
 
 Template.modalItem.helpers({
-	'getAvailableTypes':function(pairId, poolId, sex){
+	'getAvailableTypes':function(pairId, poolId, sex, birthDate){
 		var toReturn = [];
 		var type = Session.get("PoolList/Type");
 
@@ -1251,12 +1255,8 @@ Template.modalItem.helpers({
 			var key = typeKeys[i];
 			var selected = type===key ? true : false;
 			if( type!==key && ((key==="women" && gender==="women") || (key==="men"&&gender==="men") || key==="family" || key=="mixed")){
-
-				if(key!=="family"){
+				if((key==="family" && acceptForFamily(birthDate)) || key!=="family"){
 					toReturn.push({"key":key, "value":typesTranslate[key], "selected":selected, "pairId":pairId, "poolId":poolId});
-				}
-				else{
-					// TODO, implement family !!!
 				}
 			}
 		}
