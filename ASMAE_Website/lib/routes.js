@@ -236,6 +236,11 @@ Router.route('/recherche-terrain', {
 	template: 'courtSearch'
 });
 
+Router.route('/print', {
+	name: 'printSheets',
+	template: 'printSheets'
+});
+
 Router.route('/terrains', {
 	name: 'courtsList',
 	template: 'courtsList'
