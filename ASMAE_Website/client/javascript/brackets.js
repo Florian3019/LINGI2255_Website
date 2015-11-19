@@ -292,7 +292,7 @@ var setInfo = function(document, msg){
 
 Template.brackets.helpers({
   'getGracketWidth':function(){
-    return 280*Session.get('brackets/rounds');
+    return 350*Session.get('brackets/rounds');
   },
 
   'getType':function(){
@@ -574,9 +574,11 @@ var makeBrackets = function(document){
 
       if(a.pair!=="empty" && a.pair!=="placeHolder" && b.pair==="empty"){
         a.data.score = waiting;
+        a.data.clickable = false;
       }
       else if(b.pair!=="empty" && b.pair!=="placeHolder" && a.pair==="empty"){
         b.data.score = waiting;
+        b.data.clickable = false;
       }
 
       if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
@@ -600,6 +602,7 @@ var makeBrackets = function(document){
       a.data.court = "";
       ultimateWinner = [a.data];
       brackets.push([ultimateWinner]); // Only one pair: the winner
+      newRound = []; // Stop further rounds
     }
 
     thisRound = newRound;
