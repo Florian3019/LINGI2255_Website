@@ -53,10 +53,9 @@
 
 
   <!-- style="display: none" -->
-
-  <!-- {{#with getPool}} must return a list -->
-  {{#each getPool}}
-  id : {{this._id}} <br>
+  {{#each getPool}} <!--return a list -->
+  <!-- id : {{this._id}} <br> -->
+  <br>
   this : {{this}}
   <div>  <!-- Here TODO add an incremental id for div -->
     {{>scoreTable this}}
