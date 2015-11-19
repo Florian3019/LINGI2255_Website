@@ -42,3 +42,9 @@ body {
     -o-background-size: cover;
     background-size: cover;
 }
+
+@media (min-width: 1200px) {
+	.homePage {
+		min-height: 850px;
+	}
+}
