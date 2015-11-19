@@ -153,7 +153,9 @@
           <!-- TODO changer le with par une méthode -->
           {{getStreet POOL.courtId}} <br>
           {{getTown POOL.courtId}} <br>
-          Numéro : {{POOL.courtId}}
+          {{#unless equals POOL.courtId undefined}}
+            Numéro : {{POOL.courtId}}
+          {{/unless}}
           <!-- {{#with getCourt POOL.courtId}}
           {{#if equals this undefined}}
           Pas de Terrain

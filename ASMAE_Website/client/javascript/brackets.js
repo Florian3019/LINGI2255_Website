@@ -2,76 +2,83 @@
 // Do Session.set('brackets/update',Session.get('brackets/update') when you want to update the brackets (and only then).
 
 const react = {reactive: false};
+const emptyCourt = "terrain ?";
+const courtName = "terrain";
+const emptyScore = "";
+const emptyPlayer = "?";
+const placeHolderScore = "/";
+const placeHolderPlayer = "/";
+const placeHolderCourt = "";
+const inGame = "En jeu au ";
+const playerPlaceHolderScore = "Score: --";
+const waiting = "En attente au ";
+
 
 var canModifyCourt = function(pair, round){
-  var ret = pair==undefined || (pair.tournamentCourts==undefined && round==0) || (pair.tournamentCourts!=undefined && round==pair.tournamentCourts.length)
+  var ret = (pair.tournamentCourts==undefined && round==0) || (pair.tournamentCourts!=undefined && round==pair.tournamentCourts.length)
   return ret;
 }
 
 // Takes 2 round data, and returns which court to use for this match.
 var getCourt = function(courts,num){
-  return (courts == undefined ) ? "?" : " (terrain: " + courts[num]+")";
+  return (courts == undefined ) ? emptyCourt : " ("+courtName+": " + courts[num]+")";
 }
 
 /*
   Takes 2 round data, and decides which court to use for this match.
-  This function must edit roundData1.data.courtId and roundData2.data.courtId
+  This function must edit roundData1.data.court and roundData2.data.court
   and reflect the changes made in the database
 */
 var setCourt = function(roundData1, roundData2, round,courts, num){
-  if(a == undefined || b==undefined){
-    return;
-  }
-
   pair1 = roundData1.pair; // Pair object
   pair2 = roundData2.pair; // Pair object
 
-
+  automaticCourt = emptyCourt;
   /*
     Logic to choose the court
   */
-  // if we can't modify the court, either we already did this computation or the user manually set the courtId --> don't touch it
+  // if we can't modify the court, either we already did this computation or the user manually set the court --> don't touch it
   // Can only modify courts in increasing round order (i.e. can't modify round 5 if round 4 is not set)
   if(canModifyCourt(pair1, round) && canModifyCourt(pair2, round)){
-    // Automatically set the courtId, or leave it undefined
-    automaticCourtId = getCourt(courts,num);
-    if(automaticCourtId!=undefined){
+    // Automatically set the court, or leave it undefined
+    automaticCourt = getCourt(courts,num);
+    if(automaticCourt!=emptyCourt){
       if(pair1.tournamentCourts==undefined) pair1.tournamentCourts = [];
       if(pair2.tournamentCourts==undefined) pair2.tournamentCourts = [];
 
-      pair1.tournamentCourts.push(automaticCourtId);
-      pair2.tournamentCourts.push(automaticCourtId);
+      pair1.tournamentCourts.push(automaticCourt);
+      pair2.tournamentCourts.push(automaticCourt);
       Pairs.update({"_id":pair1._id},{$set:{"tournamentCourts":pair1.tournamentCourts}}); // update the db
       Pairs.update({"_id":pair2._id},{$set:{"tournamentCourts":pair2.tournamentCourts}}); // update the db
     }
   }
 
-  if(pair1.tournamentCourts==undefined){
-    // No data
-    console.warn("setCourt : 2 pairs do not have a court to play");
-    console.warn(pair1);
-    console.warn(pair2);
-    console.warn("round "+round);
-    roundData1.data.courtId = undefined;
-    roundData2.data.courtId = undefined;
-    return;
-  }
+  // if(pair1.tournamentCourts==undefined){
+  //   // No data
+  //   console.warn("setCourt : 2 pairs do not have a court to play");
+  //   console.warn(pair1);
+  //   console.warn(pair2);
+  //   console.warn("round "+round);
+  //   roundData1.data.court = emptyCourt;
+  //   roundData2.data.court = emptyCourt;
+  //   return;
+  // }
 
-  courtId = pair1.tournamentCourts[round];
-  if(courtId!=undefined && pair2!=undefined && pair2.tournament!=undefined && courtId!=pair2.tournamentCourts[round]){
-    // Inconsistent data
-    console.error("setCourt : 2 pairs that play together are not on the same court !");
-    console.error(pair1);
-    console.error(pair2);
-    console.error("courtId " + courtId + " round "+round);
-    return;
-  }
-
-  if(roundData1.data != undefined) roundData1.data.courtId = courtId;
-  if(roundData2.data != undefined) roundData2.data.courtId = courtId;
+  // court = pair1.tournamentCourts[round];
+  // if(court!=undefined && pair2!=undefined && pair2.tournament!=undefined && court!=pair2.tournamentCourts[round]){
+  //   // Inconsistent data
+  //   console.error("setCourt : 2 pairs that play together are not on the same court !");
+  //   console.error(pair1);
+  //   console.error(pair2);
+  //   console.error("court " + court + " round "+round);
+  //   return;
+  // }
+  roundData1.data.court = automaticCourt;
+  roundData2.data.court = automaticCourt;
 }
 
 var getPoints = function(pair, round){
+  if(pair.tournament==undefined) return undefined;
   return pair.tournament[round];
 }
 
@@ -81,23 +88,8 @@ var setPoints = function(pair, round, score){
     pair.tournament = [];
   }
 
-  if(round>=pair.tournament.length){
-      // The score is new, so we need to add it to the array
-      if(round==pair.tournament.length){
-        pair.tournament.push(score);
-      }
-      else{
-        console.error("saveScore error : trying to set the score for a round whose previous score isn't set yet");
-        return;
-      }
-    }
-    else{
-      // Score already existed, but is now modified
-      pair.tournament[round] = score;
-    }
-
-
-    Pairs.update({"_id":pair._id}, {$set: {"tournament":pair.tournament}});
+  pair.tournament[round] = score;
+  Pairs.update({"_id":pair._id}, {$set: {"tournament":pair.tournament}});
 }
 
 var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 /!\
@@ -119,8 +111,9 @@ var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 
             "player1":pairPlayer1String.substring(0, MAXSIZE),
             "player2":pairPlayer2String.substring(0, MAXSIZE),
             "id":pair._id,
-            "score": (pair.tournament==undefined || pair.tournament.length<=round) ? "en jeu" : getPoints(pair, round),
+            "score": (pair.tournament==undefined || pair.tournament.length<=round) ? inGame : getPoints(pair, round),
             "round":round,
+            "display":"block",
             "clickable":clickable
     };
 
@@ -128,53 +121,117 @@ var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 
 };
 
 var getPlaceHolder = function(round){
-  return {"player1":"?", "player2":"?", "id":undefined, "score":-5, "round":round, "display":"none" ,'courtId':undefined};
+  return {
+    "pair":"placeHolder", 
+    "data":{
+      "player1":placeHolderPlayer, 
+      "player2":placeHolderPlayer, 
+      "id":undefined, 
+      "score":placeHolderScore, 
+      "round":round, 
+      "display":"block",
+      "clickable":false,
+      "court":placeHolderCourt}
+    };
+}
+
+var getEmpty = function(round, court){
+  return {
+    "pair":"empty",
+    "data":{
+      "player1":emptyPlayer, 
+      "player2":emptyPlayer, 
+      "id":undefined, 
+      "score":emptyScore, 
+      "display":"block",
+      "round":round,
+      "clickable":false,
+      "court": court
+    }
+  };
 }
 
 var setRoundData = function(roundData){
-  newRoundData = {data:{}};
-  newRoundData.pair = roundData.pair;
-  newRoundData.data.player1 = roundData.data.player1;
-  newRoundData.data.player2 = roundData.data.player2;
-  newRoundData.data.id = roundData.data.id;
-  newRoundData.data.clickable = "true";
+  round = roundData.data.round;
+  newRoundData = {
+    "pair":roundData.pair,
+    "data":{
+      "player1":roundData.data.player1, 
+      "player2":roundData.data.player2, 
+      "id":roundData.data.id, 
+      "score":undefined, 
+      "display":"block",
+      "round":round+1,
+      "clickable":roundData.clickable,
+      "court": emptyCourt
+    }
+  };
 
-  s = undefined;
-
-  tournamentLength = 0;
-  if(roundData.pair.tournament!=undefined){
-    tournamentLength = roundData.pair.tournament.length;
-  }
-
-  if(round<tournamentLength){
-    s = getPoints(roundData.pair, round);
-  }
-  else{
-    s = '?';
-  }
+  points = getPoints(roundData.pair, round);
+  s = points==undefined ? emptyScore : points;
 
   // The score to display is the score of the next match !
-  newRoundData.data.score = round+1<tournamentLength ? roundData.pair.tournament[round+1] : 'en jeu';
-  newRoundData.data.round = round+1;
+  nextPoints = getPoints(roundData.pair, round+1);
+  s2 = nextPoints == undefined ? inGame : nextPoints;
+  newRoundData.data.score = s2;
+
   return {"s":s, "r":newRoundData};
 };
+
+var forwardData = function(roundData){
+  round = roundData.data.round;
+  points = getPoints(roundData.pair, round+1);
+  return {
+    "pair":roundData.pair,
+    "data":{
+      "player1":roundData.data.player1, 
+      "player2":roundData.data.player2, 
+      "id":roundData.data.id, 
+      "score":points==undefined ? (roundData.data.player1===emptyPlayer ? emptyScore : inGame) : points,
+      "display":"block",
+      "round":round+1, // increase the round
+      "clickable":true,
+      "court": emptyCourt
+    }
+  };
+}
 
 
 // Round data format : {pair:<pair>, data:<bracketPairData>}
 // Returns the best of the 2 pairs or undefined if the score is not yet known. If score is known, updates roundData with the new score
 var getBestFrom2 = function(roundData1, roundData2, round){
-  if(roundData1==undefined || roundData2==undefined || round==undefined) return undefined;
-  if(roundData1.pair && roundData2.pair && roundData1.pair.tournament && roundData2.pair.tournament && round <= roundData1.pair.tournament.length && round <= roundData2.pair.tournament.length){
-
-      a = setRoundData(roundData1);
-      b = setRoundData(roundData2);
-
-      if(a.s==='?' || b.s==='?') return undefined;
-
-      return a.s > b.s ? a.r : b.r;
+  if(roundData1==undefined || roundData2==undefined || round==undefined){
+    console.error("getBestFrom2 : Undefined data");
+    return;
   }
 
-  return undefined;
+  if(roundData1.pair==="placeHolder" && roundData2.pair==="placeHolder"){
+    return getPlaceHolder(round+1);
+  }
+  else if(roundData1.pair==="placeHolder"){
+    // The other one wins !
+    return forwardData(roundData2);
+  }
+  else if(roundData2.pair==="placeHolder"){
+    // The other one wins !
+    return forwardData(roundData1);
+  }
+
+  if(roundData1.pair==="empty" || roundData2.pair==="empty"){
+    return getEmpty(round+1, undefined);
+  }
+
+  // if(round <= roundData1.pair.tournament.length && round <= roundData2.pair.tournament.length){
+
+  a = setRoundData(roundData1);
+  b = setRoundData(roundData2);
+
+  if(a.s===emptyScore || b.s===emptyScore){
+    empty = getEmpty(round+1, undefined);
+    return empty;
+  }
+
+  return a.s > b.s ? a.r : b.r;
 };
 
 function clearInner(node) {
@@ -235,7 +292,7 @@ var setInfo = function(document, msg){
 
 Template.brackets.helpers({
   'getGracketWidth':function(){
-    return 270*Session.get('brackets/rounds');
+    return 280*Session.get('brackets/rounds');
   },
 
   'getType':function(){
@@ -387,72 +444,83 @@ var getCourts = function(){
   return typeD[cat];
 }
 
+/*
+  Returns the next power of two that is greater than or equal to number
+*/
+var getNextPowerOfTwo = function(number){
+  if(number==0) return 0;
+  var x = 2;
+  while (x<number){
+    x*=2
+  }
+  return x;
+}
+
+/*
+  Takes an array of roundData and puts it into a nicely spread out round array
+*/
+var getTournamentFirstRound = function(pairs){
+  var tournamentSize = getNextPowerOfTwo(pairs.length); // power of 2
+
+  var toReturn = [];
+
+  var m = 0;
+  var k = 0; // Index in pairs
+  for(var i=0; i< tournamentSize; i++){
+    
+    if(k<pairs.length){
+      a = pairs[k];
+      k++;
+    }
+    else{
+      a = getPlaceHolder(0);
+    }
+
+    if(i%2==0){
+      index = m;
+    }
+    else{
+      index = (tournamentSize/2) + m;
+      m++;
+    }
+
+    toReturn[index] = a;
+  }
+
+  return toReturn;
+}
+
+
 var makeBrackets = function(document){
   allWinners = handleBracketErrors(document); // Table of winner pair Id
   if(allWinners==undefined) return;
   /********************************************
     First round creation
   ********************************************/
-   thisRound = []; // {pair:<pair>, data:<bracketPairData>} List of the pairs that made it this round (contains roundData)
 
   /*
     pair display Format :
-    pair = {"player1" : <player1String>, "player2": <player2String>, id" : <pairId>, "score" : <score>, "courId":<courtId>}
+    pair = {"player1" : <player1String>, "player2": <player2String>, id" : <pairId>, "score" : <score>, "court":<court>}
     pairs in firstRound : [item1, item2] representing a knock off match with pair1 against pair2
   */
-  firstRound = [];
 
   var courts = getCourts();
 
   var matchesCompleted = 0;
-  var totalMatches = 0;
   var nextMatchNum = 0;
 
-  /*
-    Create the firstRound
-  */
-  for(var i=0; i+1<allWinners.length;i+=2){ // Take them 2 by 2
+  var pairData = [];
+  for(var i=0; i<allWinners.length;i++){
     pairId = allWinners[i];
-    pair1 = Pairs.findOne({_id:pairId},{reactive:false});
-    data1 = getBracketData(pair1,0, "true");
-
-    if(i+1<allWinners.length){
-      pairId2 = allWinners[i+1];
-      pair2 = Pairs.findOne({_id:pairId2},{reactive:false});
-      data2 = getBracketData(pair2,0, "true");
-      a = {"pair":pair1, "data":data1};
-      b = {"pair":pair2, "data":data2};
-
-      if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
-
-      setCourt(a, b, 0, courts,nextMatchNum);
-      firstRound.push([a.data, b.data]);
-
-      thisRound.push(a);
-      thisRound.push(b);
-      nextMatchNum++;
-    }
+    pair = Pairs.findOne({_id:pairId},{reactive:false});
+    data = getBracketData(pair,0, "true");
+    pairData.push({"pair":pair, "data":data});
   }
 
-  if(allWinners.length%2 != 0){
-      // Uneven number of pairs !
-      last = allWinners[allWinners.length-1];
-      lastPair = Pairs.findOne({_id:last},{reactive:false});
-      lastData = getBracketData(lastPair,0, "false");
+  // {pair:<pair>, data:<bracketPairData>} List of the pairs that made it this round (contains roundData)
+  thisRound = getTournamentFirstRound(pairData); // Size of a power of 2 
 
-      setPoints(lastPair, 0, 0); // Set points for round 0 to 0, since this pair is forwarded to next round
-      lastData.score = 0;
-
-      a = {"pair":lastPair, "data":lastData};
-
-      thisRound.push(a);
-      firstRound.push([a.data, getPlaceHolder(0)]);
-    }
-
-  totalMatches += firstRound.length;
-
-  brackets = [firstRound];
-
+  brackets = [];
   /********************************************
     Other rounds creation
   ********************************************/
@@ -460,99 +528,79 @@ var makeBrackets = function(document){
   /*
     Fill the rest of the rounds with "?" or the score
   */
-  empty = {"player1":"?", "player2":"?", "id":undefined, "score":"?", "round":undefined, 'courtId':undefined};
 
   round = 0;
   while(thisRound.length>1){
     newRound = []; // list of roundData
 
-    // Select the best pair from the 2 for each match
-    for(var i=0; i+1<thisRound.length ; i+=2){
-      best = getBestFrom2(thisRound[i], thisRound[i+1], round);
-
-      // If this is the last pair to add to this round and that by adding it, we make an uneven number of pairs in this round
-      if(i+1==thisRound.length-1 && newRound.length%2==0 && best!=undefined){
-        // Forward the points of this round to the next for this pair
-        if(thisRound[i].data.id === best.data.id) best.data.score = thisRound[i].data.score;
-        else best.data.score = thisRound[i+1].data.score;
-
-        best.data.clickable = "false";
-
-        if(hasPoints(best)){
-          setPoints(best.pair, round+1, best.data.score);
-        }
+    if(round>0){
+      // Select the best pair from the 2 for each match
+      for(var i=0; i+1<thisRound.length ; i+=2){
+        best = getBestFrom2(thisRound[i], thisRound[i+1], round);
+        newRound.push(best); // best contains a pair and its display data
       }
-      newRound.push(best); // best contains a pair and its display data
     }
-
-    if(thisRound.length%2 != 0){
-      // Uneven number of pairs !
-      last = thisRound[thisRound.length-1];
-      var last2 = undefined;
-      if(last!=undefined) last2 = setRoundData(last).r;
-
-      // If, furthermore, this pair will not be able to play for this round (it will be with a placeHolder)
-      // Forward its points to the next round and set it as unclickable
-      if(newRound.length%2==0 &&  newRound.length!=1){
-        last2.data.clickable = "false";
-        setPoints(last2.pair, round+1, last.data.score);
-        last2.data.score = last.data.score;
-      }
-
-      newRound.push(last2);
+    else{
+      newRound = thisRound;
     }
 
     // For each selected pair, convert that pair into an object that can be displayed
-    nextRound = []; // contains objects that are going to be displayed
-    for(var i=0; i+1<newRound.length ; i+=2, round){
+    displayData = []; // contains objects that are going to be displayed
+    for(var i=0; i+1<newRound.length ; i+=2){
       // a plays against b
       a = newRound[i];
       b = newRound[i+1];
 
-      setCourt(a, b, round+1,courts,nextMatchNum); // Define which court to use for that match
+      if(a.pair!=="placeHolder" && b.pair!=="placeHolder"){
+        setCourt(a, b, round,courts,nextMatchNum); // Define which court to use for that match
+        nextMatchNum++;
+      }
+      else if(a.pair==="placeHolder" && b.score!==emptyScore && b.pair!=="placeHolder"){
+        // b is playing against a placeHolder
+        b.data.clickable = false;
+        b.data.court = "";
+        if(round==0){
+          b.data.score = playerPlaceHolderScore;
+        }
+      }
+      else if(a.pair!=="placeHolder" && a.score!==emptyScore && b.pair==="placeHolder"){
+        // a is playing against a placeHolder
+        a.data.clickable = false;
+        a.data.court = "";
+        if(round==0){
+          a.data.score = playerPlaceHolderScore;
+        }
+      }
+
+      if(a.pair!=="empty" && a.pair!=="placeHolder" && b.pair==="empty"){
+        a.data.score = waiting;
+      }
+      else if(b.pair!=="empty" && b.pair!=="placeHolder" && a.pair==="empty"){
+        b.data.score = waiting;
+      }
 
       if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
 
-      empty = {"player1":"?", "player2":"?", "id":undefined, "score":"?", "round":undefined, 'courtId': courts== undefined ? "(terrain: ?)" : " (terrain: " + courts[nextMatchNum]+")"};
-      nextMatchNum++;
-
-      nextRound.push([a==undefined ? empty:a.data, b==undefined ? empty:b.data]);
+      displayData.push([a.data, b.data]);
     }
-
-    if(newRound.length%2 != 0 && newRound.length!=1){
-      // Uneven number of matches !
-      last = newRound[newRound.length-1];
-
-      if(hasPoints(last)) matchesCompleted += 1; // This is completed by default since there is no oppononent to fight
-      nextRound.push([last==undefined ? empty:last.data, getPlaceHolder(round+1)]);
-    }
-
-    totalMatches += nextRound.length;
 
     // Add that object to the list of stuff to display
-    if(nextRound.length>0) brackets.push(nextRound);
+    if(displayData.length>0) brackets.push(displayData);
 
     // If newRound.length == 1 --> we are at the last 2 pairs of the tournament and need to display the winner
-    if(newRound.length==1){
-      // If there are only 2 pairs in the tournament, we need to take the information from the firstRound (or in this case thisRound)
-      // If there are only 2 pairs in the tournament, we need to take the information from the newly created round
-      // a = newRound.length==1 ? getBestFrom2(thisRound[0], thisRound[1], round) : getBestFrom2(newRound[0], newRound[1], round+1);
-      // r = newRound.length==1 ? round : round+1;
+    if(thisRound.length==2){
       a = getBestFrom2(thisRound[0], thisRound[1], round);
-      r = round;
-
-      if(a!=undefined){
-        if(r<a.pair.tournament.length){
-          a.data.score = 'Gagnant';
-          // a.data.score = getPoints(pair, r);
-        }
-        else{
-          a.data.score = '?';
-        }
+      if(getPoints(a.pair, round)!==undefined){
+        a.data.score = 'Gagnant';
       }
-      empty = {"player1":"?", "player2":"?", "id":undefined, "score":"?", "round":undefined, 'courtId':""};
-      ultimateWinner = [a==undefined ? empty:a.data];
+      else{
+        a.data.score = emptyScore;
+      }
+      a.data.clickable = false;
+      a.data.court = "";
+      ultimateWinner = [a.data];
       brackets.push([ultimateWinner]); // Only one pair: the winner
+      newRound = []; // Stop further rounds
     }
 
     thisRound = newRound;
@@ -561,7 +609,7 @@ var makeBrackets = function(document){
 
   Session.set("brackets/rounds",round+1);
 
-  completionPercentage = (totalMatches==0) ? 0 : matchesCompleted/totalMatches;
+  completionPercentage = (nextMatchNum==0) ? 0 : matchesCompleted/nextMatchNum;
   setCompletion(completionPercentage);
 
   return brackets;
@@ -599,7 +647,7 @@ Template.brackets.events({
     clickable = event.currentTarget.dataset.clickable;
     if(clickable==="false") return;
     round = event.currentTarget.dataset.round; // if undefined --> means '?'
-    courtId = event.currentTarget.dataset.courtid; // can be undefined
+    // court = event.currentTarget.dataset.court; // can be undefined
 
     // Display modal to edit the score
     if(round!=undefined){ // Only allow to click on pairs that are not "?"
