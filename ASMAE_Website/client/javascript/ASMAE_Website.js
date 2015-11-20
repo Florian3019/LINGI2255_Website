@@ -22,8 +22,6 @@
     */
     passwordSignupFields: 'EMAIL_ONLY',
 
-
-
     /*
       Additional signup fiels required when creating a new account
       TODO : edit this for our needs
@@ -67,7 +65,6 @@
     // }]
 
 
-
   });
 
   Template._loginButtonsLoggedInDropdownActions.helpers({
@@ -84,6 +81,7 @@
       return !(user.services.google || user.services.facebook);
     }
   });
+
 
   // On logout, go back to the home page
   accountsUIBootstrap3.logoutCallback = function(error) {

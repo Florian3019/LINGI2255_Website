@@ -1,6 +1,11 @@
 @media (min-width: 981px) {
 	body {
-		padding-top: 30px;
+		padding-top: 50px;
 		/*background: #FF9900; */
+	}
+
+	.nopadding {
+   		padding: 0 !important;
+   		margin: 0 !important;
 	}
 }
