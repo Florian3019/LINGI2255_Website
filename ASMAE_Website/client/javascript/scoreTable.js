@@ -22,7 +22,6 @@ Template.scorePage.helpers({
 Template.scoreTable.helpers({
   // Returns a list of pairs that are in this pool
   'getPairs' : function(poolId){
-    console.log(poolId);
     var pairList = [];
     var pool = Pools.findOne({_id:poolId},{reactive:false});
     if(!pool){
@@ -222,6 +221,9 @@ Template.scorePage.events({
     for (var i = 0; i < inpt.length; i++) {
       inpt[i].setAttribute('type','hidden');
     }
+    // var tab = document.getElementById("scoreTab");
+    // tab.style.background='#fff';
+    console.log($("#scoreTab"));
     pdf.addHTML($("#scoreTab").css('background', '#fff'),
     30,
     250,
@@ -234,7 +236,6 @@ Template.scorePage.events({
       pdf.text("Cette feuille doit être remise au quartier général à la fin de la poule.",margins.left, pdf.internal.pageSize.height - 30);
       pdf.text("En cas de problème quelconque, n'hésitez pas de nous contacter par téléphone au numéro: +32 (0)2 742 03 01 ",margins.left, pdf.internal.pageSize.height - 10);
 
-
       pdf.output('save', 'filename.pdf'); //TODO filename = annee + cateorie+ numeterrain
       // pdf.output('dataurlnewwindow');
       /*
@@ -242,13 +243,16 @@ Template.scorePage.events({
       */
       // var string = pdf.output('datauristring');
       // document.getElementsByClassName('preview-pane')[0].setAttribute('src', string);
+      // tab.style.background='transparent';
       $("#scoreTab").css('background', 'transparent');
-      $("#scoreTab").css('width', 'auto');
-      $("#scoreTab").css('height', 'auto');
+      // $("#scoreTab").css('width', 'auto');
+      // $("#scoreTab").css('height', 'auto');
       for (var i = 0; i < inpt.length; i++) {
         inpt[i].setAttribute('type','number');
       }
 
     });
+
+
   }
 });
