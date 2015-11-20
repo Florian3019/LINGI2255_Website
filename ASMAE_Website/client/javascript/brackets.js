@@ -512,6 +512,44 @@ var getOrder = function(size){
   }
 
 /*
+  Returns the order in which to fill the first round of the tournament
+*/
+var getOrder = function(size){
+
+  var partial = function(n ,ni,result){
+
+    var half = result.length/2;
+
+    for(var i=0;i<ni;i++){
+      result[ni+i] = result[i]+n;
+      result[half+ni+i] = result[half+i]+n;
+    }
+  }
+
+  var result=[];
+
+  for(var k=0;k<size;k++){
+    if(k==size/2){
+      result.push(1);
+    }
+    else{
+      result.push(0);
+    }
+  }
+
+  var n=size/2;
+  var ni=1;
+
+  while(n>1){
+    partial(n,ni,result);
+    n=n/2;
+    ni=ni*2;
+  }
+
+  return result;
+}
+
+/*
   Takes an array of roundData and puts it into a nicely spread out round array
 */
 var getTournamentFirstRound = function(pairs){
@@ -519,7 +557,9 @@ var getTournamentFirstRound = function(pairs){
 
   var toReturn = [];
 
-  var m = 0;
+  var indexTable = getOrder(tournamentSize);
+
+  console.log(indexTable);
   var k = 0; // Index in pairs
   for(var i=0; i< tournamentSize; i++){
     
@@ -530,15 +570,7 @@ var getTournamentFirstRound = function(pairs){
     else{
       a = getPlaceHolder(0);
     }
-
-    if(i%2==0){
-      index = m;
-    }
-    else{
-      index = (tournamentSize/2) + m;
-      m++;
-    }
-
+    index = indexTable[i];
     toReturn[index] = a;
   }
 
