@@ -112,7 +112,7 @@ Meteor.methods({
         /*
          * Returns two dates for players competing in a certain type and a certain category
          */
-        function getDates(type, category) {
+        function getDates(type, category, alone) {
             var bounds;
             var year1, year2, month1, month2, day1, day2, date1, date2;
             year1 = getRandomInt(1960,2005);
@@ -125,31 +125,52 @@ Meteor.methods({
                 bounds = [8,16,24,80];
 				birthDate1 = new Date(year1, month1, day1);
 				birthDate2 = new Date(year2, month2, day2);
-				while(!acceptPairForFamily(birthDate1,birthDate2)) {
-					year1 = tournamentDate.getFullYear() - getRandomInt(bounds[0],bounds[1]+1);
-	                year2 = tournamentDate.getFullYear() - getRandomInt(bounds[2],bounds[3]+1);
-					month1 = getRandomInt(0,12);
-                    day1 = getRandomInt(0,29);
-					month2 = getRandomInt(0,12);
-                    day2 = getRandomInt(0,29);
-					birthDate1 = new Date(year1, month1, day1);
-					birthDate2 = new Date(year2, month2, day2);
+				if (alone) {
+					while(!acceptForFamily(birthDate1)) {
+						// Probability 0.5 to be the young
+						if (getRandomInt(0,1)===0) {
+							year1 = tournamentDate.getFullYear() - getRandomInt(bounds[0],bounds[1]+1);
+						}
+						else {
+							year1 = tournamentDate.getFullYear() - getRandomInt(bounds[2],bounds[3]+1);
+						}
+	                    month1 = getRandomInt(0,12);
+	                    day1 = getRandomInt(0,29);
+						birthDate1 = new Date(year1,month1,day1);
+					}
+					return birthDate1;
+				}
+				else {
+					while(!acceptPairForFamily(birthDate1,birthDate2)) {
+						year1 = tournamentDate.getFullYear() - getRandomInt(bounds[0],bounds[1]+1);
+		                year2 = tournamentDate.getFullYear() - getRandomInt(bounds[2],bounds[3]+1);
+						month1 = getRandomInt(0,12);
+	                    day1 = getRandomInt(0,29);
+						month2 = getRandomInt(0,12);
+	                    day2 = getRandomInt(0,29);
+						birthDate1 = new Date(year1, month1, day1);
+						birthDate2 = new Date(year2, month2, day2);
+					}
+					return [new Date(year1, month1, day1), new Date(year2, month2, day2)];
 				}
             }
-            else {
+            else { // Not family
                 bounds = getAgeBoundsForCategory(category);
                 while (getCategory(getAgeNoDate(year1,month1,day1)) !== category) {
                     year1 = tournamentDate.getFullYear() - getRandomInt(bounds[0],bounds[1]+1);
                     month1 = getRandomInt(0,12);
                     day1 = getRandomInt(0,29);
                 }
-                while (getCategory(getAgeNoDate(year2,month2,day2)) !== category) {
-                    year2 = tournamentDate.getFullYear() - getRandomInt(bounds[0],bounds[1]+1);
-                    month2 = getRandomInt(0,12);
-                    day2 = getRandomInt(0,29);
-                }
+				if (!alone) {
+					while (getCategory(getAgeNoDate(year2,month2,day2)) !== category) {
+	                    year2 = tournamentDate.getFullYear() - getRandomInt(bounds[0],bounds[1]+1);
+	                    month2 = getRandomInt(0,12);
+	                    day2 = getRandomInt(0,29);
+	                }
+					return [new Date(year1, month1, day1), new Date(year2, month2, day2)];
+				}
+				return new Date(year1, month1, day1);
             }
-            return [new Date(year1, month1, day1), new Date(year2, month2, day2)];
         }
 
 		function insertCourts(nbr) {
@@ -177,7 +198,7 @@ Meteor.methods({
 
 		function insertUnregisteredAccounts(nbr) {
 			for (var i=0; i<nbr; i++) {
-				var email = "aloneUser"+i+"@user.com";
+				var email = "unregisteredUser"+i+"@user.com";
 				if (Accounts.findUserByEmail(email)!==undefined) {
 					continue;
 				}
@@ -206,9 +227,15 @@ Meteor.methods({
 	            }
 			}
 
-            var dates = getDates(type, category);
-            var date1 = dates[0];
-            var date2 = dates[1];
+            var dates = getDates(type, category, alone);
+			var date1, date2;
+			if (alone) {
+				date1 = dates;
+			}
+			else {
+				date1 = dates[0];
+				date2 = dates[1];
+			}
 
             var firstname1, firstname2;
             var gen1, gen2;
@@ -277,17 +304,6 @@ Meteor.methods({
                 gender:gen1
             };
 
-            var profile2 = {
-                firstName: firstname2,
-                lastName:lastnames[getRandomInt(0,nData)],
-                phone:phone2,
-                birthDate:date2,
-                AFT:AFTs[getRandomInt(0,n_AFTs)],
-                isStaff:false,
-                isAdmin:false,
-                gender:gen2
-            };
-
             var userID1 = Accounts.createUser({
                            email : email1,
                            password : "passpass",
@@ -296,6 +312,17 @@ Meteor.methods({
 			Accounts.addEmail(userID1, email1, true);
 
 			if (!alone) {
+				var profile2 = {
+	                firstName: firstname2,
+	                lastName:lastnames[getRandomInt(0,nData)],
+	                phone:phone2,
+	                birthDate:date2,
+	                AFT:AFTs[getRandomInt(0,n_AFTs)],
+	                isStaff:false,
+	                isAdmin:false,
+	                gender:gen2
+	            };
+
 				var userID2 = Accounts.createUser({
 	                          email : email2,
 	                          password : "passpass",
@@ -349,12 +376,15 @@ Meteor.methods({
         for (var j=0; j<nTypes[3]; j++) {
             createPair(typeKeys[3],"doesnotmatterwhatiputhere");
         }
+
 		console.log("popDB populates type family with alone players");
-		for (var j=0; i<nAlones[3]; j++) {
+		for (var j=0; j<nAlones[3]; j++) {
 			createPair(typeKeys[3],"doesnotmatterwhatiputhere",true);
 		}
 
+		console.log("popDB populates staff and admin members");
 		insertStaffAndAdminMembers(nStaff,nAdmin);
+		console.log("popDB populates unregistered accounts");
 		insertUnregisteredAccounts(nUnregistered);
 
 		//insertCourts(70);

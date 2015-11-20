@@ -7,8 +7,20 @@ Template.index.helpers({
 		{
 			return '';
 		}
+	},
+
+	'isStaffMember': function(){
+		if(Meteor.user())
+		{
+			return (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin);
+		}
+		else
+		{
+			return false;
+		}
 	}
 });
+
 
 Template.index.events({
 	'click #popdb' : function(event) {

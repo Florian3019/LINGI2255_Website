@@ -14,11 +14,43 @@
 
 <template name="index">
     {{> navigation}}
+
+    {{#if isStaffMember}} 
+    <div class="container-fluid">
+      <div class="row body">
+        <div class="col-md-2 nopadding sidebar">
+          <ul class="nav nav-sidebar">
+            <li><a href="{{pathFor route='poolList'}}">Gestion du tournoi</a></li>
+            <li><a href="{{pathFor route='modifyExtras'}}">Modifier les extras</a></li>
+
+            <br>
+            <li><a href="{{pathFor route='playersInfo'}}">Information sur les joueurs</a></li>
+            <li><a href="{{pathFor route='staffManagement'}}">Questions des joueurs</a></li>
+            <br>
+            <li><a href="{{pathFor route='courtSearch'}}">Information sur les terrains</a></li>
+            <li><a href="{{pathFor route='adminAddCourt'}}">Ajouter un terrain</a></li>
+            <li><a href="{{pathFor route='courtEmail'}}">Envoi de mail aux gestionnaires de terrains</a></li>
+            <br>
+            <li><a href="{{pathFor route='adminTemplate'}}">Page administrateur</a></li>
+            <li><a href="{{pathFor route='modificationsLog'}}">Log des modifications</a></li>
+          </ul>
+        </div>
+        <div class="col-md-10 nopadding main">
+          <div class="jumbotron {{isHomePage}}">
+            <div class="container">
+              {{> yield}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{else}}
     <div class="jumbotron {{isHomePage}}">
       <div class="container">
         {{> yield}}
       </div>
     </div>
+    {{/if}}
     <div class="container">
       <div class="row">
         <div class="col-md-4">
