@@ -472,6 +472,10 @@ Template.poolList.events({
 		Session.set("PoolList/ChosenScorePool","");
 		Session.set("PoolList/ChosenBrackets","");
 
+		// Hide previous error message, if any
+		mergeErrorBox = document.getElementById("mergeErrorBox");
+		if(mergeErrorBox!=null && mergeErrorBox != undefined) mergeErrorBox.style.display = "none";
+
 		var info = {"type":type, "category":category, "isPool":true};
 		updateArrow(document, info);
 	},
