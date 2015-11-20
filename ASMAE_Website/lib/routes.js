@@ -76,13 +76,6 @@ Router.route('/mon-inscription', {
 	}
 });
 
-Router.route('/login', {
-	name: 'login',
-	template: 'login'
-});
-
-
-
 Router.route('/inscription-tournoi',  {
 	name: 'tournamentRegistration',
 	template: 'tournamentRegistration',
