@@ -144,33 +144,33 @@
 <!-- Takes 1 argument : the pool -->
 <template name="poolContainerTemplate">
   <td>
-    <div class='parent'>
       <h3>
-        {{#unless moreThanOnePair POOL.pairs}}
-        <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}">
-          <span class="glyphicon glyphicon-remove removePoolButton" aria-hidden="true"></span>
-        </button>
+      {{#unless moreThanOnePair POOL.pairs}}
+      <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}">
+        <span class="glyphicon glyphicon-remove removePoolButton" aria-hidden="true"></span>
+      </button>
+      {{/unless}}
+      {{#if moreThanOnePair POOL.pairs}}
+      <button type="button" class="btn btn-default btn-lg scoreButton" data-poolId="{{POOL._id}}">
+        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> <br>
+        <!-- TODO changer le with par une méthode -->
+        {{getStreet POOL.courtId}} <br>
+        {{getTown POOL.courtId}} <br>
+        {{#unless equals POOL.courtId undefined}}
+          Numéro : {{POOL.courtId}}
         {{/unless}}
-        {{#if moreThanOnePair POOL.pairs}}
-        <button type="button" class="btn btn-default btn-lg scoreButton" data-poolId="{{POOL._id}}">
-          <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> <br>
-          <!-- TODO changer le with par une méthode -->
-          {{getStreet POOL.courtId}} <br>
-          {{getTown POOL.courtId}} <br>
-          {{#unless equals POOL.courtId undefined}}
-            Numéro : {{POOL.courtId}}
-          {{/unless}}
-          <!-- {{#with getCourt POOL.courtId}}
-          {{#if equals this undefined}}
-          Pas de Terrain
-          {{else}}
-          {{this.street}} {{this.number}}<br> {{this.zipCode}} {{this.city}}
-          {{/if}}
-          {{/with}} -->
-
-        </button> <!-- TODO : set the pool name to the court address -->
+        <!-- {{#with getCourt POOL.courtId}}
+        {{#if equals this undefined}}
+        Pas de Terrain
+        {{else}}
+        {{this.street}} {{this.number}}<br> {{this.zipCode}} {{this.city}}
         {{/if}}
-      </h3>
+        {{/with}} -->
+
+      </button> <!-- TODO : set the pool name to the court address -->
+      {{/if}}
+    </h3>
+    <div class='parent'>
       <div class='PoolWrapper'>
         <div class='poolContainer poule' id='a{{POOL._id}}'> <!-- _id is here the id of the pool (with css escape a) -->
           {{#each POOL.pairs}} <!-- For each pair id in the pool -->
@@ -183,8 +183,8 @@
 </template>
 
 <template name="pairsToSplitContainerTemplate">
+  <h3><label class='label label-primary' for='hy'>Paires à séparer</label></h3>
   <div class='parent' id='pairstosplitparent'>
-    <h3><label class='label label-primary' for='hy'>Paires à séparer</label></h3>
     <div class='PoolWrapper'>
       <div class='poolContainer' id='pairstosplit'>
         <!-- Empty -->
@@ -199,10 +199,10 @@
 
 <!-- Takes 1 argument : the typeData -->
 <template name="alonePairsContainerTemplate">
+  <h3>
+    <label class='label label-primary' for='hy'>Joueurs seuls</label>
+  </h3>
   <div class='parent' id='alonepairsparent'>
-    <h3>
-      <label class='label label-primary' for='hy'>Joueurs seuls</label>
-    </h3>
     <div class='PoolWrapper'>
       <div class='poolContainer' id='alonepairs'>
         {{#each getAlonePairs TYPEDATA}}
@@ -222,8 +222,8 @@
 </template>
 
 <template name="mergePlayersContainerTemplate">
+<h3><label class='label label-primary' for='hy'>Fusionner 2 joueurs</label></h3>
   <div class='parent' id='mergeplayersparent'>
-    <h3><label class='label label-primary' for='hy'>Fusionner 2 joueurs</label></h3>
     <div class='PoolWrapper'>
       <div class='poolContainer' id='mergeplayers'>
         <!-- Empty -->
