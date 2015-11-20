@@ -191,6 +191,10 @@
   </div>
 </template>
 
+<template name="genderSymbol">
+  <span class="pull-right" style="font-size:1.5em;">{{#if equals this "M"}} &#x2642; {{else}} &#x2640; {{/if}} </span>
+</template>
+
 <!-- Takes 1 argument : the typeData -->
 <template name="alonePairsContainerTemplate">
   <div class='parent' id='alonepairsparent'>
@@ -203,7 +207,7 @@
         <div id="{{this.pair._id}}" class="pairs" data-startingPoolId="{{this.startingPoolId}}">
           {{#with getPlayer this.pair.player1._id}}
           <ul class="list-group" data-target="#pairModal{{../pair._id}}" data-toggle="modal">
-            <li class="list-group-item pairPlayer {{getColor ../pair/player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}}</li>
+            <li class="list-group-item pairPlayer {{getColor ../pair/player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}</li>
           </ul>
           {{>modalItem PAIR=../pair POOL=../startingPoolId SEX=profile.gender BIRTHDATE=profile.birthDate}}
           {{/with}}
@@ -222,6 +226,10 @@
       <div class='poolContainer' id='mergeplayers'>
         <!-- Empty -->
       </div>
+    </div>
+    <div class="alert alert-danger fade in" id="mergeErrorBox" style="display:none">
+      <a href="#" class="close">&times;</a>
+      <strong>Erreur!</strong> <span id="mergeErrorMessage">Ces deux paires ne peuvent pas aller ensemble !</span>
     </div>
   </div>
 </template>
@@ -296,10 +304,10 @@ Takes 2 arguments :
     <div id="{{this._id}}" class="pairs" data-startingPoolId="{{../POOLID}}">
       <ul class="list-group" data-target="#pairModal{{this._id}}" data-toggle="modal">
         {{#with getPlayer this.player1._id}}
-        <li class="list-group-item pairPlayer {{getColor ../player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
+        <li class="list-group-item pairPlayer {{getColor ../player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
         {{#with getPlayer this.player2._id}}
-        <li class="list-group-item pairPlayer {{getColor ../player2}}" id="{{this.player2._id}}" >{{profile.firstName}} {{profile.lastName}} {{profile.gender}} {{#if equals ../player2._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
+        <li class="list-group-item pairPlayer {{getColor ../player2}}" id="{{this.player2._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player2._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
       </ul>
     </div>

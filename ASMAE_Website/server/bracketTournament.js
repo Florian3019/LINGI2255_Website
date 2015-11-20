@@ -4,12 +4,44 @@ var resetPairTournament = function(pairId){
 }
 
 /*
+  Returns the pair id against which pairId played during the match
+  @pre Assumes the structure of a match is as described in methods.js (if changes are made to that, this method will fail !)
+*/
+var getOtherPair = function(match, pairId){
+  matchKeys = Object.keys(match);
+
+  // Go through the keys and check if it's the last possible field of match
+  for(var i=0; i<matchKeys.length;i++){
+    key = matchKeys[i];
+
+    if(!(key==="poolId" || key==="_id" || key==="courtId" || key==="day" || key===pairId)){
+      // Then this must be the other pairId
+      return key;
+    }
+  }
+  console.error("The other pair (than "+pairId +") for match ");
+  console.error(match)
+  console.error(" was not found");
+  return undefined;
+}
+
+/*
+  Returns the difference of points between the pair with pairId and the other pair of the match
+  --> >0 if pairId won
+      <0 if pairId lost
+      =0 if draw
+*/
+var matchPointDiff = function(match, pairId){
+  return match[pairId] - match[getOtherPair(match, pairId)];
+}
+
+/*
   Returns the winners of the pool with id poolId. Helper of getCategoryWinners. Resets the tournament points.
 */
 var getPoolWinners = function(poolId, MAXWINNERS){
   pool = Pools.findOne({_id:poolId}, {pairs:1});
 
-  pairPoints = {}; // key = pair, value = total points
+  pairPoints = {}; // key = pair, value = {"points":<total points>, "victories":<number of victories>}
 
   // For every pair of the pool, store its total points into pairPoints
   for(var i=0; i<pool.pairs.length;i++){
@@ -21,7 +53,7 @@ var getPoolWinners = function(poolId, MAXWINNERS){
     data[pairId] = {$exists:true};
 
     toReturn = {};
-    toReturn[pool.pairs[i]] = 1;
+    toReturn[pairId] = 1;
     m = Matches.find(data,toReturn).fetch(); // Get all the matches in which this pair played
 
     // For every match where that pair played
@@ -29,32 +61,81 @@ var getPoolWinners = function(poolId, MAXWINNERS){
       match = m[j];
 
       // If the key doesn't exist yet, initialize it to 0
-      if(pairPoints[pool.pairs[i]]==undefined){
-        pairPoints[pool.pairs[i]] = 0;
+      if(pairPoints[pairId]==undefined){
+        pairPoints[pairId] = {"points":0, "victories":0};
       }
 
       // Increase that pair's total score
-      score = match[pool.pairs[i]];
-      pairPoints[pool.pairs[i]] += score>=0 ? score : 0;
+      score = match[pairId];
+      pairPoints[pairId]["points"] += score>=0 ? score : 0;
+
+      // Increase that pair's total victories, if it won
+      if(matchPointDiff(match,pairId)>0){
+        // this pair won that match !
+        pairPoints[pairId]["victories"] += 1;
+      }
+
     }
   }
-  keys = Object.keys(pairPoints); // List of pairIds
+  pairKeys = Object.keys(pairPoints); // List of pairIds
+
+  oneTimeWarning = false;
 
   // Sorter for pairPoints (by descending order)
   var pointComparator = function(a,b){
     // Return a number > 0 if a is after b
     // Return a number < 0 if a is before b
-    return pairPoints[b]-pairPoints[a];
+
+    pointDiff = pairPoints[b]["points"]-pairPoints[a]["points"];
+    if(pointDiff!=0){
+      // If there is a difference in the points, return that difference
+      return pointDiff;
+    }
+
+    /*
+      Deal with equalities...
+    */
+
+    // pair a and b have the same number of points, sort them by the number of victories
+    victDiff = pairPoints[b]["victories"]-pairPoints[a]["victories"];
+    if(victDiff!=0){
+      return victDiff;
+    }
+
+    // pair a and b have the same number of points and victories, sort them in regard of who won against the other
+    data1 = {};
+    data1[a] = {$exists:true};
+    data2 = {};
+    data2[b] = {$exists:true};
+    m = Matches.find({$and:[data1, data2]}).fetch(); // Get all the matches in which this pair played
+    if(m.length!=1){
+      console.error("pointComparator : No match found (or multiple matches found) for pair "+a +" and "+b);
+      return undefined;
+    }
+
+    p = matchPointDiff(m[0], a);
+    if(p>0){
+      // A won against b
+      return -1;
+    }
+    else{
+      // A lost against b
+      if(p==0 && !oneTimeWarning){
+        oneTimeWarning = true;
+        // Can't have equalities...
+        console.warn("pointComparator : There are equalities in the matches, selection of the pairs will be random for those equalities ...");
+      }  
+      return 1;
+    }
   }
 
-  keys.sort(pointComparator);
-
+  pairKeys.sort(pointComparator);
   winners = [];
   var i = 0;
-  // Select the winners from all the pairs. The best pairs are first in "keys"
-  for(i=0; i<MAXWINNERS && i<keys.length; i++){
-    winners.push(keys[i]);
-    // TODO deal with equalities in the points
+
+  // Select the winners from all the pairs. The best pairs are first in "&"
+  for(i=0; i<MAXWINNERS && i<pairKeys.length; i++){
+    winners.push(pairKeys[i]);
   }
 
   return winners;
