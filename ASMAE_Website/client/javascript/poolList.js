@@ -956,6 +956,7 @@ Template.poolList.helpers({
 		Initializes the draggable interface
 	*/
 	'resetDrake' : function(){
+
 		drake = dragula(
 			{
 				/*	Defines what can be moved/dragged	*/
@@ -991,7 +992,61 @@ Template.poolList.helpers({
 		    		return true;
   				},
 			}
-		).on('drag', function (el) {
+		).on('drag', function (el,source) {
+		  	/*
+				Make the screen scroll when an draggable object is near the border of the screen
+		  	*/
+
+			const scrollSpeed = 3; //px
+
+			var m = false; // To keep dragging when near the border
+
+			var scrollPage = function(dx,dy){
+				// console.log("scrolling "+dy);
+				window.scrollBy(dx,dy);
+				if(m===true && drake.dragging){
+					setTimeout(function(){scrollPage(dx,dy)}, 20);
+				}
+			}
+
+			var scrollElem = function(dy){
+				source.scrollTop += dy;
+				if(keepScrollElem===true && drake.dragging){
+					setTimeout(function(){scrollElem(dy)}, 20);
+				}
+			}
+
+		    var onMouseMove = function(e) {
+		      	if (drake.dragging) {
+		        	//scroll while drag
+		            e = e ? e : window.event;
+		            var h = $(window).height();
+		            var w = $(window).width();
+
+				    if(h-e.y < 50) {
+				    	m = true;
+				        scrollPage(0, scrollSpeed);
+				    }
+				    else if(e.y < 50){
+				    	m = true;
+						scrollPage(0, -scrollSpeed);
+				    }
+				    else if(w-e.x < 50) {
+				    	m = true;
+				        scrollPage(scrollSpeed,0);
+				    }
+				    else if(e.x < 50){
+				    	m = true;
+						scrollPage(-scrollSpeed,0);
+				    }
+				    else{
+				    	m = false;				    	
+				    }
+				}
+		    };
+
+			document.addEventListener('mousemove', onMouseMove); 
+
 			hideSuccessBox(document);
   		  	el.className = el.className.replace('ex-moved', '');
   	  	}).on('drop', function (el, target, source, sibling) {
@@ -1007,54 +1062,6 @@ Template.poolList.helpers({
 	  	}).on('out', function (el, container) {
 	  		if(container!=null) container.className = container.className.replace('ex-over', '');
 	 	});
-
-	  	/*
-			Make the screen scroll when an draggable object is near the border of the screen
-	  	*/
-
-		const scrollSpeed = 3;
-
-		var m = false; // To keep dragging when near the border
-
-		var scrollPage = function(dx,dy,e){
-			// console.log("scrolling "+dy);
-			window.scrollBy(dx,dy);
-			if(m===true && drake.dragging){
-				setTimeout(function(){scrollPage(dx,dy, e)}, 20);
-			}
-		}
-
-	    var onMouseMove = function(e) {
-	      	var pageY = e.pageY;
-	      	if (drake.dragging) {
-	        	//scroll while drag
-	            e = e ? e : window.event;
-	            var h = $(window).height();
-	            var w = $(window).width();
-
-			    if(h-e.y < 50) {
-			    	m = true;
-			        scrollPage(0, scrollSpeed,e);
-			    }
-			    else if(e.y < 50){
-			    	m = true;
-					scrollPage(0, -scrollSpeed,e);
-			    }
-			    else if(w-e.x < 50) {
-			    	m = true;
-			        scrollPage(scrollSpeed,0,e);
-			    }
-			    else if(e.x < 50){
-			    	m = true;
-					scrollPage(-scrollSpeed,0,e);
-			    }
-			    else{
-			    	m = false;
-			    }
-			}
-	    };
-
-		document.addEventListener('mousemove', onMouseMove); 
 	}
 
 });

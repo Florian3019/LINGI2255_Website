@@ -17,10 +17,31 @@
 
     {{#if isStaffMember}} 
     <div class="container-fluid">
-      <div class="row">
+      <div class="row body">
         <div class="col-md-2 nopadding sidebar">
           <ul class="nav nav-sidebar">
             <li><a href="{{pathFor route='poolList'}}">Gestion du tournoi</a></li>
+
+              {{#if isTournamentPage}} 
+              <ul class="nav-secondary">
+                <li>
+                  <select class="form-control Year" id="Year" style="width:50%;" text-align="center">
+                    <option value="" disabled="" selected="" hidden>Année</option>
+                    {{#each getAllYears}}
+                      <option value="{{this}}"> {{this}} </option>
+                    {{/each}}
+                  </select>
+                </li>
+
+                {{#with getYear}}
+                  <li>{{>CategorySelect TYPE="men" DESC="Homme"}}</li>
+                  <li>{{>CategorySelect TYPE="women" DESC="Femme"}}</li>
+                  <li>{{>CategorySelect TYPE="mixed" DESC="Mixte"}}</li>
+                  <li>{{>poolBracketsSelect ID="family" CAT="all" DESC="Familles"}}</li>
+                {{/with}}
+              </ul>
+              {{/if}}
+              
             <li><a href="{{pathFor route='modifyExtras'}}">Modifier les extras</a></li>
 
             <br>
