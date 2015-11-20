@@ -606,23 +606,31 @@ Template.poolList.events({
 				var l = previouscourts.length-1;
 
 				var strt = 0;
+				var last;
 
 				if(previouscourts.length%2!=0){
 					strt=1
 				}
 
 				if(previouscourts.length<=n){
-					for(var k=0; k<n;k++){
+					for(var k=0; k<n && l>=k;k++){
 						result.push(previouscourts[l-k]);
 					}
+
+					last=k;
 				}
 				else{
-					for(var k=strt; k<n+strt;k++){
+					for(var k=strt; k<n+strt && l>=(2*k);k++){
 						result.push(previouscourts[l-(2*k)]);
 					}
+					last=k;
 				}
 
 				result = result.reverse();
+
+				for(var k=last; k<n;k++){
+					result.push(courts[(start+k) % courts.length]);
+				}
 
 			}
 
@@ -633,39 +641,37 @@ Template.poolList.events({
 			Return the number of matches to play for this round
 		*/
 
-		var getNumberMatches = function(nbrPools,round){
+		var getNumberMatches = function(nbrPairs,round){
 
 			if(round<0){
 				return 0;
 			}
 
-			if(round==0 && nbrPools>1 && (nbrPools % 2)!=0){
-					nbrPools = nbrPools - 1;
-			}
-			if(nbrPools>1 && (nbrPools % 2)!=0){
-					nbrPools = nbrPools + 1;
-			}
+			var logPairs = Math.log2(nbrPairs);
 
-			var rem=0;
+			if(round==0){
 
-			for(var k=0;k<round;k++){
-				if((nbrPools % 2)==0){
-					nbrPools = nbrPools/2 + rem;
-					rem = Math.max(rem-1,0);
+				// get the number of matches to play for the first round
+
+				var numMatchesFull = Math.floor(logPairs);
+
+				if(logPairs!=numMatchesFull){
+					return nbrPairs - Math.pow(2,numMatchesFull);// the nbr of pairs is not a multiple of 2
 				}
 				else{
-					nbrPools = (nbrPools-1)/2;
-					rem=1;
+					return nbrPairs/2; // the nbr of pairs is a multiple of 2
 				}
 			}
 
-			if(round==0 && nbrPools>1){
-				if((nbrPools % 2)!=0){
-					nbrPools = nbrPools - 1;
-				}
+			// get the number of matches for the other rounds
+			// get the number of match for the first round if the nbr of pairs were a power of 2
+			var full = Math.pow(2,Math.ceil(logPairs))/2;
+
+			for(var k=0;k<round;k++){
+				full=full/2;
 			}
 
-			return nbrPools;
+			return full;
 		}
 
 		var numberDays = 2;
@@ -765,10 +771,11 @@ Template.poolList.events({
 
 						if(typesDoc[k][categoriesKeys[t]]!=null){
 				 			var nameField = categoriesKeys[t]+"Courts";
+				 			var temp = categoriesKeys[t]+"Brackets";
 
-				 			var nbr = getNumberMatches(typesDoc[k][categoriesKeys[t]].length,round);
+				 			var nbr = getNumberMatches(typesDoc[k][temp].length,round);
 
-				 			if(!first &&typesDoc[k][nameField].length<(2*typesDoc[k][categoriesKeys[t]].length-1)){
+				 			if(!first &&typesDoc[k][nameField].length<(2*typesDoc[k][temp].length-1)){
 				 				typesDoc[k][nameField]=typesDoc[k][nameField].concat(getNCourts(typesDoc[k][nameField],courtsTable[g],nbr,start));
 				 				finished=false;
 				 			}
