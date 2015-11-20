@@ -993,7 +993,6 @@ Template.poolList.helpers({
 			}
 		).on('drag', function (el) {
 			hideSuccessBox(document);
-  		  	console.log(el);
   		  	el.className = el.className.replace('ex-moved', '');
   	  	}).on('drop', function (el, target, source, sibling) {
 	  		if(target.id==="pairstosplit"){
@@ -1009,6 +1008,9 @@ Template.poolList.helpers({
 	  		if(container!=null) container.className = container.className.replace('ex-over', '');
 	 	});
 
+	  	/*
+			Make the screen scroll when an draggable object is near the border of the screen
+	  	*/
 
 		const scrollSpeed = 3;
 
@@ -1024,11 +1026,9 @@ Template.poolList.helpers({
 
 	    var onMouseMove = function(e) {
 	      	var pageY = e.pageY;
-	      	// m = {"x":e.x, "y":e.y, "h":};
 	      	if (drake.dragging) {
-	        //scroll while drag
+	        	//scroll while drag
 	            e = e ? e : window.event;
-	            // width = $(window).width();
 	            var h = $(window).height();
 	            var w = $(window).width();
 
