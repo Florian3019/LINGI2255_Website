@@ -1,6 +1,6 @@
 Template.login.events({
     
-    'click #connexion': function(event){
+    'submit form': function(event) {
         document.getElementById("user").className = "form-group";
         document.getElementById("user-error-message").style.display = "none";
         document.getElementById("no-user-message").style.display = "none";
@@ -71,8 +71,6 @@ Template.login.events({
     
 	'click #sign-up': function(event) { 
 
-        console.log("clicked on s'inscrire");
-
         document.getElementById("inputEmailGroup").className = "form-group";
         document.getElementById("inputPasswordGroup").className = "form-group";
         
@@ -99,10 +97,8 @@ Template.login.events({
         }
         else {
             Accounts.createUser({email: email, password: password}, function(error){
-                 console.log("created user");
                 if(error){
                     console.log(error.reason);
-                    window.alert(error.reason);
                     if(error.reason === "Email already exists.") {
                         $('#existing-email').show();
                         document.getElementById("inputEmailGroup").className = "form-group has-error";
@@ -145,14 +141,12 @@ Template.login.events({
         else {
             Accounts.forgotPassword({email: email}, function(error) {
                 if (error) {
+                    console.log(error.reason);
                     if (error.message == 'User not found [403]') 
                       $('#no-existing-email').show();
-                    else 
-                      console.log('We are sorry but something went wrong.');    
                 } 
                 else {
                     document.getElementById('send-email').style.display = "none";
-                    console.log('Email Sent. Check your mailbox.');
                     $('#email-send-success').show();
                   
                     setTimeout(function(){
