@@ -38,7 +38,6 @@
   display: inline-block;
   vertical-align: top;
   height:640px;
-  /*max-width: 10%;*/
   overflow-y: auto;
   overflow-x: hidden;
   padding-left: 10px;
@@ -47,10 +46,6 @@
 
 .poolContainer {
   display: table-cell;
-  /*background-color: rgba(255, 255, 255, 0.2);*/
-/*  width: 200px;
-  min-width: 80%;
-  max-width: 80%;*/
   width: 5%;
   padding-left: 5px;
   padding-right: 5px;
@@ -117,7 +112,7 @@
 
 /* Toggle Styles */
 
-#PoolListWrapper {
+/*#PoolListWrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
@@ -157,20 +152,20 @@
 #PoolListWrapper.toggled #page-content-wrapper {
     position: absolute;
     margin-right: -250px;
-}
+}*/
 
 /* Sidebar Styles */
 
-.sidebar-nav {
+/*.sidebar-nav {
     position: absolute;
     top: 0;
     width: 250px;
     margin: 0;
     padding: 0;
     list-style: none;
-}
+}*/
 
-.sidebar-nav li {
+/*.sidebar-nav li {
     text-indent: 20px;
     line-height: 40px;
     display: block;
@@ -178,7 +173,7 @@
     color: #999999;
     cursor:pointer;
     background-color: rgba(51, 153, 255,0.15);
-}
+}*/
 
 .CategoryOption li {
   text-indent: 50px;
@@ -199,7 +194,7 @@
     text-decoration: none;
 }
 
-.sidebar-nav > .sidebar-brand {
+/*.sidebar-nav > .sidebar-brand {
     height: 65px;
     font-size: 18px;
     line-height: 60px;
@@ -212,9 +207,9 @@
 .sidebar-nav > .sidebar-brand:hover {
     color: #fff;
     background: none;
-}
+}*/
 
-@media(min-width:768px) {
+/*@media(min-width:768px) {
     #PoolListWrapper {
         padding-left: 250px;
     }
@@ -240,4 +235,4 @@
         position: relative;
         margin-right: 0;
     }
-}
+}*/
