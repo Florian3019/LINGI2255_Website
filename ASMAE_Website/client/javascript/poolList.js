@@ -823,6 +823,10 @@ Template.poolList.helpers({
 
 	// Returns the number of pools
 
+	'getAllYears':function(){
+		return ALLYEARS; // constant.js
+	},
+
 	'getNumberPools' : function(){
 		var pools = Pools.find().fetch();
 		return pools.length;

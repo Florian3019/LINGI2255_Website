@@ -105,7 +105,7 @@ Meteor.methods({
 					// Fetch the category corresponding to that date
 					cat1 = getCategory(p1.profile.birthDate);
 					if(!cat1){
-						console.error("Player 1 does not fit in any category (too young). Age : "+getAge(p1.profile.birthDate()));
+						console.error("Player 1 does not fit in any category (too young). Age : "+getAge(p1.profile.birthDate));
 						return false;
 					}
 				}
@@ -1371,7 +1371,7 @@ Meteor.methods({
 		var typeTable = Types.findOne({_id:typeID});
 
 		// No type table for now
-		if (!typeTable) {
+		if (typeTable==undefined) {
 			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
 			typeID = Types.insert({});
 			// typeID = Meteor.call('updateType', {});

@@ -318,7 +318,7 @@ Meteor.methods({
 			else {
 				pairID = Meteor.call("updatePair", {player1: {_id:userID1}, wish:wish1, extras:extra1});
 			}
-			Meteor.call("addPairToTournament", pairID, tournamentYear, dateMatch);
+			Meteor.call("addPairToTournament", pairID, currentYear, dateMatch);
         } // End createPair
 
 

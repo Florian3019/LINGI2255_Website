@@ -6,7 +6,9 @@
                 <li>
                   <select class="form-control Year" id="Year" style="width:50%;" text-align="center">
                     <option value="" disabled="" selected="" hidden>Année</option>
-                    <option value="2015"> 2015 </option>
+                    {{#each getAllYears}}
+                      <option value="{{this}}"> {{this}} </option>
+                    {{/each}}
                   </select>
                 </li>
                 {{#with getYear}}

@@ -691,9 +691,6 @@ Template.tournamentRegistration.events({
           }
         };
 
-
-    	var currentYear = "2015"; // Has to be a string
-
     	/*
 			Collect player wishes/constraints
     	*/
@@ -779,20 +776,15 @@ Template.tournamentRegistration.events({
 			if(alone){
 				// Player wants to register alone but wants to wait for another to join on him
 				pairData = {
-					year:currentYear,
 					day: dateMatch,
-					//category:<category>, TODO
 					player1:playerData
 				};
 			}
 			else{
 				// Player registers a pair
 				pairData = {
-					year:currentYear,
 					day: dateMatch,
-					//category:<category>, TODO
 					player2:playerData,  // Player2 because search for a single player is made on pairs with empty player2 field
-					//player2:{_id:player2ID} // TODO--> give all player info
 				};
 			}
 			}
