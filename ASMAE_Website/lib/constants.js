@@ -6,7 +6,11 @@ paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
+
+ALLYEARS = [2015]; // Update this as needed
 tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
+
+currentYear = ""+tournamentDate.getFullYear(); // must be a string
 
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;

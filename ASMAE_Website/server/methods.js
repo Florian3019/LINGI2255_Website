@@ -107,7 +107,7 @@ Meteor.methods({
 					// Fetch the category corresponding to that date
 					cat1 = getCategory(p1.profile.birthDate);
 					if(!cat1){
-						console.error("Player 1 does not fit in any category (too young). Age : "+getAge(p1.profile.birthDate()));
+						console.error("Player 1 does not fit in any category (too young). Age : "+getAge(p1.profile.birthDate));
 						return false;
 					}
 				}
@@ -202,6 +202,9 @@ Meteor.methods({
 				return typeKeys[3]; // family
 			}
 		}
+
+		console.error("Error : date match unrecognized");
+		return false;
 	},
 
 	/**
@@ -1320,13 +1323,13 @@ Meteor.methods({
 				Set the category
 		*/
 		type = Meteor.call('getPairType', dateMatch, p1, p2);
-		if(typeof type === undefined) {
-			console.error("addPairToTournament : getPairType returns undefined");
+		if(type === false) {
+			console.error("addPairToTournament : getPairType returns false");
 			return false;
 		}
 
 		category = Meteor.call('getPairCategory', type, p1, p2);
-		if(typeof category === undefined) return false; // An error occured, detail of the error has already been displayed in console
+		if(category === false) return false; // An error occured, detail of the error has already been displayed in console
 
 		var pair = Pairs.findOne({_id:pairID});
 		poolID = Meteor.call('getPoolToFill', year, type, category);
@@ -1373,7 +1376,7 @@ Meteor.methods({
 		var typeTable = Types.findOne({_id:typeID});
 
 		// No type table for now
-		if (!typeTable) {
+		if (typeTable==undefined) {
 			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
 			typeID = Types.insert({});
 			// typeID = Meteor.call('updateType', {});
