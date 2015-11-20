@@ -7,7 +7,7 @@
                     <h3 class="modal-title" id="lineModalLabel">Votre inscription au site est bien enregistrée </h3>
                 </div>
                 <div class="modal-body">
-                      <p id="welcom-message"> Bienvenue Surnom </p>
+                      <p id="welcom-message"> Bienvenue sur le site du Tournois Charles de Lorraine, </p>
                       <p> Votre compte à correctement été crée ! </p>
                       <p> Un e-mail automatique de confirmation vient d'être envoyé à votre adresse e-mail :</p>
                       <a id="e-mail-registration" href="mailto:someone@example.com">someone@example.com</a>
@@ -26,7 +26,6 @@
         }
     </script>
 
-
  <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -40,52 +39,34 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-		{{#if isStaff}}
-        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Staff <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="{{pathFor route='staffManagement'}}">Questions des joueurs</a></li>
-            <li><a href="{{pathFor route='playersInfo'}}">Information sur les joueurs</a></li>
-            <li><a href="{{pathFor route='courtSearch'}}">Information sur les terrains</a></li>
-            <!--
-            <li><a href="{{pathFor route='courtInfo'}}">Information sur les terrains</a></li>
-            <li><a href="{{pathFor route='courtsList'}}">Liste des terrains</a></li> -->
-            <li><a href="{{pathFor route='adminAddCourt'}}">Ajouter un terrain</a></li>
-            <li><a href="{{pathFor route='poolList'}}">Gestion du tournoi</a></li>
-            <li><a href="{{pathFor route='printSheets'}}">Impression des feuilles de poule</a></li>
-            <li><a href="{{pathFor route='courtEmail'}}">Envoi de mail aux gestionnaires de terrains</a></li>
-            <li><a href="{{pathFor route='adminTemplate'}}">Page administrateur</a></li>
-            <li><a href="{{pathFor route='modifyExtras'}}">Modifier les extras</a></li>
-            <li><a href="{{pathFor route='modificationsLog'}}">Log des modifications</a></li>
-            </ul>
-        </li>
-		{{/if}}
-        <li><a href="https://www.facebook.com/media/set/?set=a.10153598504984631.1073741844.9064359630&type=1&l=153e72eadf" target="_blank">Lien photos</a></li>
-        <li><a href="{{pathFor route='rules'}}">Règlement</a></li>
-
-        {{#if currentUser}}
-
-        <li><a href="{{pathFor route='contacts'}}">Contact</a></li>
-        <li><a href="{{pathFor route='myCourts'}}">Mes terrains</a></li>
-        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Inscription <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-              {{#if registered}}
-              <li><a href="{{pathFor route='myRegistration'}}">Mon inscription</a></li>
-              {{else}}
-              <li><a href="{{pathFor route='tournamentRegistration'}}">Inscription au tournoi</a></li>
+              {{#if currentUser}}       
+              <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Inscription <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  {{#if registered}}
+                  <li><a href="{{pathFor route='myRegistration'}}">Mon inscription</a></li>
+                  {{else}}
+                  <li><a href="{{pathFor route='tournamentRegistration'}}">Inscription au tournoi</a></li>
+                  {{/if}}
+                  <li><a href="{{pathFor route='courtRegistration'}}">Inscription d'un terrain</a></li>
+                </ul>
+              </li>
+              <li><a href="{{pathFor route='myCourts'}}">Mes terrains</a></li>
+              <li><a href="{{pathFor route='contacts'}}">Questions sur le tournois</a></li>
               {{/if}}
-            <li><a href="{{pathFor route='courtRegistration'}}">Inscription d'un terrain</a></li>
-          </ul>
-        </li>
-        {{/if}}
-
+              <li><a href="https://www.facebook.com/media/set/?set=a.10153598504984631.1073741844.9064359630&type=1&l=153e72eadf" target="_blank">Lien photos</a></li>
+              <li><a href="{{pathFor route='rules'}}">Règlement</a></li>
           </ul>
           <div class="nav navbar-nav navbar-right">
+            {{#if isStaff}}
+            <li><a href="{{pathFor route='adminTemplate'}}">Staff member</a></li>
+            {{/if}}
             {{> loginButtons}}
           </div>
-        </div><!--/.nav-collapse -->
-      </div>
+        </div> <!--/.nav-collapse -->
+      </div> 
     </nav>
 
+    
 
 </template>
 
@@ -93,3 +74,4 @@
 <template name="_loginButtonsAdditionalLoggedInDropdownActions">
   <button class="btn btn-default btn-block" id="login-buttons-edit-profile">Modifier mon profil</button>
 </template>
+

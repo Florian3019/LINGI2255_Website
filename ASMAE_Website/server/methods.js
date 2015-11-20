@@ -53,8 +53,9 @@ Meteor.methods({
 
 	'isStaff' : function(){
 		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isStaff":1});
-		return res ? res.profile.isStaff : false;
+		return (res ? res.profile.isStaff : false);
 	},
+
 	'turnAdmin': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
@@ -66,6 +67,7 @@ Meteor.methods({
 			return false;
 		}
 	},
+
 	'turnStaff': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
@@ -76,8 +78,8 @@ Meteor.methods({
 			console.error("Error turnning staff");
 			return false;
 		}
-
 	},
+
 	'turnNormal': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
