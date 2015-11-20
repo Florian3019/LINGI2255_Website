@@ -1323,6 +1323,7 @@ Meteor.methods({
 		type = Meteor.call('getPairType', dateMatch, p1, p2);
 		if(typeof type === undefined) {
 			console.error("addPairToTournament : getPairType returns undefined");
+		}
 		if(type === false) {
 			console.error("addPairToTournament : getPairType returns false");
 			return false;

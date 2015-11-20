@@ -144,7 +144,7 @@ Template.tournamentRegistration.helpers({
 		var category = getCategory(age);
 
 		var pairs = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}},
-		{"day":tournamentDateMatch}]}).fetch();
+		{"day":tournamentDateMatch}]}).fetch(); // TODO : other way to get alone players !
 		var res = [];
 		for (var i = 0; i < pairs.length; i++) {
 			var aloneProfile = Meteor.users.findOne({_id:pairs[i].player1._id}).profile;
