@@ -108,6 +108,12 @@ Template.mergePlayersContainerTemplate.onRendered(function(){
   	drake.containers.push(document.querySelector('#mergeplayers'));
 });
 
+Template.mergePlayersContainerTemplate.events({
+	'click .close':function(event){
+		document.getElementById("mergeErrorBox").style.display = "none";
+	}
+})
+
 var mergePlayers = function(document){
 	var parent = document.getElementById("mergeplayers");
 	var playersToMerge = parent.getElementsByClassName("pairs");
@@ -129,30 +135,41 @@ var mergePlayers = function(document){
 
 	var player1 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1});
 	var player2 = Meteor.users.findOne({"_id":pair2.player1._id},{"profile":1});
+
+	mergeErrorBox = document.getElementById("mergeErrorBox");
+	mergeErrorMessage = document.getElementById("mergeErrorMessage");
 	/*
 		Check compatibility
 	*/
 	if(type==="men"){
 		if( !(player1.profile.gender==="M" && player2.profile.gender==="M") ){
 			console.error("Only 2 mens can be together");
+			mergeErrorBox.style.display = "block";
+			mergeErrorMessage.innerHTML = "Seulement 2 hommes peuvent jouer ensemble !";
 			return;
 		}
 	}
 	else if(type==="women"){
 		if( !(player1.profile.gender==="F" && player2.profile.gender==="F") ){
 			console.error("Only 2 women can be together");
+			mergeErrorBox.style.display = "block";
+			mergeErrorMessage.innerHTML = "Seulement 2 femmes peuvent jouer ensemble !";
 			return;
 		}
 	}
 	else if(type==="mixed"){
 		if(player1.profile.gender===player2.profile.gender){
 			console.error("Only a man and a woman can be together");
+			mergeErrorBox.style.display = "block";
+			mergeErrorMessage.innerHTML = "Seulement un homme et une femme peuvent jouer ensemble !";
 			return;
 		}
 	}
 	else if(type=="family"){
 		if(!acceptPairForFamily(player1.profile.birthDate, player2.profile.birthDate)){ //(method in constants)
 			console.error("These players can't play together for the family tournament !");
+			mergeErrorBox.style.display = "block";
+			mergeErrorMessage.innerHTML = "Ces deux joueurs n'ont pas le bon age pour jouer ensemble !";
 			return;
 		}
 	}
@@ -454,6 +471,10 @@ Template.poolList.events({
 		Session.set('PoolList/Type', type);
 		Session.set("PoolList/ChosenScorePool","");
 		Session.set("PoolList/ChosenBrackets","");
+
+		// Hide previous error message, if any
+		mergeErrorBox = document.getElementById("mergeErrorBox");
+		if(mergeErrorBox!=null && mergeErrorBox != undefined) mergeErrorBox.style.display = "none";
 
 		var info = {"type":type, "category":category, "isPool":true};
 		updateArrow(document, info);
@@ -952,6 +973,11 @@ Template.poolList.helpers({
 		    		var isFromAlone = source.id==="alonepairs";
 		    		var isFromSplit = source.id==="pairstosplit";
 		    		var isFromMerge = source.id==="mergeplayers";
+
+		    		if(isToMerge || isFromMerge){
+	    				mergeErrorBox = document.getElementById("mergeErrorBox");
+						mergeErrorBox.style.display = "none";
+		    		}
 
 		    		if(isFromPoule && (isToAlone || isToMerge)) return false;
 		    		if(isFromAlone && (isToPoule || isToSplit)) return false;

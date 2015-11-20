@@ -67,8 +67,8 @@ Template.adminAddCourt.events({
             alert("Personne ne correpond à votre recherche, veuillez vérifier les informations suivantes: \nNom,\nPrénom\nAddresse email.");
             return;
         }
-        
-        if(this.court!=undefined){
+
+        if(typeof this.court !== 'undefined'){
             id = this.court._id;
             currentOwnerID = cursor[0]._id;
         }
@@ -77,6 +77,7 @@ Template.adminAddCourt.events({
             ownerID : currentOwnerID,
             surface : $('[name=surface]').val(),
             courtType : $('[name=courtType]:checked').val(),
+            numberOfCourts : $('[name=numberOfCourts]').val(),
             instructions : $('[name=instructions]').val(),
             ownerComment : $('[name=ownerComment]').val(),
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
@@ -85,7 +86,7 @@ Template.adminAddCourt.events({
         Session.set('cursor1',cursor);
         Session.set('courtData', courtData);
         Session.set('address', address);
-    },  
+    },
     'click li': function() {
         var courtData = Session.get('courtData');
         var address = Session.get('address');

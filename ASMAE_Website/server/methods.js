@@ -1037,6 +1037,9 @@ Meteor.methods({
 
 
 	/*
+		/!\  IF changes are made to the structure of a match, don't forget to update the method getOtherPair in bracketTournament.js !!!			/!\
+
+
 		If no _id is provided, creates a new match. Else, updates it.
 		A match is structured as follows :
 		{
