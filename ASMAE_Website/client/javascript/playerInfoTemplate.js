@@ -143,7 +143,7 @@ Template.playerInfoTemplate.helpers({
 	},
 
 	'paymentMethod' : function(){
-		var payement = Payments.findOne({"userID": Meteor.userId()});
+		var payment = Payments.findOne({"userID": Meteor.userId()});
 		if(payment){
 			return paymentTypesTranslate[payment.paymentMethod];
 		}

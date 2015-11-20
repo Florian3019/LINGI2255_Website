@@ -21,7 +21,7 @@ Router.onBeforeAction(function() {
         if(!(Meteor.user().emails[0].verified))
             this.render("emailVerification");
         else
-		this.next();
+			this.next();
 	}
 }, {except: ['home', 'rules', 'myRegistration']});
 
@@ -188,7 +188,7 @@ Router.route('/brackets', {
 	template: 'brackets'
 });
 
-Router.route('/confirmation-registration-court/:_id', {
+Router.route('/confirmation-inscription-terrain/:_id', {
 	name: 'confirmationRegistrationCourt',
 	template: 'confirmationRegistrationCourt',
 
