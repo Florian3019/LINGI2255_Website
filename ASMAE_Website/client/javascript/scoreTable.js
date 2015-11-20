@@ -1,24 +1,25 @@
-Template.scoreTable.helpers({
-
-  'getLeader' : function(poolId){
-    if(poolId==undefined) return undefined;
-    pool = Pools.findOne({_id:poolId},{leader:1});
-    if(pool.leader!=undefined){
-        user = Meteor.users.findOne({_id:pool.leader});
-        return user;
-    }
-    return undefined;
-  },
-
-  'getEmail' : function(user){
-    if(user.emails){
-      return user.emails[0].address;
-    }
-    else{
+Template.scorePage.helpers({
+    'getLeader' : function(poolId){
+      if(poolId==undefined) return undefined;
+      pool = Pools.findOne({_id:poolId},{leader:1});
+      if(pool.leader!=undefined){
+          user = Meteor.users.findOne({_id:pool.leader});
+          return user;
+      }
       return undefined;
-    }
-  },
+    },
 
+    'getEmail' : function(user){
+      if(user.emails){
+        return user.emails[0].address;
+      }
+      else{
+        return undefined;
+      }
+    },
+});
+
+Template.scoreTable.helpers({
   // Returns a list of pairs that are in this pool
   'getPairs' : function(poolId){
     var pairList = [];
@@ -115,7 +116,7 @@ var getStringOptions = function(){
       " année: "+Session.get("PoolList/Year");
 }
 
-Template.scoreTable.events({
+Template.scorePage.events({
   'click #save' : function(event){
     var points = document.getElementsByClassName("points");
     var poolId = this._id; // "this" is the parameter of the template
@@ -156,7 +157,7 @@ Template.scoreTable.events({
     /*
       Unhide the pdf preview window
     */
-    document.getElementsByClassName('preview-pane')[0].removeAttribute('hidden');
+    // document.getElementsByClassName('preview-pane')[0].removeAttribute('hidden');
 
     var options = {
 //      height: 200,
@@ -182,19 +183,13 @@ Template.scoreTable.events({
     if(pool.leader!=undefined){
         leader = Meteor.users.findOne({_id:pool.leader});
     }
-    console.log(pool);
     courtAddress = undefined;
     // Fetch the court
     if(pool.courtId){
       court = Courts.findOne({"courtNumber":pool.courtId});
-      console.log(court);
-      console.log("after court");
-      console.log(courtAddress);
       if(court && court.addressID){
         address = Addresses.findOne({_id:court.addressID});
         courtAddress = address;
-        console.log(address);
-        console.log(courtAddress);
       }
     }
 
@@ -226,6 +221,9 @@ Template.scoreTable.events({
     for (var i = 0; i < inpt.length; i++) {
       inpt[i].setAttribute('type','hidden');
     }
+    // var tab = document.getElementById("scoreTab");
+    // tab.style.background='#fff';
+    console.log($("#scoreTab"));
     pdf.addHTML($("#scoreTab").css('background', '#fff'),
     30,
     250,
@@ -238,18 +236,23 @@ Template.scoreTable.events({
       pdf.text("Cette feuille doit être remise au quartier général à la fin de la poule.",margins.left, pdf.internal.pageSize.height - 30);
       pdf.text("En cas de problème quelconque, n'hésitez pas de nous contacter par téléphone au numéro: +32 (0)2 742 03 01 ",margins.left, pdf.internal.pageSize.height - 10);
 
+      pdf.output('save', 'filename.pdf'); //TODO filename = annee + cateorie+ numeterrain
+      // pdf.output('dataurlnewwindow');
       /*
       Display the pdf in the html
       */
-      var string = pdf.output('datauristring');
-      document.getElementsByClassName('preview-pane')[0].setAttribute('src', string);
+      // var string = pdf.output('datauristring');
+      // document.getElementsByClassName('preview-pane')[0].setAttribute('src', string);
+      // tab.style.background='transparent';
       $("#scoreTab").css('background', 'transparent');
-      $("#scoreTab").css('width', 'auto');
-      $("#scoreTab").css('height', 'auto');
+      // $("#scoreTab").css('width', 'auto');
+      // $("#scoreTab").css('height', 'auto');
       for (var i = 0; i < inpt.length; i++) {
         inpt[i].setAttribute('type','number');
       }
 
     });
+
+
   }
 });

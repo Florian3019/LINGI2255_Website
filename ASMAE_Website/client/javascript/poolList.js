@@ -171,8 +171,8 @@ var mergePlayers = function(document){
 	*/
 	var pool = Pools.findOne({"_id":poolId1},{"leader":1});
 	if(pool.leader==undefined){
-		Pools.update({_id:poolId1}, {$set:{"leader":pair1.player1._id}});	
-	} 
+		Pools.update({_id:poolId1}, {$set:{"leader":pair1.player1._id}});
+	}
 
 	Meteor.call("addToModificationsLog",
 		{"opType":"Fusion de 2 joueurs",
@@ -733,7 +733,7 @@ Template.poolList.events({
 		////////// Saturday and Sunday \\\\\\\\\\
 
 		var typesDocs= [];
-		
+
 		for(var g=0;g<numberDays;g++){
 			typesDocs.push([]);
 			var types = typesTable[g];

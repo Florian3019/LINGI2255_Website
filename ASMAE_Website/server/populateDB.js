@@ -122,9 +122,19 @@ Meteor.methods({
             day1 = getRandomInt(0,29);
             day2 = getRandomInt(0,29);
             if (type === typeKeys[3]) { // Family
-                bounds = [9,15,25,80];
-                year1 = tournamentDate.getFullYear() - getRandomInt(bounds[0],bounds[1]+1);
-                year2 = tournamentDate.getFullYear() - getRandomInt(bounds[2],bounds[3]+1);
+                bounds = [8,16,24,80];
+				birthDate1 = new Date(year1, month1, day1);
+				birthDate2 = new Date(year2, month2, day2);
+				while(!acceptPairForFamily(birthDate1,birthDate2)) {
+					year1 = tournamentDate.getFullYear() - getRandomInt(bounds[0],bounds[1]+1);
+	                year2 = tournamentDate.getFullYear() - getRandomInt(bounds[2],bounds[3]+1);
+					month1 = getRandomInt(0,12);
+                    day1 = getRandomInt(0,29);
+					month2 = getRandomInt(0,12);
+                    day2 = getRandomInt(0,29);
+					birthDate1 = new Date(year1, month1, day1);
+					birthDate2 = new Date(year2, month2, day2);
+				}
             }
             else {
                 bounds = getAgeBoundsForCategory(category);
@@ -163,6 +173,20 @@ Meteor.methods({
 				return undefined;
 			}
 			return addressID;
+		}
+
+		function insertUnregisteredAccounts(nbr) {
+			for (var i=0; i<nbr; i++) {
+				var email = "aloneUser"+i+"@user.com";
+				if (Accounts.findUserByEmail(email)!==undefined) {
+					continue;
+				}
+				var userID = Accounts.createUser({
+	                           email : email,
+	                           password : "passpass",
+	                       });
+				Accounts.addEmail(userID, email, true);
+			}
 		}
 
         var count = 0;
@@ -271,18 +295,19 @@ Meteor.methods({
                        });
 			Accounts.addEmail(userID1, email1, true);
 
-            var userID2 = Accounts.createUser({
-                          email : email2,
-                          password : "passpass",
-                          profile: profile2
-                      });
 			if (!alone) {
+				var userID2 = Accounts.createUser({
+	                          email : email2,
+	                          password : "passpass",
+	                          profile: profile2
+	                      });
 				Accounts.addEmail(userID2, email2, true);
 			}
 
 			var wish1 = getWish(gen1);
 			var extra1 = getExtra();
 			var pairID;
+
 			Meteor.call("updateUser", {_id:userID1, profile:{addressID:addressID1}});
 			if (!alone) {
 				var wish2 = getWish(gen2);
@@ -293,28 +318,45 @@ Meteor.methods({
 			else {
 				pairID = Meteor.call("updatePair", {player1: {_id:userID1}, wish:wish1, extras:extra1});
 			}
-
-            Meteor.call("addPairToTournament", pairID, tournamentYear, dateMatch);
+			Meteor.call("addPairToTournament", pairID, tournamentYear, dateMatch);
         } // End createPair
 
 
         // Men - Women - Mixed - Family
-        var nTypes = [150,150,150,25];
+        var nTypes = [175,175,175,28];
+		var nAlones = [70,70,70,10];
+		var nUnregistered = 200;
+		var nCourt = 70;
+		var nStaff = 10;
+		var nAdmin = 3;
 
 		// Create the pairs
         for (var i=0; i<3; i++) {
-            for (var j=0; j<nTypes[i]/7; j++) {
-                for (var k=0; k < 7; k++) {
-                    createPair(typeKeys[i],categoriesKeys[k]);
-                }
+			console.log("popDB populates type "+typeKeys[i]);
+            for (var k=0; k < 7; k++) {
+				console.log("popDB populates category "+categoriesKeys[k]);
+				for (var j=0; j<nTypes[i]/7; j++) {
+                	createPair(typeKeys[i],categoriesKeys[k]);
+				}
+				console.log("popDB populates category "+categoriesKeys[k]+" with alone players");
+				for (var j=0; j<nAlones[i]/7;j++) {
+					createPair(typeKeys[i],categoriesKeys[k], true);
+				}
             }
         }
 		// Family
+		console.log("popDB populates type family");
         for (var j=0; j<nTypes[3]; j++) {
-            createPair(typeKeys[3],"none");
+            createPair(typeKeys[3],"doesnotmatterwhatiputhere");
         }
+		console.log("popDB populates type family with alone players");
+		for (var j=0; i<nAlones[3]; j++) {
+			createPair(typeKeys[3],"doesnotmatterwhatiputhere",true);
+		}
 
-		insertStaffAndAdminMembers(10,3);
+		insertStaffAndAdminMembers(nStaff,nAdmin);
+		insertUnregisteredAccounts(nUnregistered);
+
 		//insertCourts(70);
 
 		console.log("popDB done");

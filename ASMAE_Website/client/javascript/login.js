@@ -1,6 +1,6 @@
 Template.login.events({
     
-    'click #connexion': function(event){
+    'submit form': function(event) {
         document.getElementById("user").className = "form-group";
         document.getElementById("user-error-message").style.display = "none";
         document.getElementById("no-user-message").style.display = "none";
@@ -69,27 +69,17 @@ Template.login.events({
 		 });
 	},
     
-	'click #sign-up': function(event) {   
-        
-        document.getElementById("inputUserGroup").className = "form-group";
+	'click #sign-up': function(event) { 
+
         document.getElementById("inputEmailGroup").className = "form-group";
         document.getElementById("inputPasswordGroup").className = "form-group";
         
         $('div[role="alert"]').hide();
         
-		var userName = $('[name=username-sign]').val().trim();
 		var email = $('[name=email-sign]').val().trim();
         var password = $('[name=password-sign]').val().trim();
         
-        if(userName == "") {
-            $('#no-username').show();
-            document.getElementById("inputUserGroup").className = "form-group has-error";
-        }
-        else if(userName.length < 3) {
-            $('#not-valid-username').show();
-            document.getElementById("inputUserGroup").className = "form-group has-error";
-        }
-        else if(email == "") {
+        if(email == "") {
             $('#no-email').show();
             document.getElementById("inputEmailGroup").className = "form-group has-error";
         }
@@ -106,14 +96,10 @@ Template.login.events({
             document.getElementById("inputPasswordGroup").className = "form-group has-error";
         }
         else {
-            Accounts.createUser({username: userName, email: email, password: password}, function(error){
+            Accounts.createUser({email: email, password: password}, function(error){
                 if(error){
                     console.log(error.reason);
-                    if(error.reason == "Username already exists.") {
-                        $('#existing-username').show();
-                        document.getElementById("inputUserGroup").className = "form-group has-error";
-                    }
-                    if(error.reason == "Email already exists.") {
+                    if(error.reason === "Email already exists.") {
                         $('#existing-email').show();
                         document.getElementById("inputEmailGroup").className = "form-group has-error";
                     }
@@ -121,14 +107,14 @@ Template.login.events({
                        console.log('We are sorry but something went wrong.');
                 }
                 else {
+                    console.log("test");
                     var currentRoute = Router.current().route.getName();
-                    if(currentRoute == "login"){		//Else : don't redirect
+                    if(currentRoute === "login"){		//Else : don't redirect
                         Router.go("home");
                     }
                     
                     // Show pop up.
                     $('#sign-up-success').show();
-                    document.getElementById("welcom-message").innerHTML = "Bienvenue " + userName;
                     document.getElementById("e-mail-registration").href="mailto:"+email;
                     document.getElementById("e-mail-registration").innerHTML=email;
                     $('#signModal').modal('show');
@@ -155,14 +141,12 @@ Template.login.events({
         else {
             Accounts.forgotPassword({email: email}, function(error) {
                 if (error) {
+                    console.log(error.reason);
                     if (error.message == 'User not found [403]') 
                       $('#no-existing-email').show();
-                    else 
-                      console.log('We are sorry but something went wrong.');    
                 } 
                 else {
                     document.getElementById('send-email').style.display = "none";
-                    console.log('Email Sent. Check your mailbox.');
                     $('#email-send-success').show();
                   
                     setTimeout(function(){

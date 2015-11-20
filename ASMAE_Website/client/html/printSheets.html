@@ -1,0 +1,58 @@
+<template name="printSheets">
+
+  <table class="table">
+    <tbody>
+      <tr>
+        <td align="center">
+          <select class="form-control Year" id="Year" name = "Year">
+            <!-- <option value="" disabled="" selected="" hidden></option> -->
+            <option value="2015"> 2015 </option>
+          </select>
+        </td>
+
+        <td align="center">
+          <select class="form-control Type" id="Type">
+            <!-- <option value="" disabled="" selected="" hidden></option> -->
+            <option value="men"> Homme </option>
+            <option value="women"> Femme </option>
+            <option value="mixed"> Mixte </option>
+            <!-- <option value="family"> Familles </option> -->
+          </select>
+        </td>
+
+        <td align="center">
+          <select class="form-control Category" id="Category">
+            <!-- <option value="" disabled="" selected="" hidden></option> -->
+            <option value="preminimes"> Pré Minimes </option>
+            <option value="minimes"> Minimes </option>
+            <option value="cadets"> Cadet </option>
+            <option value="scolars"> Scolaire </option>
+            <option value="juniors"> Junior </option>
+            <option value="seniors"> Séniors </option>
+            <option value="elites"> Elites </option>
+
+          </select>
+        </td>
+        <td align="center">
+          <button type="button" id="Save" class="btn btn-default btn-lg">
+            <span class="glyphicon glyphicon-download" aria-hidden="true"></span>  Save
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="button" id="Print" class="btn btn-default btn-lg">
+    <span class="glyphicon glyphicon-print"></span> Print all
+  </button>
+
+
+
+  <div id="allTab">
+    {{#each getPool}}
+    <div id={{this.id}} style="background:#fff">
+      {{>scoreTable this.pool}}
+    </div>
+    {{/each}}
+    {{removeInput}}
+  </div>
+</template>

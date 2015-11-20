@@ -1,6 +1,6 @@
 
-<!-- Takes 1 parameter : the poolId for this score table-->
-<template name="scoreTable">
+<!-- Takes 1 parameter : the poolId for this score table under the format {_id:POOLID}-->
+<template name="scorePage">
   <!-- link to style for button http://bootsnipp.com/snippets/featured/bootstrap-square-buttons -->
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
   <!-- Some scripts added to print the table into the pdf -->
@@ -44,6 +44,27 @@
     </tbody>
   </table>
 
+  {{>scoreTable this}}
+
+  <button type="button" id="save" class="btn btn-default btn-lg">
+    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
+  </button>
+  <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
+    <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+  </button>
+
+  <div id="successBox" class="alert alert-success" role="alert" hidden>
+    <h4>
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+      <span class="sr-only">Succès:</span>
+      <span id="infoMsg">Scores sauvés !</span>
+    </h4>
+  </div>
+</template>
+
+
+<!-- Takes 1 parameter : the poolId for this score table under the format {_id:POOLID}-->
+<template name="scoreTable">
   <div id="scoreTab">
     <h3>Les paires dans la colonne jouent contre les paires de la ligne.</h3>
     <div class="panel panel-primary" style="background-color:white">
@@ -108,20 +129,7 @@
     </div>
   </div>
 
-  <button type="button" id="save" class="btn btn-default btn-lg">
-    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
-  </button>
-  <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
-    <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-  </button>
 
-  <div id="successBox" class="alert alert-success" role="alert" hidden>
-    <h4>
-      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-      <span class="sr-only">Succès:</span>
-      <span id="infoMsg">Scores sauvés !</span>
-    </h4>
-  </div>
 
   <!-- Frame for the pdf viewer -->
   <iframe class="preview-pane" type="application/pdf" height="900" width="100%" frameborder="0" hidden></iframe>
