@@ -103,9 +103,9 @@ Meteor.methods({
 				// We need the birthDate
 				if(p1.profile.birthDate){
 					// Fetch the category corresponding to that date
-					cat1 = getCategory(p1.profile.birthDate);
+					cat1 = getCategoryForBirth(p1.profile.birthDate);
 					if(!cat1){
-						console.error("Player 1 does not fit in any category (too young). Age : "+getAge(p1.profile.birthDate()));
+						console.error("Player 1 does not fit in any category (too young). Age : "+getAge(p1.profile.birthDate) +" / "+cat1);
 						return false;
 					}
 				}
@@ -114,9 +114,9 @@ Meteor.methods({
 				// We need the birthDate
 				if(p2.profile.birthDate){
 					// Fetch the category corresponding to that date
-					cat2 = getCategory(p2.profile.birthDate);
+					cat2 = getCategoryForBirth(p2.profile.birthDate);
 					if(!cat2){
-						console.error("Player 2 does not fit in any category (too young). Age : "+getAge(p2.profile.birthDate));
+						console.error("Player 2 does not fit in any category (too young). Age : "+getAge(p2.profile.birthDate) + " / "+cat2);
 						return false;
 					}
 				}
@@ -124,7 +124,7 @@ Meteor.methods({
 			if(cat1 && cat2){
 				// Both players are provided, check that the categories match !
 				if(cat1 != cat2){
-					console.error("getPairCategory : categories of the 2 players do not match !");
+					console.error("getPairCategory : categories of the 2 players do not match ! "+cat1+" and "+cat2);
 					return false;
 				}
 				return cat1;
@@ -1315,7 +1315,7 @@ Meteor.methods({
 				Set the category
 		*/
 		type = Meteor.call('getPairType', dateMatch, p1, p2);
-		if(typeof type === undefined) {
+		if(typeof type === undefined || !type) {
 			console.error("addPairToTournament : getPairType returns undefined");
 			return false;
 		}

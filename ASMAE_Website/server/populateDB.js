@@ -177,7 +177,7 @@ Meteor.methods({
 
 		function insertUnregisteredAccounts(nbr) {
 			for (var i=0; i<nbr; i++) {
-				var email = "aloneUser"+i+"@user.com";
+				var email = "unregisteredUser"+i+"@user.com";
 				if (Accounts.findUserByEmail(email)!==undefined) {
 					continue;
 				}
@@ -277,17 +277,6 @@ Meteor.methods({
                 gender:gen1
             };
 
-            var profile2 = {
-                firstName: firstname2,
-                lastName:lastnames[getRandomInt(0,nData)],
-                phone:phone2,
-                birthDate:date2,
-                AFT:AFTs[getRandomInt(0,n_AFTs)],
-                isStaff:false,
-                isAdmin:false,
-                gender:gen2
-            };
-
             var userID1 = Accounts.createUser({
                            email : email1,
                            password : "passpass",
@@ -296,6 +285,17 @@ Meteor.methods({
 			Accounts.addEmail(userID1, email1, true);
 
 			if (!alone) {
+				var profile2 = {
+	                firstName: firstname2,
+	                lastName:lastnames[getRandomInt(0,nData)],
+	                phone:phone2,
+	                birthDate:date2,
+	                AFT:AFTs[getRandomInt(0,n_AFTs)],
+	                isStaff:false,
+	                isAdmin:false,
+	                gender:gen2
+	            };
+
 				var userID2 = Accounts.createUser({
 	                          email : email2,
 	                          password : "passpass",
@@ -318,7 +318,7 @@ Meteor.methods({
 			else {
 				pairID = Meteor.call("updatePair", {player1: {_id:userID1}, wish:wish1, extras:extra1});
 			}
-			Meteor.call("addPairToTournament", pairID, tournamentYear, dateMatch);
+			Meteor.call("addPairToTournament", pairID, "2015", dateMatch);
         } // End createPair
 
 
@@ -349,12 +349,15 @@ Meteor.methods({
         for (var j=0; j<nTypes[3]; j++) {
             createPair(typeKeys[3],"doesnotmatterwhatiputhere");
         }
+		/*
 		console.log("popDB populates type family with alone players");
 		for (var j=0; i<nAlones[3]; j++) {
 			createPair(typeKeys[3],"doesnotmatterwhatiputhere",true);
-		}
+		}*/
 
+		console.log("popDB populates staff and admin members");
 		insertStaffAndAdminMembers(nStaff,nAdmin);
+		console.log("popDB populates unregistered accounts");
 		insertUnregisteredAccounts(nUnregistered);
 
 		//insertCourts(70);

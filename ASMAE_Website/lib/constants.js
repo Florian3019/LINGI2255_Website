@@ -34,11 +34,7 @@ acceptPairForFamily = function(birthDate1, birthDate2){
 * @param age is of type int
 */
 getCategory = function(age){
-    // use of getCategory with a the birthDate
-    if (typeof age == 'Date') {
-        age = getAge(age);
-    }
-    
+
     if(age < 9){
         return undefined;
     }
@@ -61,6 +57,11 @@ getCategory = function(age){
         return categoriesKeys[5];
     }
     return categoriesKeys[6];
+}
+
+getCategoryForBirth = function(birth) {
+    var age = getAge(birth);
+    return getCategory(age);
 }
 
 
