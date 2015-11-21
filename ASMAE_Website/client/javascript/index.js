@@ -59,12 +59,12 @@ Template.index.events({
 		var nCourt2015 = 70;
 		var nStaff2015 = 10;
 		var nAdmin2015 = 3;
-		var nTypes2014 = [175,175,175,28];
-		var nAlones2014 = [70,70,70,10];
-		var nUnregistered2014 = 200;
-		var nCourt2014 = 70;
-		var nStaff2014 = 10;
-		var nAdmin2014 = 3;
+		var nTypes2014 = [70,70,70,14];
+		var nAlones2014 = [35,35,35,7];
+		var nUnregistered2014 = 0;
+		var nCourt2014 = 30;
+		var nStaff2014 = 0;
+		var nAdmin2014 = 0;
 		Meteor.call("populateDB", new Date(2015, 8, 12), nTypes2015, nAlones2015, nUnregistered2015, nCourt2015, nStaff2015, nAdmin2015);
 		Meteor.call("populateDB", new Date(2014, 8, 11), nTypes2014, nAlones2014, nUnregistered2014, nCourt2014, nStaff2014, nAdmin2014);
 	}

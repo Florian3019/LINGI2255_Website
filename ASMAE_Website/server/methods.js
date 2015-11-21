@@ -36,6 +36,11 @@ Meteor.methods({
 	},
 
 	'setNextCourtNumber' : function(tournamentYear, value) {
+		globalValueDocument = GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear});
+		if (typeof globalValueDocument === 'undefined') {
+			console.error("Error setNextCourtNumber : globalValueDocument not found for year "+tournamentYear);
+			return undefined;
+		}
 		GlobalValues.update(globalValueDocument, {$set: {
 			value : value
 		}}, function(err, result){
@@ -43,7 +48,7 @@ Meteor.methods({
 				throw new Meteor.Error("update GlobalValues error: ", err);
 			}
 		});
-	}
+	},
 
 	'objectIsEmpty' : function(obj) {
 	    for(var prop in obj) {
