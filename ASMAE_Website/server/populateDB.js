@@ -217,6 +217,7 @@ Meteor.methods({
 				for(var i = 0; i < rand; i++){
 					array[i] = nextCourtNumber;
 					nextCourtNumber++;
+					nbr--;
 				}
 				Meteor.call('setNextCourtNumber', tournamentYear, nextCourtNumber);
 				return array;
@@ -254,7 +255,8 @@ Meteor.methods({
 					surface : getRandomElement(surfaceTypes)
 				};
 
-				Courts.insert(court);
+				var id = Courts.insert(court);
+				console.log("adding at least one court with id "+id);
 			}
 		}
 		function insertAddress() {
