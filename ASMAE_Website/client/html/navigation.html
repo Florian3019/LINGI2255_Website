@@ -9,8 +9,8 @@
                 </div>
                 <div class="modal-body">
                       <p id="welcom-message"> Bienvenue sur le site du Tournois Charles de Lorraine, </p>
-                      <p> Votre compte à correctement été crée ! </p>
-                      <p> Un e-mail automatique de confirmation vient d'être envoyé à votre adresse e-mail :</p>
+                      <p> Votre compte a correctement été créé ! </p>
+                      <p> Un e-mail de confirmation automatique vient d'être envoyé à votre adresse e-mail :</p>
                       <a id="e-mail-registration" href="mailto:someone@example.com">someone@example.com</a>
                       <hr>
                       <p> Vous ne retrouvez pas notre e-mail de confirmation ?</p>
@@ -34,7 +34,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-              {{#if currentUser}}       
+              {{#if currentUser}}
               <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Inscription <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   {{#if registered}}
@@ -46,22 +46,22 @@
                 </ul>
               </li>
               <li><a href="{{pathFor route='myCourts'}}">Mes terrains</a></li>
-              <li><a href="{{pathFor route='contacts'}}">Questions sur le tournois</a></li>
+              <li><a href="{{pathFor route='contacts'}}">Questions sur le tournoi</a></li>
               {{/if}}
               <li><a href="https://www.facebook.com/media/set/?set=a.10153598504984631.1073741844.9064359630&type=1&l=153e72eadf" target="_blank">Lien photos</a></li>
               <li><a href="{{pathFor route='rules'}}">Règlement</a></li>
           </ul>
           <div class="nav navbar-nav navbar-right">
             {{#if isStaff}}
-            <li><a href="{{pathFor route='adminTemplate'}}">Staff member</a></li>
+            <li><a href="{{pathFor route='adminTemplate'}}">Membre Staff</a></li>
             {{/if}}
             {{> loginButtons}}
           </div>
         </div> <!--/.nav-collapse -->
-      </div> 
+      </div>
     </nav>
 
-    
+
 
 </template>
 
@@ -69,4 +69,3 @@
 <template name="_loginButtonsAdditionalLoggedInDropdownActions">
   <button class="btn btn-default btn-block" id="login-buttons-edit-profile">Modifier mon profil</button>
 </template>
-

@@ -17,10 +17,13 @@ Meteor.methods({
 			$set: {"profile.isAdmin":1,"profile.isStaff":1}
 		});
 
-		GlobalValues.insert({
-			key: "nextCourtNumber",
-			value: 1
-		});
+		Meteor.call('activateCourtDB');
+	},
+
+	'activateCourtDB' : function() {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
+			GlobalValues.insert({_id:"nextCourtNumber", 'value':1});
+		}
 	},
 
 	'objectIsEmpty' : function(obj) {
@@ -411,7 +414,7 @@ Meteor.methods({
 
 			//CourtNumber
 			var courtNumberArray = [];
-			var globalValueDocument = GlobalValues.findOne({key: "nextCourtNumber"})
+			var globalValueDocument = GlobalValues.findOne({_id:"nextCourtNumber"})
 			nextCourtNumber = globalValueDocument.value;
 
 			for(var i = 0; i < data.numberOfCourts; i++){
