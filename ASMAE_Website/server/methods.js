@@ -556,7 +556,6 @@ Meteor.methods({
 			return;
 		}
 
-
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = userData._id == Meteor.userId();
@@ -646,7 +645,9 @@ Meteor.methods({
 		return false;
 	},
 
-
+	'sendNewEmail' : function(userId){
+		Accounts.sendVerificationEmail(userId);
+	},
 	/*
 		@param userId : Updates the address of the user with id userId.
 				If courtId is provided, updates the court address (userId is then the owner's id).
