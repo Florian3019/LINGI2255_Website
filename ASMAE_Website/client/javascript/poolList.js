@@ -203,6 +203,77 @@ var mergePlayers = function(document){
 											Sidebar collapsable Menu
 *******************************************************************************************************************/
 
+
+Template.poolsSidebarCollapsableMenu.helpers({
+	'getAllYears':function(){
+		return ALLYEARS; // constant.js
+	},
+
+	// Returns a yearData with id year (copy of the same function in poolList.helpers)
+	'getYear' : function(){
+		var year = Session.get('PoolList/Year');
+		var y = Years.findOne({_id:year});
+
+		if(year!=undefined && y==undefined){
+			setInfo(document, "Pas de données trouvées pour l'année "+ year);
+		}
+		else{
+			infoBox =document.getElementById("infoBox");
+			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
+		}
+
+		return y;
+	},
+});
+
+Template.poolsSidebarCollapsableMenu.events({
+	'click .PoolOption' : function(event){
+		var type = event.currentTarget.dataset.type;
+		var category = event.currentTarget.dataset.category;
+		hideSuccessBox(document);
+		Session.set('PoolList/Category', category);
+		if(category==="all"){
+			type="family";
+		}
+		Session.set('PoolList/Type', type);
+		Session.set("PoolList/ChosenScorePool","");
+		Session.set("PoolList/ChosenBrackets","");
+
+		// Hide previous error message, if any
+		mergeErrorBox = document.getElementById("mergeErrorBox");
+		if(mergeErrorBox!=null && mergeErrorBox != undefined) mergeErrorBox.style.display = "none";
+
+		var info = {"type":type, "category":category, "isPool":true};
+		updateArrow(document, info);
+	},
+
+	'click .BracketOption' : function(event){
+		var type = event.currentTarget.dataset.type;
+		var category = event.currentTarget.dataset.category;
+		hideSuccessBox(document);
+		Session.set('PoolList/Category', category);
+		if(category==="all"){
+			type="family";
+		}
+		Session.set('PoolList/Type', type);
+		Session.set("PoolList/ChosenBrackets","true");
+		Session.set("PoolList/ChosenScorePool","");
+
+		var info = {"type":type, "category":category, "isPool":false};
+		updateArrow(document, info);
+	},
+
+	'click .collapsableMenu' : function(event){
+		collapseMenus(document, event.currentTarget);
+	},
+
+	'click .Year':function(event){
+		hideSuccessBox(document);
+		Session.set('PoolList/Year', event.target.value);
+		Session.set("PoolList/ChosenScorePool","");
+	}
+});
+
 /*
 	Updates the arrow of the collapsable menu
 */
@@ -459,53 +530,6 @@ Template.poolList.onRendered(function() {
 });
 
 Template.poolList.events({
-
-	'click .PoolOption' : function(event){
-		var type = event.currentTarget.dataset.type;
-		var category = event.currentTarget.dataset.category;
-		hideSuccessBox(document);
-		Session.set('PoolList/Category', category);
-		if(category==="all"){
-			type="family";
-		}
-		Session.set('PoolList/Type', type);
-		Session.set("PoolList/ChosenScorePool","");
-		Session.set("PoolList/ChosenBrackets","");
-
-		// Hide previous error message, if any
-		mergeErrorBox = document.getElementById("mergeErrorBox");
-		if(mergeErrorBox!=null && mergeErrorBox != undefined) mergeErrorBox.style.display = "none";
-
-		var info = {"type":type, "category":category, "isPool":true};
-		updateArrow(document, info);
-	},
-
-	'click .BracketOption' : function(event){
-		var type = event.currentTarget.dataset.type;
-		var category = event.currentTarget.dataset.category;
-		hideSuccessBox(document);
-		Session.set('PoolList/Category', category);
-		if(category==="all"){
-			type="family";
-		}
-		Session.set('PoolList/Type', type);
-		Session.set("PoolList/ChosenBrackets","true");
-		Session.set("PoolList/ChosenScorePool","");
-
-		var info = {"type":type, "category":category, "isPool":false};
-		updateArrow(document, info);
-	},
-
-	'click .collapsableMenu' : function(event){
-		collapseMenus(document, event.currentTarget);
-	},
-
-	'click .Year':function(event){
-		hideSuccessBox(document);
-		Session.set('PoolList/Year', event.target.value);
-		Session.set("PoolList/ChosenScorePool","");
-	},
-
 	/*
 		Collects the state of the table of pools to save it into the db
 	*/
@@ -821,25 +845,7 @@ Template.poolList.events({
 
 Template.poolList.helpers({
 
-	// Returns the number of pools
-
-	'getAllYears':function(){
-		return ALLYEARS; // constant.js
-	},
-
-	'getNumberPools' : function(){
-		var pools = Pools.find().fetch();
-		return pools.length;
-	},
-
-	// Returns the number of courts
-
-	'getNumberCourts' : function(){
-		var courts = getCourtNumbers(Courts.find().fetch());
-		return courts.length;
-	},
-
-	// // Returns a yearData with id year
+	// Returns a yearData with id year (copy of the same function in poolsSidebarCollapsableMenu.helpers)
 	'getYear' : function(){
 		var year = Session.get('PoolList/Year');
 		var y = Years.findOne({_id:year});
@@ -853,6 +859,20 @@ Template.poolList.helpers({
 		}
 
 		return y;
+	},
+
+	// Returns the number of pools
+
+	'getNumberPools' : function(){
+		var pools = Pools.find().fetch();
+		return pools.length;
+	},
+
+	// Returns the number of courts
+
+	'getNumberCourts' : function(){
+		var courts = getCourtNumbers(Courts.find().fetch());
+		return courts.length;
 	},
 
 	// Returns a typeData
