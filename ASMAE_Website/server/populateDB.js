@@ -251,7 +251,7 @@ Meteor.methods({
 					dispoSamedi : saturdayAvailable,
 					dispoDimanche : sundayAvailable,
 					instructions : getInstructions(),
-					lendThisYear : tournamentYear === "2015",
+					lendThisYear : tournamentYear.toString() === "2015",
 					numberOfCourts : courtArray.length,
 					ownerComment : getComment(),
 					ownerID : owner._id,
@@ -427,7 +427,7 @@ Meteor.methods({
 			else {
 				pairID = Meteor.call("updatePair", {player1: {_id:userID1}, wish:wish1, extras:extra1});
 			}
-			Meteor.call("addPairToTournament", pairID, tournamentYear, dateMatch);
+			Meteor.call("addPairToTournament", pairID, tournamentYear.toString(), dateMatch);
         } // End createPair
 
 
