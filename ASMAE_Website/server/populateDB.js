@@ -3,7 +3,7 @@ Meteor.methods({
 	 * Insert some users in the DB for the tournament specified as the first argument
 	 * This is magic
 	 */
-	'populateDB': function(tournamentDate, nTypes, nAlones, nUnregistered, nCourt, nStaff, nAdmin) {
+	'populateDB': function(tournamentDate, nTypes, nAlones, nUnregistered, nCourtSaturday, nCourtSunday, nCourtBoth, nStaff, nAdmin) {
 		console.log("Begin popDB");
 
 		var tournamentYear = tournamentDate.getFullYear();
@@ -11,13 +11,16 @@ Meteor.methods({
 		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isStaff":true}});
 
 		console.log("popDB populates extras");
-		if (typeof Extras.findOne({name:"BBQ"}) === undefined) {
+		if (typeof Extras.findOne({name:"BBQ"}) === 'undefined') {
+			console.log("Inserting BBQ");
 			Extras.insert({name: "BBQ", price: 8, comment: "poulet-merguez"});
 		}
-		if (typeof Extras.findOne({name:"Karaoke"}) === undefined) {
+		if (typeof Extras.findOne({name:"Karaoke"}) === 'undefined') {
+			console.log("Inserting Karaoke");
 			Extras.insert({name: "Karaoke", price: 4, comment: "Pour les petits et les grands"});
 		}
-		if (typeof Extras.findOne({name:"Dessert"}) === undefined) {
+		if (typeof Extras.findOne({name:"Dessert"}) === 'undefined') {
+			console.log("Inserting Dessert");
 			Extras.insert({name: "Dessert", price: 3, comment: "Tiramisu"});
 		}
 
@@ -204,7 +207,7 @@ Meteor.methods({
 			return array[getRandomInt(0,array.length)];
 		}
 
-		function insertCourts(nbr) {
+		function insertCourts(nbr, saturdayAvailable, sundayAvailable) {
 			if (Courts && Courts.find().fetch().length > nbr - 1) {
 				return false;
 			}
@@ -245,10 +248,10 @@ Meteor.methods({
 					addressID : insertAddress(),
 					courtNumber : courtArray,
 					courtType : flipCoin() ? "club" : "privé",
-					dispoSamedi : flipCoin(),
-					dispoDimanche : flipCoin(),
+					dispoSamedi : saturdayAvailable,
+					dispoDimanche : sundayAvailable,
 					instructions : getInstructions(),
-					lendThisYear : true,
+					lendThisYear : tournamentYear === "2015",
 					numberOfCourts : courtArray.length,
 					ownerComment : getComment(),
 					ownerID : owner._id,
@@ -256,7 +259,6 @@ Meteor.methods({
 				};
 
 				var id = Courts.insert(court);
-				console.log("adding at least one court with id "+id);
 			}
 		}
 		function insertAddress() {
@@ -463,7 +465,9 @@ Meteor.methods({
 		insertUnregisteredAccounts(nUnregistered);
 
 		console.log("popDB populates courts");
-		insertCourts(nCourt);
+		insertCourts(nCourtSaturday, true, false);
+		insertCourts(nCourtSunday, false, true);
+		insertCourts(nCourtBoth, true, true);
 
 		console.log("popDB done");
 	},
