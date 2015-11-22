@@ -61,6 +61,7 @@ Accounts.emailTemplates.resetPassword.html =function(user,url){
 	var data = {
 		dataintro:"Bonjour,",
 		dataacc:"",
+		dataacccc:"",
 		datacontent:"Il semble que vous ayez oublié votre mot de passe. Si c'est le cas, veuillez suivre les instructions ci-dessous. Si jamais vous n'avez pas demandé le changement de votre mot de passe, vous pouvez simplement ignoré cet email.",
 		datadesc:"Pour modifier votre mot de passe, il suffit de cliquer sur le lien ci-dessous :",
 		datalink:url,
