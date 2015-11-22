@@ -20,10 +20,34 @@ Meteor.methods({
 		Meteor.call('activateCourtDB');
 	},
 
-	'activateCourtDB' : function() {
-		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
-			GlobalValues.insert({_id:"nextCourtNumber", 'value':1});
+	'activateCourtDB' : function(tournamentYear) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
+			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, 'value':1});
 		}
+	},
+
+	'getNextCourtNumber' : function(tournamentYear) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
+			console.warn("No court number yet, activating CourtDB");
+			Meteor.call('activateCourtDB',tournamentYear);
+			return 1;
+		}
+		return GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear});
+	},
+
+	'setNextCourtNumber' : function(tournamentYear, value) {
+		globalValueDocument = GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear});
+		if (typeof globalValueDocument === 'undefined') {
+			console.error("Error setNextCourtNumber : globalValueDocument not found for year "+tournamentYear);
+			return undefined;
+		}
+		GlobalValues.update(globalValueDocument, {$set: {
+			value : value
+		}}, function(err, result){
+			if(err){
+				throw new Meteor.Error("update GlobalValues error: ", err);
+			}
+		});
 	},
 
 	'objectIsEmpty' : function(obj) {
@@ -414,7 +438,7 @@ Meteor.methods({
 
 			//CourtNumber
 			var courtNumberArray = [];
-			var globalValueDocument = GlobalValues.findOne({_id:"nextCourtNumber"})
+			var globalValueDocument = Meteor.call('getNextCourtNumber',tournamentDate.getFullYear());
 			nextCourtNumber = globalValueDocument.value;
 
 			for(var i = 0; i < data.numberOfCourts; i++){
@@ -424,13 +448,7 @@ Meteor.methods({
 			data.courtNumber = courtNumberArray;
 
 			//Update nextCourtNumber global value
-			GlobalValues.update(globalValueDocument, {$set: {
-				value : nextCourtNumber
-			}}, function(err, result){
-				if(err){
-					throw new Meteor.Error("update GlobalValues error: ", err);
-				}
-			});
+			Meteor.call('setNextCourtNumber', tournamentDate.getFullYear(), nextCourtNumber);
 		}
 
 
@@ -559,7 +577,6 @@ Meteor.methods({
 			return;
 		}
 
-
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = userData._id == Meteor.userId();
@@ -649,7 +666,9 @@ Meteor.methods({
 		return false;
 	},
 
-
+	'sendNewEmail' : function(userId){
+		Accounts.sendVerificationEmail(userId);
+	},
 	/*
 		@param userId : Updates the address of the user with id userId.
 				If courtId is provided, updates the court address (userId is then the owner's id).
