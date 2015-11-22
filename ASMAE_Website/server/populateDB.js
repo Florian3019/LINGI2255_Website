@@ -6,6 +6,10 @@ Meteor.methods({
 	'populateDB': function(tournamentDate, nTypes, nAlones, nUnregistered, nCourtSaturday, nCourtSunday, nCourtBoth, nStaff, nAdmin) {
 		console.log("Begin popDB");
 
+		console.log("popDB sets your email to verified");
+		var user = Meteor.users.findOne({_id:Meteor.userId()});
+		Accounts.addEmail(Meteor.userId(), user.emails[0].address, true);
+
 		var tournamentYear = tournamentDate.getFullYear();
 		console.log("popDB grants you STAFF access !")
 		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isStaff":true}});
@@ -58,7 +62,7 @@ Meteor.methods({
 		function getWish(gender) {
 			var rand = getRandomInt(0,2);
 			var name = gender=="M" ? getRandomElement(firstnamesM) : getRandomElement(firstnamesF);
-			if (getRandomInt(0,1)===0) {
+			if (flipCoin()) {
 				switch (rand) {
 					case 0: return "Je veux jouer avec "+name;
 					case 1: return "Je ne veux pas jouer avec "+name;
@@ -70,7 +74,7 @@ Meteor.methods({
 		function getExtra() {
 			var rand = getRandomInt(0,3);
 			var nbr = getRandomInt(1,5);
-			if (getRandomInt(0,1)===0) {
+			if (flipCoin()) {
 				switch (rand) {
 					case 0: return {"BBQ":nbr};
 					case 1: return {"Karaoke":nbr};
@@ -429,9 +433,6 @@ Meteor.methods({
 			}
 			Meteor.call("addPairToTournament", pairID, tournamentYear.toString(), dateMatch);
         } // End createPair
-
-
-        // Men - Women - Mixed - Family
 
 
 		// Create the pairs

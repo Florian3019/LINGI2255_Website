@@ -31,6 +31,10 @@ acceptPairForFamily = function(birthDate1, birthDate2, tournamentDate){
     age1 = getAge(birthDate1, tournamentDate);
     age2 = getAge(birthDate2, tournamentDate);
 
+    return acceptPairForFamilyAge(age1,age2);
+}
+
+acceptPairForFamilyAge = function(age1, age2) {
     return (age1<=MAX_FAMILY_AGE && age2>= MIN_FAMILY_AGE) || (age2<=MAX_FAMILY_AGE && age1>= MIN_FAMILY_AGE);
 }
 
@@ -128,4 +132,25 @@ getAgeNoDate = function(year, month, day, tournamentDate){
 isValidEmail = function (email) {
     var re = new RegExp('^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$','i');
     return re.test(email);
+}
+
+/*
+*   params are strings
+*   @param dateMatch := saturday | sunday | family
+*   @param gender := M | F
+*/
+getTypeForPlayer = function(dateMatch, gender) {
+    if (dateMatch === 'family') {
+        return 'family';
+    }
+    else if (dateMatch === 'saturday') {
+        return typeKeys[2];
+    }
+    else if (dateMatch === 'sunday') {
+        return gender==='M' ? typeKeys[0] : typeKeys[1];
+    }
+    else {
+        console.error("Error getTypeForPlayer - invalid dateMatch : "+dateMatch);
+        return undefined;
+    }
 }
