@@ -138,14 +138,21 @@ Router.route('/mes-terrains', {
 	template: 'myCourts'
 });
 
+Router.route('/lancer-inscriptions-tournoi', {
+	name: 'launchTournament',
+	template: 'launchTournament'
+});
+
 Router.route('/template-admin', {
 	name: 'adminTemplate',
 	template: 'adminTemplate'
 });
+
 Router.route('/admin-ajout-terrain', {
 	name: 'adminAddCourt',
 	template: 'adminAddCourt'
 });
+
 Router.route('/info-joueurs', {
 	name: 'playersInfo',
 	template: 'playersInfo',
@@ -153,6 +160,7 @@ Router.route('/info-joueurs', {
 		return Meteor.subscribe('Addresses');
 	}
 });
+
 Router.route('/page-info-joueur', {
 	name: 'playerInfoPage',
 	template: 'playerInfoPage',

@@ -3,7 +3,7 @@ Template.contacts.events({
 	console.log("envoi d'une question");
         event.preventDefault();
         var currentdate = new Date();
-var datetime =    currentdate.getDate() + "/"
+        var datetime = currentdate.getDate() + "/"
                 + (currentdate.getMonth()+1)  + "/"
                 + currentdate.getFullYear() + " @ "
                 + currentdate.getHours() + ":"
@@ -31,5 +31,13 @@ var datetime =    currentdate.getDate() + "/"
 Template.contacts.helpers({
     getMail: function(){
         return Meteor.user().emails[0].address;
+    },
+
+    getFirstName: function(){
+        return Meteor.user().profile.firstName;
+    },
+
+    getLastName: function(){
+        return Meteor.user().profile.lastName;
     }
 });

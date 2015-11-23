@@ -11,9 +11,61 @@ const REGISTRATION_PRICE = 10;
 
 Meteor.methods({
 
-	'getAllYears':function(){
+	// Method to launch the tournament registrations for this year's tournament.
+	'launchTournament': function(launchTournamentData){
+		if(Meteor.call('isAdmin')){
+
+			var data = {}
+			if(typeof launchTournamentData.tournamentDate === 'undefined')
+			{
+				console.error("launchTournament: No date for the tournament");
+				return false;
+			}
+			else {
+				data.tournamentDate = launchTournamentData.tournamentDate;
+				dataYear = ""+data.tournamentDate.getFullYear();	//Must be a string
+			}
+
+			if(typeof launchTournamentData.tournamentPrice === 'undefined')
+			{
+				console.error("launchTournament: No price for the tournament");
+				return false;
+			}
+			else{
+				data.tournamentPrice = launchTournamentData.tournamentPrice;
+			}
+
+			//Insert in database
+
+			globalValueDocument = GlobalValues.findOne({_id:"currentYear"});
+			if(typeof globalValueDocument === 'undefined') {
+				console.error("Error in launchTournament : globalValueDocument not found for key currentYear");
+				return undefined;
+			}
+
+			GlobalValues.update(globalValueDocument, {$set: {
+				value : dataYear
+			}}, function(err, result){
+				if(err){
+					throw new Meteor.Error("update GlobalValues in launchTournament error: ", err);
+				}
+				else{
+
+					Meteor.call("activateCourtDB", dataYear);
+				}
+			});
+
+			return Years.insert({_id: dataYear}, data);
+		}
+		else {
+			console.error("You are not an administrator, you don't have the permission to do this action.");
+			return false;
+		}
+	},
+
+	'getAllYears': function(){
 		allYears = Years.find({}).fetch();
-		
+
 		var y = [];
 		for(var i=0; i<allYears.length;i++){
 			y.push(allYears[i]._id);
@@ -27,12 +79,18 @@ Meteor.methods({
 			$set: {"profile.isAdmin":1,"profile.isStaff":1}
 		});
 
-		Meteor.call('activateCourtDB');
+		Meteor.call('activateCourtDB', "2015");
+	},
+
+	'activateGlobalValuesDB' : function() {
+		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
+			GlobalValues.insert({_id:"currentYear", value:"2015"});
+		}
 	},
 
 	'activateCourtDB' : function(tournamentYear) {
 		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
-			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, 'value':1});
+			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, value:1});
 		}
 	},
 
@@ -448,7 +506,7 @@ Meteor.methods({
 
 			//CourtNumber
 			var courtNumberArray = [];
-			var globalValueDocument = Meteor.call('getNextCourtNumber',tournamentDate.getFullYear());
+			var globalValueDocument = Meteor.call('getNextCourtNumber', currentYear);
 			nextCourtNumber = globalValueDocument.value;
 
 			for(var i = 0; i < data.numberOfCourts; i++){
@@ -458,7 +516,7 @@ Meteor.methods({
 			data.courtNumber = courtNumberArray;
 
 			//Update nextCourtNumber global value
-			Meteor.call('setNextCourtNumber', tournamentDate.getFullYear(), nextCourtNumber);
+			Meteor.call('setNextCourtNumber', currentYear, nextCourtNumber);
 		}
 
 
@@ -1419,7 +1477,7 @@ Meteor.methods({
 			// typeID = Meteor.call('updateType', {});
 			typeTable = Types.findOne({_id:typeID});
 
-			yearData =  {_id:year};
+			yearData = {_id:year};
 			yearData[type] = typeID;
 			yearTable = Meteor.call('updateYear',yearData);
 		}
@@ -1520,7 +1578,7 @@ Meteor.methods({
 		data2 = {$set:data};
 		Extras.update({_id:extraId}, data2);
 		return extraId;
-		
+
 	},
 
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){

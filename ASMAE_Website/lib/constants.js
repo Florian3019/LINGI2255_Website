@@ -6,9 +6,28 @@ paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
-tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 
-currentYear = ""+tournamentDate.getFullYear(); // must be a string
+//TODO: must always fetch this from DB !
+
+currentYear = GlobalValues.findOne({_id: "currentYear"});
+if(!currentYear)
+{
+    currentYear = "2015";
+}
+//currentYear = ""+tournamentDate.getFullYear(); // must be a string
+
+var fetchData = Years.findOne({year: currentYear});
+if(fetchData)
+{
+    tournamentDate = Years.findOne({year: currentYear}).tournamentDate
+}
+else {
+    tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
+}
+
+
+
+
 
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;

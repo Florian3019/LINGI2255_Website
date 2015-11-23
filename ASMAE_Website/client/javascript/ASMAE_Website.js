@@ -160,4 +160,5 @@ Tracker.autorun(function () {
   Meteor.subscribe("Extras");
   Meteor.subscribe("ModificationsLog");
   Meteor.subscribe("Payments");
+  Meteor.subscribe("GlobalValues");
 });
