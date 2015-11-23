@@ -17,168 +17,164 @@ Template.tournamentRegistration.helpers({
         return paymentTypes[2];
     },
 
-	'alonePlayers' : function(){
+    'alonePlayers' : function() {
+        function setAlonePlayers(){
 
-		if (Session.get("firstTime")) {
-			return undefined;
-		}
+    		if (Session.get("firstTime")) {
+    			return undefined;
+    		}
 
-		function checkErrors() {
-			/**
-				This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
-				If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
-			*/
-			function set_error(id,errorVisible) {
-				const error = "Error";
-				const OK = "OK";
-				const div = "Div";
-				var e = document.getElementById(id.concat(error));
-				if(!errorVisible){
-					e.style.display = 'none';
-					document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
-				}else{
-					e.style.display = 'block';
-					document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
-				}
-				e = document.getElementById(id.concat(OK));
-				if(errorVisible)
-					e.style.display = 'none';
-				else
-					e.style.display = 'block';
-			}
+    		function checkErrors() {
+    			/**
+    				This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
+    				If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
+    			*/
+    			function set_error(id,errorVisible) {
+    				const error = "Error";
+    				const OK = "OK";
+    				const div = "Div";
+    				var e = document.getElementById(id.concat(error));
+    				if(!errorVisible){
+    					e.style.display = 'none';
+    					document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
+    				}else{
+    					e.style.display = 'block';
+    					document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
+    				}
+    				e = document.getElementById(id.concat(OK));
+    				if(errorVisible)
+    					e.style.display = 'none';
+    				else
+    					e.style.display = 'block';
+    			}
 
-			var errors = new Array();
-			var hasError = false;
+    			var errors = new Array();
+    			var hasError = false;
 
-			/*
-				Get all the fields and check if they are filled,
-				display error or success according to that
-	    	*/
-	        var male = document.getElementById("male").checked;
-			var female = document.getElementById("female").checked;
-	        if(!male && !female){
-	        	errors.push({id:"sex", error:true});
-	        	hasError = true;
-	        }
-	        else{
-	        	errors.push({id:"sex", error:false});
-	        }
+    			/*
+    				Get all the fields and check if they are filled,
+    				display error or success according to that
+    	    	*/
+    	        var male = document.getElementById("male").checked;
+    			var female = document.getElementById("female").checked;
+    	        if(!male && !female){
+    	        	errors.push({id:"sex", error:true});
+    	        	hasError = true;
+    	        }
+    	        else{
+    	        	errors.push({id:"sex", error:false});
+    	        }
 
-			// Birthdate
-	        var birthDay = document.getElementById("birthDay").value;
-			var birthMonth = document.getElementById("birthMonth").value;
-			var birthYear = document.getElementById("birthYear").value;
-	        if(!birthDay || birthDay > 31 || birthDay < 1){
-	        	errors.push({id:"birthDay", error:true});
-	        	hasError = true;
-	        }
-	        else{
-	        	errors.push({id:"birthDay", error:false});
-	        }
-			if(!birthMonth || birthMonth > 12 || birthMonth < 1){
-	        	errors.push({id:"birthMonth", error:true});
-	        	hasError = true;
-	        }
-	        else{
-	        	errors.push({id:"birthMonth", error:false});
-	        }
-			if(!birthYear || birthYear < 1900 || birthYear > tournamentDate.getFullYear() - 9){
-	        	errors.push({id:"birthYear", error:true});
-	        	hasError = true;
-	        }
-	        else{
-	        	errors.push({id:"birthYear", error:false});
-	        }
-			// new Date object for the birthdate. Year : only 2 last digits. Month : from 0 to 11.
-			//var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
+    			// Birthdate
+    	        var birthDay = document.getElementById("birthDay").value;
+    			var birthMonth = document.getElementById("birthMonth").value;
+    			var birthYear = document.getElementById("birthYear").value;
+    	        if(!birthDay || birthDay > 31 || birthDay < 1){
+    	        	errors.push({id:"birthDay", error:true});
+    	        	hasError = true;
+    	        }
+    	        else{
+    	        	errors.push({id:"birthDay", error:false});
+    	        }
+    			if(!birthMonth || birthMonth > 12 || birthMonth < 1){
+    	        	errors.push({id:"birthMonth", error:true});
+    	        	hasError = true;
+    	        }
+    	        else{
+    	        	errors.push({id:"birthMonth", error:false});
+    	        }
+    			if(!birthYear || birthYear < 1900 || birthYear > tournamentDate.getFullYear() - 9){
+    	        	errors.push({id:"birthYear", error:true});
+    	        	hasError = true;
+    	        }
+    	        else{
+    	        	errors.push({id:"birthYear", error:false});
+    	        }
+    			// new Date object for the birthdate. Year : only 2 last digits. Month : from 0 to 11.
+    			//var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
 
-	        var dateMatch = document.getElementById("dateMatch").value;
-	        if(!dateMatch){
-	        	errors.push({id:"dateMatch", error:true});
-	        	hasError = true;
-	        }
-	        else{
-	        	errors.push({id:"dateMatch", error:false});
-	        }
+    	        var dateMatch = document.getElementById("dateMatch").value;
+    	        if(!dateMatch){
+    	        	errors.push({id:"dateMatch", error:true});
+    	        	hasError = true;
+    	        }
+    	        else{
+    	        	errors.push({id:"dateMatch", error:false});
+    	        }
 
-			/*
-				Display all errors
-	 		*/
-	        for(var i in errors){
-	        	var d = errors[i];
-	        	set_error(d.id, d.error);
-	        }
-	        if(hasError){
-	        	console.log("At least one field is missing or mis-filled");
-				return true;
-	        }
-			return false;
-		}
+                if (dateMatch === 'family' && !acceptForFamily(new Date(birthYear, birthMonth-1, birthDay))) {
+                    errors.push({id:"family", error:true});
+                    hasError = true;
+                }
+                else {
+                    errors.push({id:"family", error:false});
+                }
 
+    			/*
+    				Display all errors
+    	 		*/
+    	        for(var i in errors){
+    	        	var d = errors[i];
+    	        	set_error(d.id, d.error);
+    	        }
 
+    	        if(hasError){
+    	        	console.log("At least one field is missing or mis-filled");
+    				return true;
+    	        }
 
-		aloneDependency.depend(); // Refresh when button is hit
+    			return false;
+    		}
 
-		var check = checkErrors();
-		var e = document.getElementById("refreshErrorMessage");
-		if (check) { // An error occurred (mis-filled field)
-			e.style.display = 'block';
-			return undefined;
-		}
-		else {
-			e.style.display = 'none';
-		}
+    		var check = checkErrors();
+    		var e = document.getElementById("refreshErrorMessage");
+    		if (check) { // An error occurred (mis-filled field)
+    			e.style.display = 'block';
+    			return undefined;
+    		}
+    		else {
+    			e.style.display = 'none';
+    		}
 
-		var temp = document.getElementById("dateMatch");
-		var tournamentDateMatch = temp.options[temp.selectedIndex].value;
-		var date = new Date(document.getElementById("birthYear").value,document.getElementById("birthMonth").value-1,document.getElementById("birthDay").value);
-		var age = getAge(date);
+    		var temp = document.getElementById("dateMatch");
+    		var tournamentDateMatch = temp.options[temp.selectedIndex].value;
+    		var date = new Date(document.getElementById("birthYear").value,document.getElementById("birthMonth").value-1,document.getElementById("birthDay").value);
+    		var age = getAge(date);
 
-		var male = document.getElementById("male").checked;
-		if (male) {
-			sex = "M";
-		}
-		else {
-			sex = "F"
-		}
-		var category = getCategory(age);
+    		var male = document.getElementById("male").checked;
+    		if (male) {
+    			sex = "M";
+    		}
+    		else {
+    			sex = "F";
+    		}
 
-		var pairs = Pairs.find({$and:[{player2:{$exists:false}}, {"player1._id":{$ne:Meteor.userId()}},
-		{"day":tournamentDateMatch}]}).fetch();
-		var res = [];
-		for (var i = 0; i < pairs.length; i++) {
-			var aloneProfile = Meteor.users.findOne({_id:pairs[i].player1._id}).profile;
-			var aloneAge = getAge(aloneProfile.birthDate);
-			var aloneSex = aloneProfile.gender;
-			var aloneCategory = getCategory(aloneAge);
+            var type = getTypeForPlayer(tournamentDateMatch, sex);
+    		var category = getCategory(age);
+            var pairsAlonePlayers = Meteor.call('getPairsAlonePlayers', type, category, date, function(err, returnValue) {
+                Session.set("alonePlayers", returnValue);
+            });
+    	}
 
-			if (tournamentDateMatch==="family") {
-				if((age <= 15 && aloneAge > 25) || (age >= 25 && aloneAge <= 15)) {
-					res.push(pairs[i]);
-				}
-			}
+        aloneDependency.depend(); // Refresh when button is hit
+        setAlonePlayers();
+        var alone = Session.get("alonePlayers");
+        return alone;
+    },
 
-			else if (tournamentDateMatch==="saturday") { // Mixed
-				if (sex != aloneSex && aloneCategory === category) {
-					res.push(pairs[i]);
-				}
-			}
-			else if(tournamentDateMatch==="sunday") { // Same sex
-				if (sex === aloneSex && aloneCategory === category) {
-					res.push(pairs[i]);
-				}
-			}
-		}
-
-		return res;
-	},
 
 	'getPlayer' : function(userId){
 		return Meteor.users.findOne({_id:userId},{profile:1});
 	},
 
 	'getCity' :function(addressID){
+        if (typeof addressID === 'undefined') {
+            return undefined;
+        }
 		var res = Addresses.findOne({_id:addressID});
+        if (typeof res === 'undefined') {
+            return undefined;
+        }
 		return res.city;
 	},
 
@@ -256,7 +252,10 @@ Template.tournamentRegistration.helpers({
 		}
 		else{
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-			return userData ? userData.profile.birthDate.getDate() : "";
+            if (typeof userData.profile.birthDate !== 'undefined') {
+                return userData.profile.birthDate.getDate();
+            }
+            return "";
     	}
   	},
   	'getMonth' : function(){
@@ -267,7 +266,10 @@ Template.tournamentRegistration.helpers({
 		}
 		else{
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-			return userData ? userData.profile.birthDate.getMonth()+1 : "";
+			if (typeof userData.profile.birthDate !== 'undefined') {
+                return userData.profile.birthDate.getMonth()+1;
+            }
+            return "";
     	}
   	},
   	'getYear' : function(){
@@ -278,7 +280,10 @@ Template.tournamentRegistration.helpers({
 		}
 		else{
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-			return userData ? userData.profile.birthDate.getFullYear() : "";
+			if (typeof userData.profile.birthDate !== 'undefined') {
+                return userData.profile.birthDate.getFullYear();
+            }
+            return "";
     	}
 	},
 	'street': function(){
@@ -654,6 +659,13 @@ Template.tournamentRegistration.events({
         else{
         	errors.push({id:"dateMatch", error:false});
         }
+        if (dateMatch === 'family' && !acceptForFamily(new Date(birthYear, birthMonth-1, birthDay))) {
+            errors.push({id:"family", error:true});
+            hasError = true;
+        }
+        else {
+            errors.push({id:"family", error:false});
+        }
 
 
         /*
@@ -690,9 +702,6 @@ Template.tournamentRegistration.events({
             AFT : AFT
           }
         };
-
-
-    	var currentYear = "2015"; // Has to be a string
 
     	/*
 			Collect player wishes/constraints
@@ -779,20 +788,15 @@ Template.tournamentRegistration.events({
 			if(alone){
 				// Player wants to register alone but wants to wait for another to join on him
 				pairData = {
-					year:currentYear,
 					day: dateMatch,
-					//category:<category>, TODO
 					player1:playerData
 				};
 			}
 			else{
 				// Player registers a pair
 				pairData = {
-					year:currentYear,
 					day: dateMatch,
-					//category:<category>, TODO
 					player2:playerData,  // Player2 because search for a single player is made on pairs with empty player2 field
-					//player2:{_id:player2ID} // TODO--> give all player info
 				};
 			}
 			}
@@ -861,5 +865,5 @@ Template.tournamentRegistration.events({
   Template.tournamentRegistration.onCreated(function (){
 	  this.subscribe("AddressesNoSafe"); //TODO: selective addresses ?
 	  this.subscribe("users");
-	  Session.set("firstTime", true);
+	  Session.set("firstTime", true); // How lovely it is
   });

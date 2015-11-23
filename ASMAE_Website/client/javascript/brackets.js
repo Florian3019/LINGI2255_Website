@@ -325,15 +325,7 @@ Template.brackets.helpers({
     return array[index];
   },
 
-  'getScore':function(pairId){
-    if(pairId==undefined) return;
-    pair = Pairs.findOne({"_id":pairId}, {"tournament":1});
-
-    if(pair==undefined){
-      console.warn("getScore warning : pair not found with pairId provided");
-      return;
-    }
-
+  'getScore':function(pair){
     round = Session.get('brackets/round');
     if(pair.tournament!=undefined && round<pair.tournament.length){
       return getPoints(pair, round);

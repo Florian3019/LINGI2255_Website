@@ -11,15 +11,52 @@ const REGISTRATION_PRICE = 10;
 
 Meteor.methods({
 
+	'getAllYears':function(){
+		allYears = Years.find({}).fetch();
+		
+		var y = [];
+		for(var i=0; i<allYears.length;i++){
+			y.push(allYears[i]._id);
+		}
+		return y;
+	},
+
 	//TODO: remove this when going to production !!!
 	'turnAdminInsecure' : function(nid){
 		Meteor.users.update({_id:nid}, {
 			$set: {"profile.isAdmin":1,"profile.isStaff":1}
 		});
 
-		GlobalValues.insert({
-			key: "nextCourtNumber",
-			value: 1
+		Meteor.call('activateCourtDB');
+	},
+
+	'activateCourtDB' : function(tournamentYear) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
+			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, 'value':1});
+		}
+	},
+
+	'getNextCourtNumber' : function(tournamentYear) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
+			console.warn("No court number yet, activating CourtDB");
+			Meteor.call('activateCourtDB',tournamentYear);
+			return 1;
+		}
+		return GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear});
+	},
+
+	'setNextCourtNumber' : function(tournamentYear, value) {
+		globalValueDocument = GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear});
+		if (typeof globalValueDocument === 'undefined') {
+			console.error("Error setNextCourtNumber : globalValueDocument not found for year "+tournamentYear);
+			return undefined;
+		}
+		GlobalValues.update(globalValueDocument, {$set: {
+			value : value
+		}}, function(err, result){
+			if(err){
+				throw new Meteor.Error("update GlobalValues error: ", err);
+			}
 		});
 	},
 
@@ -53,8 +90,9 @@ Meteor.methods({
 
 	'isStaff' : function(){
 		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isStaff":1});
-		return res ? res.profile.isStaff : false;
+		return (res ? res.profile.isStaff : false);
 	},
+
 	'turnAdmin': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
@@ -66,6 +104,7 @@ Meteor.methods({
 			return false;
 		}
 	},
+
 	'turnStaff': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
@@ -76,8 +115,8 @@ Meteor.methods({
 			console.error("Error turnning staff");
 			return false;
 		}
-
 	},
+
 	'turnNormal': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
@@ -103,9 +142,9 @@ Meteor.methods({
 				// We need the birthDate
 				if(p1.profile.birthDate){
 					// Fetch the category corresponding to that date
-					cat1 = getCategory(p1.profile.birthDate);
+					cat1 = getCategoryForBirth(p1.profile.birthDate);
 					if(!cat1){
-						console.error("Player 1 does not fit in any category (too young). Age : "+getAge(p1.profile.birthDate()));
+						console.error("Player 1 does not fit in any category (too young). Age : "+getAge(p1.profile.birthDate) +" / "+cat1);
 						return false;
 					}
 				}
@@ -114,9 +153,9 @@ Meteor.methods({
 				// We need the birthDate
 				if(p2.profile.birthDate){
 					// Fetch the category corresponding to that date
-					cat2 = getCategory(p2.profile.birthDate);
+					cat2 = getCategoryForBirth(p2.profile.birthDate);
 					if(!cat2){
-						console.error("Player 2 does not fit in any category (too young). Age : "+getAge(p2.profile.birthDate));
+						console.error("Player 2 does not fit in any category (too young). Age : "+getAge(p2.profile.birthDate) + " / "+cat2);
 						return false;
 					}
 				}
@@ -124,7 +163,7 @@ Meteor.methods({
 			if(cat1 && cat2){
 				// Both players are provided, check that the categories match !
 				if(cat1 != cat2){
-					console.error("getPairCategory : categories of the 2 players do not match !");
+					console.error("getPairCategory : categories of the 2 players do not match ! "+cat1+" and "+cat2);
 					return false;
 				}
 				return cat1;
@@ -200,6 +239,9 @@ Meteor.methods({
 				return typeKeys[3]; // family
 			}
 		}
+
+		console.error("Error : date match unrecognized");
+		return false;
 	},
 
 	/**
@@ -406,7 +448,7 @@ Meteor.methods({
 
 			//CourtNumber
 			var courtNumberArray = [];
-			var globalValueDocument = GlobalValues.findOne({key: "nextCourtNumber"})
+			var globalValueDocument = Meteor.call('getNextCourtNumber',tournamentDate.getFullYear());
 			nextCourtNumber = globalValueDocument.value;
 
 			for(var i = 0; i < data.numberOfCourts; i++){
@@ -416,13 +458,7 @@ Meteor.methods({
 			data.courtNumber = courtNumberArray;
 
 			//Update nextCourtNumber global value
-			GlobalValues.update(globalValueDocument, {$set: {
-				value : nextCourtNumber
-			}}, function(err, result){
-				if(err){
-					throw new Meteor.Error("update GlobalValues error: ", err);
-				}
-			});
+			Meteor.call('setNextCourtNumber', tournamentDate.getFullYear(), nextCourtNumber);
 		}
 
 
@@ -551,7 +587,6 @@ Meteor.methods({
 			return;
 		}
 
-
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = userData._id == Meteor.userId();
@@ -641,7 +676,9 @@ Meteor.methods({
 		return false;
 	},
 
-
+	'sendNewEmail' : function(userId){
+		Accounts.sendVerificationEmail(userId);
+	},
 	/*
 		@param userId : Updates the address of the user with id userId.
 				If courtId is provided, updates the court address (userId is then the owner's id).
@@ -962,6 +999,7 @@ Meteor.methods({
 		}
 		player : can either be player1 or player2
 	*/
+	/*
 	'updatePayment' : function(paymentData, pairId, player){
 		if(!pairId){
 			console.error('updatePayment : you must provide the pairId');
@@ -1034,6 +1072,7 @@ Meteor.methods({
 		});
 		return paymentData._id;
 	},
+	*/
 
 
 	/*
@@ -1320,11 +1359,14 @@ Meteor.methods({
 		type = Meteor.call('getPairType', dateMatch, p1, p2);
 		if(typeof type === undefined) {
 			console.error("addPairToTournament : getPairType returns undefined");
+		}
+		if(type === false) {
+			console.error("addPairToTournament : getPairType returns false");
 			return false;
 		}
 
 		category = Meteor.call('getPairCategory', type, p1, p2);
-		if(typeof category === undefined) return false; // An error occured, detail of the error has already been displayed in console
+		if(category === false) return false; // An error occured, detail of the error has already been displayed in console
 
 		var pair = Pairs.findOne({_id:pairID});
 		poolID = Meteor.call('getPoolToFill', year, type, category);
@@ -1371,7 +1413,7 @@ Meteor.methods({
 		var typeTable = Types.findOne({_id:typeID});
 
 		// No type table for now
-		if (!typeTable) {
+		if (typeTable==undefined) {
 			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
 			typeID = Types.insert({});
 			// typeID = Meteor.call('updateType', {});
@@ -1452,21 +1494,33 @@ Meteor.methods({
 		return Questions.insert(data)
 	},
 
-	'insertExtra' : function(Extra){
-		var data ={
-			name : Extra.desc,
-			price : Extra.price,
-			comment : Extra.comment
+	'removeExtra' : function(extraId){
+		Extras.remove({_id:extraId});
+	},
+
+	'updateExtra' : function(extraData){
+		data = {};
+		extraId = undefined;
+		if(extraData._id!==undefined){
+			extraId = extraData._id;
 		}
-		return Extras.insert(data);
-	},
-
-	'removeExtra' : function(ExtraID){
-		Extras.remove({_id:ExtraID});
-	},
-
-	'updateExtra' : function(Extra){
-		Extras.update(Extra.extra,{name: Extra.name, price: Extra.price, comment: Extra.comment});
+		if(extraData.name!==undefined){
+			data.name = extraData.name;
+		}
+		if(extraData.price!==undefined){
+			data.price = extraData.price;
+		}
+		if(extraData.comment!==undefined){
+			data.comment = extraData.comment;
+		}
+		if(extraId===undefined){
+			extraId = Extras.insert(data);
+			return extraId;
+		}
+		data2 = {$set:data};
+		Extras.update({_id:extraId}, data2);
+		return extraId;
+		
 	},
 
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){

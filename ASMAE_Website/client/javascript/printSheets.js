@@ -1,11 +1,13 @@
 Template.printSheets.events({
 
   'click #Save':function(event){
+    var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
     var info={
       year : document.getElementById("Year").value,
       type : document.getElementById("Type").value,
       cat : document.getElementById("Category").value,
     };
+    Session.set("printSheets/info",info);
     var year = Years.findOne({_id:info.year});
     if(year==undefined){
       return undefined;
@@ -16,7 +18,17 @@ Template.printSheets.events({
         return undefined
       }
       else{
-        var poolList = type[info.cat];
+        if(info.cat!="all"){
+          var poolList = type[info.cat];
+        }
+        else{
+          var poolList = new Array();
+          for (var i in allcat) {
+            for (var j in type[allcat[i]]) {
+              poolList.push(type[allcat[i]][j]);
+            }
+          }
+        }
         Session.set("printSheets/poolList",poolList);
       }
     }
@@ -103,8 +115,11 @@ Template.printSheets.events({
         pdf.text("En cas de problème quelconque, n'hésitez pas de nous contacter par téléphone au numéro: +32 (0)2 742 03 01 ",margins.left, pdf.internal.pageSize.height - 10);
 
         if(i+1==length){
-          pdf.output('save', 'filename.pdf'); //TODO filename = annee + cateorie+ numeterrain
-          $("#allTab").css("display","none");
+          var info = Session.get("printSheets/info");
+          var filename = info.year+"_"+info.type+"_"+info.cat+".pdf";
+          pdf.output('save', filename);
+          Session.set("printSheets/poolList","");
+          console.log("set to null");
         }
         else{
           pdf.addPage();
@@ -115,21 +130,21 @@ Template.printSheets.events({
 
     }
 
-    /*
-    Create the pdf
-    */
-    var pdf = new jsPDF('portrait','pt','a4');
+    $( document ).ready(function() {
+      /*
+      Create the pdf
+      */
+      var pdf = new jsPDF('portrait','pt','a4');
 
-    /* Remove input */
-    var inpt = document.getElementsByTagName("input");
-    for (var j = 0; j < inpt.length; j++) {
-      inpt[j].setAttribute('type','hidden');
-    }
+      /* Remove input */
+      var inpt = document.getElementsByTagName("input");
+      for (var j = 0; j < inpt.length; j++) {
+        inpt[j].setAttribute('type','hidden');
+      }
 
-
-
-    /*Add content in pdf with automatic recursive call*/
-    printPage(pdf,0,poolsObject);
+      /*Add content in pdf with automatic recursive call*/
+      printPage(pdf,0,poolsObject);
+    });
 
   },
 

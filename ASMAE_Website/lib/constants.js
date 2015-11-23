@@ -8,6 +8,8 @@ surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
 tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 
+currentYear = ""+tournamentDate.getFullYear(); // must be a string
+
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;
 MIN_FAMILY_AGE = 25;
@@ -15,18 +17,23 @@ MIN_FAMILY_AGE = 25;
 /*
     @param birthDate of the player for which we want to know if he is accepted into the family tournament
 */
-acceptForFamily = function(birthDate){
-    age = getAge(birthDate);
+acceptForFamily = function(birthDate, tournamentDate){
+    age = getAge(birthDate, tournamentDate);
+    console.log(age);
     return age<=MAX_FAMILY_AGE || age>=MIN_FAMILY_AGE;
 }
 
 /*
     @returns true if the 2 players whose birthDates are given can play together at the family tournament
 */
-acceptPairForFamily = function(birthDate1, birthDate2){
-    age1 = getAge(birthDate1);
-    age2 = getAge(birthDate2);
+acceptPairForFamily = function(birthDate1, birthDate2, tournamentDate){
+    age1 = getAge(birthDate1, tournamentDate);
+    age2 = getAge(birthDate2, tournamentDate);
 
+    return acceptPairForFamilyAge(age1,age2);
+}
+
+acceptPairForFamilyAge = function(age1, age2) {
     return (age1<=MAX_FAMILY_AGE && age2>= MIN_FAMILY_AGE) || (age2<=MAX_FAMILY_AGE && age1>= MIN_FAMILY_AGE);
 }
 
@@ -34,11 +41,7 @@ acceptPairForFamily = function(birthDate1, birthDate2){
 * @param age is of type int
 */
 getCategory = function(age){
-    // use of getCategory with a the birthDate
-    if (typeof age == 'Date') {
-        age = getAge(age);
-    }
-    
+
     if(age < 9){
         return undefined;
     }
@@ -61,6 +64,11 @@ getCategory = function(age){
         return categoriesKeys[5];
     }
     return categoriesKeys[6];
+}
+
+getCategoryForBirth = function(birth, tournamentDate) {
+    var age = getAge(birth, tournamentDate);
+    return getCategory(age);
 }
 
 
@@ -94,10 +102,14 @@ getCategory = function(age){
 /*
  *  @param birthDate is of type Date
  */
-getAge = function(birthDate){
-    var age = tournamentDate.getFullYear() - birthDate.getFullYear();
-    var m = tournamentDate.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && tournamentDate.getDate() < birthDate.getDate())) {
+getAge = function(birthDate, tournamentDateSpecified){
+    var thisTournamentDate = tournamentDate; // The global one in constants.
+    if (typeof tournamentDateSpecified !== 'undefined') {
+        thisTournamentDate = tournamentDateSpecified;
+    }
+    var age = thisTournamentDate.getFullYear() - birthDate.getFullYear();
+    var m = thisTournamentDate.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && thisTournamentDate.getDate() < birthDate.getDate())) {
         age--;
     }
     return age;
@@ -107,13 +119,9 @@ getAge = function(birthDate){
  *  @param year a year
  *  @param month = 0 | 1 | ... | 11
  */
-getAgeNoDate = function(year, month, day){
-    var age = tournamentDate.getFullYear() - year;
-    var m = tournamentDate.getMonth() - month;
-    if (m < 0 || (m === 0 && tournamentDate.getDate() < day)) {
-        age--;
-    }
-    return age;
+getAgeNoDate = function(year, month, day, tournamentDate){
+    var date = new Date(year, month, day);
+    return getAge(date, tournamentDate);
 }
 
 /*
@@ -123,4 +131,25 @@ getAgeNoDate = function(year, month, day){
 isValidEmail = function (email) {
     var re = new RegExp('^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$','i');
     return re.test(email);
+}
+
+/*
+*   params are strings
+*   @param dateMatch := saturday | sunday | family
+*   @param gender := M | F
+*/
+getTypeForPlayer = function(dateMatch, gender) {
+    if (dateMatch === 'family') {
+        return 'family';
+    }
+    else if (dateMatch === 'saturday') {
+        return typeKeys[2];
+    }
+    else if (dateMatch === 'sunday') {
+        return gender==='M' ? typeKeys[0] : typeKeys[1];
+    }
+    else {
+        console.error("Error getTypeForPlayer - invalid dateMatch : "+dateMatch);
+        return undefined;
+    }
 }

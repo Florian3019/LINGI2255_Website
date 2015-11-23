@@ -1,32 +1,9 @@
 <template name="poolList">
-        <div id="PoolListWrapper">
-          <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-              <li class="sidebar-brand"> Poules </li>
-                <li>
-                  <select class="form-control Year" id="Year" style="width:50%;" text-align="center">
-                    <option value="" disabled="" selected="" hidden>Année</option>
-                    <option value="2015"> 2015 </option>
-                  </select>
-                </li>
-                {{#with getYear}}
-                  <li>{{>CategorySelect TYPE="men" DESC="Homme"}}</li>
-                  <li>{{>CategorySelect TYPE="women" DESC="Femme"}}</li>
-                  <li>{{>CategorySelect TYPE="mixed" DESC="Mixte"}}</li>
-                  <li>{{>poolBracketsSelect ID="family" CAT="all" DESC="Familles"}}</li>
-                {{/with}}
-            </ul>
-          </div>
-        <!-- /#sidebar-wrapper -->
-
     <!-- Page Content -->
     <div id="page-content-wrapper">
       <div class="container-fluid">
         <div class="col-lg-20">
           <div class="row">
-            <div class="col-md-3">
-              <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">+/- Menu</a>
-            </div>
             <div class="col-md-3">
               <p style="font-size:100%">Nombre de poules: {{getNumberPools}}</p>
             </div>
@@ -103,14 +80,30 @@
       </div>
     </div>
     <!-- /#page-content-wrapper -->
-  </div>
-  <script>
-  $("#menu-toggle").click(function(e) {
-    e.preventDefault();
-    $("#PoolListWrapper").toggleClass("toggled");
-  });
-  </script>
 </template>
+
+
+
+<template name="poolsSidebarCollapsableMenu">
+    <div id="poolSidebar-wrapper">
+      <select class="form-control Year" id="Year" style="width:50%;" text-align="center">
+        <option value="" disabled="" selected="" hidden>Année</option>
+        {{getAllYears}}
+        {{#each getAllYearsSession}}
+          <option value="{{this}}"> {{this}} </option>
+        {{/each}}
+      </select>
+      <ul class="sidebar-nav">
+          {{#with getYear}}
+            <li>{{>CategorySelect TYPE="men" DESC="Homme"}}</li>
+            <li>{{>CategorySelect TYPE="women" DESC="Femme"}}</li>
+            <li>{{>CategorySelect TYPE="mixed" DESC="Mixte"}}</li>
+            <li>{{>poolBracketsSelect ID="family" CAT="all" DESC="Familles"}}</li>
+          {{/with}}
+      </ul>
+    </div>
+</template>
+
 <!-- Param : TYPE -->
 <template name="CategorySelect">
   <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span>
@@ -142,33 +135,33 @@
 <!-- Takes 1 argument : the pool -->
 <template name="poolContainerTemplate">
   <td>
-    <div class='parent'>
       <h3>
-        {{#unless moreThanOnePair POOL.pairs}}
-        <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}">
-          <span class="glyphicon glyphicon-remove removePoolButton" aria-hidden="true"></span>
-        </button>
+      {{#unless moreThanOnePair POOL.pairs}}
+      <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}">
+        <span class="glyphicon glyphicon-remove removePoolButton" aria-hidden="true"></span>
+      </button>
+      {{/unless}}
+      {{#if moreThanOnePair POOL.pairs}}
+      <button type="button" class="btn btn-default btn-lg scoreButton" data-poolId="{{POOL._id}}">
+        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> <br>
+        <!-- TODO changer le with par une méthode -->
+        {{getStreet POOL.courtId}} <br>
+        {{getTown POOL.courtId}} <br>
+        {{#unless equals POOL.courtId undefined}}
+          Numéro : {{POOL.courtId}}
         {{/unless}}
-        {{#if moreThanOnePair POOL.pairs}}
-        <button type="button" class="btn btn-default btn-lg scoreButton" data-poolId="{{POOL._id}}">
-          <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> <br>
-          <!-- TODO changer le with par une méthode -->
-          {{getStreet POOL.courtId}} <br>
-          {{getTown POOL.courtId}} <br>
-          {{#unless equals POOL.courtId undefined}}
-            Numéro : {{POOL.courtId}}
-          {{/unless}}
-          <!-- {{#with getCourt POOL.courtId}}
-          {{#if equals this undefined}}
-          Pas de Terrain
-          {{else}}
-          {{this.street}} {{this.number}}<br> {{this.zipCode}} {{this.city}}
-          {{/if}}
-          {{/with}} -->
-
-        </button> <!-- TODO : set the pool name to the court address -->
+        <!-- {{#with getCourt POOL.courtId}}
+        {{#if equals this undefined}}
+        Pas de Terrain
+        {{else}}
+        {{this.street}} {{this.number}}<br> {{this.zipCode}} {{this.city}}
         {{/if}}
-      </h3>
+        {{/with}} -->
+
+      </button> <!-- TODO : set the pool name to the court address -->
+      {{/if}}
+    </h3>
+    <div class='parent'>
       <div class='PoolWrapper'>
         <div class='poolContainer poule' id='a{{POOL._id}}'> <!-- _id is here the id of the pool (with css escape a) -->
           {{#each POOL.pairs}} <!-- For each pair id in the pool -->
@@ -181,8 +174,8 @@
 </template>
 
 <template name="pairsToSplitContainerTemplate">
+  <h3><label class='label label-primary' for='hy'>Paires à séparer</label></h3>
   <div class='parent' id='pairstosplitparent'>
-    <h3><label class='label label-primary' for='hy'>Paires à séparer</label></h3>
     <div class='PoolWrapper'>
       <div class='poolContainer' id='pairstosplit'>
         <!-- Empty -->
@@ -197,10 +190,10 @@
 
 <!-- Takes 1 argument : the typeData -->
 <template name="alonePairsContainerTemplate">
+  <h3>
+    <label class='label label-primary' for='hy'>Joueurs seuls</label>
+  </h3>
   <div class='parent' id='alonepairsparent'>
-    <h3>
-      <label class='label label-primary' for='hy'>Joueurs seuls</label>
-    </h3>
     <div class='PoolWrapper'>
       <div class='poolContainer' id='alonepairs'>
         {{#each getAlonePairs TYPEDATA}}
@@ -220,8 +213,8 @@
 </template>
 
 <template name="mergePlayersContainerTemplate">
+<h3><label class='label label-primary' for='hy'>Fusionner 2 joueurs</label></h3>
   <div class='parent' id='mergeplayersparent'>
-    <h3><label class='label label-primary' for='hy'>Fusionner 2 joueurs</label></h3>
     <div class='PoolWrapper'>
       <div class='poolContainer' id='mergeplayers'>
         <!-- Empty -->

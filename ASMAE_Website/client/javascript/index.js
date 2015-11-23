@@ -7,12 +7,69 @@ Template.index.helpers({
 		{
 			return '';
 		}
-	}
+	},
+
+	'isTournamentPage':function(){
+		if(Router.current().route.getName() === 'poolList'){
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	},
+
+	'isStaffMember': function(){
+		if(Meteor.user())
+		{
+			return (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin);
+		}
+		else
+		{
+			return false;
+		}
+	},
+
+	// 'getAllYears':function(){
+	// 	return ALLYEARS; // constant.js
+	// },
+
+	'getYear' : function(){
+		var year = Session.get('PoolList/Year');
+		var y = Years.findOne({_id:year});
+
+		if(year!=undefined && y==undefined){
+			setInfo(document, "Pas de données trouvées pour l'année "+ year);
+		}
+		else{
+			infoBox =document.getElementById("infoBox");
+			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
+		}
+
+		return y;
+	},
 });
+
 
 Template.index.events({
 	'click #popdb' : function(event) {
-		console.log("Populating DB");
-		Meteor.call("populateDB");
+		var nTypes2015 = [175,175,175,28];
+		var nAlones2015 = [70,70,70,10];
+		var nUnregistered2015 = 200;
+		var nCourtSaturday2015 = 40;
+		var nCourtSunday2015 = 40;
+		var nCourtBoth2015 = 30;
+		var nStaff2015 = 10;
+		var nAdmin2015 = 3;
+		var nTypes2014 = [70,70,70,14];
+		var nAlones2014 = [35,35,35,7];
+		var nUnregistered2014 = 0;
+		var nCourtSaturday2014 = 40;
+		var nCourtSunday2014 = 40;
+		var nCourtBoth2014 = 30;
+		var nStaff2014 = 0;
+		var nAdmin2014 = 0;
+		Meteor.call("populateDB", new Date(2015, 8, 12), nTypes2015, nAlones2015, nUnregistered2015, nCourtSaturday2015, nCourtSunday2015, nCourtBoth2015, nStaff2015, nAdmin2015);
+		Meteor.call("populateDB", new Date(2014, 8, 11), nTypes2014, nAlones2014, nUnregistered2014, nCourtSaturday2014, nCourtSunday2014, nCourtBoth2014, nStaff2014, nAdmin2014);
 	}
 });

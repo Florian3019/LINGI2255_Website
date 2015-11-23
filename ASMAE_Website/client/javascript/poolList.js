@@ -203,6 +203,85 @@ var mergePlayers = function(document){
 											Sidebar collapsable Menu
 *******************************************************************************************************************/
 
+
+Template.poolsSidebarCollapsableMenu.helpers({
+	'getAllYears':function(){
+		var callBack = function(err, ret){
+			Session.set("PoolList/allYears", ret);
+		}
+		Meteor.call("getAllYears", callBack);
+	},
+
+	'getAllYearsSession':function(){
+		return Session.get("PoolList/allYears");
+	},
+
+
+	// Returns a yearData with id year (copy of the same function in poolList.helpers)
+	'getYear' : function(){
+		var year = Session.get('PoolList/Year');
+		var y = Years.findOne({_id:year});
+
+		if(year!=undefined && y==undefined){
+			setInfo(document, "Pas de données trouvées pour l'année "+ year);
+		}
+		else{
+			infoBox =document.getElementById("infoBox");
+			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
+		}
+
+		return y;
+	},
+});
+
+Template.poolsSidebarCollapsableMenu.events({
+	'click .PoolOption' : function(event){
+		var type = event.currentTarget.dataset.type;
+		var category = event.currentTarget.dataset.category;
+		hideSuccessBox(document);
+		Session.set('PoolList/Category', category);
+		if(category==="all"){
+			type="family";
+		}
+		Session.set('PoolList/Type', type);
+		Session.set("PoolList/ChosenScorePool","");
+		Session.set("PoolList/ChosenBrackets","");
+
+		// Hide previous error message, if any
+		mergeErrorBox = document.getElementById("mergeErrorBox");
+		if(mergeErrorBox!=null && mergeErrorBox != undefined) mergeErrorBox.style.display = "none";
+
+		var info = {"type":type, "category":category, "isPool":true};
+		updateArrow(document, info);
+	},
+
+	'click .BracketOption' : function(event){
+		var type = event.currentTarget.dataset.type;
+		var category = event.currentTarget.dataset.category;
+		hideSuccessBox(document);
+		Session.set('PoolList/Category', category);
+		if(category==="all"){
+			type="family";
+		}
+		Session.set('PoolList/Type', type);
+		Session.set("PoolList/ChosenBrackets","true");
+		Session.set("PoolList/ChosenScorePool","");
+
+		var info = {"type":type, "category":category, "isPool":false};
+		updateArrow(document, info);
+	},
+
+	'click .collapsableMenu' : function(event){
+		collapseMenus(document, event.currentTarget);
+	},
+
+	'click .Year':function(event){
+		hideSuccessBox(document);
+		Session.set('PoolList/Year', event.target.value);
+		Session.set("PoolList/ChosenScorePool","");
+	}
+});
+
 /*
 	Updates the arrow of the collapsable menu
 */
@@ -459,53 +538,6 @@ Template.poolList.onRendered(function() {
 });
 
 Template.poolList.events({
-
-	'click .PoolOption' : function(event){
-		var type = event.currentTarget.dataset.type;
-		var category = event.currentTarget.dataset.category;
-		hideSuccessBox(document);
-		Session.set('PoolList/Category', category);
-		if(category==="all"){
-			type="family";
-		}
-		Session.set('PoolList/Type', type);
-		Session.set("PoolList/ChosenScorePool","");
-		Session.set("PoolList/ChosenBrackets","");
-
-		// Hide previous error message, if any
-		mergeErrorBox = document.getElementById("mergeErrorBox");
-		if(mergeErrorBox!=null && mergeErrorBox != undefined) mergeErrorBox.style.display = "none";
-
-		var info = {"type":type, "category":category, "isPool":true};
-		updateArrow(document, info);
-	},
-
-	'click .BracketOption' : function(event){
-		var type = event.currentTarget.dataset.type;
-		var category = event.currentTarget.dataset.category;
-		hideSuccessBox(document);
-		Session.set('PoolList/Category', category);
-		if(category==="all"){
-			type="family";
-		}
-		Session.set('PoolList/Type', type);
-		Session.set("PoolList/ChosenBrackets","true");
-		Session.set("PoolList/ChosenScorePool","");
-
-		var info = {"type":type, "category":category, "isPool":false};
-		updateArrow(document, info);
-	},
-
-	'click .collapsableMenu' : function(event){
-		collapseMenus(document, event.currentTarget);
-	},
-
-	'click .Year':function(event){
-		hideSuccessBox(document);
-		Session.set('PoolList/Year', event.target.value);
-		Session.set("PoolList/ChosenScorePool","");
-	},
-
 	/*
 		Collects the state of the table of pools to save it into the db
 	*/
@@ -828,21 +860,7 @@ Template.poolList.events({
 
 Template.poolList.helpers({
 
-	// Returns the number of pools
-
-	'getNumberPools' : function(){
-		var pools = Pools.find().fetch();
-		return pools.length;
-	},
-
-	// Returns the number of courts
-
-	'getNumberCourts' : function(){
-		var courts = getCourtNumbers(Courts.find().fetch());
-		return courts.length;
-	},
-
-	// // Returns a yearData with id year
+	// Returns a yearData with id year (copy of the same function in poolsSidebarCollapsableMenu.helpers)
 	'getYear' : function(){
 		var year = Session.get('PoolList/Year');
 		var y = Years.findOne({_id:year});
@@ -856,6 +874,20 @@ Template.poolList.helpers({
 		}
 
 		return y;
+	},
+
+	// Returns the number of pools
+
+	'getNumberPools' : function(){
+		var pools = Pools.find().fetch();
+		return pools.length;
+	},
+
+	// Returns the number of courts
+
+	'getNumberCourts' : function(){
+		var courts = getCourtNumbers(Courts.find().fetch());
+		return courts.length;
 	},
 
 	// Returns a typeData
@@ -959,6 +991,7 @@ Template.poolList.helpers({
 		Initializes the draggable interface
 	*/
 	'resetDrake' : function(){
+
 		drake = dragula(
 			{
 				/*	Defines what can be moved/dragged	*/
@@ -994,10 +1027,64 @@ Template.poolList.helpers({
 		    		return true;
   				},
 			}
-		).on('drag', function (el) {
+		).on('drag', function (el,source) {
+		  	/*
+				Make the screen scroll when an draggable object is near the border of the screen
+		  	*/
+
+			const scrollSpeed = 3; //px
+
+			var m = false; // To keep dragging when near the border
+
+			var scrollPage = function(dx,dy){
+				// console.log("scrolling "+dy);
+				window.scrollBy(dx,dy);
+				if(m===true && drake.dragging){
+					setTimeout(function(){scrollPage(dx,dy)}, 20);
+				}
+			}
+
+			var scrollElem = function(dy){
+				source.scrollTop += dy;
+				if(keepScrollElem===true && drake.dragging){
+					setTimeout(function(){scrollElem(dy)}, 20);
+				}
+			}
+
+		    var onMouseMove = function(e) {
+		      	if (drake.dragging) {
+		        	//scroll while drag
+		            e = e ? e : window.event;
+		            var h = $(window).height();
+		            var w = $(window).width();
+
+				    if(h-e.y < 50) {
+				    	m = true;
+				        scrollPage(0, scrollSpeed);
+				    }
+				    else if(e.y < 50){
+				    	m = true;
+						scrollPage(0, -scrollSpeed);
+				    }
+				    else if(w-e.x < 50) {
+				    	m = true;
+				        scrollPage(scrollSpeed,0);
+				    }
+				    else if(e.x < 50){
+				    	m = true;
+						scrollPage(-scrollSpeed,0);
+				    }
+				    else{
+				    	m = false;				    	
+				    }
+				}
+		    };
+
+			document.addEventListener('mousemove', onMouseMove); 
+
 			hideSuccessBox(document);
   		  	el.className = el.className.replace('ex-moved', '');
-	  	}).on('drop', function (el, target, source, sibling) {
+  	  	}).on('drop', function (el, target, source, sibling) {
 	  		if(target.id==="pairstosplit"){
 	  			splitPairs(el);
 	  		}
