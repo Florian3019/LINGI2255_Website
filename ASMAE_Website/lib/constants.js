@@ -6,8 +6,6 @@ paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
-
-ALLYEARS = [2015]; // Update this as needed
 tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
 
 currentYear = ""+tournamentDate.getFullYear(); // must be a string

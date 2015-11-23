@@ -11,6 +11,16 @@ const REGISTRATION_PRICE = 10;
 
 Meteor.methods({
 
+	'getAllYears':function(){
+		allYears = Years.find({}).fetch();
+		
+		var y = [];
+		for(var i=0; i<allYears.length;i++){
+			y.push(allYears[i]._id);
+		}
+		return y;
+	},
+
 	//TODO: remove this when going to production !!!
 	'turnAdminInsecure' : function(nid){
 		Meteor.users.update({_id:nid}, {

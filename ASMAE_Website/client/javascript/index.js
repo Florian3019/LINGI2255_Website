@@ -30,9 +30,9 @@ Template.index.helpers({
 		}
 	},
 
-	'getAllYears':function(){
-		return ALLYEARS; // constant.js
-	},
+	// 'getAllYears':function(){
+	// 	return ALLYEARS; // constant.js
+	// },
 
 	'getYear' : function(){
 		var year = Session.get('PoolList/Year');
