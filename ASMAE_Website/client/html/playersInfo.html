@@ -134,7 +134,7 @@
 </template>
 
 <template name="isAdminLabel">
-  {{#if this.isAdmin}}
+  {{#if this.profile.isAdmin}}
     <span class="glyphicon glyphicon-ok lendOk"></span>
   {{else}}
     <span class="glyphicon glyphicon-remove lendNot"></span>
@@ -142,7 +142,7 @@
 </template>
 
 <template name="isStaffLabel">
-  {{#if this.isStaff}}
+  {{#if this.profile.isStaff}}
     <span class="glyphicon glyphicon-ok lendOk"></span>
   {{else}}
     <span class="glyphicon glyphicon-remove lendNot"></span>
