@@ -650,6 +650,8 @@ Template.poolList.events({
 
 			if(typeof previouscourts === "undefined"){
 
+				console.log(n);
+
 				for(var k=0; k<n;k++){
 					result.push(courts[(start+k) % courts.length]);
 				}
@@ -666,6 +668,7 @@ Template.poolList.events({
 				}
 
 				if(previouscourts.length<=n){
+					console.log("pas ok");
 					for(var k=0; k<n && l>=k;k++){
 						result.push(previouscourts[l-k]);
 					}
@@ -673,6 +676,7 @@ Template.poolList.events({
 					last=k;
 				}
 				else{
+					console.log("ok");
 					for(var k=strt; k<n+strt && l>=(2*k);k++){
 						result.push(previouscourts[l-(2*k)]);
 					}
@@ -718,7 +722,7 @@ Template.poolList.events({
 
 			// get the number of matches for the other rounds
 			// get the number of match for the first round if the nbr of pairs were a power of 2
-			var full = Math.pow(2,Math.floor(logPairs));
+			var full = Math.pow(2,Math.floor(logPairs))/2;
 
 			for(var k=0;k<round;k++){
 				full=full/2;
@@ -822,13 +826,15 @@ Template.poolList.events({
 
 					for(var t=0;t<categoriesKeys.length;t++){
 
-						if(typesDoc[k][categoriesKeys[t]]!=null){
+						var temp = categoriesKeys[t]+"Bracket";
+
+						if(typesDoc[k][categoriesKeys[t]]!=null && typesDoc[k][temp]!=null){
+
 				 			var nameField = categoriesKeys[t]+"Courts";
-				 			var temp = categoriesKeys[t]+"Brackets";
 
 				 			var nbr = getNumberMatches(typesDoc[k][temp].length,round);
 
-				 			if(!first &&typesDoc[k][nameField].length<(2*typesDoc[k][temp].length-1)){
+				 			if(!first &&typesDoc[k][nameField].length<(typesDoc[k][temp].length-1)){
 				 				typesDoc[k][nameField]=typesDoc[k][nameField].concat(getNCourts(typesDoc[k][nameField],courtsTable[g],nbr,start));
 				 				finished=false;
 				 			}
