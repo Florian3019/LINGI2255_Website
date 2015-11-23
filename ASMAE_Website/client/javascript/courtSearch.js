@@ -122,7 +122,7 @@ Template.allCourtsTable.helpers({
     settings : function(){
       return {
         fields:[
-          { key: 'ownerID', label: 'Owner', fn: function(value, object){
+          { key: 'ownerID', label: 'Propriétaire', fn: function(value, object){
             user= Meteor.users.findOne({_id:value},{"profile":1});
             return user.profile.firstName + " " + user.profile.lastName;
           }},
@@ -155,7 +155,7 @@ Template.allCourtsTable.helpers({
           { key: 'lendThisYear', label:"Loué", tmpl:Template.dispoLendLabel},
           { key: 'courtType', label:"Type"},
           { key: 'instructions', label:"Instructions"},
-          { key: 'ownerComment', label:"Commentaire owner"},
+          { key: 'ownerComment', label:"Commentaire propriétaire"},
           { key: 'staffComment', label:"Commentaire staff"}
       ],
              filters: ['NomDeFamille']
