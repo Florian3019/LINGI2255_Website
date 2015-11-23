@@ -989,6 +989,7 @@ Meteor.methods({
 		}
 		player : can either be player1 or player2
 	*/
+	/*
 	'updatePayment' : function(paymentData, pairId, player){
 		if(!pairId){
 			console.error('updatePayment : you must provide the pairId');
@@ -1061,6 +1062,7 @@ Meteor.methods({
 		});
 		return paymentData._id;
 	},
+	*/
 
 
 	/*
