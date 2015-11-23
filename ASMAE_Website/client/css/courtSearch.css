@@ -6,3 +6,7 @@
 #search-box{
 	width: 500px;
 }
+
+.courtRow{
+	cursor: pointer;
+}

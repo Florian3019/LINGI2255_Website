@@ -206,8 +206,16 @@ var mergePlayers = function(document){
 
 Template.poolsSidebarCollapsableMenu.helpers({
 	'getAllYears':function(){
-		return ALLYEARS; // constant.js
+		var callBack = function(err, ret){
+			Session.set("PoolList/allYears", ret);
+		}
+		Meteor.call("getAllYears", callBack);
 	},
+
+	'getAllYearsSession':function(){
+		return Session.get("PoolList/allYears");
+	},
+
 
 	// Returns a yearData with id year (copy of the same function in poolList.helpers)
 	'getYear' : function(){
