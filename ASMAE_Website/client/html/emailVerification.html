@@ -26,12 +26,12 @@
             <div class="modal-body">
                 <p>Si vous desirez changer d'addresse mail veuillez remplir le champs suivant :</p>
                 <label class=" pull-left" for="email-new"> Nouvelle Addresse mail :</label>
-                 
+
                 <div class="form-group" id="email-new-group">
                     <input  id="email-new" name="email-new" class="form-control" placeholder="Email" required autofocus>
                 </div>
                 <p> </p> <!-- Espace -->
-                    
+
                 <div class="alert alert-success fade in" style="display:none;" id="new-email-success" role="alert">
                     <span class="glyphicon glyphicon-ok-sign"></span>
                     <strong>Réussi !</strong> Votre addresse mail à bien été mise à jour. Un mail de confirmation vous a été envoyé.
@@ -45,7 +45,7 @@
                     <strong>Erreur :</strong> Veuillez entrer une addresse mail valide.
                 </div>
             </div>
-             
+
             <div class="modal-footer">
                 <button id="changeEmailConfirmation" class="btn btn-primary" type="submit">Confirmer</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
@@ -56,27 +56,27 @@
 
 
 <div id="emailVerificationWrapper">
-    <center> 
+    <center>
 		<div class="header">
 			<h2>Veuillez confirmer votre adresse mail avant de poursuivre !</h2>
-		</div> 
+		</div>
 	</center>
     <br>
     <div class="row">
     	<div class="col-md-8 col-md-offset-2">
-    	<h3 align="center"> Des difficultées pour vérifier votre adresse email ? </h3>
+    	<h3 align="center"> Des difficultées pour activer votre adresse email ? </h3>
     	<br>
-	    	<h4><b> Je n'ai pas reçu d'email d'activation de Le Charle de Loraine</b></h4>
-	    		<h5>Verifier si vous ne l'avez pas reçu parmi vos "courriers indésirables ou spam". Soyez sûr que  staff@lecharlesdelorraine.com peut vous envoyer des emails sur votre messagerie.</h5>
-	    		<h5>Pour qu'un nouveau email vous soit envoyé: <a href="" type="submit" id="sendNewEmail">Cliquer ici</a>.</h5>
+	    	<h4><b> Je n'ai pas reçu d'email d'activation de Le Charles de Lorraine</b></h4>
+	    		<h5>Verifiez si vous ne l'avez pas reçu parmi vos "courriers indésirables ou spam". Soyez sûr que staff@lecharlesdelorraine.com peut envoyer des emails sur votre messagerie.</h5>
+	    		<h5>Pour qu'un nouvel email vous soit envoyé: <a href="" type="submit" id="sendNewEmail">Cliquez ici</a>.</h5>
 	    	<br>
 	    	<h4><b> Je voudrais changer d'adresse email</b></h4>
-	    		<h5> Vous êtes actuellement inscrit avec l'adresse mail: <a id="userEmail" href={{getMailto}}>{{getMail}}</a>.</h5>
-	    		<h5>Pour changer d'addresse email: <a href="" type="submit" id="changeEmail">Cliquer ici</a>.</h5>
+	    		<h5> Vous êtes actuellement inscrit avec l'adresse email: <a id="userEmail" href={{getMailto}}>{{getMail}}</a>.</h5>
+	    		<h5>Pour changer d'addresse email: <a href="" type="submit" id="changeEmail">Cliquez ici</a>.</h5>
 	    	<br>
 	    	<h4><b> J'ai toujours des problèmes avec mon inscription au site</b></h4>
-	    		<h5>Si vous avez toujours des difficultées pour vérifier votre adresse email, s'il vous plait <a href="http://asmae.org/contact.php" target="_blank">Contacter nous</a>.</h5>
-    	</div>	
+	    		<h5>Si vous avez toujours des difficultées pour activer votre adresse email, s'il vous plait <a href="http://asmae.org/contact.php" target="_blank">Contactez nous</a>.</h5>
+    	</div>
     </div>
 </div>
 </template>

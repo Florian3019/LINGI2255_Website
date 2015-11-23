@@ -44,12 +44,12 @@ Accounts.emailTemplates.verifyEmail.subject = function(user){
 Accounts.emailTemplates.verifyEmail.html = function(user,url){
 	var data = {
 		dataintro:"Merci pour votre inscription",
-		dataacc:"Vous y ête presque !",
+		dataacc:"Vous y êtes presque !",
 		dataacccc:"Nous avons juste besoin de vérifier votre adresse email.",
 		datacontent:"Grâce à votre inscription vous avez accès à de nouvelles fonctionalités ! Il vous sera possible à présent de vous inscrire au tournoi, mettre à jours votre profil, inscrire votre prope terrain. N'hésitez donc pas à visiter notre site !",
-		datadesc:"Vérifier votre compte en cliquant sur le lien suivant :",
+		datadesc:"Vérifiez votre compte en cliquant sur le lien suivant :",
 		datalink:url,
-		datafinal:"Attention, ce lien expira dans 3 jours."
+		datafinal:"Attention, ce lien expirera dans 3 jours."
 		};
 		return SSR.render("verifMail",data);
 };
@@ -62,7 +62,7 @@ Accounts.emailTemplates.resetPassword.html =function(user,url){
 		dataintro:"Bonjour,",
 		dataacc:"",
 		dataacccc:"",
-		datacontent:"Il semble que vous ayez oublié votre mot de passe. Si c'est le cas, veuillez suivre les instructions ci-dessous. Si jamais vous n'avez pas demandé le changement de votre mot de passe, vous pouvez simplement ignoré cet email.",
+		datacontent:"Il semble que vous ayez oublié votre mot de passe. Si c'est le cas, veuillez suivre les instructions ci-dessous. Si jamais vous n'avez pas demandé le changement de votre mot de passe, vous pouvez simplement ignorer cet email.",
 		datadesc:"Pour modifier votre mot de passe, il suffit de cliquer sur le lien ci-dessous :",
 		datalink:url,
 		datafinal:""
