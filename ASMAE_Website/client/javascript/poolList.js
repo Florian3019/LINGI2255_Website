@@ -686,7 +686,7 @@ Template.poolList.events({
 
 			// get the number of matches for the other rounds
 			// get the number of match for the first round if the nbr of pairs were a power of 2
-			var full = Math.pow(2,Math.ceil(logPairs))/2;
+			var full = Math.pow(2,Math.floor(logPairs));
 
 			for(var k=0;k<round;k++){
 				full=full/2;
