@@ -162,8 +162,8 @@ Template.playersInfo.helpers({
                     }
                     return ret
                 }},
-                { key: 'profile.isStaff', label:'Staff'},
-                { key: 'profile.isAdmin', label:'Admin'},
+                { key: 'profile.isStaff', label:'Staff', tmpl:Template.isStaffLabel},
+                { key: 'profile.isAdmin', label:'Admin', tmpl:Template.isAdminLabel},
             ],
              filters: ['NomDeFamille']
         }

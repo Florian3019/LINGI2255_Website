@@ -132,3 +132,19 @@
 <template name="mySpecialFilterAddress">
   <input class="form-control addressFilter" type="text" placeholder="Adresse:"/>
 </template>
+
+<template name="isAdminLabel">
+  {{#if this.isAdmin}}
+    <span class="glyphicon glyphicon-ok lendOk"></span>
+  {{else}}
+    <span class="glyphicon glyphicon-remove lendNot"></span>
+  {{/if}}
+</template>
+
+<template name="isStaffLabel">
+  {{#if this.isStaff}}
+    <span class="glyphicon glyphicon-ok lendOk"></span>
+  {{else}}
+    <span class="glyphicon glyphicon-remove lendNot"></span>
+  {{/if}}
+</template>
