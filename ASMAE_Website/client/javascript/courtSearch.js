@@ -158,13 +158,14 @@ Template.allCourtsTable.helpers({
           { key: 'ownerComment', label:"Commentaire propriétaire"},
           { key: 'staffComment', label:"Commentaire staff"}
       ],
-             filters: ['NomDeFamille']
+             filters: ['NomDeFamille'],
+             rowClass: "courtRow"
       }
     }
 });
 
 Template.courtSearch.events({
-    'click .reactive-table tbody tr' : function(event){
+    'click .courtRow' : function(event){
         Router.go('courtInfoPage',{_id:this._id});
     }
 });
