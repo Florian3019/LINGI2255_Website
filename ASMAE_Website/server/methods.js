@@ -1492,21 +1492,33 @@ Meteor.methods({
 		return Questions.insert(data)
 	},
 
-	'insertExtra' : function(Extra){
-		var data ={
-			name : Extra.desc,
-			price : Extra.price,
-			comment : Extra.comment
+	'removeExtra' : function(extraId){
+		Extras.remove({_id:extraId});
+	},
+
+	'updateExtra' : function(extraData){
+		data = {};
+		extraId = undefined;
+		if(extraData._id!==undefined){
+			extraId = extraData._id;
 		}
-		return Extras.insert(data);
-	},
-
-	'removeExtra' : function(ExtraID){
-		Extras.remove({_id:ExtraID});
-	},
-
-	'updateExtra' : function(Extra){
-		Extras.update(Extra.extra,{name: Extra.name, price: Extra.price, comment: Extra.comment});
+		if(extraData.name!==undefined){
+			data.name = extraData.name;
+		}
+		if(extraData.price!==undefined){
+			data.price = extraData.price;
+		}
+		if(extraData.comment!==undefined){
+			data.comment = extraData.comment;
+		}
+		if(extraId===undefined){
+			extraId = Extras.insert(data);
+			return extraId;
+		}
+		data2 = {$set:data};
+		Extras.update({_id:extraId}, data2);
+		return extraId;
+		
 	},
 
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
