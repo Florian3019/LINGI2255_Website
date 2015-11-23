@@ -165,22 +165,21 @@
     list-style: none;
 }*/
 
-/*.sidebar-nav li {
-    text-indent: 20px;
+.sidebar-nav li {
     line-height: 40px;
     display: block;
     text-decoration: none;
     color: #999999;
     cursor:pointer;
     background-color: rgba(51, 153, 255,0.15);
-}*/
+}
 
 .CategoryOption li {
-  text-indent: 50px;
+  text-indent: 30px;
 }
 
 .PoolBracketOption li{
-  text-indent: 120px;
+  text-indent: 100px;
 }
 
 .sidebar-nav li:hover {
