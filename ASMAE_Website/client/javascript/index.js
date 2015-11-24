@@ -29,6 +29,17 @@ Template.index.helpers({
 			return false;
 		}
 	},
+
+	'isConnected': function(){
+		if(Meteor.user())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	},
 	
 });
 
