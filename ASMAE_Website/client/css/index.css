@@ -81,6 +81,12 @@ body {
    		margin: 0 !important;
 }
 
+/*
+	Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris
+*/
+.dropdown:hover .dropdown-menu {
+display: block;
+}
 
 
 /**
@@ -95,7 +101,7 @@ body {
 
 @media (min-width: 1400px) {
 	.homePage {
-		min-height: 850px;
+		min-height: 730px;
 	}
 }
 
