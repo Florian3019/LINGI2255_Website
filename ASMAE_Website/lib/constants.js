@@ -7,28 +7,6 @@ paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Vireme
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
 
-//TODO: must always fetch this from DB !
-
-currentYear = GlobalValues.findOne({_id: "currentYear"});
-if(!currentYear)
-{
-    currentYear = "2015";
-}
-//currentYear = ""+tournamentDate.getFullYear(); // must be a string
-
-var fetchData = Years.findOne({year: currentYear});
-if(fetchData)
-{
-    tournamentDate = Years.findOne({year: currentYear}).tournamentDate
-}
-else {
-    tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
-}
-
-
-
-
-
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;
 MIN_FAMILY_AGE = 25;
@@ -121,13 +99,17 @@ getCategoryForBirth = function(birth, tournamentDate) {
  *  @param birthDate is of type Date
  */
 getAge = function(birthDate, tournamentDateSpecified){
-    var thisTournamentDate = tournamentDate; // The global one in constants.
+    var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
+    var tournamentDate;
     if (typeof tournamentDateSpecified !== 'undefined') {
-        thisTournamentDate = tournamentDateSpecified;
+        tournamentDate = tournamentDateSpecified;
     }
-    var age = thisTournamentDate.getFullYear() - birthDate.getFullYear();
-    var m = thisTournamentDate.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && thisTournamentDate.getDate() < birthDate.getDate())) {
+    else {
+        tournamentDate = (Years.findOne({_id:currentYear})).tournamentDate;
+    }
+    var age = tournamentDate.getFullYear() - birthDate.getFullYear();
+    var m = tournamentDate.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && tournamentDate.getDate() < birthDate.getDate())) {
         age--;
     }
     return age;

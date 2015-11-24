@@ -1,8 +1,7 @@
 Meteor.methods({
     'getPairsAlonePlayers' : function(type, category, date) {
         var pairs = Meteor.call('getPlayersID', type, category);
-        if(typeof pairs !== 'undefined')
-        {
+        if(typeof pairs !== 'undefined') {
             var pairsAlonePlayers = [];
             var pair;
             for (var i=0; i<pairs.length; i++) {

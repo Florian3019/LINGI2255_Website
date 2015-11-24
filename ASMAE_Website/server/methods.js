@@ -19,11 +19,13 @@ Meteor.methods({
 	},
 
 	'activateGlobalValuesDB' : function() {
-		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
+		if (!GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
-			GlobalValues.insert({_id:"registrationsON", value: false});
 
 			Meteor.call('activateCourtDB', "2015");		//TODO: not need the year?
+		}
+		if (!GlobalValues.findOne({_id:"registrationsON"})) {
+			GlobalValues.insert({_id:"registrationsON", value: false});
 		}
 	},
 
@@ -33,14 +35,12 @@ Meteor.methods({
 		}
 	},
 
-
 	// Method to launch the tournament registrations for this year's tournament.
 	'launchTournament': function(launchTournamentData){
 		if(Meteor.call('isAdmin')){
 
 			var data = {};
-			if(typeof launchTournamentData.tournamentDate === 'undefined')
-			{
+			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
 				return false;
 			}
@@ -49,8 +49,12 @@ Meteor.methods({
 				data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
 			}
 
-			if(typeof launchTournamentData.tournamentPrice === 'undefined')
-			{
+			if (typeof Years.findOne({_id:data._id}) !== 'undefined') {
+				// Tournament already exists
+				return undefined;
+			}
+
+			if(typeof launchTournamentData.tournamentPrice === 'undefined') {
 				console.error("launchTournament: No price for the tournament");
 				return false;
 			}
@@ -85,6 +89,12 @@ Meteor.methods({
 			console.error("You are not an administrator, you don't have the permission to do this action.");
 			return false;
 		}
+	},
+
+	'setCurrentYear' : function(currentYear) {
+		GlobalValues.update({_id:"currentYear"}, {$set:{
+			value : currentYear
+		}}, {upsert:true});
 	},
 
 	'stopTournamentRegistrations': function(){
