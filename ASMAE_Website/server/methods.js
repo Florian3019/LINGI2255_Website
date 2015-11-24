@@ -16,8 +16,7 @@ Meteor.methods({
 		if(Meteor.call('isAdmin')){
 
 			var data = {};
-			if(typeof launchTournamentData.tournamentDate === 'undefined')
-			{
+			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
 				return false;
 			}
@@ -26,8 +25,12 @@ Meteor.methods({
 				data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
 			}
 
-			if(typeof launchTournamentData.tournamentPrice === 'undefined')
-			{
+			if (typeof Years.findOne({_id:data._id}) !== 'undefined') {
+				// Tournament already exists
+				return undefined;
+			}
+
+			if(typeof launchTournamentData.tournamentPrice === 'undefined') {
 				console.error("launchTournament: No price for the tournament");
 				return false;
 			}
@@ -60,6 +63,12 @@ Meteor.methods({
 			console.error("You are not an administrator, you don't have the permission to do this action.");
 			return false;
 		}
+	},
+
+	'setCurrentYear' : function(currentYear) {
+		GlobalValues.update({_id:"currentYear"}, {$set:{
+			value : currentYear
+		}}, {upsert:true});
 	},
 
 	'getAllYears': function(){

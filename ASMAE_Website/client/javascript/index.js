@@ -29,7 +29,7 @@ Template.index.helpers({
 			return false;
 		}
 	},
-	
+
 });
 
 Template.index.events({
@@ -50,7 +50,8 @@ Template.index.events({
 		var nCourtBoth2014 = 30;
 		var nStaff2014 = 0;
 		var nAdmin2014 = 0;
-		Meteor.call("populateDB", new Date(2015, 8, 12), nTypes2015, nAlones2015, nUnregistered2015, nCourtSaturday2015, nCourtSunday2015, nCourtBoth2015, nStaff2015, nAdmin2015);
 		Meteor.call("populateDB", new Date(2014, 8, 11), nTypes2014, nAlones2014, nUnregistered2014, nCourtSaturday2014, nCourtSunday2014, nCourtBoth2014, nStaff2014, nAdmin2014);
+		Meteor.call("populateDB", new Date(2015, 8, 12), nTypes2015, nAlones2015, nUnregistered2015, nCourtSaturday2015, nCourtSunday2015, nCourtBoth2015, nStaff2015, nAdmin2015);
+		Meteor.call('setCurrentYear', new Date(2015, 8, 12));
 	}
 });
