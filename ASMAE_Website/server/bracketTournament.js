@@ -62,7 +62,7 @@ var getPoolWinners = function(poolId, MAXWINNERS){
 
       // If the key doesn't exist yet, initialize it to 0
       if(pairPoints[pairId]==undefined){
-        pairPoints[pairId] = {"points":0, "victories":0};
+        pairPoints[pairId] = {"points":0, "victories":0, "pairId":pairId, "poolId":poolId, "courtNumber":"?"};//TODO : courtNumber
       }
 
       // Increase that pair's total score
@@ -130,15 +130,19 @@ var getPoolWinners = function(poolId, MAXWINNERS){
   }
 
   pairKeys.sort(pointComparator);
-  winners = [];
   var i = 0;
 
+
+  winnerPairPoints = [];
+  loserPairPoints = [];
   // Select the winners from all the pairs. The best pairs are first in "&"
   for(i=0; i<MAXWINNERS && i<pairKeys.length; i++){
-    winners.push(pairKeys[i]);
+    winnerPairPoints.push(pairPoints[pairKeys[i]]);
   }
-
-  return winners;
+  for(i = i/*keep old value*/; i<pairKeys.length;i++){
+    loserPairPoints.push(pairPoints[pairKeys[i]]);
+  }
+  return {"loserPairPoints":loserPairPoints, "winnerPairPoints":winnerPairPoints};
 };
 
 /*
@@ -146,18 +150,22 @@ var getPoolWinners = function(poolId, MAXWINNERS){
   and it will return a list of pairs that were winners in their pool
 */
 var getCategoryWinners = function(poolIdList, maxWinners){
-  allWinners = []; // list of pairIds
+  allWinnersPairPoints = [];
+  allLosersPairPoints = [];
   for(var i=0; i<poolIdList.length;i++){
     poolWinners = getPoolWinners(poolIdList[i], maxWinners);
-    for(var j=0; j<poolWinners.length;j++){
-      allWinners.push(poolWinners[j]);
-    }
+    allLosersPairPoints = allLosersPairPoints.concat(poolWinners.loserPairPoints);
+    allWinnersPairPoints = allWinnersPairPoints.concat(poolWinners.winnerPairPoints);
   }
 
-  return allWinners;
+  return {"loserPairPoints":allLosersPairPoints, "winnerPairPoints":allWinnersPairPoints};
 };
 
 Meteor.methods({
+
+  /*
+    Sets the winners into the db in types[<category>Brackets]
+  */
   'startTournament': function(year, type, category, maxWinners){
     if(year==undefined || type==undefined || category==undefined || maxWinners==undefined){
       console.error("startTournament : year, type or category or maxWinners is undefined");
@@ -172,6 +180,7 @@ Meteor.methods({
       return;
     }
 
+    console.log("startTournament");
     typ = {};
     typ[type] = 1;
     yearData = Years.findOne({"_id":year}, typ);
@@ -184,12 +193,130 @@ Meteor.methods({
     if(typeData==undefined) return;
     poolIdList = typeData[category];
     if(poolIdList==undefined) return;
-    var winners = getCategoryWinners(poolIdList, maxWinners);
+
+    var winnersData = getCategoryWinners(poolIdList, maxWinners);
+    return winnersData;
+  },
+
+    // Returns a table of pools corresponding to the table of pool ids (poolIDList)
+  'getPoolList' : function(poolIdList){
+    list = [];
+    for(var i=0;i<poolIdList.length;i++){
+      list.push(Pools.findOne({_id:poolIdList[i]}));
+    }
+  },
+
+  /**
+  * @param year : year for which the brackets must be made
+  * @param matchType : one of mixed,men,women,family
+  *   @param category : preminimes, minimes, cadets, scholars, juniors, seniors or elites
+  */
+  'makeBrackets' : function(year, matchType, category){
+
+    var yearData = Years.findOne({_id:year});
+    var typeId = yearData.matchType;
+
+    var typeData = Types.findOne({_id:typeId});
+    var poolIdList = typeData.category;
+
+    var poolList = Meteor.call('getPoolList', poolIdList);
+
+    var winners = []; // Contains the pairs selected to play during the afternoon
+
+    // Go through all pools of that type and that category
+    for(var i=0;i<poolList.length;i++){
+
+      var results = {}; // Key : <pairId>, value : <total match points>
+
+      /*
+        For each pool, go through all the matches
+      */
+      var pairMatch = poolList[i].match;
+      for(var j=0; j<pairMatch.length;j++){
+        /*
+          For each pair in the match, add that pair's points to its total points won on all matches
+        */
+
+        // If the pair has already been added to the list of results, increment its score, otherwise just set its new score.
+        results[pairMatch.pair1] = results[pairMatch.pair1] ? results[pairMatch.pair1]+pairMatch["result.pair1Points"] : pairMatch["result.pair1Points"];
+        results[pairMatch.pair2] = results[pairMatch.pair2] ? results[pairMatch.pair2]+pairMatch["result.pair2Points"] : pairMatch["result.pair2Points"];
+      }
+
+      /*
+        Convert the result object to an array, so that we can sort it
+      */
+      var sortable = [];
+      for (var pair in results) {
+        if (p.hasOwnProperty(pair)) { // Check that pair is really a key of results, and not coming from the prototype
+            sortable.push({"pair":pair, "points":results[pair]});
+          }
+      }
+
+      /*
+        Sort by descending order based on the pair's result
+      */
+      sortable.sort(function(a,b){
+        // a is before b
+        if(a.points > b.points){
+          return -1;
+        }
+        // a is after b
+        if(a.points < b.points){
+          return 1;
+        }
+        // points of a are equal to points of b, thus best pair is the one who won against the other (since no egality in a match is allowed)
+        if(results[a.pair] > results[b.pair]){
+          // a has more points than b, so a must be before b
+          return -1;
+        }
+        // a lost against b, so a is after b
+        return 1;
+      });
 
 
-    data = {"_id":typeId};
-    data[category.concat("Bracket")] = winners;
-    Meteor.call("updateType", data);
+
+      // Select the best SELECTED pairs of this pool to play during the afternoon
+      const SELECTED = 2; // Number of pairs to select per pool
+      for (var i=0; i<SELECTED && i<sortable.length; i++){
+        winners.push(sortable[i]);
+      }
+    } // end for each pool
+
+
+    /*
+      Make the brackets
+      An element of the bracket is as follows :
+      {
+        "name":<name>,
+        "id":<id>,
+        "seed":<seed>,
+        "displaySeed":<displaySeed>,
+        "score":<score>,
+      }
+    */
+    var winnerMatchList = [];
+    var firstRound = [];
+    /*
+      Just generate the first round
+    */
+    for(var i=0;i<winners.length;i++){
+      var pairData = Pairs.findOne({_id : winners[i]});
+      var player1Data = Meteor.users.findOne({_id : pairData.player1._id});
+      var player2Data = Meteor.users.findOne({_id : pairData.player2._id});
+
+      // var pairData = {
+      //  "name":
+
+      // };
+
+      firstRound.push([]);
+    }
+
+    winnerMatchList.push(firstRound);
+
+    return winnerMatchList;
+
+
   }
 
 });

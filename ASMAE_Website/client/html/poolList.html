@@ -12,11 +12,15 @@
             </div>
             <div class="col-md-4">
               {{#if isAdminOrStaff}}
+              {{#with getYear}}
+                {{#with getType this}}
                 <center>
                 <button type="button" id="assignCourts" class="btn btn-default btn-lg">
                   <span class="glyphicon" aria-hidden="true"></span> Assigner les terrains
                 </button>
                 </center>
+                {{/with}}
+                {{/with}}
               {{/if}}
             </div>
           </div>
@@ -224,7 +228,7 @@
           <ul class="list-group clickablePoolItem" data-id="{{../pair._id}}">
             <li class="list-group-item pairPlayer {{getColor ../pair/player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}</li>
           </ul>
-          {{>modalItem PAIR=../pair POOL=../startingPoolId SEX=profile.gender BIRTHDATE=profile.birthDate}}
+          {{>modalItem PAIR=../pair POOL=../startingPoolId SEX=profile.gender BIRTHDATE=profile.birthDate SHOWOPTIONS=true}}
           {{/with}}
         </div>
         {{/each}}
@@ -266,7 +270,13 @@
         </div>
         <div class="modal-body">
           <div class="panel panel-primary pairInfoBox">
-            <center><button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player1._id}}" data-player="{{PAIR.player1._id}}" data-poolid="{{POOL}}">Choisir comme chef de poule</button></center>
+            {{#if showOptions}}
+              <center>
+                <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player1._id}}" data-player="{{PAIR.player1._id}}" data-poolid="{{POOL}}">
+                 Choisir comme chef de poule
+                </button>
+              </center>
+            {{/if}}
             {{>playerInfoTemplate ID=PAIR.player1._id MODAL=getModalId}}
             {{#if PAIR.player1.playerWish}}
             <h3>Souhaits sur les joueurs</h3>
@@ -281,21 +291,29 @@
             {{PAIR.player1.otherWish}}
             {{/if}}
           </div>
+          
           {{#if equals PAIR.player2._id undefined}}
-          <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              Changer ce joueur de type
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-              {{#each getAvailableTypes PAIR._id POOL SEX BIRTHDATE}}
-              <li><a href="#" class="typeChosing">{{this.value}}</a></li>
-              {{/each}}
-            </ul>
-          </div>
+            {{#if showOptions}}
+            <div class="dropdown">
+              
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Changer ce joueur de type
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                {{#each getAvailableTypes PAIR._id POOL SEX BIRTHDATE}}
+                <li><a href="#" class="typeChosing">{{this.value}}</a></li>
+                {{/each}}
+              </ul>
+            </div>
+            {{/if}}
           {{else}}
           <div class="panel panel-primary pairInfoBox">
-            <center><button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player2._id}}" data-player="{{PAIR.player2._id}}" data-poolid="{{POOL}}">Choisir comme chef de poule</button></center>
+            {{#if showOptions}}
+            <center>
+              <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player2._id}}" data-player="{{PAIR.player2._id}}" data-poolid="{{POOL}}">Choisir comme chef de poule</button>
+            </center>
+            {{/if}}
             {{>playerInfoTemplate ID=PAIR.player2._id MODAL='pairModal'}}
             {{#if PAIR.player2.playerWish}}
             <h3>Souhaits sur les joueurs</h3>
@@ -338,7 +356,7 @@ Takes 2 arguments :
       </ul>
     </div>
     {{#unless equals this.player2._id undefined}}
-    {{>modalItem PAIR=this POOL=../POOLID}} <!-- Don't set SEX here, since we should not be able to change the type of the pair -->
+    {{>modalItem PAIR=this POOL=../POOLID SHOWOPTIONS=true}} <!-- Don't set SEX here, since we should not be able to change the type of the pair -->
     {{/unless}}
   {{/with}}
 </template>

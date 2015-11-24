@@ -1122,6 +1122,29 @@ var showPairModal = function(event){
 	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
 }
 
+var getColorFromPlayer = function(player){
+		count = 0;
+		code = 0;
+		if(player.playerWish){
+			count += 1;
+			code = 1;
+		}
+		if(player.courtWish){
+			count+=1;
+			code = 2;
+		}
+		if(player.otherWish){
+			count+=1;
+			code = 3;
+		}
+	
+		if(count>1) return 'cyan';
+		if(code == 1) return 'orange';
+		if(code == 2) return 'red';
+		if(code == 3) return 'magenta';
+		return "";
+}
+
 Template.alonePairsContainerTemplate.onRendered(function(){
 	// Add the container of this template as a container that can receive draggable objects
   	drake.containers.push(document.querySelector('#alonepairs'));
@@ -1158,26 +1181,7 @@ Template.alonePairsContainerTemplate.helpers({
 	},
 
 	'getColor' : function(player){
-		count = 0;
-		code = 0;
-		if(player.playerWish){
-			count += 1;
-			code = 1;
-		}
-		if(player.courtWish){
-			count+=1;
-			code = 2;
-		}
-		if(player.otherWish){
-			count+=1;
-			code = 3;
-		}
-	
-		if(count>1) return 'cyan';
-		if(code == 1) return 'orange';
-		if(code == 2) return 'red';
-		if(code == 3) return 'magenta';
-		return "";
+		getColorFromPlayer(player);
 	},
 
 	'getPlayer' : function(playerId){
@@ -1207,9 +1211,7 @@ Template.poolItem.helpers({
 	},
 
 	'getColor' : function(player){
-		if(player.wish || player.constraint){
-			return 'orange';
-		}
+		getColorFromPlayer(player);
 	}
 });
 

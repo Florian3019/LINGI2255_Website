@@ -336,6 +336,10 @@ Template.brackets.helpers({
   'getAllWinners' : function(){
     Session.get('brackets/update');
     return handleBracketErrors(document);
+  },
+
+  'buildingTournament' : function(){
+    return Session.get('brackets/buildingTournament');
   }
 
 });
@@ -397,16 +401,16 @@ var handleBracketErrors = function(document){
     if(allWinners==undefined){
       if(bracketOptions!=undefined){
         console.info("Tournament not started");
-        startButton.innerHTML="Démarrer ce tournoi";
-        bracketOptions.style.display = 'block';
-        pdfButton.style.display = 'block';
+        if(startButton!=undefined && startButton!=null) startButton.innerHTML="Démarrer ce tournoi";
+        if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
+        if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
       }
       return;
     }
-    if(bracketOptions!=undefined){
-      startButton.innerHTML="Redémarrer ce tournoi";
-      bracketOptions.style.display = 'block';
-      pdfButton.style.display = 'block';
+    if(bracketOptions!==undefined){
+      if(startButton!=undefined && startButton!=null) startButton.innerHTML="Redémarrer ce tournoi";
+      if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
+      if(pdfButton!==undefined && pdfButton!==null) pdfButton.style.display = 'block';
     }
 
     if(allWinners.length==0){
@@ -510,12 +514,9 @@ var getOrder = function(size){
 */
 var getTournamentFirstRound = function(pairs){
   var tournamentSize = getNextPowerOfTwo(pairs.length); // power of 2
-
   var toReturn = [];
-
   var indexTable = getOrder(tournamentSize);
 
-  console.log(indexTable);
   var k = 0; // Index in pairs
   for(var i=0; i< tournamentSize; i++){
     
@@ -686,6 +687,10 @@ var getStringOptions = function(){
       " année: "+Session.get("PoolList/Year");
 }
 
+Template.brackets.onRendered(function(){
+  Session.set('brackets/buildingTournament', false); // By default, we are not building the tournament
+});
+
 Template.brackets.events({
 
 	// Do something when the user clicks on a player
@@ -721,7 +726,7 @@ Template.brackets.events({
   },
 
   'click #start':function(event){
-
+      Session.set('brackets/buildingTournament', true);
       console.log("calling startTournament");
       year = Session.get('PoolList/Year');
       type = Session.get('PoolList/Type');
@@ -729,15 +734,9 @@ Template.brackets.events({
 
       maxWinners = document.getElementById("winnersPerPool").value;
 
-      callback = function(err, status){
-        Meteor.call("addToModificationsLog",
-        {"opType":"Création tournoi knock-off",
-        "details":
-            "Paires par poule: "+maxWinners+getStringOptions()
-        });
-
-
-        Session.set('brackets/update',Session.get('brackets/update') ? false:true);
+      callback = function(err, retVal){
+        console.log(retVal);
+        Session.set("brackets/pairPoints",retVal);
       };
 
       if(maxWinners<1){
