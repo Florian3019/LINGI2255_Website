@@ -18,10 +18,7 @@ Template.modifyExtras.events({
 			Meteor.call('updateExtra',data);
 			Meteor.call("addToModificationsLog", 
             {"opType":"Ajout d'un extra", 
-            "details":
-                "Nom : "+name +
-                " Prix : "+price+
-                " Commentaire: "+comment 
+            "details":name +": "+price+"€ "+ (comment!=="" ? "("+comment+")" : "") 
             });
 		}
 
@@ -74,10 +71,7 @@ var modifyExtra=function(id){
 
 	Meteor.call("addToModificationsLog", 
     {"opType":"Modification d'un extra", 
-    "details":
-        "Nom : "+data.name +
-        " Prix : "+data.price+
-        " Commentaire: "+data.comment 
+    "details":data.name +": "+data.price+"€ "+ (data.comment!=="" ? "("+data.comment+")" : "")  
     });
 }
 
@@ -107,10 +101,7 @@ Template.modifyExtras.events({
 
 		Meteor.call("addToModificationsLog", 
         {"opType":"Effacer un extra", 
-        "details":
-            "Nom : "+data.name+
-            " Prix : "+data.price+
-            " Commentaire: "+data.comment
+        "details":data.name +": "+data.price+"€ "+ (data.comment!=="" ? "("+data.comment+")" : "") 
         });
 	}
 
