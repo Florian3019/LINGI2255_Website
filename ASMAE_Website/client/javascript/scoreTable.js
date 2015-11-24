@@ -117,6 +117,10 @@ var getStringOptions = function(){
 }
 
 Template.scorePage.events({
+  'click #scoreTableBack':function(event){
+    Session.set("PoolList/ChosenScorePool","");
+  },
+
   'click #save' : function(event){
     var points = document.getElementsByClassName("points");
     var poolId = this._id; // "this" is the parameter of the template
