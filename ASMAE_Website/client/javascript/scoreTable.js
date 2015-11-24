@@ -19,6 +19,33 @@ Template.scorePage.helpers({
     },
 });
 
+Template.scoreTable.events({
+  'change .points':function(event){
+    score = event.currentTarget.value;
+    if(score == "") score = "-1";
+    data = event.currentTarget.dataset;
+    pairId = data.pairid;
+    otherPairId = data.otherpairid;
+    matchId = data.matchid;
+
+    // the fact that this is pair1 and not pair2 is irrelevant for the update (just for parsing convenience)
+    data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score,10)}};
+    // Update the DB !
+    Meteor.call("updateMatch", data);
+
+    playersName1 = getPairPlayers(pairId);
+    playersName2 = getPairPlayers(otherPairId);
+
+    Meteor.call("addToModificationsLog",
+    {"opType":"Modification points match poule",
+    "details":
+        playersName1[0]+" "+playersName1[1] + 
+        " VS " + playersName2[0]+" "+playersName2[1] +
+        " Points: "+data.points+getStringOptions()
+    });
+  }
+})
+
 Template.scoreTable.helpers({
   // Returns a list of pairs that are in this pool
   'getPairs' : function(poolId){
@@ -116,35 +143,18 @@ var getStringOptions = function(){
       " année: "+Session.get("PoolList/Year");
 }
 
+var getPairPlayers = function(pairId){
+  p = Pairs.findOne({_id:pairId},{"player1._id":1, "player2._id":1});
+  info = {"profile.firstName":1, "profile.lastName":1};
+  u1 = Meteor.users.findOne({_id:p.player1._id},info);
+  u2 = Meteor.users.findOne({_id:p.player2._id},info);
+
+  return [u1.profile.firstName + " "+u1.profile.lastName, u2.profile.firstName + " "+u2.profile.lastName];
+}
+
 Template.scorePage.events({
   'click #scoreTableBack':function(event){
     Session.set("PoolList/ChosenScorePool","");
-  },
-
-  'click #save' : function(event){
-    var points = document.getElementsByClassName("points");
-    var poolId = this._id; // "this" is the parameter of the template
-    for(var i=0; i<points.length;i++){
-      var score = points[i].value;
-      if(score=="") score = "-1";
-      var matchId = points[i].getAttribute('data-matchid');
-      var pairId = points[i].getAttribute('data-pairid');
-
-      // the fact that this is pair1 and not pair2 is irrelevant for the update (just for parsing convenience)
-      data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score,10)}};
-      // Update the DB !
-      Meteor.call("updateMatch", data);
-
-      Meteor.call("addToModificationsLog",
-      {"opType":"Modification points match poule",
-      "details":
-          "Match: "+matchId+
-          " PairId: "+ pairId+
-          " Points: "+data.points+getStringOptions()
-      });
-    }
-
-    document.getElementById("successBox").removeAttribute("hidden");
   },
 
   'change #checkBoxEmptyTable' : function(event){
