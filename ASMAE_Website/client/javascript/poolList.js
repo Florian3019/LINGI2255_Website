@@ -13,9 +13,9 @@ var setInfo = function(document, msg){
 }
 
 var getStringOptions = function(){
-	return "\ncatégorie: "+Session.get("PoolList/Category")+
-			" type: "+Session.get("PoolList/Type") +
-			" année: "+Session.get("PoolList/Year");
+	return " dans "+typesTranslate[Session.get("PoolList/Type")]+">"+
+			categoriesTranslate[Session.get("PoolList/Category")]+
+			" (" + Session.get("PoolList/Year")+")";
 }
 
 var hideSuccessBox = function(document){
@@ -94,7 +94,7 @@ var splitPairs = function(pairDiv){
 	Meteor.call("addToModificationsLog",
 		{"opType":"Séparation de paire",
 		"details":
-			"Paire séparée : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			player1.profile.firstName + " "+ player1.profile.lastName +
 			 " et " + player2.profile.firstName +" " + player2.profile.lastName + getStringOptions()
 		});
 }
@@ -194,7 +194,7 @@ var mergePlayers = function(document){
 	Meteor.call("addToModificationsLog",
 		{"opType":"Fusion de 2 joueurs",
 		"details":
-			"Joueurs : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			player1.profile.firstName + " "+ player1.profile.lastName +
 			 " et " + player2.profile.firstName +" " + player2.profile.lastName +getStringOptions()
 		});
 }
@@ -446,7 +446,7 @@ var movePairs = function(document){
 			Meteor.call("addToModificationsLog",
 				{"opType":"Mouvement paire",
 				"details":
-					"Paire : "+player1.profile.firstName + " "+ player1.profile.lastName +
+					player1.profile.firstName + " "+ player1.profile.lastName +
 			 		" et " + player2.profile.firstName +" " + player2.profile.lastName + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
 				});
 		}
@@ -917,9 +917,7 @@ Template.poolList.helpers({
 
 		poolList = typeData[category];
 		if((poolList==undefined || poolList.length==0) && category!=undefined){
-			setInfo(document, "Pas de poules trouvées pour la catégorie " + categoriesTranslate[Session.get("PoolList/Category")]
-				+ " du type " + typesTranslate[Session.get("PoolList/Type")]
-				+ " de l'année "+Session.get('PoolList/Year'));
+			setInfo(document, "Pas de poules trouvées"+getStringOptions());
 			return true;
 		}
 		else{

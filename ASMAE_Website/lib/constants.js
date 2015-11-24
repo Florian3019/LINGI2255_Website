@@ -38,7 +38,6 @@ MIN_FAMILY_AGE = 25;
 */
 acceptForFamily = function(birthDate, tournamentDate){
     age = getAge(birthDate, tournamentDate);
-    console.log(age);
     return age<=MAX_FAMILY_AGE || age>=MIN_FAMILY_AGE;
 }
 
