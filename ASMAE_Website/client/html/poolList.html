@@ -103,19 +103,19 @@
         {{/each}}
       </select>
       </div>
-      <ul class="sidebar-nav">
           {{#with getYear}}
-            <li>{{>CategorySelect TYPE="men" DESC="Homme"}}</li>
-            <li>{{>CategorySelect TYPE="women" DESC="Femme"}}</li>
-            <li>{{>CategorySelect TYPE="mixed" DESC="Mixte"}}</li>
-            <li>{{>poolBracketsSelect ID="family" CAT="all" DESC="Familles"}}</li>
+            {{>CategorySelect TYPE="men" DESC="Homme"}}
+            {{>CategorySelect TYPE="women" DESC="Femme"}}
+            {{>CategorySelect TYPE="mixed" DESC="Mixte"}}
+            {{>poolBracketsSelect ID="family" CAT="all" DESC="Familles"}}
           {{/with}}
-      </ul>
     </div>
 </template>
 
 <!-- Param : TYPE -->
 <template name="CategorySelect">
+<ul>
+<li>
   <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span>
   <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
   <ul class="nav collapse CategoryOption" id="{{TYPE}}" role="menu" aria-labelledby="btn-{{TYPE}}">
@@ -125,21 +125,35 @@
     {{/unless}}
     {{/each}}
   </ul>
+</li>
+</ul>
 </template>
 
 <template name="poolBracketsSelect">
+<ul>
+<li>
   <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_category" style="display:none;"></span>
   <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory" data-target="#{{this.ID}}_{{this.CAT}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
   <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
     <li class="PoolOption" data-category="{{this.CAT}}" data-type="{{this.ID}}" >
+      <ul>
+      <li>
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_pool" style="display:none"></span>
-      Poules {{getPoulesCompletion this.ID this.CAT}}
-    </li>
+      <a href="#" style="text-decoration: none;display:inline;"> Poules {{getPoulesCompletion this.ID this.CAT}} </a>
+      </li>
+      </ul>
+    </li>    
     <li class="BracketOption" data-category="{{this.CAT}}" data-type="{{this.ID}}">
+      <ul>
+      <li>
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_bracket" style="display:none"></span>
-      Tournoi {{getBracketCompletion this.ID this.CAT}}
+      <a href="#" style="text-decoration: none;display:inline;">Tournoi {{getBracketCompletion this.ID this.CAT}}</a>
+      </li>
+      </ul>
     </li>
   </ul>
+</li>
+</ul>
 </template>
 
 <!-- Takes 1 argument : the pool -->

@@ -178,7 +178,7 @@
 
 
 
-.CategoryOption li {
+/*.CategoryOption li {
   text-indent: 30px;
 }
 
@@ -195,7 +195,7 @@
 .sidebar-nav li:active,
 .sidebar-nav li:focus {
     text-decoration: none;
-}
+}*/
 
 /*.sidebar-nav > .sidebar-brand {
     height: 65px;
