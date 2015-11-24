@@ -1,4 +1,3 @@
-const REGISTRATION_PRICE = 10;
 // Useful link : http://stackoverflow.com/questions/16439055/retrieve-id-after-insert-in-a-meteor-method-call
 
 
@@ -10,6 +9,30 @@ const REGISTRATION_PRICE = 10;
 */
 
 Meteor.methods({
+
+	//TODO: remove this when going to production !!!
+	'turnAdminInsecure' : function(nid){
+		Meteor.users.update({_id:nid}, {
+			$set: {"profile.isAdmin":1,"profile.isStaff":1}
+		});
+
+	},
+
+	'activateGlobalValuesDB' : function() {
+		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
+			GlobalValues.insert({_id:"currentYear", value:""});
+			GlobalValues.insert({_id:"registrationsON", value: false});
+
+			Meteor.call('activateCourtDB', "2015");		//TODO: not need the year?
+		}
+	},
+
+	'activateCourtDB' : function(tournamentYear) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
+			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, value:1});
+		}
+	},
+
 
 	// Method to launch the tournament registrations for this year's tournament.
 	'launchTournament': function(launchTournamentData){
@@ -37,22 +60,24 @@ Meteor.methods({
 
 			//Insert in database
 
-			globalValueDocument = GlobalValues.findOne({_id:"currentYear"});
-			if(typeof globalValueDocument === 'undefined') {
-				console.error("Error in launchTournament : globalValueDocument not found for key currentYear");
-				return undefined;
-			}
-
-			GlobalValues.update(globalValueDocument, {$set: {
+			GlobalValues.update({_id:"currentYear"}, {$set: {
 				value : data._id
 			}}, function(err, result){
 				if(err){
-					throw new Meteor.Error("update GlobalValues in launchTournament error: ", err);
-				}
-				else{
-					Meteor.call("activateCourtDB", data._id);
+					throw new Meteor.Error("update GlobalValues currentYear in launchTournament error: ", err);
 				}
 			});
+
+			GlobalValues.update({_id:"registrationsON"}, {$set: {
+				value : true
+			}}, function(err, result){
+				if(err){
+					throw new Meteor.Error("update GlobalValues registrationsON in launchTournament error: ", err);
+				}
+			});
+
+			//Activate court DB for this year's tournament
+			Meteor.call("activateCourtDB", data._id);
 
 			return Years.insert(data);
 		}
@@ -60,6 +85,16 @@ Meteor.methods({
 			console.error("You are not an administrator, you don't have the permission to do this action.");
 			return false;
 		}
+	},
+
+	'stopTournamentRegistrations': function(){
+		GlobalValues.update({_id:"registrationsON"}, {$set: {
+			value : false
+		}}, function(err, result){
+			if(err){
+				throw new Meteor.Error("update GlobalValues registrationsON in stopTournamentRegistrations error: ", err);
+			}
+		});
 	},
 
 	'getAllYears': function(){
@@ -70,27 +105,6 @@ Meteor.methods({
 			y.push(allYears[i]._id);
 		}
 		return y;
-	},
-
-	//TODO: remove this when going to production !!!
-	'turnAdminInsecure' : function(nid){
-		Meteor.users.update({_id:nid}, {
-			$set: {"profile.isAdmin":1,"profile.isStaff":1}
-		});
-
-		Meteor.call('activateCourtDB', "2015");
-	},
-
-	'activateGlobalValuesDB' : function() {
-		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
-			GlobalValues.insert({_id:"currentYear", value:""});
-		}
-	},
-
-	'activateCourtDB' : function(tournamentYear) {
-		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
-			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, value:1});
-		}
 	},
 
 	'getNextCourtNumber' : function(tournamentYear) {
@@ -998,7 +1012,8 @@ Meteor.methods({
 
 
 		//Payments: add to the Payments collection
-		var amount = REGISTRATION_PRICE;
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+	    var amount = Years.findOne({_id: currentYear}).tournamentPrice;
 
 		//Add extras to amount
 		if(check1 && pairData["player1"].extras)
@@ -1381,6 +1396,12 @@ Meteor.methods({
 		Adds the pair in the tournament on the right pool.
 	 */
 	'addPairToTournament' : function(pairID, year, dateMatch) {
+		var registrationsON = GlobalValues.findOne({_id: "registrationsON"}).value;
+		if(!registrationsON){
+			console.error("Error in addPairToTournament: the registrations to the tournament are not opened.");
+			return undefined;
+		}
+
 		if(!pairID) {
 			console.error("Error addPairToTournament : no pairID specified");
 			return undefined;

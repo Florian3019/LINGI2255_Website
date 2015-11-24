@@ -1,5 +1,4 @@
 var gateway;
-const REGISTRATION_PRICE = 10; // Price of the tournament, in euros
 
 Meteor.startup(function () {
   var braintree = Meteor.npmRequire('braintree');
@@ -28,7 +27,8 @@ Meteor.methods({
     var transaction = Meteor.wrapAsync(gateway.transaction.sale, gateway.transaction);
 
     //Calculate amount to pay
-    var amount = REGISTRATION_PRICE;
+    var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+    var amount = Years.findOne({_id: currentYear}).tournamentPrice;
     /*
     if(data.extras)
     {

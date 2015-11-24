@@ -2,6 +2,14 @@ Template.launchTournament.rendered=function() {
     $('#launchTournamentDate').datepicker();
 }
 
+
+Template.launchTournament.helpers({
+    'registrationsON': function(){
+         return GlobalValues.findOne({_id: "registrationsON"}).value;
+    }
+});
+
+
 Template.launchTournament.events({
     'submit form': function(event){
         event.preventDefault();
@@ -30,6 +38,19 @@ Template.launchTournament.events({
 
 	    });
 
+    },
+
+    'click #closeRegistrationsButton': function(){
+        if(confirm("Confirmer la fermeture des inscriptions:"))
+        {
+                Meteor.call('stopTournamentRegistrations', function(error, result){
+                    if(error){
+                        console.error('stopTournamentRegistrations error');
+                        console.error(error);
+                    }
+                });
+        }
 
     }
+
 });
