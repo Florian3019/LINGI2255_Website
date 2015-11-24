@@ -270,7 +270,7 @@
             {{#each extras}}
             <div class="form-group">
               <label for="number">{{getName}} ({{getPrice}} euros)</label>
-              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" value="0" class="form-control" style="width: 15%; display: inline">
+              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" value="0" class="form-control" style="width: 15%; display: inline; text-align:center">
               <p style="font-size:100%">{{getComment}}</p>
             </div>
             {{/each}}
@@ -298,16 +298,24 @@
       <div class="row">
 		    <div class="col-sm-6 col-sm-offset-3">
 		      <div class="form-group">
-            <label for="playerWishes">Souhaits:</label>
-       	    <textarea name="playerWishes" id="playerWishes" class="form-control" placeholder="Facultatif"></textarea>
+            <label for="playerWish">Souhaits sur les joueurs:</label>
+       	    <textarea name="playerWish" id="playerWish" class="form-control" placeholder="Facultatif"></textarea>
   		    </div>
         </div>
       </div>
       <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
           <div class="form-group">
-            <label for="playerConstraints">Contraintes:</label>
-            <textarea name="playerConstraints" id="playerConstraints" class="form-control" placeholder="Facultatif"></textarea>
+            <label for="courtWish">Souhaits sur un terrain:</label>
+            <textarea name="courtWish" id="courtWish" class="form-control" placeholder="Facultatif"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+          <div class="form-group">
+            <label for="otherWish">Autre souhaits:</label>
+            <textarea name="otherWish" id="otherWish" class="form-control" placeholder="Facultatif"></textarea>
           </div>
         </div>
       </div>

@@ -884,7 +884,6 @@ Meteor.methods({
 	},
 
 	/*
-		If a wish(es) is specified, it(they) must be in an array and will be appended to the list of existing wishes.
 		If you supply the category (and no player), make sure it fits the category of both players --> not checked.
 		The category will be automatically checked and set if you provide at least a player.
 		The update fails if both players are not of the same category or if the supplied category does not fit the player.
@@ -897,16 +896,18 @@ Meteor.methods({
 				extras:{
 					<name>:<number>
 				},
-				wish:<wish>,
-				constraint:<constraint>
+				playerWish:<playerWish>,
+				courtWish:<courtWish>,
+				otherWish:<otherWish>
 			},
 			player2:{
 				_id:<userID>,
 				extras:{
 					<name>:<number>
 				},
-				wish:<wish>,
-				constraint:<constraint>
+				playerWish:<playerWish>,
+				courtWish:<courtWish>,
+				otherWish:<otherWish>
 			},
 			tournament :[<pointsRound1>, <pointsRound2>, ....],
 			tournamentCourts:[<courtForRound1>, ...],
@@ -963,8 +964,9 @@ Meteor.methods({
 			p['_id'] = ID[player];
 			pData = pairData[player];
 
-			if(pData['wish']) p['wish'] = pData['wish'];
-			if(pData['constraint']) p['constraint'] = pData['constraint'];
+			if(pData['playerWish']) p['playerWish'] = pData['playerWish'];
+			if(pData['courtWish']) p['courtWish'] = pData['courtWish'];
+			if(pData['otherWish']) p['otherWish'] = pData['otherWish'];
 
 			if(pData['extras']){
 				extr = {};

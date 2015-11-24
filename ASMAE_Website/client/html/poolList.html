@@ -268,13 +268,17 @@
           <div class="panel panel-primary pairInfoBox">
             <center><button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player1._id}}" data-player="{{PAIR.player1._id}}" data-poolid="{{POOL}}">Choisir comme chef de poule</button></center>
             {{>playerInfoTemplate ID=PAIR.player1._id MODAL=getModalId}}
-            {{#if PAIR.player1.wish}}
-            <h3>Souhaits</h3>
-            {{PAIR.player1.wish}}
+            {{#if PAIR.player1.playerWish}}
+            <h3>Souhaits sur les joueurs</h3>
+            {{PAIR.player1.playerWish}}
             {{/if}}
-            {{#if PAIR.player1.constraint}}
-            <h3>Contraintes</h3>
-            {{PAIR.player1.constraint}}
+            {{#if PAIR.player1.courtWish}}
+            <h3>Souhaits sur un terrain</h3>
+            {{PAIR.player1.courtWish}}
+            {{/if}}
+            {{#if PAIR.player1.otherWish}}
+            <h3>Autre souhaits</h3>
+            {{PAIR.player1.otherWish}}
             {{/if}}
           </div>
           {{#if equals PAIR.player2._id undefined}}
@@ -293,13 +297,17 @@
           <div class="panel panel-primary pairInfoBox">
             <center><button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player2._id}}" data-player="{{PAIR.player2._id}}" data-poolid="{{POOL}}">Choisir comme chef de poule</button></center>
             {{>playerInfoTemplate ID=PAIR.player2._id MODAL='pairModal'}}
-            {{#if PAIR.player2.wish}}
-            <h3>Souhaits</h3>
-            {{PAIR.player2.wish}}
+            {{#if PAIR.player2.playerWish}}
+            <h3>Souhaits sur les joueurs</h3>
+            {{PAIR.player2.playerWish}}
             {{/if}}
-            {{#if PAIR.player2.constraint}}
-            <h3>Contraintes</h3>
-            {{PAIR.player2.constraint}}
+            {{#if PAIR.player2.courtWish}}
+            <h3>Souhaits sur un terrain</h3>
+            {{PAIR.player2.courtWish}}
+            {{/if}}
+            {{#if PAIR.player2.otherWish}}
+            <h3>Autre souhaits</h3>
+            {{PAIR.player2.otherWish}}
             {{/if}}
           </div>
           {{/if}}
@@ -322,10 +330,10 @@ Takes 2 arguments :
     <div id="{{this._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
       <ul class="list-group clickablePoolItem" data-id="{{this._id}}">
         {{#with getPlayer this.player1._id}}
-        <li class="list-group-item pairPlayer {{#if isAdminOrStaff}}{{getColor ../player1}}{{/if}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
+        <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}{{getColor ../player1}}{{/if}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
         {{#with getPlayer this.player2._id}}
-        <li class="list-group-item pairPlayer {{#if isAdminOrStaff}}{{getColor ../player2}}{{/if}}" id="{{this.player2._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player2._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
+        <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}{{getColor ../player1}}{{/if}}" id="{{this.player2._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player2._id ../../LEADER}}<span class="glyphicon glyphicon-star" style="color:#4CC417" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
       </ul>
     </div>

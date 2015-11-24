@@ -535,6 +535,9 @@ Template.poolList.onRendered(function() {
 	// (usefull when he clicks on scoreboard and presses the back button)
 	Session.set("PoolList/ChosenScorePool","");
 	Session.set("PoolList/ChosenBrackets","");
+	Session.set("PoolList/Year","");
+	Session.set("PoolList/Type","");
+	Session.set("PoolList/Category","");
 });
 
 Template.poolList.events({
@@ -1155,9 +1158,26 @@ Template.alonePairsContainerTemplate.helpers({
 	},
 
 	'getColor' : function(player){
-		if(player.wish || player.constraint){
-			return 'orange';
+		count = 0;
+		code = 0;
+		if(player.playerWish){
+			count += 1;
+			code = 1;
 		}
+		if(player.courtWish){
+			count+=1;
+			code = 2;
+		}
+		if(player.otherWish){
+			count+=1;
+			code = 3;
+		}
+	
+		if(count>1) return 'cyan';
+		if(code == 1) return 'orange';
+		if(code == 2) return 'red';
+		if(code == 3) return 'magenta';
+		return "";
 	},
 
 	'getPlayer' : function(playerId){

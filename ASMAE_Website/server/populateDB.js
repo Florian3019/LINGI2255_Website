@@ -22,7 +22,7 @@ Meteor.methods({
 			tournamentDate : tournamentDate,
 			tournamentPrice : 10
 		};
-		Meteor.call('launchTournament', tournamentData);
+		// Meteor.call('launchTournament', tournamentData);
 
 		var tournamentYear = tournamentDate.getFullYear();
 
@@ -436,7 +436,7 @@ Meteor.methods({
 				var wish2 = getWish(gen2);
 				var extra2 = getExtra();
 				Meteor.call("updateUser", {_id:userID2, profile:{addressID:addressID2}});
-				pairID = Meteor.call("updatePair", {player1: {_id:userID1, wish:wish1, extras:extra1}, player2: {_id:userID2, wish:wish2, extras:extra2}});
+				pairID = Meteor.call("updatePair", {player1: {_id:userID1, playerWish:wish1, extras:extra1}, player2: {_id:userID2, playerWish:wish2, extras:extra2}});
 			}
 			else {
 				pairID = Meteor.call("updatePair", {player1: {_id:userID1}, wish:wish1, extras:extra1});
