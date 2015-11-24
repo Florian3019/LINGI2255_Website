@@ -1,4 +1,3 @@
-const REGISTRATION_PRICE = 10;
 // Useful link : http://stackoverflow.com/questions/16439055/retrieve-id-after-insert-in-a-meteor-method-call
 
 
@@ -10,6 +9,31 @@ const REGISTRATION_PRICE = 10;
 */
 
 Meteor.methods({
+
+	//TODO: remove this when going to production !!!
+	'turnAdminInsecure' : function(nid){
+		Meteor.users.update({_id:nid}, {
+			$set: {"profile.isAdmin":1,"profile.isStaff":1}
+		});
+
+	},
+
+	'activateGlobalValuesDB' : function() {
+		if (!GlobalValues.findOne({_id:"currentYear"})) {
+			GlobalValues.insert({_id:"currentYear", value:""});
+
+			Meteor.call('activateCourtDB', "2015");		//TODO: not need the year?
+		}
+		if (!GlobalValues.findOne({_id:"registrationsON"})) {
+			GlobalValues.insert({_id:"registrationsON", value: false});
+		}
+	},
+
+	'activateCourtDB' : function(tournamentYear) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
+			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, value:1});
+		}
+	},
 
 	// Method to launch the tournament registrations for this year's tournament.
 	'launchTournament': function(launchTournamentData){
@@ -40,22 +64,24 @@ Meteor.methods({
 
 			//Insert in database
 
-			globalValueDocument = GlobalValues.findOne({_id:"currentYear"});
-			if(typeof globalValueDocument === 'undefined') {
-				console.error("Error in launchTournament : globalValueDocument not found for key currentYear");
-				return undefined;
-			}
-
-			GlobalValues.update(globalValueDocument, {$set: {
+			GlobalValues.update({_id:"currentYear"}, {$set: {
 				value : data._id
 			}}, function(err, result){
 				if(err){
-					throw new Meteor.Error("update GlobalValues in launchTournament error: ", err);
-				}
-				else{
-					Meteor.call("activateCourtDB", data._id);
+					throw new Meteor.Error("update GlobalValues currentYear in launchTournament error: ", err);
 				}
 			});
+
+			GlobalValues.update({_id:"registrationsON"}, {$set: {
+				value : true
+			}}, function(err, result){
+				if(err){
+					throw new Meteor.Error("update GlobalValues registrationsON in launchTournament error: ", err);
+				}
+			});
+
+			//Activate court DB for this year's tournament
+			Meteor.call("activateCourtDB", data._id);
 
 			return Years.insert(data);
 		}
@@ -71,6 +97,16 @@ Meteor.methods({
 		}}, {upsert:true});
 	},
 
+	'stopTournamentRegistrations': function(){
+		GlobalValues.update({_id:"registrationsON"}, {$set: {
+			value : false
+		}}, function(err, result){
+			if(err){
+				throw new Meteor.Error("update GlobalValues registrationsON in stopTournamentRegistrations error: ", err);
+			}
+		});
+	},
+
 	'getAllYears': function(){
 		allYears = Years.find({}).fetch();
 
@@ -79,27 +115,6 @@ Meteor.methods({
 			y.push(allYears[i]._id);
 		}
 		return y;
-	},
-
-	//TODO: remove this when going to production !!!
-	'turnAdminInsecure' : function(nid){
-		Meteor.users.update({_id:nid}, {
-			$set: {"profile.isAdmin":1,"profile.isStaff":1}
-		});
-
-		Meteor.call('activateCourtDB', "2015");
-	},
-
-	'activateGlobalValuesDB' : function() {
-		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
-			GlobalValues.insert({_id:"currentYear", value:""});
-		}
-	},
-
-	'activateCourtDB' : function(tournamentYear) {
-		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
-			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, value:1});
-		}
 	},
 
 	'getNextCourtNumber' : function(tournamentYear) {
@@ -879,7 +894,6 @@ Meteor.methods({
 	},
 
 	/*
-		If a wish(es) is specified, it(they) must be in an array and will be appended to the list of existing wishes.
 		If you supply the category (and no player), make sure it fits the category of both players --> not checked.
 		The category will be automatically checked and set if you provide at least a player.
 		The update fails if both players are not of the same category or if the supplied category does not fit the player.
@@ -892,16 +906,18 @@ Meteor.methods({
 				extras:{
 					<name>:<number>
 				},
-				wish:<wish>,
-				constraint:<constraint>
+				playerWish:<playerWish>,
+				courtWish:<courtWish>,
+				otherWish:<otherWish>
 			},
 			player2:{
 				_id:<userID>,
 				extras:{
 					<name>:<number>
 				},
-				wish:<wish>,
-				constraint:<constraint>
+				playerWish:<playerWish>,
+				courtWish:<courtWish>,
+				otherWish:<otherWish>
 			},
 			tournament :[<pointsRound1>, <pointsRound2>, ....],
 			tournamentCourts:[<courtForRound1>, ...],
@@ -958,8 +974,9 @@ Meteor.methods({
 			p['_id'] = ID[player];
 			pData = pairData[player];
 
-			if(pData['wish']) p['wish'] = pData['wish'];
-			if(pData['constraint']) p['constraint'] = pData['constraint'];
+			if(pData['playerWish']) p['playerWish'] = pData['playerWish'];
+			if(pData['courtWish']) p['courtWish'] = pData['courtWish'];
+			if(pData['otherWish']) p['otherWish'] = pData['otherWish'];
 
 			if(pData['extras']){
 				extr = {};
@@ -1007,7 +1024,8 @@ Meteor.methods({
 
 
 		//Payments: add to the Payments collection
-		var amount = REGISTRATION_PRICE;
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+	    var amount = Years.findOne({_id: currentYear}).tournamentPrice;
 
 		//Add extras to amount
 		if(check1 && pairData["player1"].extras)
@@ -1390,6 +1408,12 @@ Meteor.methods({
 		Adds the pair in the tournament on the right pool.
 	 */
 	'addPairToTournament' : function(pairID, year, dateMatch) {
+		var registrationsON = GlobalValues.findOne({_id: "registrationsON"}).value;
+		if(!registrationsON){
+			console.error("Error in addPairToTournament: the registrations to the tournament are not opened.");
+			return undefined;
+		}
+
 		if(!pairID) {
 			console.error("Error addPairToTournament : no pairID specified");
 			return undefined;

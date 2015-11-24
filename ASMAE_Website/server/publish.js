@@ -1,23 +1,24 @@
-Meteor.publish('Courts', function(){
-  if(this.userId) {
-        var user = Meteor.users.findOne(this.userId);
-        if(user.profile.isStaff || user.profile.isAdmin){
-        return Courts.find();
+var isStaffOrAdmin = function(){
+      if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+          return true;
       }
+      else{
+        return false;
+      }
+};
+
+Meteor.publish('Courts', function(){
+    if(isStaffOrAdmin()) {
+        return Courts.find();
     }
     return Courts.find({ownerID: this.userId});
 });
 
 Meteor.publish('Addresses', function(){
-    if(this.userId) {
-        var user = Meteor.users.findOne(this.userId);
-        if(user.profile.isStaff || user.profile.isAdmin){
+      if(isStaffOrAdmin()) {
         return Addresses.find();
       }
-      else{
-        return Addresses.find({userID: this.userId});
-      }
-    }
+      return Addresses.find({userID: this.userId});
 });
 
 Meteor.publish('AddressesNoSafe', function() {
@@ -25,15 +26,10 @@ Meteor.publish('AddressesNoSafe', function() {
 });
 
 Meteor.publish('Questions', function(){
-  if(this.userId) {
-        var user = Meteor.users.findOne(this.userId);
-        if(user.profile.isStaff || user.profile.isAdmin){
-        return Questions.find();
-      }
-      else{
-        return Questions.find({userID: this.userId});
-      }
+    if(isStaffOrAdmin()){
+          return Questions.find();
     }
+    return Questions.find({userID: this.userId});
 });
 
 Meteor.publish('Extras', function(){
@@ -58,138 +54,38 @@ Meteor.publish("ModificationsLog", function(){
   return ModificationsLog.find({});
 });
 
-Pools.allow({
-  'insert': function (userId,doc) {
-        /* user and doc checks ,
-        return true to allow insert */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
-  },
-  'update': function (userId,doc) {
-        /* user and doc checks ,
-        return true to allow update */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
-  },
-  'remove': function (userId,doc) {
-        /* user and doc checks ,
-        return true to allow remove */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
-  }
-  });
+/************************************************
+              ALLOWS
+*************************************************/
 
-Types.allow({
+var allowForStaffOrAdmin = {
   'insert': function (userId,doc) {
         /* user and doc checks ,
         return true to allow insert */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
+        return isStaffOrAdmin();
   },
   'update': function (userId,doc) {
         /* user and doc checks ,
         return true to allow update */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
+        return isStaffOrAdmin();
   },
   'remove': function (userId,doc) {
         /* user and doc checks ,
         return true to allow remove */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
+        return isStaffOrAdmin();
   }
-  });
+};
 
-Pairs.allow({
-  'insert': function (userId,doc) {
-        /* user and doc checks ,
-        return true to allow insert */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
-  },
-  'update': function (userId,doc) {
-        /* user and doc checks ,
-        return true to allow update */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
-  },
-  'remove': function (userId,doc) {
-        /* user and doc checks ,
-        return true to allow remove */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
-  }
-});
+Pools.allow(allowForStaffOrAdmin);
+
+Types.allow(allowForStaffOrAdmin);
+
+Pairs.allow(allowForStaffOrAdmin);
 
 /*  Known uses : client/scoreTable  */
-Matches.allow({
-  'insert': function (userId,doc) {
-        /* user and doc checks ,
-        return true to allow insert */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
-  },
-  'update': function (userId,doc) {
-        /* user and doc checks ,
-        return true to allow update */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
-  },
-  'remove': function (userId,doc) {
-        /* user and doc checks ,
-        return true to allow remove */
-        if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
-  }
-});
+Matches.allow(allowForStaffOrAdmin);
+
+Meteor.users.deny({'update':function(userId, doc){return !isStaffOrAdmin()}});
 
 
 Meteor.publish("Pools", function(){

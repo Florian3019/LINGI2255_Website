@@ -1,24 +1,30 @@
 Meteor.methods({
     'getPairsAlonePlayers' : function(type, category, date) {
         var pairs = Meteor.call('getPlayersID', type, category);
-        var pairsAlonePlayers = [];
-        var pair;
-        for (var i=0; i<pairs.length; i++) {
-            pair = Pairs.findOne({_id:pairs[i]});
-            if (typeof pair.player2 === 'undefined' && typeof pair.player1 !== 'undefined') {
-                if (type === 'family') {
-                    var other = Meteor.users.findOne({_id:pair.player1._id});
-                    var otherDate = other.profile.birthDate;
-                    if (acceptPairForFamily(date,otherDate)) {
+        if(typeof pairs !== 'undefined') {
+            var pairsAlonePlayers = [];
+            var pair;
+            for (var i=0; i<pairs.length; i++) {
+                pair = Pairs.findOne({_id:pairs[i]});
+                if (typeof pair.player2 === 'undefined' && typeof pair.player1 !== 'undefined') {
+                    if (type === 'family') {
+                        var other = Meteor.users.findOne({_id:pair.player1._id});
+                        var otherDate = other.profile.birthDate;
+                        if (acceptPairForFamily(date,otherDate)) {
+                            pairsAlonePlayers.push(pair);
+                        }
+                    }
+                    else {
                         pairsAlonePlayers.push(pair);
                     }
                 }
-                else {
-                    pairsAlonePlayers.push(pair);
-                }
             }
+            return pairsAlonePlayers;
         }
-        return pairsAlonePlayers;
+        else {
+            return undefined;
+        }
+
     },
 
     'getPlayersID' : function(type, category) {

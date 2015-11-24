@@ -9,13 +9,13 @@ function getFormData(){
   	var data = {
     	firstName : user.profile.firstName,
     	lastName : user.profile.lastName,
-    	email : user.emails[0].address,
+    	email : user.emails[0].address
   	};
 	if(extras)
 	{
 		data.extras = extras;
 	}
-  return data;
+  	return data;
 }
 
 function initializeBraintree (clientToken) {

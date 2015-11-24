@@ -535,6 +535,9 @@ Template.poolList.onRendered(function() {
 	// (usefull when he clicks on scoreboard and presses the back button)
 	Session.set("PoolList/ChosenScorePool","");
 	Session.set("PoolList/ChosenBrackets","");
+	Session.set("PoolList/Year","");
+	Session.set("PoolList/Type","");
+	Session.set("PoolList/Category","");
 });
 
 Template.poolList.events({
@@ -865,7 +868,6 @@ Template.poolList.events({
 });
 
 Template.poolList.helpers({
-
 	// Returns a yearData with id year (copy of the same function in poolsSidebarCollapsableMenu.helpers)
 	'getYear' : function(){
 		var year = Session.get('PoolList/Year');
@@ -1000,12 +1002,15 @@ Template.poolList.helpers({
 			{
 				/*	Defines what can be moved/dragged	*/
 				moves : function(el, source, handle, sibling) {
-					var isPairModal = (' ' + el.className + ' ').indexOf(' pairInfoModal ') > -1;
-		    		if(isPairModal){
-		    			// The modal must not be draggable
-		    			return false;
+					if(Meteor.user().profile.isStaff===true || Meteor.user().profile.isAdmin===true){
+						var isPairModal = (' ' + el.className + ' ').indexOf(' modal ') > -1;
+			    		if(isPairModal){
+			    			// The modal must not be draggable
+			    			return false;
+			    		}
+			    		return true; // All other elements are draggable
 		    		}
-		    		return true; // All other elements are draggable
+		    		return false;
 		  		},
 		  		accepts: function (el, target, source, sibling) {
 		    		var isToPoule = (' ' + target.className + ' ').indexOf(' poule ') > -1;
@@ -1109,6 +1114,14 @@ Template.poolList.helpers({
 											alonePairsContainerTemplate
 *******************************************************************************************************************/
 
+var showPairModal = function(event){
+	user = Meteor.user();
+	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
+		return; // Do nothing
+	}
+	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
+}
+
 Template.alonePairsContainerTemplate.onRendered(function(){
 	// Add the container of this template as a container that can receive draggable objects
   	drake.containers.push(document.querySelector('#alonepairs'));
@@ -1117,6 +1130,12 @@ Template.alonePairsContainerTemplate.onRendered(function(){
 var hasBothPlayers = function(pair){
 	return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
 }
+
+Template.alonePairsContainerTemplate.events({
+	'click .clickablePoolItem':function(event){
+		showPairModal(event);
+	}
+})
 
 Template.alonePairsContainerTemplate.helpers({
 	'getAlonePairs' : function(typeData){
@@ -1139,9 +1158,26 @@ Template.alonePairsContainerTemplate.helpers({
 	},
 
 	'getColor' : function(player){
-		if(player.wish || player.constraint){
-			return 'orange';
+		count = 0;
+		code = 0;
+		if(player.playerWish){
+			count += 1;
+			code = 1;
 		}
+		if(player.courtWish){
+			count+=1;
+			code = 2;
+		}
+		if(player.otherWish){
+			count+=1;
+			code = 3;
+		}
+	
+		if(count>1) return 'cyan';
+		if(code == 1) return 'orange';
+		if(code == 2) return 'red';
+		if(code == 3) return 'magenta';
+		return "";
 	},
 
 	'getPlayer' : function(playerId){
@@ -1177,6 +1213,12 @@ Template.poolItem.helpers({
 	}
 });
 
+Template.poolItem.events({
+	'click .clickablePoolItem':function(event){
+		showPairModal(event);
+	}
+});
+
 /******************************************************************************************************************
 											poolContainerTemplate
 *******************************************************************************************************************/
@@ -1186,14 +1228,23 @@ Template.poolContainerTemplate.onRendered(function(){
   	drake.containers.push(doc); // Make the id this.data.ID draggable
 });
 
+var moreThanOnePairFunct = function(pairs){
+	for(var i=0;i<pairs.length;i++){
+		pair = Pairs.findOne({"_id":pairs[i]});
+		if(hasBothPlayers(pair)) return true;
+	}
+	return false;
+}
+
 Template.poolContainerTemplate.helpers({
 	'moreThanOnePair' : function(pairs){
-		for(var i=0;i<pairs.length;i++){
-			pair = Pairs.findOne({"_id":pairs[i]});
-			if(hasBothPlayers(pair)) return true;
-		}
-		return false;
+		return moreThanOnePairFunct(pairs);
 	},
+
+	'displayPool':function(pairs){
+		return (Meteor.user().profile.isAdmin || Meteor.user().profile.isStaff || moreThanOnePairFunct(pairs));
+	},
+
   'getStreet' : function(courtId){
       if(courtId ==undefined){
         return "Pas de terrain assigné";
@@ -1410,4 +1461,4 @@ Template.modalItem.events({
 		playerId = target.dataset.player;
 		pool = Pools.update({_id:poolId},{$set:{"leader":playerId}});
 	}
-})
+});

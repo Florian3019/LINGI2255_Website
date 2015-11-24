@@ -29,6 +29,9 @@ Template.navigation.helpers({
 		else {
 			return false;
 		}
-	}
+	},
+	'registrationsON': function(){
+         return GlobalValues.findOne({_id: "registrationsON"}).value;
+    }
 
 });

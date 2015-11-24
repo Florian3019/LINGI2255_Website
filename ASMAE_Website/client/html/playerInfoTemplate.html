@@ -16,40 +16,40 @@
 
                       <tr>
                         <td>Addresse email</td>
-                        <td>{{emails}}</td>
+                        <td id="Email">{{emails}}</td>
                       </tr>
                       <tr>
                         <td>Numéro de téléphone</td>
-                        <td>{{phone}}</td>
+                        <td id="phone">{{phone}}</td>
                       </tr>
                       <tr>
                         <td>Date de naissance</td>
-                        <td>{{birth}}</td>
+                        <td id="birth">{{birth}}</td>
                       </tr>
                      <tr>
                         <td>Sexe</td>
-                        <td>{{gender}}</td>
+                        <td id="sex">{{gender}}</td>
                       </tr>
                         <tr>
                         <td>Adresse</td>
-                        <td>{{address}}</td>
+                        <td id="address">{{address}}</td>
                       </tr>
                       <tr>
                       <td>Ville</td>
-                      <td>{{city}}</td>
+                      <td id="city">{{city}}</td>
                     </tr>
                     <tr>
                     <td>Pays</td>
-                    <td>{{land}}</td>
+                    <td id="land">{{land}}</td>
                   </tr>
                    <tr>
                     <td>Classement</td>
-                    <td>{{rank}}</td>
+                    <td id="rank">{{rank}}</td>
                   </tr>
                   {{#if isCurrentUser id}}
                   <tr>
                    <td>Méthode de paiement</td>
-                   <td>{{paymentMethod}}</td>
+                   <td id="paiement">{{paymentMethod}}</td>
                   </tr>
                   <tr>
                       <td>Montant</td>
@@ -73,7 +73,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal" id="dropinModal" role="dialog">
+<div class="modal" id="dropinModal">
   <div class="modal-dialog">
 
     <!-- Modal content-->

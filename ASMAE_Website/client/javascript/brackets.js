@@ -397,14 +397,14 @@ var handleBracketErrors = function(document){
     if(allWinners==undefined){
       if(bracketOptions!=undefined){
         console.info("Tournament not started");
-        startButton.innerHTML="Démarrer le tournoi";
+        startButton.innerHTML="Démarrer ce tournoi";
         bracketOptions.style.display = 'block';
         pdfButton.style.display = 'block';
       }
       return;
     }
     if(bracketOptions!=undefined){
-      startButton.innerHTML="Redémarrer le tournoi";
+      startButton.innerHTML="Redémarrer ce tournoi";
       bracketOptions.style.display = 'block';
       pdfButton.style.display = 'block';
     }
@@ -690,6 +690,11 @@ Template.brackets.events({
 
 	// Do something when the user clicks on a player
   "click .g_team":function(event, template){
+    var user = Meteor.user();
+    if(user==null || !(user.profile.isAdmin || user.profile.isStaff)){
+      return; // No action must be done
+    }
+
     var pairId = event.currentTarget.id;
     mod = document.getElementById("bracketModal");
     clickable = event.currentTarget.dataset.clickable;
