@@ -176,11 +176,6 @@ Template.scorePage.events({
     Session.set("scoreTable/emptyTable", checked);
   },
 
-  'change .points' : function(event){
-    document.getElementById("successBox").setAttribute("hidden","");// Remove any success message if any, user just changed a score
-  },
-
-
   'click #getPDF':function(event){
     /*
       Unhide the pdf preview window
