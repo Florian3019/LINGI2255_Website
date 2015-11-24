@@ -979,16 +979,15 @@ Meteor.methods({
 			if(pData['otherWish']) p['otherWish'] = pData['otherWish'];
 
 			if(pData['extras']){
-				extr = {};
+				var extr = {};
 				var count = 0;
-
 				var extrAmount = 0;
 
 				var dataExtras = pData['extras'];
 
 				var extras = Extras.find().fetch();
 
-				for(var i=0;i<extras.length;i++){
+				for(var i=0; i<extras.length; i++){
 
 					if(dataExtras[extras[i].name]){
 						var currentExtraNumber = dataExtras[extras[i].name]

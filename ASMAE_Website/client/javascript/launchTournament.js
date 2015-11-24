@@ -32,9 +32,7 @@ Template.launchTournament.events({
                 console.error("No result in launchTournament...");
             }
 
-            if(confirm("Les inscriptions au tournoi sont lancées.")){
-                Router.go('home');
-            }
+            alert("Les inscriptions au tournoi sont lancées.");
 
 	    });
 

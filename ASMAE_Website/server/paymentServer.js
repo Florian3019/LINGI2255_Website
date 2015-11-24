@@ -29,21 +29,21 @@ Meteor.methods({
     //Calculate amount to pay
     var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
     var amount = Years.findOne({_id: currentYear}).tournamentPrice;
-    /*
+
     if(data.extras)
     {
-      for(extra in data.extras){
-        amout += getPrice(extra);           //TODO
-      }
+        for(extra in data.extras){
+            amount += data.extras[extra] * Extras.findOne({name: extra}).price;
+        }
     }
-    */
+
 
     var response = transaction({
       amount: amount,
       paymentMethodNonce: data.nonce,
       customer: {
-        firstName: data.firstName,
-        lastName: data.lastName,
+        firstName: data.firstname,
+        lastName: data.lastname,
         email: data.email
       }
     });
@@ -53,7 +53,8 @@ Meteor.methods({
     var currentDate = new Date();
     var data = {
         status : "paid",
-        date: currentDate
+        date: currentDate,
+        paymentMethod: "CreditCard"
     };
 
     Payments.update({"userID": Meteor.userId()} , {$set: data}, function(err, result){

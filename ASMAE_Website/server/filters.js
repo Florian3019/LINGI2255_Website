@@ -39,6 +39,7 @@ Meteor.methods({
         if (type === 'family') {
             category = 'all';
         }
+        var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
         yearTable = Years.findOne({_id:currentYear});
         if (typeof yearTable === 'undefined') {
             console.warn("getPlayersID : no yeartable found for year "+currentYear);
