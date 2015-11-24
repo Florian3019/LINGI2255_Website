@@ -1,0 +1,35 @@
+<template name="launchTournament">
+	<div class="container">
+		<form id="launchTournamentForm" role="form">
+			<div class="form-group">
+				<div class="row">
+					<div class="col-sm-6 col-sm-offset-3">
+						<h2>Lancer les inscriptions au tournoi:</h2>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-5 col-sm-offset-3">
+						<label for="launchTournamentDate">Date de début du tournoi:</label>
+						<input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" required>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-sm-5 col-sm-offset-3">
+						<label for="tournamentPrice">Prix de l'inscription au tournoi (&euro;):</label>
+						<input type="number" name="tournamentPrice" id="tournamentPrice" class="form-control" required>
+					</div>
+				</div>
+				<br>
+
+				<center>
+					<div class="form-group">
+						<button type="submit" class="btn btn-default">C'est parti !</button>
+					</div>
+				</center>
+
+			</div>
+		</form>
+	</div>
+</template>

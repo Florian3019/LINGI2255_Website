@@ -7,10 +7,27 @@ paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Vireme
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
 
-ALLYEARS = [2015]; // Update this as needed
-tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
+//TODO: must always fetch this from DB !
 
-currentYear = ""+tournamentDate.getFullYear(); // must be a string
+currentYear = GlobalValues.findOne({_id: "currentYear"});
+if(!currentYear)
+{
+    currentYear = "2015";
+}
+//currentYear = ""+tournamentDate.getFullYear(); // must be a string
+
+var fetchData = Years.findOne({year: currentYear});
+if(fetchData)
+{
+    tournamentDate = Years.findOne({year: currentYear}).tournamentDate
+}
+else {
+    tournamentDate = new Date(2015, 8, 12); // 12 sept 2015
+}
+
+
+
+
 
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;
@@ -31,6 +48,10 @@ acceptPairForFamily = function(birthDate1, birthDate2, tournamentDate){
     age1 = getAge(birthDate1, tournamentDate);
     age2 = getAge(birthDate2, tournamentDate);
 
+    return acceptPairForFamilyAge(age1,age2);
+}
+
+acceptPairForFamilyAge = function(age1, age2) {
     return (age1<=MAX_FAMILY_AGE && age2>= MIN_FAMILY_AGE) || (age2<=MAX_FAMILY_AGE && age1>= MIN_FAMILY_AGE);
 }
 
@@ -128,4 +149,25 @@ getAgeNoDate = function(year, month, day, tournamentDate){
 isValidEmail = function (email) {
     var re = new RegExp('^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$','i');
     return re.test(email);
+}
+
+/*
+*   params are strings
+*   @param dateMatch := saturday | sunday | family
+*   @param gender := M | F
+*/
+getTypeForPlayer = function(dateMatch, gender) {
+    if (dateMatch === 'family') {
+        return 'family';
+    }
+    else if (dateMatch === 'saturday') {
+        return typeKeys[2];
+    }
+    else if (dateMatch === 'sunday') {
+        return gender==='M' ? typeKeys[0] : typeKeys[1];
+    }
+    else {
+        console.error("Error getTypeForPlayer - invalid dateMatch : "+dateMatch);
+        return undefined;
+    }
 }

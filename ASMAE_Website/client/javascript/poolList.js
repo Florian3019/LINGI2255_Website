@@ -13,9 +13,9 @@ var setInfo = function(document, msg){
 }
 
 var getStringOptions = function(){
-	return "\ncatégorie: "+Session.get("PoolList/Category")+
-			" type: "+Session.get("PoolList/Type") +
-			" année: "+Session.get("PoolList/Year");
+	return " dans "+typesTranslate[Session.get("PoolList/Type")]+">"+
+			categoriesTranslate[Session.get("PoolList/Category")]+
+			" (" + Session.get("PoolList/Year")+")";
 }
 
 var hideSuccessBox = function(document){
@@ -94,7 +94,7 @@ var splitPairs = function(pairDiv){
 	Meteor.call("addToModificationsLog",
 		{"opType":"Séparation de paire",
 		"details":
-			"Paire séparée : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			player1.profile.firstName + " "+ player1.profile.lastName +
 			 " et " + player2.profile.firstName +" " + player2.profile.lastName + getStringOptions()
 		});
 }
@@ -194,7 +194,7 @@ var mergePlayers = function(document){
 	Meteor.call("addToModificationsLog",
 		{"opType":"Fusion de 2 joueurs",
 		"details":
-			"Joueurs : "+player1.profile.firstName + " "+ player1.profile.lastName +
+			player1.profile.firstName + " "+ player1.profile.lastName +
 			 " et " + player2.profile.firstName +" " + player2.profile.lastName +getStringOptions()
 		});
 }
@@ -206,8 +206,16 @@ var mergePlayers = function(document){
 
 Template.poolsSidebarCollapsableMenu.helpers({
 	'getAllYears':function(){
-		return ALLYEARS; // constant.js
+		var callBack = function(err, ret){
+			Session.set("PoolList/allYears", ret);
+		}
+		Meteor.call("getAllYears", callBack);
 	},
+
+	'getAllYearsSession':function(){
+		return Session.get("PoolList/allYears");
+	},
+
 
 	// Returns a yearData with id year (copy of the same function in poolList.helpers)
 	'getYear' : function(){
@@ -438,7 +446,7 @@ var movePairs = function(document){
 			Meteor.call("addToModificationsLog",
 				{"opType":"Mouvement paire",
 				"details":
-					"Paire : "+player1.profile.firstName + " "+ player1.profile.lastName +
+					player1.profile.firstName + " "+ player1.profile.lastName +
 			 		" et " + player2.profile.firstName +" " + player2.profile.lastName + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
 				});
 		}
@@ -642,6 +650,8 @@ Template.poolList.events({
 
 			if(typeof previouscourts === "undefined"){
 
+				console.log(n);
+
 				for(var k=0; k<n;k++){
 					result.push(courts[(start+k) % courts.length]);
 				}
@@ -651,23 +661,33 @@ Template.poolList.events({
 				var l = previouscourts.length-1;
 
 				var strt = 0;
+				var last;
 
 				if(previouscourts.length%2!=0){
 					strt=1
 				}
 
 				if(previouscourts.length<=n){
-					for(var k=0; k<n;k++){
+					console.log("pas ok");
+					for(var k=0; k<n && l>=k;k++){
 						result.push(previouscourts[l-k]);
 					}
+
+					last=k;
 				}
 				else{
-					for(var k=strt; k<n+strt;k++){
+					console.log("ok");
+					for(var k=strt; k<n+strt && l>=(2*k);k++){
 						result.push(previouscourts[l-(2*k)]);
 					}
+					last=k;
 				}
 
 				result = result.reverse();
+
+				for(var k=last; k<n;k++){
+					result.push(courts[(start+k) % courts.length]);
+				}
 
 			}
 
@@ -678,39 +698,37 @@ Template.poolList.events({
 			Return the number of matches to play for this round
 		*/
 
-		var getNumberMatches = function(nbrPools,round){
+		var getNumberMatches = function(nbrPairs,round){
 
 			if(round<0){
 				return 0;
 			}
 
-			if(round==0 && nbrPools>1 && (nbrPools % 2)!=0){
-					nbrPools = nbrPools - 1;
-			}
-			if(nbrPools>1 && (nbrPools % 2)!=0){
-					nbrPools = nbrPools + 1;
-			}
+			var logPairs = Math.log2(nbrPairs);
 
-			var rem=0;
+			if(round==0){
 
-			for(var k=0;k<round;k++){
-				if((nbrPools % 2)==0){
-					nbrPools = nbrPools/2 + rem;
-					rem = Math.max(rem-1,0);
+				// get the number of matches to play for the first round
+
+				var numMatchesFull = Math.floor(logPairs);
+
+				if(logPairs!=numMatchesFull){
+					return nbrPairs - Math.pow(2,numMatchesFull);// the nbr of pairs is not a multiple of 2
 				}
 				else{
-					nbrPools = (nbrPools-1)/2;
-					rem=1;
+					return nbrPairs/2; // the nbr of pairs is a multiple of 2
 				}
 			}
 
-			if(round==0 && nbrPools>1){
-				if((nbrPools % 2)!=0){
-					nbrPools = nbrPools - 1;
-				}
+			// get the number of matches for the other rounds
+			// get the number of match for the first round if the nbr of pairs were a power of 2
+			var full = Math.pow(2,Math.floor(logPairs))/2;
+
+			for(var k=0;k<round;k++){
+				full=full/2;
 			}
 
-			return nbrPools;
+			return full;
 		}
 
 		var numberDays = 2;
@@ -808,12 +826,15 @@ Template.poolList.events({
 
 					for(var t=0;t<categoriesKeys.length;t++){
 
-						if(typesDoc[k][categoriesKeys[t]]!=null){
+						var temp = categoriesKeys[t]+"Bracket";
+
+						if(typesDoc[k][categoriesKeys[t]]!=null && typesDoc[k][temp]!=null){
+
 				 			var nameField = categoriesKeys[t]+"Courts";
 
-				 			var nbr = getNumberMatches(typesDoc[k][categoriesKeys[t]].length,round);
+				 			var nbr = getNumberMatches(typesDoc[k][temp].length,round);
 
-				 			if(!first &&typesDoc[k][nameField].length<(2*typesDoc[k][categoriesKeys[t]].length-1)){
+				 			if(!first &&typesDoc[k][nameField].length<(typesDoc[k][temp].length-1)){
 				 				typesDoc[k][nameField]=typesDoc[k][nameField].concat(getNCourts(typesDoc[k][nameField],courtsTable[g],nbr,start));
 				 				finished=false;
 				 			}
@@ -896,9 +917,7 @@ Template.poolList.helpers({
 
 		poolList = typeData[category];
 		if((poolList==undefined || poolList.length==0) && category!=undefined){
-			setInfo(document, "Pas de poules trouvées pour la catégorie " + categoriesTranslate[Session.get("PoolList/Category")]
-				+ " du type " + typesTranslate[Session.get("PoolList/Type")]
-				+ " de l'année "+Session.get('PoolList/Year'));
+			setInfo(document, "Pas de poules trouvées"+getStringOptions());
 			return true;
 		}
 		else{
@@ -1240,7 +1259,7 @@ var typeCompletion = function(type){
 	typeData = Types.findOne({"_id":typeId},{"completion":1});
 	if(typeData==undefined || typeData.completion==undefined) return "(?)";
 
-	typeCompletion = 0;
+	typeCompletionValue = 0;
 	nonEmptyCat = 0;
 
 	var completionData = typeData["completion"];
@@ -1250,17 +1269,17 @@ var typeCompletion = function(type){
 		var cPools = completionData["pools"][categoriesKeys[i]];
 		if(cPools!=undefined){
 			nonEmptyCat+=2;
-			typeCompletion += cPools;
+			typeCompletionValue += cPools;
 		}
 		if(completionData["brackets"]!=undefined){
 			var cBrackets = completionData["brackets"][categoriesKeys[i]];
 			if(cBrackets!=undefined){
-				typeCompletion += cBrackets;
+				typeCompletionValue += cBrackets;
 			}
 		}
 	}
 
-	completion = (nonEmptyCat==0) ? 0 : typeCompletion/nonEmptyCat;
+	completion = (nonEmptyCat==0) ? 0 : typeCompletionValue/nonEmptyCat;
 
 	var perc = completion*100;
 	var toReturn = "("+perc.toFixed(0)+"%)";

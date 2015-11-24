@@ -85,6 +85,7 @@ package-version-parser@3.0.4
 practicalmeteor:chai@1.9.2_3
 practicalmeteor:loglevel@1.1.0_3
 promise@0.5.1
+rajit:bootstrap3-datepicker@1.5.0
 random@1.0.5
 rate-limit@1.0.0
 reactive-dict@1.1.3

@@ -40,6 +40,9 @@ Meteor.publish('Extras', function(){
   return Extras.find();
 });
 
+Meteor.publish('GlobalValues', function(){
+  return GlobalValues.find();
+});
 
 Meteor.publish('users', function () {
   var res = Meteor.users.find({});
