@@ -24,6 +24,18 @@
           {{/with}}
         </td>
 
+        <td align="center">
+          {{#with getCourt this._id}}
+          <h3>Terrain :</h3>
+          <div class="btn btn-sq-lg btn-primary">
+            <i class="fa fa-home fa-5x"></i><br/>
+            <strong> Numéro : {{this.id}} </strong><br>
+            {{this.address.street}} {{this.address.number}} <br>
+            {{this.address.zipCode}} {{this.address.city}}
+          </div>
+        {{/with}}
+        </td>
+
         <!-- {{#with getStaff this._id}} -->
         <!-- <td align="center">
           <h3>Responsable: </h3>

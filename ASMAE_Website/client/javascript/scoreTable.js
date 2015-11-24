@@ -17,6 +17,20 @@ Template.scorePage.helpers({
         return undefined;
       }
     },
+
+    'getCourt': function(poolId){
+      if(poolId==undefined) return undefined;
+      pool = Pools.findOne({_id:poolId});
+      if(pool.courtId!=undefined){
+        court = Courts.findOne({"courtNumber":pool.courtId});
+        if(court && court.addressID){
+          address = Addresses.findOne({_id:court.addressID});
+          return {id:pool.courtId,
+                  address:address};
+        }
+      }
+      return undefined;
+    },
 });
 
 Template.scoreTable.helpers({
