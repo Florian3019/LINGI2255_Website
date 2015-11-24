@@ -1259,7 +1259,7 @@ var typeCompletion = function(type){
 	typeData = Types.findOne({"_id":typeId},{"completion":1});
 	if(typeData==undefined || typeData.completion==undefined) return "(?)";
 
-	typeCompletion = 0;
+	typeCompletionValue = 0;
 	nonEmptyCat = 0;
 
 	var completionData = typeData["completion"];
@@ -1269,17 +1269,17 @@ var typeCompletion = function(type){
 		var cPools = completionData["pools"][categoriesKeys[i]];
 		if(cPools!=undefined){
 			nonEmptyCat+=2;
-			typeCompletion += cPools;
+			typeCompletionValue += cPools;
 		}
 		if(completionData["brackets"]!=undefined){
 			var cBrackets = completionData["brackets"][categoriesKeys[i]];
 			if(cBrackets!=undefined){
-				typeCompletion += cBrackets;
+				typeCompletionValue += cBrackets;
 			}
 		}
 	}
 
-	completion = (nonEmptyCat==0) ? 0 : typeCompletion/nonEmptyCat;
+	completion = (nonEmptyCat==0) ? 0 : typeCompletionValue/nonEmptyCat;
 
 	var perc = completion*100;
 	var toReturn = "("+perc.toFixed(0)+"%)";
