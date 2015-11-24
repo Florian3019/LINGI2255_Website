@@ -15,7 +15,7 @@ Meteor.methods({
 	'launchTournament': function(launchTournamentData){
 		if(Meteor.call('isAdmin')){
 
-			var data = {}
+			var data = {};
 			if(typeof launchTournamentData.tournamentDate === 'undefined')
 			{
 				console.error("launchTournament: No date for the tournament");
@@ -23,7 +23,7 @@ Meteor.methods({
 			}
 			else {
 				data.tournamentDate = launchTournamentData.tournamentDate;
-				dataYear = ""+data.tournamentDate.getFullYear();	//Must be a string
+				data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
 			}
 
 			if(typeof launchTournamentData.tournamentPrice === 'undefined')
@@ -44,18 +44,17 @@ Meteor.methods({
 			}
 
 			GlobalValues.update(globalValueDocument, {$set: {
-				value : dataYear
+				value : data._id
 			}}, function(err, result){
 				if(err){
 					throw new Meteor.Error("update GlobalValues in launchTournament error: ", err);
 				}
 				else{
-
-					Meteor.call("activateCourtDB", dataYear);
+					Meteor.call("activateCourtDB", data._id);
 				}
 			});
 
-			return Years.insert({_id: dataYear}, data);
+			return Years.insert(data);
 		}
 		else {
 			console.error("You are not an administrator, you don't have the permission to do this action.");
@@ -84,7 +83,7 @@ Meteor.methods({
 
 	'activateGlobalValuesDB' : function() {
 		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
-			GlobalValues.insert({_id:"currentYear", value:"2015"});
+			GlobalValues.insert({_id:"currentYear", value:""});
 		}
 	},
 
