@@ -7,6 +7,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"></script>
 
+  <button type="button" id="scoreTableBack" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button>
+
   <table class="table">
     <tbody>
       <tr>
@@ -22,6 +24,18 @@
             </a>
           </address>
           {{/with}}
+        </td>
+
+        <td align="center">
+          {{#with getCourt this._id}}
+          <h3>Terrain :</h3>
+          <div class="btn btn-sq-lg btn-primary">
+            <i class="fa fa-home fa-5x"></i><br/>
+            <strong> Numéro : {{this.id}} </strong><br>
+            {{this.address.street}} {{this.address.number}} <br>
+            {{this.address.zipCode}} {{this.address.city}}
+          </div>
+        {{/with}}
         </td>
 
         <!-- {{#with getStaff this._id}} -->
@@ -46,20 +60,11 @@
 
   {{>scoreTable this}}
 
-  <button type="button" id="save" class="btn btn-default btn-lg">
-    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
-  </button>
-  <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
-    <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-  </button>
-
-  <div id="successBox" class="alert alert-success" role="alert" hidden>
-    <h4>
-      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-      <span class="sr-only">Succès:</span>
-      <span id="infoMsg">Scores sauvés !</span>
-    </h4>
-  </div>
+  {{#if isAdminOrStaff}}
+    <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
+      <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+    </button>
+  {{/if}}
 </template>
 
 
@@ -69,7 +74,7 @@
     <h3>Les paires dans la colonne jouent contre les paires de la ligne.</h3>
     <div class="panel panel-primary" style="background-color:white">
       <div class="panel-heading">Tableaux des résultats</div>
-      <table class="table table-bordered">
+      <table class="table table-bordered" id="scoreTableElement">
         {{#with getPairs this._id}}
         <thead>
           <tr>
@@ -108,14 +113,33 @@
             <td align="center">
               <div class="input-group inputscore" display="inline">
                 {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
-                <input
-                type="number"
-                min="0"
-                step="1"
-                class="form-control points"
-                data-matchid="{{this._id}}"
-                data-pairid="{{../../_id}}"
-                value="{{getPoints this ../../_id}}">
+                  {{#if isAdminOrStaff}}
+                    <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="form-control points"
+                    data-matchid="{{this._id}}"
+                    data-otherpairid="{{../_id}}"
+                    data-pairid="{{../../_id}}"
+                    value="{{getPoints this ../../_id}}"
+                    style="text-align:center; width=15%">
+                    
+                    <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="form-control points"
+                    data-matchid="{{this._id}}"
+                    data-otherpairid="{{../../_id}}"
+                    data-pairid="{{../_id}}"
+                    value="{{getPoints this ../_id}}"
+                    style="text-align:center; width=15%">
+                  {{else}}
+                    <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../../_id}}</span>
+                    -
+                    <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../_id}}</span>
+                  {{/if}}
                 {{/with}}
               </div>
             </td>
