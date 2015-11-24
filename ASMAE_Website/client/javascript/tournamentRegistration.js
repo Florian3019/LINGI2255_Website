@@ -98,7 +98,7 @@ Template.tournamentRegistration.helpers({
     	        	errors.push({id:"dateMatch", error:false});
     	        }
 
-                if (!acceptForFamily(new Date(birthYear, birthMonth-1, birthDay))) {
+                if (dateMatch === 'family' && !acceptForFamily(new Date(birthYear, birthMonth-1, birthDay))) {
                     errors.push({id:"family", error:true});
                     hasError = true;
                 }
@@ -655,7 +655,7 @@ Template.tournamentRegistration.events({
         else{
         	errors.push({id:"dateMatch", error:false});
         }
-        if (!acceptForFamily(new Date(birthYear, birthMonth-1, birthDay))) {
+        if (dateMatch === 'family' && !acceptForFamily(new Date(birthYear, birthMonth-1, birthDay))) {
             errors.push({id:"family", error:true});
             hasError = true;
         }

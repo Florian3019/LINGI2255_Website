@@ -165,7 +165,8 @@ Template.playersInfo.helpers({
                 { key: 'profile.isStaff', label:'Staff', tmpl:Template.isStaffLabel},
                 { key: 'profile.isAdmin', label:'Admin', tmpl:Template.isAdminLabel},
             ],
-             filters: ['NomDeFamille']
+             filters: ['NomDeFamille'],
+             rowClass: "playerInfoRow"
         }
     }
     

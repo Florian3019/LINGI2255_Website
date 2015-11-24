@@ -3,9 +3,11 @@
 	<div class="form-group">
 		<div class="row">
           	<div class="col-sm-6 col-sm-offset-3">
-				<h4> Extras actuels: </h4>
+				<h2> Extras actuels: </h2>
+				(sauvés immédiatement)
 			</div>
         </div>
+        <br>
 		{{#if hasExtras}}
 		<div class="row">
 			<div class="col-md-2 col-sm-offset-3">
@@ -29,59 +31,42 @@
 		    {{#each extras}}
 		      	<div class="row">
 					<div class="col-sm-2 col-sm-offset-3">
-					    <input type="text" class="form-control" id="name{{getID}}" value="{{getName}}" name="{{getName}}">
+					    <input type="text" class="form-control extra-name" id="name{{getID}}" value="{{getName}}" data-id="{{getID}}" name="{{getName}}">
 					</div>
 					<div class="col-sm-2">
-					    <input type="number" min="0" step="1" class="form-control" id="price{{getID}}" name="{{getPrice}}" value="{{getPrice}}">
+					    <input type="number" min="0" step="1" class="form-control extra-price" id="price{{getID}}" data-id="{{getID}}" name="{{getPrice}}" value="{{getPrice}}">
 					</div>
 					<div class="col-sm-2">
-					    <input type="text" class="form-control" id="comment{{getID}}" name="{{getComment}}" value="{{getComment}}">
+					    <input type="text" class="form-control extra-comment" id="comment{{getID}}" name="{{getComment}}" data-id="{{getID}}" value="{{getComment}}">
 					</div>
-					<label class="radio-inline">
-            			<input type="radio" name="group{{getID}}" id="modify{{getID}}">
-            					Modifier
-          				</label>
-           				<label class="radio-inline">
-				            <input type="radio" name="group{{getID}}" id="delete{{getID}}">
-				            Supprimer
-			          	</label>
-			           	<label class="radio-inline">
-				            <input type="radio" name="group{{getID}}" id="cancel{{getID}}">
-				            Annuler
-			           	</label>
+					<button type="button" class="btn btn-default extra-delete" id="delete{{getID}}" data-id="{{getID}}" aria-label="Left Align">
+					  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+					</button>
 				  	</div>
 		        {{/each}}
 		 	</div>
+		 	<!-- Add extra -->
+ 			<div class="row">
+				<div class="col-sm-2 col-sm-offset-3">
+			      	<div class="form-group" id="nameExtra">
+			          	<input type="text" class="form-control" id="nameExtra" name="nameExtra" placeholder="Nom">
+			  		</div>
+			  	</div>
+				<div class="col-sm-2">
+			      	<div class="form-group" id="priceExtra">
+			         	<input type="number" min="0" step="1" class="form-control" id="priceExtra" name="priceExtra" placeholder="Prix">
+			  		</div>
+			  	</div>
+			  	<div class="col-sm-2">
+			      <div class="form-group" id="comment">
+			         		 <input type="text" class="form-control" id="comment" name="comment" placeholder="Commentaire">
+			  		</div>
+			  	</div>
+			  	<button type="submit" class="btn btn-default" >
+					<span class="glyphicon glyphicon-plus" style="color:green" aria-hidden="true"></span>
+				</button>
+	  		</div>
 		</div>
-		<div class="row">
-          	<div class="col-sm-6 col-sm-offset-3">
-				<h4> Ajouter un extra: </h4>
-			</div>
-        </div>
-		<div class="row">
-			<div class="col-sm-2 col-sm-offset-3">
-		      	<div class="form-group" id="nameExtra">
-		      		<label for="text">Nom:</label>
-		          	<input type="text" class="form-control" id="nameExtra" name="nameExtra">
-		  		</div>
-		  	</div>
-			<div class="col-sm-2">
-		      	<div class="form-group" id="priceExtra">
-		      		<label for="number"> Prix:</label>
-		         	<input type="number" min="0" step="1" class="form-control" id="priceExtra" name="priceExtra">
-		  		</div>
-		  	</div>
-		  	<div class="col-sm-2">
-		      <div class="form-group" id="comment">
-		      		<label for="text"> Commentaire:</label>
-		         		 <input type="text" class="form-control" id="comment" name="comment">
-		  		</div>
-		  	</div>
-	  	</div>
-	  	<div class="row">
-          	<div class="col-sm-3 col-sm-offset-3">
-				<button type="submit" class="btn btn-default" >Sauver</button>
-			</div>
-		</div>
+
 	</form>
 </template>
