@@ -71,57 +71,59 @@
 
         <div class="modal-body">
 			<div display="align:center;">
-
-		    {{#with getPairs}}
-		    	{{#with getIndex this 0}}
-		    	<h4>
-			    	{{#with getPlayer this.player1._id}}
-			    		{{this.profile.firstName}} {{this.profile.lastName}}
-			    	{{/with}}
-		    		,
-			    	{{#with getPlayer this.player2._id}}
-			    		{{this.profile.firstName}} {{this.profile.lastName}}
-			    	{{/with}}
-			    </h4>
-					<input
-						type="number"
-						display="inline"
-						min="0"
-						step="1"
-						class="form-control"
-						id="scoreInput0"
-						value="{{getScore this}}"
-						style="width: 15%;"
-						placeholder="0"
-						autofocus
-						onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()">
-			  		
-		    	{{/with}}
-			  	            - 
-			  	{{#with getIndex this 1}}
-  				  	<input
-						type="number"
-						display="inline"
-						min="0"
-						step="1"
-						class="form-control"
-						id="scoreInput1"
-						value="{{getScore this}}"
-						style="width: 15%;"
-						placeholder="0"
-						autofocus
-						onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()">
+			<center>
+			    {{#with getPairs}}
+			    	{{#with getIndex this 0}}
 			    	<h4>
-					  	{{#with getPlayer this.player1._id}}
+				    	{{#with getPlayer this.player1._id}}
 				    		{{this.profile.firstName}} {{this.profile.lastName}}
 				    	{{/with}}
-			    		,
+			    		&amp;
 				    	{{#with getPlayer this.player2._id}}
 				    		{{this.profile.firstName}} {{this.profile.lastName}}
 				    	{{/with}}
-			    	</h4>
-		    	{{/with}}
-		  	{{/with}}
+				    </h4>
+						<input
+							type="number"
+							display="inline"
+							min="0"
+							step="1"
+							class="form-control"
+							id="scoreInput0"
+							value="{{getScore this}}"
+							style="width: 15%; text-align:center;"
+							placeholder="0"
+							autofocus
+							onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()">
+				  		
+			    	{{/with}}
+				  	<h5>VS</h5>
+				  	{{#with getIndex this 1}}
+	  				  	<input
+							type="number"
+							display="inline"
+							min="0"
+							step="1"
+							class="form-control"
+							id="scoreInput1"
+							value="{{getScore this}}"
+							style="width: 15%; text-align:center;"
+							placeholder="0"
+							autofocus
+							onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()">
+				    		<h4>
+						  	{{#with getPlayer this.player1._id}}
+					    		{{this.profile.firstName}} {{this.profile.lastName}}
+					    	{{/with}}
+				    		&amp;
+					    	{{#with getPlayer this.player2._id}}
+					    		{{this.profile.firstName}} {{this.profile.lastName}}
+					    	{{/with}}
+				    		</h4>
+
+			    	{{/with}}
+			  	{{/with}}
+		  	</center>
 		  	</div>
 		</div>
         <div class="modal-footer">

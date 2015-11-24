@@ -7,6 +7,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"></script>
 
+  <button type="button" id="scoreTableBack" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button>
+
   <table class="table">
     <tbody>
       <tr>
@@ -59,9 +61,9 @@
   {{>scoreTable this}}
 
   {{#if isAdminOrStaff}}
-    <button type="button" id="save" class="btn btn-default btn-lg">
+<!--     <button type="button" id="save" class="btn btn-default btn-lg">
       <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
-    </button>
+    </button> -->
     <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
       <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
     </button>
@@ -83,7 +85,7 @@
     <h3>Les paires dans la colonne jouent contre les paires de la ligne.</h3>
     <div class="panel panel-primary" style="background-color:white">
       <div class="panel-heading">Tableaux des résultats</div>
-      <table class="table table-bordered">
+      <table class="table table-bordered" id="scoreTableElement">
         {{#with getPairs this._id}}
         <thead>
           <tr>
@@ -129,11 +131,25 @@
                     step="1"
                     class="form-control points"
                     data-matchid="{{this._id}}"
+                    data-otherpairid="{{../_id}}"
                     data-pairid="{{../../_id}}"
                     value="{{getPoints this ../../_id}}"
-                    style="text-align:center;">
+                    style="text-align:center; width=15%">
+                    
+                    <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="form-control points"
+                    data-matchid="{{this._id}}"
+                    data-otherpairid="{{../../_id}}"
+                    data-pairid="{{../_id}}"
+                    value="{{getPoints this ../_id}}"
+                    style="text-align:center; width=15%">
                   {{else}}
                     <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../../_id}}</span>
+                    -
+                    <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../_id}}</span>
                   {{/if}}
                 {{/with}}
               </div>
