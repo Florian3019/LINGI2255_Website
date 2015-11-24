@@ -46,20 +46,22 @@
 
   {{>scoreTable this}}
 
-  <button type="button" id="save" class="btn btn-default btn-lg">
-    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
-  </button>
-  <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
-    <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-  </button>
+  {{#if isAdminOrStaff}}
+    <button type="button" id="save" class="btn btn-default btn-lg">
+      <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
+    </button>
+    <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
+      <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+    </button>
 
-  <div id="successBox" class="alert alert-success" role="alert" hidden>
-    <h4>
-      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-      <span class="sr-only">Succès:</span>
-      <span id="infoMsg">Scores sauvés !</span>
-    </h4>
-  </div>
+    <div id="successBox" class="alert alert-success" role="alert" hidden>
+      <h4>
+        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+        <span class="sr-only">Succès:</span>
+        <span id="infoMsg">Scores sauvés !</span>
+      </h4>
+    </div>
+  {{/if}}
 </template>
 
 
@@ -108,14 +110,19 @@
             <td align="center">
               <div class="input-group inputscore" display="inline">
                 {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
-                <input
-                type="number"
-                min="0"
-                step="1"
-                class="form-control points"
-                data-matchid="{{this._id}}"
-                data-pairid="{{../../_id}}"
-                value="{{getPoints this ../../_id}}">
+                  {{#if isAdminOrStaff}}
+                    <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="form-control points"
+                    data-matchid="{{this._id}}"
+                    data-pairid="{{../../_id}}"
+                    value="{{getPoints this ../../_id}}"
+                    style="text-align:center;">
+                  {{else}}
+                    <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../../_id}}</span>
+                  {{/if}}
                 {{/with}}
               </div>
             </td>
