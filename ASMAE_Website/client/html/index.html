@@ -22,29 +22,29 @@
     <div class="container-fluid">
       <div class="row main col-wrap">
         <div class="col-md-2 sidebar col">
-          <div class="well container-fluid">
-          <ul class="nav nav-sidebar">
-            <li><a class="brand" href="#">Menu Staff</a></li>
-            <li><a href="{{pathFor route='launchTournament'}}">Lancer les inscriptions</a></li>
-            <li><a href="{{pathFor route='poolList'}}">Gestion du tournoi</a></li>
+          <div class="well container-fluid sideBarUpper1">
+          <ul class="nav nav-sidebar fixedSideBar">
+            <li><a class="brand menuItem" href="#">Menu Staff</a></li>
+            <li><a href="{{pathFor route='launchTournament'}}" class="menuItem">Lancer les inscriptions</a></li>
+            <li><a href="{{pathFor route='poolList'}}" class="menuItem">Gestion du tournoi</a></li>
 
               {{#if isTournamentPage}}
                 {{>poolsSidebarCollapsableMenu}}
               {{/if}}
 
-            <li><a href="{{pathFor route='modifyExtras'}}">Modifier les extras</a></li>
+            <li><a href="{{pathFor route='modifyExtras'}}" class="menuItem">Modifier les extras</a></li>
 
             <br>
-            <li><a href="{{pathFor route='playersInfo'}}">Information sur les joueurs</a></li>
-            <li><a href="{{pathFor route='staffManagement'}}">Questions des joueurs</a></li>
+            <li><a href="{{pathFor route='playersInfo'}}" class="menuItem">Information sur les joueurs</a></li>
+            <li><a href="{{pathFor route='staffManagement'}}" class="menuItem">Questions des joueurs</a></li>
             <br>
-            <li><a href="{{pathFor route='courtSearch'}}">Information sur les terrains</a></li>
-            <li><a href="{{pathFor route='adminAddCourt'}}">Ajouter un terrain</a></li>
-            <li><a href="{{pathFor route='courtEmail'}}">Envoi de mail aux gestionnaires de terrains</a></li>
+            <li><a href="{{pathFor route='courtSearch'}}" class="menuItem">Information sur les terrains</a></li>
+            <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem">Ajouter un terrain</a></li>
+            <li><a href="{{pathFor route='courtEmail'}}" class="menuItem">Envoi de mail aux gestionnaires de terrains</a></li>
             <br>
-            <li><a href="{{pathFor route='adminTemplate'}}">Page administrateur</a></li>
-            <li><a href="{{pathFor route='printSheets'}}">Feuille de poule</a></li>
-            <li><a href="{{pathFor route='modificationsLog'}}">Log des modifications</a></li>
+            <li><a href="{{pathFor route='adminTemplate'}}" class="menuItem">Page administrateur</a></li>
+            <li><a href="{{pathFor route='printSheets'}}" class="menuItem">Feuille de poule</a></li>
+            <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem">Log des modifications</a></li>
           </ul>
         </div>
         </div>

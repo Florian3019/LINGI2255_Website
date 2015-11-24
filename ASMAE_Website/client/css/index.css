@@ -17,6 +17,9 @@ body {
 /*.navbar {
 }*/
 
+.menuItem{
+	color:black;
+}
 
 /* Sidebar on the left */
 .sidebar {

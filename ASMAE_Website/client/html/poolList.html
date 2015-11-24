@@ -117,7 +117,7 @@
 <ul>
 <li>
   <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span>
-  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
+  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType menuItem" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
   <ul class="nav collapse CategoryOption" id="{{TYPE}}" role="menu" aria-labelledby="btn-{{TYPE}}">
     {{#each getCategories}}
     {{#unless equals this.key "all"}} <!-- avoid family category -->
@@ -133,13 +133,13 @@
 <ul>
 <li>
   <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_category" style="display:none;"></span>
-  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory" data-target="#{{this.ID}}_{{this.CAT}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
+  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory menuItem" data-target="#{{this.ID}}_{{this.CAT}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
   <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
     <li class="PoolOption" data-category="{{this.CAT}}" data-type="{{this.ID}}" >
       <ul>
       <li>
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_pool" style="display:none"></span>
-      <a href="#" style="text-decoration: none;display:inline;"> Poules {{getPoulesCompletion this.ID this.CAT}} </a>
+      <a href="#" style="text-decoration: none;display:inline;" class="menuItem"> Poules {{getPoulesCompletion this.ID this.CAT}} </a>
       </li>
       </ul>
     </li>    
@@ -147,7 +147,7 @@
       <ul>
       <li>
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_bracket" style="display:none"></span>
-      <a href="#" style="text-decoration: none;display:inline;">Tournoi {{getBracketCompletion this.ID this.CAT}}</a>
+      <a href="#" style="text-decoration: none;display:inline;" class="menuItem">Tournoi {{getBracketCompletion this.ID this.CAT}}</a>
       </li>
       </ul>
     </li>
