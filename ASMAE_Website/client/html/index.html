@@ -59,12 +59,40 @@
       </div>
 
     </div>
-    {{else}}
-    <div class="content {{isHomePage}}">
-      <div class="container">
-        {{> yield}}
+      {{else}}
+      {{#if isConnected}}
+      <div class="container-fluid">
+        <div class="row main col-wrap">
+          <div class="col-md-2 sidebar col">
+            <div class="well container-fluid">
+            <ul class="nav nav-sidebar">
+              <li><a class="brand" href="#">Menu</a></li>
+              <li><a href="{{pathFor route='poolList'}}">Gestion du tournoi</a></li>
+
+                {{#if isTournamentPage}}
+                  {{>poolsSidebarCollapsableMenu}}
+                {{/if}}
+            </ul>
+          </div>
+          </div>
+          <div class="col-md-10 nopadding col">
+            <div class="well container-fluid">
+            <div class="content {{isHomePage}}">
+              <div class="container">
+                {{> yield}}
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
       </div>
-    </div>
+      {{else}}
+      <div class="content {{isHomePage}}">
+        <div class="container">
+          {{> yield}}
+        </div>
+      </div>
+      {{/if}}
     {{/if}}
 
     <div class="footer">

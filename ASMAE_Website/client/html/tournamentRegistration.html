@@ -10,7 +10,7 @@
             <label for="text">Nom:</label>
             <input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" ><br>
             <div id="lastnameError" hidden>
-              <span class="help-block" >Merci d'entrer votre nom</span>
+              <span class="help-block" id="lastNameError">Merci d'entrer votre nom</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
             </div>
             <div id="lastnameOK" hidden>
@@ -24,7 +24,7 @@
             <label for="text">Prénom:</label>
             <input type="text" class="form-control" id="firstname" value="{{firstname}}" name="firstname">
             <div id="firstnameError" hidden>
-              <span class="help-block" >Merci d'entrer votre prénom</span>
+              <span class="help-block" id="firstNameError">Merci d'entrer votre prénom</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
             </div>
             <div id="firstnameOK" hidden>
@@ -45,7 +45,7 @@
             <label for="day">Jour:</label>
             <input type="number" id="birthDay" class="form-control" min="1" max="31" value="{{getDate}}" name="jour de naissance">
             <div id="birthDayError" hidden>
-              <span class="help-block" >Merci d'entrer le jour</span>
+              <span class="help-block" id="dayError">Merci d'entrer le jour</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
             </div>
             <div id="birthDayOK" hidden>
@@ -59,7 +59,7 @@
             <label for="month">Mois:</label>
             <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{getMonth}}" name="mois de naissance">
             <div id="birthMonthError" hidden>
-              <span class="help-block" >Merci d'entrer le mois</span>
+              <span class="help-block" id="monthError">Merci d'entrer le mois</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
             </div>
             <div id="birthMonthOK" hidden>
@@ -73,7 +73,7 @@
             <label for="year">Année:</label>
             <input type="number" id="birthYear" class="form-control" min="1900" value="{{getYear}}" name="année de naissance">
             <div id="birthYearError" hidden>
-              <span class="help-block" >Merci d'entrer l'année</span>
+              <span class="help-block" id="yearError">Merci d'entrer l'année</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
             </div>
             <div id="birthYearOK" hidden>
@@ -93,7 +93,7 @@
             <label class="radio-inline">
             <input type="radio" name="sex" id="female" value="F" {{setGender 'false'}}>Femme</label>
             <div id="sexError" hidden>
-              <span class="help-block" >Merci d'entrer votre sexe</span>
+              <span class="help-block" id="sexErrorText">Merci d'entrer votre sexe</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
             </div>
             <div id="sexOK" hidden>
@@ -121,7 +121,7 @@
             <div class="input-group" style="display: inline">
               <input type="text" class="form-control" id="street" value="{{street}}" name="street">
           		<div id="streetError" hidden>
-                <span class="help-block" >Merci d'entrer votre rue</span>
+                <span class="help-block" id="streetErrorText">Merci d'entrer votre rue</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
               </div>
               <div id="streetOK" hidden>
@@ -137,7 +137,7 @@
             <div class="input-group">
               <input type="number" class="form-control" id="addressnumber" min="0" value="{{addressNumber}}" name="addressNumber">
               <div id="numberError" hidden>
-                <span class="help-block" >Merci d'entrer votre numéro</span>
+                <span class="help-block" id="numberErrorText">Merci d'entrer votre numéro</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
               </div>
               <div id="numberOK" hidden>
@@ -162,7 +162,7 @@
           		 	<div class="input-group">
                   <input type="number" min="0" step="1" class="form-control" id="zipcode" value="{{zipcode}}" name="zipcode">
                   <div id="zipcodeError" hidden>
-                    <span class="help-block" >Merci d'entrer votre code postal</span>
+                    <span class="help-block" id="zipcodeErrorText">Merci d'entrer votre code postal</span>
                     <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
                   </div>
                   <div id="zipcodeOK" hidden>
@@ -178,7 +178,7 @@
             <div class="input-group" style="display: inline">
               <input type="text" class="form-control" id="city" value="{{city}}" name="city">
               <div id="cityError" hidden>
-                <span class="help-block" >Merci d'entrer votre ville</span>
+                <span class="help-block" id="cityErrorText">Merci d'entrer votre ville</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
               </div>
               <div id="cityOK" hidden>

@@ -42,6 +42,25 @@ module.exports = function () {
         var mail = browser.getText('#Email');
         expect(mail).toEqual("test@test.com");
         //Get the surface value (This is an example. It's better to do it for every value).
+    	var phone = browser.getText('#phone');
+        var dob = browser.getText('#birth');
+        var sex = browser.getText('#sex');
+        var address = browser.getText('#address');
+		var city = browser.getText('#city');
+		var country = browser.getText('#land');
+		var rank = browser.getText('#rank');
+		var paiement = browser.getText('#paiement');
 
+        expect(phone).toEqual("0473/38.31.43");
+        expect(dob).toEqual("23/9/1994");
+        expect(sex).toEqual("M");
+        expect(address).toEqual("23, Place de l université. Boite 123b");
+		expect(city).toEqual("1348 Louvain La Neuve");
+        expect(country).toEqual("Belgique");
+        expect(rank).toEqual("C30.5");
+        expect(paiement).toEqual("Virement bancaire");
+        
+        
+        
     });
 }
