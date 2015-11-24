@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
   <link href="https://maxcdn.bootstrapcdn.com/bootswatch/latest/paper/bootstrap.min.css" rel="stylesheet">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <title>Le Charles de Lorraine</title>
@@ -16,7 +15,7 @@
 
 <template name="index">
   <div class="website">
-    
+
     {{> navigation}}
 
     {{#if isStaffMember}}
@@ -26,6 +25,7 @@
           <div class="well container-fluid">
           <ul class="nav nav-sidebar">
             <li><a class="brand" href="#">Menu Staff</a></li>
+            <li><a href="{{pathFor route='launchTournament'}}">Lancer les inscriptions</a></li>
             <li><a href="{{pathFor route='poolList'}}">Gestion du tournoi</a></li>
 
               {{#if isTournamentPage}}
@@ -57,6 +57,7 @@
         </div>
         </div>
       </div>
+
     </div>
       {{else}}
       {{#if isConnected}}
@@ -95,7 +96,7 @@
     {{/if}}
 
     <div class="footer">
-      <div class="container"> 
+      <div class="container">
       <div class="row">
         <div class="col-md-4">
 			  <h3>ASMAE, ASBL.</h3>
