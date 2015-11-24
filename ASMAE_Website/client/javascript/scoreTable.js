@@ -17,6 +17,20 @@ Template.scorePage.helpers({
         return undefined;
       }
     },
+
+    'getCourt': function(poolId){
+      if(poolId==undefined) return undefined;
+      pool = Pools.findOne({_id:poolId});
+      if(pool.courtId!=undefined){
+        court = Courts.findOne({"courtNumber":pool.courtId});
+        if(court && court.addressID){
+          address = Addresses.findOne({_id:court.addressID});
+          return {id:pool.courtId,
+                  address:address};
+        }
+      }
+      return undefined;
+    },
 });
 
 Template.scoreTable.events({
@@ -39,7 +53,7 @@ Template.scoreTable.events({
     Meteor.call("addToModificationsLog",
     {"opType":"Modification points match poule",
     "details":
-        playersName1[0]+" "+playersName1[1] + 
+        playersName1[0]+" "+playersName1[1] +
         " VS " + playersName2[0]+" "+playersName2[1] +
         " Points: "+data.points+getStringOptions()
     });
@@ -250,7 +264,8 @@ Template.scorePage.events({
       pdf.text("Cette feuille doit être remise au quartier général à la fin de la poule.",margins.left, pdf.internal.pageSize.height - 30);
       pdf.text("En cas de problème quelconque, n'hésitez pas de nous contacter par téléphone au numéro: +32 (0)2 742 03 01 ",margins.left, pdf.internal.pageSize.height - 10);
 
-      pdf.output('save', 'filename.pdf'); //TODO filename = annee + cateorie+ numeterrain
+      var name = "poule_"+pool._id+".pdf";
+      pdf.output('save', name);
       // pdf.output('dataurlnewwindow');
       /*
       Display the pdf in the html
