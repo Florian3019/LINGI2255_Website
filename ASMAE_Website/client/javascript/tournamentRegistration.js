@@ -1,9 +1,5 @@
 var aloneDependency = new Deps.Dependency();
 
-function closePopUp() {
-    $('#signModal').modal('hide');
-}
-
 Template.tournamentRegistration.helpers({
     'getPay1' : function() {
         return paymentTypes[0];

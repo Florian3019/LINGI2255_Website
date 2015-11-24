@@ -49,9 +49,9 @@ Accounts.emailTemplates.verifyEmail.html = function(user,url){
 		datacontent:"Grâce à votre inscription vous avez accès à de nouvelles fonctionalités ! Il vous sera possible à présent de vous inscrire au tournoi, mettre à jours votre profil, inscrire votre prope terrain. N'hésitez donc pas à visiter notre site !",
 		datadesc:"Vérifiez votre compte en cliquant sur le lien suivant :",
 		datalink:url,
-		datafinal:"Attention, ce lien expirera dans 3 jours."
-		};
-		return SSR.render("verifMail",data);
+		datafinal:"Attention, ce lien expira dans 3 jours."
+	};
+	return SSR.render("verifMail",data);
 };
 
 Accounts.emailTemplates.resetPassword.subject = function(user){
@@ -66,7 +66,6 @@ Accounts.emailTemplates.resetPassword.html =function(user,url){
 		datadesc:"Pour modifier votre mot de passe, il suffit de cliquer sur le lien ci-dessous :",
 		datalink:url,
 		datafinal:""
-
 	};
 	return SSR.render("verifMail",data);
 };

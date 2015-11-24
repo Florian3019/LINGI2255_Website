@@ -1,8 +1,12 @@
 <template name="home">
 		<h1 class="mainTitle" style="font-size: 60px; color:white; font: Helvetica; padding-top: 10px">Le Charles de Lorraine</h1>
-	    <p style="font-size: 30px; color:white">Tournoi de tennis</p>
-	    <p style="padding-top: 150px">
-	      <a id="inscriptionTournoi" href="{{pathFor route='tournamentRegistration'}}" class="btn btn-lg btn-default" style="margin-left: 40px">Inscription au tournoi</a>
-	      <a id="courtRegistrationButton" href="{{pathFor route='courtRegistration'}}" class="btn btn-lg btn-default" style="margin-left: 20px">Inscription d'un terrain</a>
-	    </p>
+	    <h2 style="font-size: 30px; color:white">Tournoi de tennis</h2>
+	    <div class="row" style="padding-top: 150px">
+	    	<div class="col-sm-3">
+	      		<a id="inscriptionTournoi" href="{{pathFor route='tournamentRegistration'}}" class="btn btn-lg btn-default">Inscription au tournoi</a>
+	      	</div>
+	      	<div class="col-sm-3">
+	      		<a id="courtRegistrationButton" href="{{pathFor route='courtRegistration'}}" class="btn btn-lg btn-default">Inscription d'un terrain</a>
+	      	</div>
+	    </div>
 </template>

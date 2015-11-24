@@ -30,26 +30,18 @@ Template.index.helpers({
 		}
 	},
 
-	// 'getAllYears':function(){
-	// 	return ALLYEARS; // constant.js
-	// },
-
-	'getYear' : function(){
-		var year = Session.get('PoolList/Year');
-		var y = Years.findOne({_id:year});
-
-		if(year!=undefined && y==undefined){
-			setInfo(document, "Pas de données trouvées pour l'année "+ year);
+	'isConnected': function(){
+		if(Meteor.user())
+		{
+			return true;
 		}
-		else{
-			infoBox =document.getElementById("infoBox");
-			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
+		else
+		{
+			return false;
 		}
-
-		return y;
 	},
+	
 });
-
 
 Template.index.events({
 	'click #popdb' : function(event) {
