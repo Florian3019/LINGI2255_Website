@@ -29,27 +29,8 @@ Template.index.helpers({
 			return false;
 		}
 	},
-
-	// 'getAllYears':function(){
-	// 	return ALLYEARS; // constant.js
-	// },
-
-	'getYear' : function(){
-		var year = Session.get('PoolList/Year');
-		var y = Years.findOne({_id:year});
-
-		if(year!=undefined && y==undefined){
-			setInfo(document, "Pas de données trouvées pour l'année "+ year);
-		}
-		else{
-			infoBox =document.getElementById("infoBox");
-			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
-		}
-
-		return y;
-	},
+	
 });
-
 
 Template.index.events({
 	'click #popdb' : function(event) {

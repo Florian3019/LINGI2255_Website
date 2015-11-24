@@ -1,7 +1,3 @@
-function closePopUp() {
-    $('#signModal').modal('hide');
-}
-
 Template.courtRegistration.helpers({
     'availableThisDay': function(available){
         if(available === null){

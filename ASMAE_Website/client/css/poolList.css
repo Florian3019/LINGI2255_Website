@@ -165,14 +165,7 @@
     list-style: none;
 }*/
 
-.sidebar-nav li {
-    line-height: 40px;
-    display: block;
-    text-decoration: none;
-    color: #999999;
-    cursor:pointer;
-    background-color: rgba(51, 153, 255,0.15);
-}
+
 
 .CategoryOption li {
   text-indent: 30px;
