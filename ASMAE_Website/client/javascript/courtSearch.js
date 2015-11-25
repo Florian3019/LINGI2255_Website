@@ -5,43 +5,12 @@ Template.mySpecialFilterCourt.events({
     }
 });
 
-var addressToString = function(theAddress){
-    var theString = "";
-    if(theAddress!=undefined &&theAddress!=null){
-        theString +=theAddress.city+" ";
-        theString +=theAddress.street+" ";
-        theString += theAddress.country+" ";
-        theString += theAddress.box+" ";
-        theString += theAddress.number+" ";
-        theString += theAddress.zipCode+" ";
-    }
-    return theString;
-};
-
-var courtToString = function(court){
-    if(court===undefined || court===null){
-        return "";
-    }
-    var theString = "";
-
-    var user = Meteor.users.findOne({_id:court.ownerID});
-    if(user!==null && user!==undefined) theString += user.profile.lastName + " " + user.profile.firstName + " ";
-
-    var address = Addresses.findOne({_id:court.addressID});
-    theString += addressToString(address);
-
-    theString += court.surface;
-    theString += court.courtType;
-
-    return theString.toLowerCase();
-};
-
 Template.allCourtsTable.onRendered(function(){
     Session.set("courtSearch/saturday","");
     Session.set("courtSearch/sunday","");
     Session.set("courtSearch/lend","");
     Session.set("courtSearch/input","");
-    Session.set("courtNumber/courtNumber","");
+    Session.set("courtSearch/courtNumber","");
 })
 
 
@@ -52,7 +21,7 @@ Template.allCourtsTable.helpers({
         saturday = Session.get("courtSearch/saturday");
         sunday = Session.get("courtSearch/sunday");
         lend = Session.get("courtSearch/lend");
-        courtNumb = Session.get("courtNumber/courtNumber");
+        courtNumb = Session.get("courtSearch/courtNumber");
 
         noInput = (input ==="" || input===undefined || input === null) && saturday==="Ignore" && sunday==="Ignore" && lend==="Ignore";
 
@@ -165,6 +134,6 @@ Template.courtSearch.events({
     },
 
     'change #courtNumberInput':function(event){
-      Session.set("courtNumber/courtNumber",event.currentTarget.value);
+      Session.set("courtSearch/courtNumber",event.currentTarget.value);
     }
 });
