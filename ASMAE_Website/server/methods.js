@@ -467,6 +467,8 @@ Meteor.methods({
 			return false;
 		}
 
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+
 
        		/*			TODO
        		ADD:
@@ -553,7 +555,7 @@ Meteor.methods({
 			}
 
 			// Create a new court
-			var courtId = Courts.insert(data, function(err, courtId){
+			courtId = Courts.insert(data, function(err, courtId){
 				if(err){
 					throw new Meteor.Error("updateCourt error: during Courts.insert", err);
 				}
