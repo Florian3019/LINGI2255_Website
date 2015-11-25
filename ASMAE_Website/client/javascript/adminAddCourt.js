@@ -72,6 +72,10 @@ Template.adminAddCourt.helpers({
 
 Template.adminAddCourt.onRendered(function(){
     Session.set("adminAddCourt/selected", ""); //Reset
+    Session.set('adminAddCourt/lastName',"");
+    Session.set('adminAddCourt/firstName',"");
+    Session.set('adminAddCourt/address',"");
+    Session.set("adminAddCourt/searchComplete",false);
 });
 
 Template.adminAddCourt.events({
