@@ -92,6 +92,10 @@ Meteor.methods({
 	},
 
 	'setCurrentYear' : function(currentYear) {
+		if (typeof currentYear !== 'string') {
+			console.error("Error setCurrentYear, you must provide a string denoting the year of the tournament");
+			return undefined;
+		}
 		GlobalValues.update({_id:"currentYear"}, {$set:{
 			value : currentYear
 		}}, {upsert:true});
