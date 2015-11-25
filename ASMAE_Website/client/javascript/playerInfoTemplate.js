@@ -288,8 +288,29 @@ Template.playerInfoTemplate.events({
 						}
 					}
 				}
-				console.log(types_in)
-				alert("impossible de supprimer ce joueur")
+				years = Years.find().fetch()
+				var years_in = []
+				var max_year = years[0]._id ;
+				for(i = 0; i < years.length; i++){
+					if(years[i]._id > max_year){
+						max_year = years[i]._id
+					}
+					for(j = 0; j < types_in.length; j++){
+						if(years[i].men === types_in[j] || years[i].women === types_in[j] || years[i].mixed === types_in[j] || years[i].family === types_in[j]){
+							years_in.push(years[i]._id); 
+						}
+					}
+				}
+				var bool = true
+				for(i = 0; i < years_in.length; i++){
+					if(years_in[i] === max_year){
+						bool = false
+						alert("impossible de supprimer ce joueur")
+					}
+				}
+				if(bool && confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
+					Meteor.call('deleteUser',this.id);
+				}
 				Router.go('home')
 			}
 		}
