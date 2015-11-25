@@ -1,4 +1,18 @@
 module.exports = function () {
+    this.Given(/^The tournament inscriptions were launched$/,function() {
+        var getDate = [10,10,2018];
+        var getDateObject = new Date(getDate[2], getDate[0]-1, getDate[1]);
+        var price = 10;
+
+        var launchData = {
+            tournamentDate: getDateObject,
+            tournamentPrice: price
+        };
+        server.call('activateGlobalValuesDB',function(error,result){ 
+            server.call('launchTournament',launchData);
+        });
+        
+    });
     this.When(/^I navigate to the tournament registration page$/, function () {
         
         browser.waitForExist('a#Droop.dropdown-togglebis');

@@ -51,6 +51,7 @@ Meteor.methods({
 
 			if (typeof Years.findOne({_id:data._id}) !== 'undefined') {
 				// Tournament already exists
+				console.log("shit !");
 				return undefined;
 			}
 
@@ -74,8 +75,10 @@ Meteor.methods({
 
 			GlobalValues.update({_id:"registrationsON"}, {$set: {
 				value : true
-			}}, function(err, result){
+			}}, {upsert: true}, function(err, result){
+				console.log("coucou 1");
 				if(err){
+					console.log("coucou 2");
 					throw new Meteor.Error("update GlobalValues registrationsON in launchTournament error: ", err);
 				}
 			});
