@@ -235,8 +235,8 @@ Router.route('/modifier-terrain/:_id', {
 });
 
 Router.route('/recherche-terrain', {
-	name: 'courtSearch',
-	template: 'courtSearch'
+	name: 'courtSearchTemplate',
+	template: 'courtSearchTemplate'
 });
 
 Router.route('/print', {

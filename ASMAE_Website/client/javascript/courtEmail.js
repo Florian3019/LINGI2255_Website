@@ -3,7 +3,7 @@ Template.courtEmail.returnAllCourts = function(){
 }
 
 Template.courtEmail.events({
-	'click .reactive-table tbody tr' : function(event){
+	'click .courtRow' : function(event){
 		var target = event.currentTarget;
 		var courtSelected = (' ' + target.className + ' ').indexOf(' courtSelected ') > -1;
 		if(courtSelected){

@@ -116,11 +116,13 @@ Template.allCourtsTable.helpers({
     }
 });
 
-Template.courtSearch.events({
+Template.courtSearchTemplate.events({
     'click .courtRow' : function(event){
         Router.go('courtInfoPage',{_id:this._id});
     },
+})
 
+Template.courtSearch.events({
     'change #saturdaySelect':function(event){
       Session.set("courtSearch/saturday",event.currentTarget.value);
     },

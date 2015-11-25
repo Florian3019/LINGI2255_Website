@@ -20,6 +20,11 @@ Template.staffManagement.events({
 	
 });
 Template.staffManagement.helpers({
+
+	'hasQuestions':function(){
+		return Questions.find().count()>0;
+	},
+
 	'showStaff' : function(){
 		return Questions.find();
 	},
