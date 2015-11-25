@@ -279,3 +279,8 @@ Router.route('/payment-confirmation', {
   name: 'paymentConfirmation',
 	template: 'paymentConfirmation'
 });
+
+Router.route('/select-courts', {
+	name: 'selectCourts',
+	template: 'selectCourts'
+});

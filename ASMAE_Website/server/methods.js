@@ -51,6 +51,7 @@ Meteor.methods({
 
 			if (typeof Years.findOne({_id:data._id}) !== 'undefined') {
 				// Tournament already exists
+				console.log("shit !");
 				return undefined;
 			}
 
@@ -74,8 +75,10 @@ Meteor.methods({
 
 			GlobalValues.update({_id:"registrationsON"}, {$set: {
 				value : true
-			}}, function(err, result){
+			}}, {upsert: true}, function(err, result){
+				console.log("coucou 1");
 				if(err){
+					console.log("coucou 2");
 					throw new Meteor.Error("update GlobalValues registrationsON in launchTournament error: ", err);
 				}
 			});
@@ -168,13 +171,13 @@ Meteor.methods({
 		return false;
 	},
 
-	'isAdmin' : function(){
-		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isAdmin":1});
+	'isAdmin' : function(nid){
+		var res = Meteor.users.findOne({_id:nid}, {"profile.isAdmin":1});
 		return res ? res.profile.isAdmin : false;
 	},
 
-	'isStaff' : function(){
-		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isStaff":1});
+	'isStaff' : function(nid){
+		var res = Meteor.users.findOne({_id:nid}, {"profile.isStaff":1});
 		return (res ? res.profile.isStaff : false);
 	},
 
@@ -462,14 +465,16 @@ Meteor.methods({
 			return false;
 		}
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		const userIsOwner = courtData.ownerID == Meteor.userId();
 
 		if(! (userIsOwner || isAdmin || isStaff) ){
 			console.error("updateCourt : You don't have the permissions to update a court !");
 			return false;
 		}
+
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 
 
        		/*			TODO
@@ -557,7 +562,7 @@ Meteor.methods({
 			}
 
 			// Create a new court
-			var courtId = Courts.insert(data, function(err, courtId){
+			courtId = Courts.insert(data, function(err, courtId){
 				if(err){
 					throw new Meteor.Error("updateCourt error: during Courts.insert", err);
 				}
@@ -603,8 +608,8 @@ Meteor.methods({
 			return false;
 		}
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		const userIsOwner = court.ownerID == Meteor.userId();
 
 		if(userIsOwner || isAdmin || isStaff){
@@ -672,8 +677,8 @@ Meteor.methods({
 			return;
 		}
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		const userIsOwner = userData._id == Meteor.userId();
 
 		if(!(userIsOwner || isAdmin || isStaff)){
@@ -821,8 +826,8 @@ Meteor.methods({
 		}
 
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		const userIsOwner = userId == Meteor.userId();
 
 		if(!(userIsOwner || isAdmin || isStaff)){
@@ -935,8 +940,8 @@ Meteor.methods({
 			console.error("updatePair : pairData is undefined");
 			return;
 		}
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		ID = {};
 		if(pairData.player1){
 			P1_id= pairData.player1._id;
@@ -1194,8 +1199,8 @@ Meteor.methods({
 			return;
 		}
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 
 		if(!(isAdmin || isStaff)){
 			console.error("updateMatch : You don't have the required permissions!");

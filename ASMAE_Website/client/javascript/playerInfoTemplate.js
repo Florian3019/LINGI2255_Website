@@ -126,8 +126,8 @@ Template.playerInfoTemplate.helpers({
 		}
 
 		if(Meteor.userId() == this.ID) callBack(undefined, true);
-		Meteor.call('isStaff', callBack);
-		Meteor.call('isAdmin', callBack);
+		Meteor.call('isStaff',Meteor.userId(), callBack);
+		Meteor.call('isAdmin',Meteor.userId(), callBack);
 	},
 
 
