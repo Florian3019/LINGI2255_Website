@@ -1,0 +1,81 @@
+<template name="buildTournament">
+
+	{{#if getCurrentlyBuilding}}
+		{{resetDrake}}
+	<div class="row">
+  		<div class="col-sm-6">
+			<center>
+				<div class="poolLabel"><span class="label label-primary">Non séléctionés ({{getNotSelectedSize}})</span></div>
+				<div class='parent'>
+				  	<div class='PoolWrapper'>
+				  		{{>buildContainer ID="notSelectedForTournament"}}
+				  	</div>
+				</div>
+			</center>
+		</div>
+		<div class="col-sm-6">
+			<center>
+				<div class="poolLabel"><span class="label label-primary">Séléctionés ({{getSelectedSize}})</span></div>
+				<div class='parent'>
+				  	<div class='PoolWrapper'>
+				    	{{>buildContainer ID="selectedForTournament"}}
+					</div>
+				</div>
+			</center>
+		</div>
+	</div>
+	<br>
+	<center>
+		<button type="button" id="continueToTournament" class="btn btn-default btn-lg">
+		   Continuer <span class="glyphicon glyphicon-arrow-right" style="color:green" aria-hidden="true"></span>
+		</button>
+	</center>
+	{{/if}}
+</template>
+
+
+<template name="buildContainer">
+	<div class='poolContainer buildContainer' id='{{ID}}'>
+		{{#if equals ID "selectedForTournament"}}
+	  		{{#each getWinnerPairPoints}}
+	  			{{>buildTournamentItem PAIRID=this.pairId POOLID=this.poolId COURT=this.courtNumber SCORE=this.points}}
+	  		{{/each}}
+  		{{else}}
+	  		{{#each getLoserPairPoints}}
+  				{{>buildTournamentItem PAIRID=this.pairId POOLID=this.poolId COURT=this.courtNumber SCORE=this.points}}
+  			{{/each}}
+  		{{/if}}
+	</div>
+</template>
+
+<!--
+Takes 2 arguments :
+- PAIRID : the id of this pair
+- POOLID : the id of the pool of this pair
+- COURT  : the number of the court on which the pair played
+- SCORE  : the total score for that pair
+-->
+<template name="buildTournamentItem">
+  {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
+    <div id="{{this._id}}" class="pairs grabbable" data-startingPoolId="{{../POOLID}}">
+      <ul class="list-group clickablePoolItem" data-id="{{this._id}}">
+      	<li class="list-group-item pairPlayerHeader bold"> 
+      		Score : {{../SCORE}} <span class="pull-right">T {{../COURT}}</span>
+      	</li>
+        {{#with getPlayer this.player1._id}}
+	        <li class="list-group-item pairPlayer" style="{{getColor ../player1}}" id="{{this.player1._id}}" >
+	        	{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}
+	        </li>
+        {{/with}}
+        {{#with getPlayer this.player2._id}}
+	        <li class="list-group-item pairPlayer" style="{{getColor ../player1}}" id="{{this.player2._id}}" >
+	        {{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} 
+	        </li>
+        {{/with}}
+      </ul>
+	  	{{#unless equals this.player2._id undefined}}
+	    {{>modalItem PAIR=this POOL=../POOLID SHOWOPTIONS=false}} <!-- Don't set SEX here, since we should not be able to change the type of the pair -->
+	    {{/unless}}
+    </div>
+  {{/with}}
+</template>

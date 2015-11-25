@@ -7,6 +7,17 @@
   vertical-align: top;
 }
 
+.poolLabel{
+  padding: 5px;
+  font-size: 2.5em;
+  width: 250px;
+}
+
+.scoreButton{
+  padding: 5px;
+  width: 250px;
+}
+
 *, *:before, *:after {
   -webkit-box-sizing: inherit;
   -moz-box-sizing: inherit;
@@ -44,6 +55,10 @@
   padding-right: 10px;
 }
 
+.leaderStar{
+  color:#4CC417;
+}
+
 .poolContainer {
   display: table-cell;
   width: 5%;
@@ -64,7 +79,7 @@
   /*background-color: rgba(0, 0, 0, 0.2);*/
   transition: opacity 0.4s ease-in-out;
 }
-.poolContainer > div {
+.poolContainer > .grabbable {
   cursor: move;
   cursor: grab;
   cursor: -moz-grab;
@@ -79,10 +94,6 @@
 .removePoolButton{
   font-size:20px;
   color:red;
-}
-
-.orange{
-  color:orange;
 }
 
 .pairs.ex-over >.list-group>.list-group-item{
@@ -167,7 +178,7 @@
 
 
 
-.CategoryOption li {
+/*.CategoryOption li {
   text-indent: 30px;
 }
 
@@ -184,7 +195,7 @@
 .sidebar-nav li:active,
 .sidebar-nav li:focus {
     text-decoration: none;
-}
+}*/
 
 /*.sidebar-nav > .sidebar-brand {
     height: 65px;

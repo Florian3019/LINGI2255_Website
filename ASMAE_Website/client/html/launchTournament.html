@@ -1,5 +1,17 @@
 <template name="launchTournament">
 	<div class="container">
+
+		{{#if registrationsON}}
+		<center>
+			<p>
+				Les inscriptions au tournoi sont en cours.
+			</p>
+			<p>
+				Cliquez sur ce bouton pour fermer les inscriptions au tournoi de cette année:<br>
+				<button id="closeRegistrationsButton" type="button" class="btn btn-default">Fermer les inscriptions</button>
+			</p>
+		</center>
+		{{else}}
 		<form id="launchTournamentForm" role="form">
 			<div class="form-group">
 				<div class="row">
@@ -31,5 +43,6 @@
 
 			</div>
 		</form>
+		{{/if}}
 	</div>
 </template>

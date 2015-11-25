@@ -336,6 +336,10 @@ Template.brackets.helpers({
   'getAllWinners' : function(){
     Session.get('brackets/update');
     return handleBracketErrors(document);
+  },
+
+  'buildingTournament' : function(){
+    return Session.get('brackets/buildingTournament');
   }
 
 });
@@ -397,16 +401,16 @@ var handleBracketErrors = function(document){
     if(allWinners==undefined){
       if(bracketOptions!=undefined){
         console.info("Tournament not started");
-        startButton.innerHTML="Démarrer le tournoi";
-        bracketOptions.style.display = 'block';
-        pdfButton.style.display = 'block';
+        if(startButton!=undefined && startButton!=null) startButton.innerHTML="Démarrer ce tournoi";
+        if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
+        if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
       }
       return;
     }
-    if(bracketOptions!=undefined){
-      startButton.innerHTML="Redémarrer le tournoi";
-      bracketOptions.style.display = 'block';
-      pdfButton.style.display = 'block';
+    if(bracketOptions!==undefined){
+      if(startButton!=undefined && startButton!=null) startButton.innerHTML="Redémarrer ce tournoi";
+      if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
+      if(pdfButton!==undefined && pdfButton!==null) pdfButton.style.display = 'block';
     }
 
     if(allWinners.length==0){
@@ -510,12 +514,9 @@ var getOrder = function(size){
 */
 var getTournamentFirstRound = function(pairs){
   var tournamentSize = getNextPowerOfTwo(pairs.length); // power of 2
-
   var toReturn = [];
-
   var indexTable = getOrder(tournamentSize);
 
-  console.log(indexTable);
   var k = 0; // Index in pairs
   for(var i=0; i< tournamentSize; i++){
     
@@ -686,10 +687,34 @@ var getStringOptions = function(){
       " année: "+Session.get("PoolList/Year");
 }
 
+// var updateSelectedNumber = function(document){
+//   console.log("updateSelectedNumber");
+//   a = document.getElementById("selectedForTournament");
+//   b = document.getElementById("notSelectedForTournament");
+//   console.log(a);
+//   console.log(b);
+//   if(a!=null && a!==undefined && b!=null && b!=undefined){
+//     s = a.getElementsByClassName("pairs").length;
+//     ns =b.getElementsByClassName("pairs").length;
+//     console.log(s);
+//     console.log(ns);
+//     Session.set("brackets/selectedSize",[s,ns]);
+//   }
+// }
+
+Template.brackets.onRendered(function(){
+  Session.set('brackets/buildingTournament', false); // By default, we are not building the tournament
+});
+
 Template.brackets.events({
 
 	// Do something when the user clicks on a player
   "click .g_team":function(event, template){
+    var user = Meteor.user();
+    if(user==null || !(user.profile.isAdmin || user.profile.isStaff)){
+      return; // No action must be done
+    }
+
     var pairId = event.currentTarget.id;
     mod = document.getElementById("bracketModal");
     clickable = event.currentTarget.dataset.clickable;
@@ -716,7 +741,7 @@ Template.brackets.events({
   },
 
   'click #start':function(event){
-
+      Session.set('brackets/buildingTournament', true);
       console.log("calling startTournament");
       year = Session.get('PoolList/Year');
       type = Session.get('PoolList/Type');
@@ -724,15 +749,9 @@ Template.brackets.events({
 
       maxWinners = document.getElementById("winnersPerPool").value;
 
-      callback = function(err, status){
-        Meteor.call("addToModificationsLog",
-        {"opType":"Création tournoi knock-off",
-        "details":
-            "Paires par poule: "+maxWinners+getStringOptions()
-        });
-
-
-        Session.set('brackets/update',Session.get('brackets/update') ? false:true);
+      callback = function(err, retVal){
+        console.log(retVal);
+        Session.set("brackets/pairPoints",retVal);
       };
 
       if(maxWinners<1){

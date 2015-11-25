@@ -2,3 +2,15 @@
   display:table-cell;
   vertical-align: middle;
 }
+
+#scoreTableElement > thead > tr > th{
+	border:2px solid black;
+}
+
+#scoreTableElement > tbody > tr > th{
+	border:2px solid black;
+}
+
+#scoreTableElement > tbody > tr > td{
+	border:2px solid black;
+}

@@ -79,6 +79,8 @@ Template.tournamentRegistration.helpers({
     	        else{
     	        	errors.push({id:"birthMonth", error:false});
     	        }
+                var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
+                var tournamentDate = (Years.findOne({_id:currentYear})).tournamentDate;
     			if(!birthYear || birthYear < 1900 || birthYear > tournamentDate.getFullYear() - 9){
     	        	errors.push({id:"birthYear", error:true});
     	        	hasError = true;
@@ -179,6 +181,8 @@ Template.tournamentRegistration.helpers({
 	* @param todayDate give an optional today date (e. g. date of the tournament)
 	*/
 	'getAge' : function(birthDate){
+        var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
+        var tournamentDate = (Years.findOne({_id:currentYear})).tournamentDate;
 	    var age = tournamentDate.getFullYear() - birthDate.getFullYear();
 	    var m = tournamentDate.getMonth() - birthDate.getMonth();
 	    if (m < 0 || (m === 0 && tournamentDate.getDate() < birthDate.getDate())) {
@@ -586,6 +590,8 @@ Template.tournamentRegistration.events({
         else{
         	errors.push({id:"birthMonth", error:false});
         }
+        var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
+        var tournamentDate = (Years.findOne({_id:currentYear})).tournamentDate;
 		if(!birthYear || birthYear < 1900 || birthYear > tournamentDate.getFullYear() - 9){
         	errors.push({id:"birthYear", error:true});
         	hasError = true;
@@ -702,8 +708,9 @@ Template.tournamentRegistration.events({
     	/*
 			Collect player wishes/constraints
     	*/
-		var playerWishes = event.target.playerWishes.value;
-		var playerConstraints = event.target.playerConstraints.value;
+		var playerWish = event.target.playerWish.value;
+		var courtWish = event.target.courtWish.value;
+		var otherWish = event.target.otherWish.value;
 
 		var later = event.target.later.checked; // True if the user wants to waits for another user to chose him as partner
 
@@ -713,8 +720,9 @@ Template.tournamentRegistration.events({
 		var playerData = {
 			_id:Meteor.userId(),
 			extras : {},
-			wish:playerWishes,
-			constraint:playerConstraints
+			"playerWish":playerWish,
+			"courtWish":courtWish,
+			"otherWish":otherWish
 		};
 
 		var extras = Extras.find().fetch();

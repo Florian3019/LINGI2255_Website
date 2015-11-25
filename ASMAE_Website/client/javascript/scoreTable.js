@@ -17,7 +17,48 @@ Template.scorePage.helpers({
         return undefined;
       }
     },
+
+    'getCourt': function(poolId){
+      if(poolId==undefined) return undefined;
+      pool = Pools.findOne({_id:poolId});
+      if(pool.courtId!=undefined){
+        court = Courts.findOne({"courtNumber":pool.courtId});
+        if(court && court.addressID){
+          address = Addresses.findOne({_id:court.addressID});
+          return {id:pool.courtId,
+                  address:address};
+        }
+      }
+      return undefined;
+    },
 });
+
+Template.scoreTable.events({
+  'change .points':function(event){
+    score = event.currentTarget.value;
+    if(score == "") score = "-1";
+    data = event.currentTarget.dataset;
+    pairId = data.pairid;
+    otherPairId = data.otherpairid;
+    matchId = data.matchid;
+
+    // the fact that this is pair1 and not pair2 is irrelevant for the update (just for parsing convenience)
+    data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score,10)}};
+    // Update the DB !
+    Meteor.call("updateMatch", data);
+
+    playersName1 = getPairPlayers(pairId);
+    playersName2 = getPairPlayers(otherPairId);
+
+    Meteor.call("addToModificationsLog",
+    {"opType":"Modification points match poule",
+    "details":
+        playersName1[0]+" "+playersName1[1] +
+        " VS " + playersName2[0]+" "+playersName2[1] +
+        " Points: "+data.points+getStringOptions()
+    });
+  }
+})
 
 Template.scoreTable.helpers({
   // Returns a list of pairs that are in this pool
@@ -116,42 +157,24 @@ var getStringOptions = function(){
       " année: "+Session.get("PoolList/Year");
 }
 
+var getPairPlayers = function(pairId){
+  p = Pairs.findOne({_id:pairId},{"player1._id":1, "player2._id":1});
+  info = {"profile.firstName":1, "profile.lastName":1};
+  u1 = Meteor.users.findOne({_id:p.player1._id},info);
+  u2 = Meteor.users.findOne({_id:p.player2._id},info);
+
+  return [u1.profile.firstName + " "+u1.profile.lastName, u2.profile.firstName + " "+u2.profile.lastName];
+}
+
 Template.scorePage.events({
-  'click #save' : function(event){
-    var points = document.getElementsByClassName("points");
-    var poolId = this._id; // "this" is the parameter of the template
-    for(var i=0; i<points.length;i++){
-      var score = points[i].value;
-      if(score=="") score = "-1";
-      var matchId = points[i].getAttribute('data-matchid');
-      var pairId = points[i].getAttribute('data-pairid');
-
-      // the fact that this is pair1 and not pair2 is irrelevant for the update (just for parsing convenience)
-      data = {"_id":matchId, pair1:{"pairId":pairId, "points":parseInt(score,10)}};
-      // Update the DB !
-      Meteor.call("updateMatch", data);
-
-      Meteor.call("addToModificationsLog",
-      {"opType":"Modification points match poule",
-      "details":
-          "Match: "+matchId+
-          " PairId: "+ pairId+
-          " Points: "+data.points+getStringOptions()
-      });
-    }
-
-    document.getElementById("successBox").removeAttribute("hidden");
+  'click #scoreTableBack':function(event){
+    Session.set("PoolList/ChosenScorePool","");
   },
 
   'change #checkBoxEmptyTable' : function(event){
     checked = document.getElementById(event.target.id).checked;
     Session.set("scoreTable/emptyTable", checked);
   },
-
-  'change .points' : function(event){
-    document.getElementById("successBox").setAttribute("hidden","");// Remove any success message if any, user just changed a score
-  },
-
 
   'click #getPDF':function(event){
     /*
@@ -236,7 +259,8 @@ Template.scorePage.events({
       pdf.text("Cette feuille doit être remise au quartier général à la fin de la poule.",margins.left, pdf.internal.pageSize.height - 30);
       pdf.text("En cas de problème quelconque, n'hésitez pas de nous contacter par téléphone au numéro: +32 (0)2 742 03 01 ",margins.left, pdf.internal.pageSize.height - 10);
 
-      pdf.output('save', 'filename.pdf'); //TODO filename = annee + cateorie+ numeterrain
+      var name = "poule_"+pool._id+".pdf";
+      pdf.output('save', name);
       // pdf.output('dataurlnewwindow');
       /*
       Display the pdf in the html
