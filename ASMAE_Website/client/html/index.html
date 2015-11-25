@@ -33,7 +33,7 @@
               {{/if}}
 
              <li><a href="{{pathFor route='selectCourts'}}" class="menuItem">Sélectionner les terrains</a></li>
-              
+
             <li><a href="{{pathFor route='modifyExtras'}}" class="menuItem">Modifier les extras</a></li>
 
             <br>
@@ -44,7 +44,6 @@
             <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem">Ajouter un terrain</a></li>
             <li><a href="{{pathFor route='courtEmail'}}" class="menuItem">Envoi de mail aux gestionnaires de terrains</a></li>
             <br>
-            <li><a href="{{pathFor route='adminTemplate'}}" class="menuItem">Page administrateur</a></li>
             <li><a href="{{pathFor route='printSheets'}}" class="menuItem">Feuille de poule</a></li>
             <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem">Log des modifications</a></li>
           </ul>
@@ -116,6 +115,7 @@
             <li><a href="https://plus.google.com/111823322896172247261/about" target="_blank"> Google+ </a></li>
           </ul>
           {{#if currentUser}}
+    	  <button id="activateDB" class="btn btn-lg btn-default" style="margin-left: 20px" type="button">CLICK ME BEFORE POPDB</button>
     	  <button id="popdb" class="btn btn-lg btn-default" style="margin-left: 20px" type="button"> populateDB</button>
     	  {{/if}}
         </div>

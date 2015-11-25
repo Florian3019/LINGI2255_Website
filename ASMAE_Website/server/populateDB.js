@@ -1,4 +1,18 @@
 Meteor.methods({
+
+	'activateDB' : function(userID) {
+		console.log("Activation of the DB");
+		console.log("activateDB grants you ADMIN access !");
+		Meteor.call("turnAdminInsecure", userID);
+
+		console.log("Activate GlobalValuesDB");
+		Meteor.call('activateGlobalValuesDB');
+
+		console.log("activateDB sets your email to verified");
+		var user = Meteor.users.findOne({_id:Meteor.userId()});
+		Accounts.addEmail(Meteor.userId(), user.emails[0].address, true);
+	},
+
     /*
 	 * Insert some users in the DB for the tournament specified as the first argument
 	 * This is magic
@@ -6,17 +20,6 @@ Meteor.methods({
 	'populateDB': function(tournamentDate, nTypes, nAlones, nUnregistered, nCourtSaturday, nCourtSunday, nCourtBoth, nStaff, nAdmin) {
 		console.log("Begin popDB for year "+tournamentDate.getFullYear());
 
-		console.log("Activate GlobalValuesDB");
-		Meteor.call('activateGlobalValuesDB');
-
-		console.log("popDB sets your email to verified");
-		var user = Meteor.users.findOne({_id:Meteor.userId()});
-		Accounts.addEmail(Meteor.userId(), user.emails[0].address, true);
-
-		console.log("popDB grants you ADMIN access !");
-		Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.isStaff":true, "profile.isAdmin":true}});
-
-		console.log("popDB launches tournament and activates GlobalValues collection");
 		var tournamentData = {
 			tournamentDate : tournamentDate,
 			tournamentPrice : 10

@@ -38,7 +38,6 @@ Meteor.methods({
 	// Method to launch the tournament registrations for this year's tournament.
 	'launchTournament': function(launchTournamentData,nid){
 		if(Meteor.call('isAdmin',nid)){
-
 			var data = {};
 			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
@@ -76,9 +75,7 @@ Meteor.methods({
 			GlobalValues.update({_id:"registrationsON"}, {$set: {
 				value : true
 			}}, {upsert: true}, function(err, result){
-				console.log("coucou 1");
 				if(err){
-					console.log("coucou 2");
 					throw new Meteor.Error("update GlobalValues registrationsON in launchTournament error: ", err);
 				}
 			});
@@ -182,7 +179,7 @@ Meteor.methods({
 	},
 
 	'turnAdmin': function(nid){
-		if(Meteor.call('isAdmin')){
+		if(Meteor.call('isAdmin', nid)){
 			Meteor.users.update({_id:nid}, {
            		$set: {"profile.isAdmin":1,"profile.isStaff":0}
          	});
@@ -194,7 +191,7 @@ Meteor.methods({
 	},
 
 	'turnStaff': function(nid){
-		if(Meteor.call('isAdmin')){
+		if(Meteor.call('isAdmin', nid)){
 			Meteor.users.update({_id:nid}, {
            		$set: {"profile.isAdmin":0,"profile.isStaff":1}
          	});
@@ -206,7 +203,7 @@ Meteor.methods({
 	},
 
 	'turnNormal': function(nid){
-		if(Meteor.call('isAdmin')){
+		if(Meteor.call('isAdmin', nid)){
 			Meteor.users.update({_id:nid}, {
 	        	$set: {"profile.isAdmin":0,"profile.isStaff":0}
 	      	});

@@ -12,19 +12,12 @@
     {{> mySpecialFilterPlayers}}
   </div>
   <div class="col-sm-2">
-    <label for="adminSelect">Admin</label>
-    <select id="adminSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
+    <label for="permSelect">Permissions</label>
+    <select id="permSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" selected="selected">Ignorer</option>
-                  <option value="Yes" >Oui</option>
-                  <option value="No">Non</option>
-    </select>
-  </div>
-  <div class="col-sm-2">
-    <label for="staffSelect">Staff</label>
-    <select id="staffSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
-                  <option value="Ignore" selected="selected">Ignorer</option>
-                  <option value="Yes">Oui</option>
-                  <option value="No">Non</option>
+                  <option value="Admin" >Admin</option>
+                  <option value="Staff">Staff</option>
+                  <option value="Normal">Normal</option>
     </select>
   </div>
 </div>
@@ -36,43 +29,10 @@
   <input class="form-control playerFilter" type="text" placeholder="Recherche"/>
 </template>
 
-<!-- <template name="mySpecialFilterEmail">
-  <input class="form-control emailFilter" type="text" placeholder="Email:"/>
-</template>
-
-<template name="mySpecialFilterFirstName">
-  <input class="form-control firstNameFilter" type="text" placeholder="Prénom:"/>
-</template>
-
-<template name="mySpecialFilterLastName">
-  <input class="form-control lastNameFilter" type="text" placeholder="Nom:"/>
-</template>
-
-<template name="mySpecialFilterPhone">
-  <input class="form-control phoneFilter" type="text" placeholder="Numéro de téléphone:"/>
-</template>
-
-<template name="mySpecialFilterRank">
-  <input class="form-control rankFilter" type="text" placeholder="Classement:"/>
-</template>
-
-
-<template name="mySpecialFilterAddress">
-  <input class="form-control addressFilter" type="text" placeholder="Adresse:"/>
-</template> -->
-
-<template name="isAdminLabel">
-  {{#if this.profile.isAdmin}}
-    <span class="glyphicon glyphicon-ok lendOk"></span>
-  {{else}}
-    <span class="glyphicon glyphicon-remove lendNot"></span>
-  {{/if}}
-</template>
-
-<template name="isStaffLabel">
-  {{#if this.profile.isStaff}}
-    <span class="glyphicon glyphicon-ok lendOk"></span>
-  {{else}}
-    <span class="glyphicon glyphicon-remove lendNot"></span>
-  {{/if}}
+<template name="changePermissions">
+  <select class="form-control myPermissionSelects" id="{{this._id}}" {{isDisabled this._id}}>
+    <option {{getSelected this "normal"}}>Normal</option>
+    <option {{getSelected this "staff"}}>Staff</option>
+    <option {{getSelected this "admin"}}>Admin</option>
+    </select>
 </template>

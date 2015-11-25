@@ -99,7 +99,12 @@ getCategoryForBirth = function(birth, tournamentDate) {
  *  @param birthDate is of type Date
  */
 getAge = function(birthDate, tournamentDateSpecified){
-    var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
+    var currentYearData = (GlobalValues.findOne({_id:"currentYear"}));
+    if(currentYearData===undefined){
+        console.error("getAge : currentYear is not defined");
+        return;
+    }
+    var currentYear = currentYearData.value;
     var tournamentDate;
     if (typeof tournamentDateSpecified !== 'undefined') {
         tournamentDate = tournamentDateSpecified;

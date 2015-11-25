@@ -32,25 +32,25 @@ Template.courtEmail.events({
 		var em = Meteor.users.findOne({_id:Courts.findOne({_id : checkboxes[i].id}).ownerID}).emails[0].address;
 		//Print du texte à envoyer
 	     	if(mail.value!=""){
-	     		Meteor.call('emailFeedback',em,"Charles De Lorraine : mail relatif à votre terrain",mail.value);
+	     		Meteor.call('emailFeedback',em,"Charles De Lorraine : mail relatif à votre terrain",mail.value, Meteor.userId());
 			checkboxesChecked.push(checkboxes[i]);
 	     		Meteor.call("addToModificationsLog", {"opType":"Envoi de mails aux courtsowners","details": "Mail envoyé : "+mail.value+"\n à : "+em});
 	     	}
 	  }
 	  // Return the array if it is non-empty, or null
-	  if(checkboxesChecked.length > 0){		
+	  if(checkboxesChecked.length > 0){
 	  	if(checkboxesChecked.length==1){
 	  		alert("Mail envoyé !")
 	  	}
 	  	else{
 	  		alert("Mails envoyés !")
 	  	}
-	  	Router.go('home');	  
+	  	Router.go('home');
 	  }
 	  else{
 	  	alert("vous n'avez pas coché de case ou entré de texte pour le mail que vous désirez envoyer.")
 	  }
-        
+
     },
     'click #SelectAll':function(event){
     	console.log("SelectAll");
@@ -66,7 +66,7 @@ Template.courtEmail.events({
 	       		target.id = this._id;
 	       	}
 	  	}
-	
+
     },
     'click #UnselectAll':function(event){
     	console.log("UnselectAll");
@@ -82,8 +82,7 @@ Template.courtEmail.events({
 				target.className = target.className.replace('courtSelected', '');
 	       	}
 		  }
-	
-    }
-    
-});
 
+    }
+
+});
