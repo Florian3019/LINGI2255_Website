@@ -45,13 +45,17 @@ Template.adminAddCourt.helpers({
     'player': function(){
         Session.set("adminAddCourt/selected", "");
         lastName = Session.get('adminAddCourt/lastName');
+        if(lastName!==undefined) lastName = lastName.toLowerCase();
         firstName = Session.get('adminAddCourt/firstName');
+        if(firstName!==undefined) firstName = firstName.toLowerCase();
         address = Session.get('adminAddCourt/address');
+        if(address!==undefined) address = address.toLowerCase();
+
 
         var query = [];
-        if(lastName!=="" && lastName!==undefined) query.push({$where:function(){if(this.profile.lastName!==undefined) return this.profile.lastName.indexOf(lastName)>-1;}});
-        if(firstName!=="" && firstName!==undefined) query.push({$where:function(){if(this.profile.firstName!==undefined) return this.profile.firstName.indexOf(firstName)>-1;}});
-        if(address!=="" && address!==undefined) query.push({$where:function(){return this.emails[0].address.indexOf(address)>-1;}});
+        if(lastName!=="" && lastName!==undefined) query.push({$where:function(){if(this.profile.lastName!==undefined) return this.profile.lastName.toLowerCase().indexOf(lastName)>-1;}});
+        if(firstName!=="" && firstName!==undefined) query.push({$where:function(){if(this.profile.firstName!==undefined) return this.profile.firstName.toLowerCase().indexOf(firstName)>-1;}});
+        if(address!=="" && address!==undefined) query.push({$where:function(){return this.emails[0].address.toLowerCase().indexOf(address)>-1;}});
 
         cursor = [];
         if(query.length>0) cursor = Meteor.users.find({$and:query}).fetch();
