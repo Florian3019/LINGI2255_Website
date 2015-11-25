@@ -227,7 +227,7 @@ Meteor.methods({
 			function getCourtArray() {
 				var rand = getRandomInt(1,11);
 				var array = [];
-				var globalValueDocument = Meteor.call('getNextCourtNumber', tournamentYear);
+				var globalValueDocument = Meteor.call('getNextCourtNumber');
 				nextCourtNumber = globalValueDocument.value;
 
 				for(var i = 0; i < rand; i++){
@@ -235,7 +235,7 @@ Meteor.methods({
 					nextCourtNumber++;
 					nbr--;
 				}
-				Meteor.call('setNextCourtNumber', tournamentYear, nextCourtNumber);
+				Meteor.call('setNextCourtNumber', nextCourtNumber);
 				return array;
 			}
 			function getInstructions() {
