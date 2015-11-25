@@ -36,9 +36,8 @@ Meteor.methods({
 	},
 
 	// Method to launch the tournament registrations for this year's tournament.
-	'launchTournament': function(launchTournamentData){
-		if(Meteor.call('isAdmin', Meteor.userId())){
-
+	'launchTournament': function(launchTournamentData,nid){
+		if(Meteor.call('isAdmin',nid)){
 			var data = {};
 			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
@@ -1645,12 +1644,13 @@ Meteor.methods({
 /*
 	@param to: is for the receiver email,
 	@param subject : is for the object of the mail,
-	@param data : var dataContext = {
-											intro:"Bonjour tdc,",
-											message:"j'aurais pu mettre un lorem..."
-										};
+	@param data : var data = {
+      intro:"Bonjour Joseph !",
+			important:"lorem1",
+			texte:"lorem 2",
+			encadre:"final2"};
 	*/
-	'emailFeedback': function (to, subject, data) {
+	'emailFeedback': function (to, subject, data,nid) {
 
 
 							// Don't wait for result
@@ -1672,7 +1672,7 @@ Meteor.methods({
 								}
 
 								// Send the request
-                if (Meteor.call('isStaff') || Meteor.call('isAdmin')){// || Meteor.user().emails[0].address == to) {
+                if(Meteor.call('isStaff',nid) || Meteor.call('isAdmin',nid)){
                   Meteor.http.post(postURL, options, onError);
                   console.log("Email sent");
                 }
@@ -1680,6 +1680,23 @@ Meteor.methods({
                   console.error("Forbidden permissions to send mail");
                 }
 	},
+
+  'emailtoAllUsers':function(nid){
+    var mails=[];
+    var usersCursor = Meteor.users.find();
+    usersCursor.forEach( function(user) {
+      mails.push(user.emails[0].address);
+    });
+    var subject = "[Le Charles De Lorraine] Lancement des inscriptions";
+    var data  ={
+      intro:"Bonjour,",
+      important:"Nous avons une grande nouvelle à vous annoncer !",
+      texte:"Depuis aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
+      encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
+    };
+    Meteor.call('emailFeedback',mails.toString(),subject,data,nid);
+
+  },
 
 
 

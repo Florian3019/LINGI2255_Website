@@ -837,7 +837,7 @@ Template.tournamentRegistration.events({
 		    		var data = {
 		    			intro:"",
 						message:body};
-					Meteor.call('emailFeedback',to,"Demande d'inscription au Charles de Lorraine",Blaze.toHTMLWithData(Template.mail,data));
+					Meteor.call('emailFeedback',to,"Demande d'inscription au Charles de Lorraine",Blaze.toHTMLWithData(Template.mail,data),Meteor.userId());
 	        }
 
         	if(remove){
