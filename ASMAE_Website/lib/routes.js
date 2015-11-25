@@ -143,11 +143,6 @@ Router.route('/lancer-inscriptions-tournoi', {
 	template: 'launchTournament'
 });
 
-Router.route('/template-admin', {
-	name: 'adminTemplate',
-	template: 'adminTemplate'
-});
-
 Router.route('/admin-ajout-terrain', {
 	name: 'adminAddCourt',
 	template: 'adminAddCourt'
