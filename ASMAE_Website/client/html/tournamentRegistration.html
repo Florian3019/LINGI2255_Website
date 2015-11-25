@@ -247,11 +247,11 @@
           <div class="form-group has-feedback" id="dateMatchDiv">
             <label for="dateMatch">S'incrire pour le tournoi:</label>
             <br>
-            <select name="dateMatch" id="dateMatch"  class="form-control dateMatch" style="width: 30%; display: inline">
+            <select name="dateMatch" id="dateMatchSelect"  class="form-control dateMatch" style="width: 30%; display: inline">
               <option value="" hidden></option>
-				      <option value="family" selected="selected">Tournoi des familles (Samedi)</option>
-				      <option value="saturday">Mixtes (Samedi)</option>
-				      <option value="sunday">Doubles (Dimanche)</option>
+				      <option value="saturday" selected="selected">Mixtes (Samedi)</option>
+				      <option value="family" >Tournoi des familles (Samedi)</option>
+              <option value="sunday">Doubles (Dimanche)</option>
             </select>
             <div id="dateMatchError" hidden>
               <span class="help-block" >Merci de préciser le tournoi</span>

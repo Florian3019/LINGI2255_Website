@@ -24,6 +24,26 @@
 						<input type="text" name="address" id="address" value="{{users.address}}" class="form-control">
 					</div>
 				</div>
+				<div class="row">
+					<div class="col-sm-6 col-sm-offset-3">
+				          <div id="infoBox" class="alert alert-info" role="alert" hidden>
+					        <h4>
+					          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+					          <span class="sr-only">Info:</span>
+					          <span id="infoMsg">Pas de propriétaire trouvé...</span>
+					        </h4>
+					      </div>
+  					</div>
+				</div>
+				<div class="row">
+	        		<div class="col-sm-3 col-sm-offset-3">
+	  					<ul class="list-group">
+	    					{{#each player}}
+	      					<li class="list-group-item playerFound" id="{{this._id}}">{{profile.lastName}}, {{profile.firstName}}</li>
+	    					{{/each}}
+	  					</ul>
+	  				</div>
+				</div>
 				<br>
 				<div class="row">
 					<div class="col-sm-2 col-sm-offset-3">
@@ -124,15 +144,6 @@
 						<button type="submit" class="btn btn-default">Enregistrer</button>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-        		<div class="col-sm-3 col-sm-offset-3">
-  					<ul class="list-group">
-    					{{#each player}}
-      					<li class="list-group-item playerFound">{{profile.lastName}}, {{profile.firstName}}</li>
-    					{{/each}}
-  					</ul>
-  				</div>
 			</div>
 		</form>
 	</div>
