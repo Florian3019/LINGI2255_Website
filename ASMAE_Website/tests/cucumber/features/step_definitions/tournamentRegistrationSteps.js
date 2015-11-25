@@ -27,11 +27,7 @@ module.exports = function () {
     	client.setValue('#country','Belgique');
     	client.click('#Virement');
     	client.setValue('#playerWishes','Avoir une grande piscine et plein d argent');
-    	client.click('select#rank.form-control');
-        client.click('option[value="C30.5 "]');
-        client.click('select#dateMatch.form-control.dateMatch');
-        client.click('option[value="saturday"]');
-    	client.setValue('#emailPlayer','serge@serge.com');
+    	client.setValue('input#emailPlayer.form-control','serge@serge.com');
     	client.click('button#submit.btn.btn-default');
     });
 
@@ -57,7 +53,7 @@ module.exports = function () {
         expect(address).toEqual("23, Place de l université. Boite 123b");
 		expect(city).toEqual("1348 Louvain La Neuve");
         expect(country).toEqual("Belgique");
-        expect(rank).toEqual("C30.5");
+        expect(rank).toEqual("NC");
         expect(paiement).toEqual("Virement bancaire");
         
         
