@@ -29,9 +29,9 @@ Meteor.methods({
 		}
 	},
 
-	'activateCourtDB' : function(tournamentYear) {
-		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
-			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, value:1});
+	'activateCourtDB' : function() {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
+			GlobalValues.insert({_id:"nextCourtNumber", value:1});
 		}
 	},
 
@@ -121,19 +121,19 @@ Meteor.methods({
 		return y;
 	},
 
-	'getNextCourtNumber' : function(tournamentYear) {
-		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
+	'getNextCourtNumber' : function() {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
 			console.warn("No court number yet, activating CourtDB");
-			Meteor.call('activateCourtDB',tournamentYear);
+			Meteor.call('activateCourtDB');
 			return 1;
 		}
-		return GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear});
+		return GlobalValues.findOne({_id:"nextCourtNumber"});
 	},
 
-	'setNextCourtNumber' : function(tournamentYear, value) {
-		globalValueDocument = GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear});
+	'setNextCourtNumber' : function(value) {
+		globalValueDocument = GlobalValues.findOne({_id:"nextCourtNumber"});
 		if (typeof globalValueDocument === 'undefined') {
-			console.error("Error setNextCourtNumber : globalValueDocument not found for year "+tournamentYear);
+			console.error("Error setNextCourtNumber : globalValueDocument not found");
 			return undefined;
 		}
 		GlobalValues.update(globalValueDocument, {$set: {
