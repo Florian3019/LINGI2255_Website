@@ -7,6 +7,7 @@ Feature: Incorrect fill of the form
 
     Background: Tournament registrations launched
         Given An admin has been created
+        Given The tournament inscriptions were launched
 
     @watch
     Scenario: Authenticated user can register to the tournament

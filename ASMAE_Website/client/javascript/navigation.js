@@ -31,8 +31,11 @@ Template.navigation.helpers({
 		}
 	},
 	'registrationsON': function(){
-         var v =  GlobalValues.findOne({_id: "registrationsON"});
-         if(v!==undefined) return v.value;
+        var registrationsON = GlobalValues.findOne({_id:"registrationsON"});
+        if (typeof registrationsON !== 'undefined') {
+            return registrationsON.value;
+        }
+        return false;
     }
 
 });
