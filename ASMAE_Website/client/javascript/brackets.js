@@ -687,6 +687,21 @@ var getStringOptions = function(){
       " année: "+Session.get("PoolList/Year");
 }
 
+// var updateSelectedNumber = function(document){
+//   console.log("updateSelectedNumber");
+//   a = document.getElementById("selectedForTournament");
+//   b = document.getElementById("notSelectedForTournament");
+//   console.log(a);
+//   console.log(b);
+//   if(a!=null && a!==undefined && b!=null && b!=undefined){
+//     s = a.getElementsByClassName("pairs").length;
+//     ns =b.getElementsByClassName("pairs").length;
+//     console.log(s);
+//     console.log(ns);
+//     Session.set("brackets/selectedSize",[s,ns]);
+//   }
+// }
+
 Template.brackets.onRendered(function(){
   Session.set('brackets/buildingTournament', false); // By default, we are not building the tournament
 });

@@ -540,7 +540,19 @@ Template.poolList.onRendered(function() {
 	Session.set("PoolList/Category","");
 });
 
+var showPairModal = function(event){
+	user = Meteor.user();
+	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
+		return; // Do nothing
+	}
+	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
+}
+
 Template.poolList.events({
+	'click .clickablePoolItem':function(event){
+		showPairModal(event);
+	},
+
 	/*
 		Collects the state of the table of pools to save it into the db
 	*/
@@ -1114,37 +1126,6 @@ Template.poolList.helpers({
 											alonePairsContainerTemplate
 *******************************************************************************************************************/
 
-var showPairModal = function(event){
-	user = Meteor.user();
-	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
-		return; // Do nothing
-	}
-	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
-}
-
-var getColorFromPlayer = function(player){
-		count = 0;
-		code = 0;
-		if(player.playerWish){
-			count += 1;
-			code = 1;
-		}
-		if(player.courtWish){
-			count+=1;
-			code = 2;
-		}
-		if(player.otherWish){
-			count+=1;
-			code = 3;
-		}
-	
-		if(count>1) return 'cyan';
-		if(code == 1) return 'orange';
-		if(code == 2) return 'red';
-		if(code == 3) return 'magenta';
-		return "";
-}
-
 Template.alonePairsContainerTemplate.onRendered(function(){
 	// Add the container of this template as a container that can receive draggable objects
   	drake.containers.push(document.querySelector('#alonepairs'));
@@ -1153,12 +1134,6 @@ Template.alonePairsContainerTemplate.onRendered(function(){
 var hasBothPlayers = function(pair){
 	return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
 }
-
-Template.alonePairsContainerTemplate.events({
-	'click .clickablePoolItem':function(event){
-		showPairModal(event);
-	}
-})
 
 Template.alonePairsContainerTemplate.helpers({
 	'getAlonePairs' : function(typeData){
@@ -1212,12 +1187,6 @@ Template.poolItem.helpers({
 
 	'getColor' : function(player){
 		getColorFromPlayer(player);
-	}
-});
-
-Template.poolItem.events({
-	'click .clickablePoolItem':function(event){
-		showPairModal(event);
 	}
 });
 

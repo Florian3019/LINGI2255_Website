@@ -1,7 +1,21 @@
 
 var drake; // Draggable object
 
+var updateSelectedNumber = function(document){
+	s = document.getElementById("selectedForTournament").getElementsByClassName("pairs").length;
+	ns = document.getElementById("notSelectedForTournament").getElementsByClassName("pairs").length;
+	Session.set("brackets/selectedSize",[s,ns]);
+}
+
 Template.buildTournament.helpers({
+	'getNotSelectedSize':function(){
+		return Session.get("brackets/selectedSize")[1];
+	},
+
+	'getSelectedSize':function(){
+		return Session.get("brackets/selectedSize")[0];
+	},
+
 	'getCurrentlyBuilding':function(){
 		return Session.get("brackets/buildingTournament");
 	},
@@ -75,6 +89,7 @@ Template.buildTournament.helpers({
 			document.addEventListener('mousemove', onMouseMove); 
   		  	el.className = el.className.replace('ex-moved', '');
   	  	}).on('drop', function (el, target, source, sibling) {
+	  		updateSelectedNumber(document);
 	    	el.className += ' ex-moved';
 	  	}).on('over', function (el, container) {
 	    	container.className += ' ex-over';
@@ -91,6 +106,10 @@ var getStringOptions = function(){
 };
 
 Template.buildTournament.events({
+	'click .clickablePoolItem':function(event){
+		showPairModal(event);
+	},
+
 	'click #continueToTournament':function(event){
 		var selected = document.getElementById("selectedForTournament").getElementsByClassName("pairs");
 
@@ -143,17 +162,13 @@ var showPairModal = function(event){
 	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
 		return; // Do nothing
 	}
-	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
+	mod = $('#pairModal'+event.currentTarget.dataset.id);
+	console.log(mod);
+	mod.modal('show');
 }
 
-Template.buildTournamentItem.events({
-	'click .clickablePoolItem':function(event){
-		showPairModal(event);
-	},
-})
 
 Template.buildTournamentItem.helpers({
-
 	'getPlayer' : function(playerId){
 		return Meteor.users.findOne({_id:playerId});
 	},
@@ -170,9 +185,7 @@ Template.buildTournamentItem.helpers({
 	},
 
 	'getColor' : function(player){
-		if(player.wish || player.constraint){
-			return 'orange';
-		}
+		return getColorFromPlayer(player);
 	}
 });
 
@@ -182,16 +195,27 @@ Template.buildContainer.onRendered(function(){
  	*/
  	container = document.querySelector('#'+this.data.ID);
  	drake.containers.push(container);
+
+	// updateSelectedNumber(document);
 });
+
+// Template.buildContainer.events({
+// 	'change .buildContainer':function(event){
+// 		console.log("hi");
+// 		updateSelectedNumber(document);
+// 	}
+// })
 
 Template.buildContainer.helpers({
 	'getLoserPairPoints':function(){
 		var pairPoints = Session.get("brackets/pairPoints");
+		Session.set("brackets/selectedSize",[pairPoints.winnerPairPoints.length,pairPoints.loserPairPoints.length]);
 		return pairPoints.loserPairPoints;
 	},
 
 	'getWinnerPairPoints':function(){
 		var pairPoints = Session.get("brackets/pairPoints");
+		Session.set("brackets/selectedSize",[pairPoints.winnerPairPoints.length,pairPoints.loserPairPoints.length]);
 		return pairPoints.winnerPairPoints;
 	},
 })

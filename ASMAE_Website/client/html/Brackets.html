@@ -4,16 +4,18 @@
 			{{#with getYear}}
 				{{#with getType}}
 					{{#with getCategory}}
-					<div id="bracketOptions" style="display:none">
-						<button type="button" id="start" class="btn btn-default btn-lg">
-						  <span class="glyphicon glyphicon-star"></span> Start
-						</button>
-					  	<div class="pull-right">
-						  <h4>Gagnants par poule:
-						 	<input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
-						  </h4>
-	 					</div>
-		 			</div>
+					{{#unless buildingTournament}}
+						<div id="bracketOptions" style="display:none">
+							<button type="button" id="start" class="btn btn-default btn-lg">
+							  <span class="glyphicon glyphicon-star"></span> Start
+							</button>
+						  	<div class="pull-right">
+							  <h4>Gagnants par poule:
+							 	<input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
+							  </h4>
+		 					</div>
+			 			</div>
+		 			{{/unless}}
 		 			{{/with}}
 		 		{{/with}}
 			{{/with}}

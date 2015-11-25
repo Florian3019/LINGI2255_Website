@@ -153,3 +153,26 @@ getTypeForPlayer = function(dateMatch, gender) {
         return undefined;
     }
 }
+
+getColorFromPlayer = function(player){
+        count = 0;
+        code = 0;
+        if(player.playerWish){
+            count += 1;
+            code = 1;
+        }
+        if(player.courtWish){
+            count+=1;
+            code = 2;
+        }
+        if(player.otherWish){
+            count+=1;
+            code = 3;
+        }
+    
+        if(count>1) return 'cyan';
+        if(code == 1) return 'orange';
+        if(code == 2) return 'red';
+        if(code == 3) return 'magenta';
+        return "";
+}

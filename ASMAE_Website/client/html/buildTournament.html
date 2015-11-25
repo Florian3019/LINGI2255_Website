@@ -1,10 +1,11 @@
 <template name="buildTournament">
-	{{resetDrake}}
+
 	{{#if getCurrentlyBuilding}}
+		{{resetDrake}}
 	<div class="row">
   		<div class="col-sm-6">
 			<center>
-				<div class="poolLabel"><span class="label label-primary">Non séléctionés</span></div>
+				<div class="poolLabel"><span class="label label-primary">Non séléctionés ({{getNotSelectedSize}})</span></div>
 				<div class='parent'>
 				  	<div class='PoolWrapper'>
 				  		{{>buildContainer ID="notSelectedForTournament"}}
@@ -14,7 +15,7 @@
 		</div>
 		<div class="col-sm-6">
 			<center>
-				<div class="poolLabel"><span class="label label-primary">Séléctionés</span></div>
+				<div class="poolLabel"><span class="label label-primary">Séléctionés ({{getSelectedSize}})</span></div>
 				<div class='parent'>
 				  	<div class='PoolWrapper'>
 				    	{{>buildContainer ID="selectedForTournament"}}
@@ -32,7 +33,7 @@
 
 
 <template name="buildContainer">
-	<div class='poolContainer' id='{{ID}}'>
+	<div class='poolContainer buildContainer' id='{{ID}}'>
 		{{#if equals ID "selectedForTournament"}}
 	  		{{#each getWinnerPairPoints}}
 	  			{{>buildTournamentItem PAIRID=this.pairId POOLID=this.poolId COURT=this.courtNumber SCORE=this.points}}
@@ -70,9 +71,9 @@ Takes 2 arguments :
 	        </li>
         {{/with}}
       </ul>
+	  	{{#unless equals this.player2._id undefined}}
+	    {{>modalItem PAIR=this POOL=../POOLID SHOWOPTIONS=false}} <!-- Don't set SEX here, since we should not be able to change the type of the pair -->
+	    {{/unless}}
     </div>
-    {{#unless equals this.player2._id undefined}}
-    {{>modalItem PAIR=this POOL=../POOLID SHOWOPTIONS=false}} <!-- Don't set SEX here, since we should not be able to change the type of the pair -->
-    {{/unless}}
   {{/with}}
 </template>
