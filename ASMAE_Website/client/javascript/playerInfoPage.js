@@ -4,10 +4,11 @@ Template.playerInfoPage.helpers({
 	}
 });
 
-
+/*
 Template.playerInfoPage.events({
 	"click": function(event){
 		event.preventDefault();
 		Router.go('profileEdit',{"_id":Session.get('selected')._id});
 	}
 });
+*/

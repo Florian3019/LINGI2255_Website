@@ -216,7 +216,23 @@ Meteor.methods({
 			return false;
 		}
 	},
-
+	'deleteUser': function(nid){
+		userToDelete = Meteor.users.findOne({"_id":nid});
+		addressId = userToDelete.profile.addressID;
+		if(addressId != undefined){
+			Addresses.remove({_id:addressId});
+			Meteor.users.update({_id: nid} , {$set: {"profile.addressID": undefined}});
+		}
+		courtId = Courts.findOne({"ownerID":nid});
+		if(courtId != undefined){
+			Courts.remove({_id:courtId});
+			//Meteor.users.update({_id: nid} , {$set: {"profile.courtID": undefined}});
+		}
+		Meteor.users.update({_id: nid} , {$set: {"profile.isStaff": false}});
+		Meteor.users.update({_id: nid} , {$set: {"profile.isAdmin": false}});
+		Meteor.users.update({_id: nid} , {$set: {"services": undefined}});
+		Meteor.users.update({_id: nid} , {$set: {"profile.phone": undefined}});
+	},
 	'getPairCategory' : function(type, p1, p2){
 		var category;
 		if(type==="family"){

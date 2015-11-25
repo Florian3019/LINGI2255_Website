@@ -184,13 +184,117 @@ Template.playerInfoTemplate.events({
 		/*
 			Check if the button was in a popup (modal), if so, close it before going to profileEdit
 		*/
-		var modalId = event.currentTarget.dataset.modal;
-		if(modalId) $(modalId).modal('hide');
-
-		/*	Go to profile edit	*/
-		Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
-		console.log("clicked modifier");
+		if(Session.get('closeModal') != undefined){
+			var modalId = '#pairModal'+Session.get('closeModal')
+			Session.set('closeModal', undefined)
+			$(modalId).on('hidden.bs.modal', function() {
+            	Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
+        	}).modal('hide');
+        		
+		}
+		else{
+			/*	Go to profile edit	*/
+			Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
+			console.log("clicked modifier");
+		}
 	},
+	'click #deleteUser' : function(event){
+
+		user = Meteor.users.findOne({"_id":this.id})
+		if(Session.get('closeModal') != undefined){	
+			if (confirm('Impossible de supprimer un joueur depuis ce menu.\n Voulez vous être redirigé ?')) {
+				Session.set('selected', user);
+				var modalId = '#pairModal'+Session.get('closeModal')
+				Session.set('closeModal', undefined)
+				$(modalId).on('hidden.bs.modal', function() {
+            		Router.go('playerInfoPage');
+        		}).modal('hide');
+        		
+			}
+		}
+		else {
+			
+			player1 = Pairs.find({"player1._id": this.id}).fetch()
+			player2 = Pairs.find({"player2._id": this.id}).fetch()
+			if(player1.length == 0 && player2 == 0){
+				console.log(user)
+				if (confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
+					Meteor.call('deleteUser',this.id);
+					Router.go('home')
+				}
+			}
+			else{
+				pools = Pools.find().fetch()
+				var pool_in = []
+				for(i = 0; i < pools.length; i++){
+					for(j = 0; j<pools[i].pairs.length; j++){
+						for(k = 0; k<player1.length; k++){
+							if(pools[i].pairs[j] === player1[k]._id){
+								pool_in.push(pools[i]._id);      
+							}
+						}
+						for(k = 0; k<player2.length; k++){
+							if(pools[i].pairs[j] === player2[k]._id){
+								pool_in.push(pools[i]._id);
+							}
+						}
+					}
+				}
+				types = Types.find().fetch()
+				var types_in = []
+				for(i = 0; i < types.length; i++){
+					for(j = 0; j < pool_in.length; j++){
+						for(k = 0; types[i].preminimes !== undefined && k < types[i].preminimes.length; k++){
+							if(types[i].preminimes[k] === pool_in[j]){
+								types_in.push(types[i]._id);
+								k = types[i].preminimes.length;   
+							}	
+						}
+						for(k = 0; types[i].minimes !== undefined && k < types[i].minimes.length; k++){
+							if(types[i].minimes[k] === pool_in[j]){
+								types_in.push(types[i]._id); 
+								k = types[i].preminimes.length;     
+							}	
+						}
+						for(k = 0; types[i].cadets !== undefined && k < types[i].cadets.length; k++){
+							if(types[i].cadets[k] === pool_in[j]){
+								types_in.push(types[i]._id);
+								k = types[i].preminimes.length;      
+							}	
+						}
+						for(k = 0; types[i].scolars !== undefined && k < types[i].scolars.length; k++){
+							if(types[i].scolars[k] === pool_in[j]){
+								types_in.push(types[i]._id);
+								k = types[i].preminimes.length;      
+							}	
+						}
+						for(k = 0; types[i].juniors !== undefined && k < types[i].juniors.length; k++){
+							if(types[i].juniors[k] === pool_in[j]){
+								types_in.push(types[i]._id); 
+								k = types[i].preminimes.length;     
+							}	
+						}
+						for(k = 0; types[i].seniors !== undefined && k < types[i].seniors.length; k++){
+							if(types[i].seniors[k] === pool_in[j]){
+								types_in.push(types[i]._id); 
+								k = types[i].preminimes.length;     
+							}	
+						}
+						for(k = 0; types[i].elites !== undefined && k < types[i].elites.length; k++){
+							if(types[i].elites[k] === pool_in[j]){
+								types_in.push(types[i]._id);  
+								k = types[i].preminimes.length;    
+							}	
+						}
+					}
+				}
+				console.log(types_in)
+				alert("impossible de supprimer ce joueur")
+				Router.go('home')
+			}
+		}
+		
+	}
 
 });
 

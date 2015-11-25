@@ -897,6 +897,15 @@ Template.poolList.helpers({
 											alonePairsContainerTemplate
 *******************************************************************************************************************/
 
+var showPairModal = function(event){
+	Session.set('closeModal',event.currentTarget.dataset.id)
+	user = Meteor.user();
+	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
+		return; // Do nothing
+	}
+	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
+}
+
 Template.alonePairsContainerTemplate.onRendered(function(){
 	// Add the container of this template as a container that can receive draggable objects
   	drake.containers.push(document.querySelector('#alonepairs'));
