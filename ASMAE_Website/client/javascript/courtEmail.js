@@ -19,7 +19,6 @@ Template.courtEmail.events({
     },
 
     'click #Boutton': function(event){
-	console.log("Check d'une Check");
         event.preventDefault();
          var checkboxes = document.getElementsByClassName("courtSelected");
 
@@ -53,7 +52,6 @@ Template.courtEmail.events({
 
     },
     'click #SelectAll':function(event){
-    	console.log("SelectAll");
         event.preventDefault();
         var checkboxes = document.getElementsByTagName("tbody")[0].children;
  		for (var i=0; i<checkboxes.length; i++) {
@@ -69,7 +67,6 @@ Template.courtEmail.events({
 
     },
     'click #UnselectAll':function(event){
-    	console.log("UnselectAll");
         event.preventDefault();
          var checkboxes = document.getElementsByTagName("tbody")[0].children;
 		 for (var i=0; i<checkboxes.length; i++) {

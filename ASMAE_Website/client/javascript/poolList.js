@@ -227,7 +227,7 @@ Template.poolsSidebarCollapsableMenu.helpers({
 
 		var y = Years.findOne({_id:year});
 
-		if(year!=="" && y==undefined){
+		if(year!=="" && year!==undefined && y==undefined){
 			setInfo(document, "Pas de données trouvées pour l'année "+ year);
 		}
 		else{
@@ -666,7 +666,7 @@ Template.poolList.helpers({
 			setInfo(document, "Veuillez choisir l'année");
 		}
 
-		if(year!=undefined && y==undefined){
+		if(year!=undefined && year !==undefined && y==undefined){
 			setInfo(document, "Pas de données trouvées pour l'année "+ year);
 		}
 		else{
