@@ -36,10 +36,10 @@ Template.allCourtsTable.helpers({
             }
 
             if(sunday=="Yes"){
-              if(!this.dispoSamedi) return false;
+              if(!this.dispoDimanche) return false;
             }
             else if(sunday=="No"){
-              if(this.dispoSamedi) return false;
+              if(this.dispoDimanche) return false;
             }
 
             if(lend=="Yes"){
