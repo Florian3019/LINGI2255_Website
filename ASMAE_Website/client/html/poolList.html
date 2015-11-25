@@ -270,7 +270,7 @@
         </div>
         <div class="modal-body">
           <div class="panel panel-primary pairInfoBox">
-            {{#if showOptions}}
+            {{#if SHOWOPTIONS}}
               <center>
                 <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player1._id}}" data-player="{{PAIR.player1._id}}" data-poolid="{{POOL}}">
                  Choisir comme chef de poule
@@ -293,7 +293,7 @@
           </div>
           
           {{#if equals PAIR.player2._id undefined}}
-            {{#if showOptions}}
+            {{#if SHOWOPTIONS}}
             <div class="dropdown">
               
               <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -309,7 +309,7 @@
             {{/if}}
           {{else}}
           <div class="panel panel-primary pairInfoBox">
-            {{#if showOptions}}
+            {{#if SHOWOPTIONS}}
             <center>
               <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player2._id}}" data-player="{{PAIR.player2._id}}" data-poolid="{{POOL}}">Choisir comme chef de poule</button>
             </center>
