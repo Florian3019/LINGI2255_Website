@@ -14,8 +14,16 @@ Template.adminAddCourt.helpers({
         }
     },
 
+    'getSelectedOwner':function(){
+        return Session.get("adminAddCourt/selected");
+    },
+
     'selectedSurface': function(value, surfaceName){
         return value === surfaceName ? 'selected' : '';
+    },
+
+    'searchComplete':function(){
+        return Session.get("adminAddCourt/searchComplete");
     },
 
     'isPrivate': function(value){
@@ -41,24 +49,19 @@ Template.adminAddCourt.helpers({
         address = Session.get('adminAddCourt/address');
 
         var query = [];
-        if(lastName!=="" && lastName!==undefined) query.push({$where:function(){return this.profile.lastName.indexOf(lastName)>-1;}});
-        if(firstName!=="" && firstName!==undefined) query.push({$where:function(){return this.profile.firstName.indexOf(firstName)>-1;}});
+        if(lastName!=="" && lastName!==undefined) query.push({$where:function(){if(this.profile.lastName!==undefined) return this.profile.lastName.indexOf(lastName)>-1;}});
+        if(firstName!=="" && firstName!==undefined) query.push({$where:function(){if(this.profile.firstName!==undefined) return this.profile.firstName.indexOf(firstName)>-1;}});
         if(address!=="" && address!==undefined) query.push({$where:function(){return this.emails[0].address.indexOf(address)>-1;}});
 
         cursor = [];
         if(query.length>0) cursor = Meteor.users.find({$and:query}).fetch();
 
-        infoBox = document.getElementById("infoBox");
-        if(infoBox!==null && infoBox!==undefined){
-            if(cursor.length==0){
-                infoBox.removeAttribute("hidden");
-                return [];
-            }
-            else{
-                infoBox.setAttribute("hidden","");
-            }
+        if(cursor.length>0){
+            Session.set("adminAddCourt/searchComplete",true);
         }
-
+        else{
+            Session.set("adminAddCourt/searchComplete",false);
+        }
         return cursor;
     }
 });
@@ -70,14 +73,17 @@ Template.adminAddCourt.onRendered(function(){
 Template.adminAddCourt.events({
     'keyup #lastName':function(event){
         Session.set('adminAddCourt/lastName', event.currentTarget.value);
+        Session.set("adminAddCourt/searchComplete",true);
     },
 
     'keyup #firstName':function(event){
         Session.set('adminAddCourt/firstName', event.currentTarget.value);
+        Session.set("adminAddCourt/searchComplete",true);
     },
 
     'keyup #address':function(event){
         Session.set('adminAddCourt/address', event.currentTarget.value);
+        Session.set("adminAddCourt/searchComplete",true);
     },
 
 
