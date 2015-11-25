@@ -215,10 +215,10 @@ playerToString = function(player){
     if(addr!==undefined) theString += addressToString(addr);
     theString += player.profile.firstName += " ";
     theString += player.profile.lastName += " ";
-    theString += player.profile.phone += " ";
-    theString += player.profile.AFT += " ";
-    theString += player.profile.gender += " ";
-    theString += player.profile.birthDate.toLocaleString() + " ";
+    if(player.profile.phone!==undefined) theString += player.profile.phone += " ";
+    if(player.profile.AFT!==undefined) theString += player.profile.AFT += " ";
+    if(player.profile.gender!==undefined) theString += player.profile.gender += " ";
+    if(player.profile.birthDate!==undefined) theString += player.profile.birthDate.toLocaleString() + " ";
 
     for(var i=0; i<player.emails.length;i++){
         theString += player.emails[i].address;

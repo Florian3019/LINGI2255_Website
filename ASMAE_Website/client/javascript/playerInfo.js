@@ -12,7 +12,8 @@ Template.playersInfo.onRendered(function(){
 
 Template.playersInfo.helpers({
     userCollection: function () {
-         input = Session.get("playerInfo/input").toLowerCase();
+        input = Session.get("playerInfo/input")
+        if(input!==undefined) input = input.toLowerCase();
 
         isStaff = Session.get("playerInfo/isStaff");
         isAdmin = Session.get("playerInfo/isAdmin");
@@ -20,7 +21,7 @@ Template.playersInfo.helpers({
         noInput = (input ==="" || input===undefined || input === null) && isStaff==="Ignore" && isAdmin==="Ignore";
 
         if(noInput) return Meteor.users.find();
-        inputArray = input.split(" ");
+        if(input!==undefined) inputArray = input.split(" ");
         query = {$where: function(){
             if(isAdmin=="Yes"){
               if(!this.profile.isAdmin) return false;
@@ -35,12 +36,13 @@ Template.playersInfo.helpers({
             else if(isStaff=="No"){
               if(this.profile.isStaff) return false;
             }
+            if(input!==undefined){
+                var searchString = playerToString(this);
 
-            var searchString = playerToString(this);
-
-            for(var i=0; i<inputArray.length;i++){
-                if(searchString.indexOf(inputArray[i])==-1){
-                    return false;
+                for(var i=0; i<inputArray.length;i++){
+                    if(searchString.indexOf(inputArray[i])==-1){
+                        return false;
+                    }
                 }
             }
             return true;
