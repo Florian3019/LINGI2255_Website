@@ -1,122 +1,60 @@
-// var options = {
-//   keepHistory: 1000 * 60 * 5,
-//   localSearch: true
-// };
-// var fields = ['street', 'number', 'city', 'zipCode'];
-
-// CourtSearch = new SearchSource('courtsSearch', fields, options);
-
-// Template.courtSearch.helpers({
-//   'getCourts': function() {
-//     return CourtSearch.getData({
-//       transform: function(matchText, regExp) {
-//         return matchText.replace(regExp, "<b>$&</b>");
-//       }
-//     });
-//   },
-
-//   'isLoading': function() {
-//     return CourtSearch.getStatus().loading;
-//   },
-
-//   'courtInfos': function(addr){
-//     var court = Courts.findOne({addressID: addr._id});
-//     var result = {};
-//     result.court = court;
-//     result.address = addr;
-//     return result;
-//   },
-
-//   'courtOwner': function(ownerID){
-//     var owner = Meteor.users.findOne(ownerID);
-//     if(owner.profile.firstName){
-//       return owner.profile.firstName + " " + owner.profile.lastName;
-//     }
-//     else{
-//       return owner.emails[0].address;
-//     }
-//   },
-
-//   'checkedForDay': function(day){
-//     if(day){
-//       return "glyphicon-ok lendOk"
-//     }
-//     else
-//     {
-//       return "glyphicon-remove lendNot"
-//     }
-//   }
-
-// });
-
-// Template.courtSearch.rendered = function() {
-//   CourtSearch.search(' ');
-// };
-
-// Template.courtSearch.events({
-//   "keyup #search-box": _.throttle(function(e) {
-//     var text = $(e.target).val().trim();
-//     CourtSearch.search(text);
-//   }, 200)
-// });
-Template.mySpecialFilterAddressCourt.events({
-    'keyup .addressFilter':function(event){
-        addressInput = event.currentTarget.value;
-        console.log(addressInput);
-        Session.set("playersInfo/addressInput", addressInput);
-    }
-});
-
-Template.mySpecialFilterSurface.events({
-    'keyup .surfaceFilter':function(event){
-        surfInput = event.currentTarget.value;
-        console.log(surfInput);
-        Session.set("playersInfo/surfInput", surfInput);
-    }
-});
-
-
-Template.mySpecialFilterPrivate.events({
-    'keyup .privateFilter':function(event){
+Template.mySpecialFilterCourt.events({
+    'keyup .courtFilter':function(event){
         privInput = event.currentTarget.value;
-        console.log(privInput);
-        Session.set("playersInfo/privInput", privInput);
+        Session.set("courtSearch/input", privInput);
     }
 });
+
+var addressToString = function(theAddress){
+    var theString = "";
+    if(theAddress!=undefined &&theAddress!=null){
+        theString +=theAddress.city+" ";
+        theString +=theAddress.street+" ";
+        theString += theAddress.country+" ";
+        theString += theAddress.box+" ";
+        theString += theAddress.number+" ";
+        theString += theAddress.zipCode+" ";
+    }
+    return theString;
+};
+
+var courtToString = function(court){
+    if(court===undefined || court===null){
+        return "";
+    }
+    var theString = "";
+
+    var user = Meteor.users.findOne({_id:court.ownerID});
+    theString += user.profile.lastName + " " + user.profile.firstName + " ";
+
+    var address = Addresses.findOne({_id:court.addressID});
+    theString += addressToString(address);
+
+    theString += court.surface;
+    theString += court.courtType;
+
+    return theString.toLowerCase();
+};
 
 
 Template.allCourtsTable.helpers({
     courtsCollection: function () {
-        addressInput = Session.get("playersInfo/addressInput");
-        if(addressInput!=undefined && addressInput!="" ){
-            return Courts.find({$where:function(){
-                var addid = this.addressID
-                var theAddress = Addresses.findOne({_id:addid})
-                var theString = "";
-                if(theAddress!=undefined &&theAddress!=null){
-                    theString +=theAddress.city+" "
-                    theString +=theAddress.street+" "
-                    theString += theAddress.country+" "
-                    theString += theAddress.box+" "
-                    theString += theAddress.number+" "
-                    theString += theAddress.zipCode+" " 
-                }
-                if(theString!=null && theString !=""){
-                    console.log(theString)
-                    return (theString.indexOf(addressInput)>-1)
-                }
-                }});
-        }
-        surfInput = Session.get("playersInfo/surfInput");
-        if(surfInput!=undefined && surfInput!=""){
-            return Courts.find({$where: function(){if(this.surface!=null){return this.surface.indexOf(surfInput)>-1;}}});
-        }
-        privInput = Session.get("playersInfo/privInput");
-        if(privInput!=undefined && privInput!=""){
-            return Courts.find({$where: function(){if(this.courtType!=null){return this.courtType.indexOf(privInput)>-1;}}});
-        }
+        input = Session.get("courtSearch/input").toLowerCase();
 
-        return Courts.find();
+        if(input ==="" || input===undefined || input === null) return Courts.find({});
+        inputArray = input.split(" ");
+        query = {$where: function(){
+            var searchString = courtToString(this);
+
+            for(var i=0; i<inputArray.length;i++){
+                if(searchString.indexOf(inputArray[i])==-1){
+                    return false;
+                }
+            }
+            return true;
+            }
+        };
+        return Courts.find(query);
     },
 
     settings : function(){
@@ -156,7 +94,8 @@ Template.allCourtsTable.helpers({
           { key: 'courtType', label:"Type"},
           { key: 'instructions', label:"Instructions"},
           { key: 'ownerComment', label:"Commentaire propriétaire"},
-          { key: 'staffComment', label:"Commentaire staff"}
+          { key: 'staffComment', label:"Commentaire staff"},
+          { key: 'courtNumber', label:"Numéros"}
       ],
              filters: ['NomDeFamille'],
              rowClass: "courtRow"
