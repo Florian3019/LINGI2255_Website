@@ -220,7 +220,7 @@ Template.poolsSidebarCollapsableMenu.helpers({
 	// Returns a yearData with id year (copy of the same function in poolList.helpers)
 	'getYear' : function(){
 		var year = Session.get('PoolList/Year');
-		if(year===""){
+		if(year==="" || year===undefined){
 			setInfo(document, "Veuillez choisir l'année");
 			return;
 		}
@@ -890,6 +890,10 @@ Template.poolList.helpers({
 		var year = Session.get('PoolList/Year');
 		var y = Years.findOne({_id:year});
 
+		if(year==="" || year===undefined){
+			setInfo(document, "Veuillez choisir l'année");
+		}
+
 		if(year!=undefined && y==undefined){
 			setInfo(document, "Pas de données trouvées pour l'année "+ year);
 		}
@@ -918,7 +922,7 @@ Template.poolList.helpers({
 	// Returns a typeData
 	'getType' : function(yearData){
 		var type = Session.get('PoolList/Type');
-		if(type===""){
+		if(type==="" || type===undefined){
 			setInfo(document, "Veuillez choisir parmis les types homme, femme, mixte ou familles");
 			return;
 		}
