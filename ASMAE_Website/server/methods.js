@@ -168,13 +168,13 @@ Meteor.methods({
 		return false;
 	},
 
-	'isAdmin' : function(){
-		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isAdmin":1});
+	'isAdmin' : function(nid){
+		var res = Meteor.users.findOne({_id:nid}, {"profile.isAdmin":1});
 		return res ? res.profile.isAdmin : false;
 	},
 
-	'isStaff' : function(){
-		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isStaff":1});
+	'isStaff' : function(nid){
+		var res = Meteor.users.findOne({_id:nid}, {"profile.isStaff":1});
 		return (res ? res.profile.isStaff : false);
 	},
 
@@ -462,8 +462,8 @@ Meteor.methods({
 			return false;
 		}
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		const userIsOwner = courtData.ownerID == Meteor.userId();
 
 		if(! (userIsOwner || isAdmin || isStaff) ){
@@ -603,8 +603,8 @@ Meteor.methods({
 			return false;
 		}
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		const userIsOwner = court.ownerID == Meteor.userId();
 
 		if(userIsOwner || isAdmin || isStaff){
@@ -672,8 +672,8 @@ Meteor.methods({
 			return;
 		}
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		const userIsOwner = userData._id == Meteor.userId();
 
 		if(!(userIsOwner || isAdmin || isStaff)){
@@ -821,8 +821,8 @@ Meteor.methods({
 		}
 
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		const userIsOwner = userId == Meteor.userId();
 
 		if(!(userIsOwner || isAdmin || isStaff)){
@@ -935,8 +935,8 @@ Meteor.methods({
 			console.error("updatePair : pairData is undefined");
 			return;
 		}
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 		ID = {};
 		if(pairData.player1){
 			P1_id= pairData.player1._id;
@@ -1194,8 +1194,8 @@ Meteor.methods({
 			return;
 		}
 
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
+		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
+		const isStaff = Meteor.call('isStaff',Meteor.userId());
 
 		if(!(isAdmin || isStaff)){
 			console.error("updateMatch : You don't have the required permissions!");

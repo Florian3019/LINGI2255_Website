@@ -3,27 +3,6 @@
     <div id="page-content-wrapper">
       <div class="container-fluid">
         <div class="col-lg-20">
-          <div class="row">
-            <div class="col-md-4">
-              <center><p style="font-size:100%">Nombre de poules: {{getNumberPools}}</p></center>
-            </div>
-            <div class="col-md-4">
-              <center><p style="font-size:100%">Nombre de terrains: {{getNumberCourts}}</p></center>
-            </div>
-            <div class="col-md-4">
-              {{#if isAdminOrStaff}}
-              {{#with getYear}}
-                {{#with getType this}}
-                <center>
-                <button type="button" id="assignCourts" class="btn btn-default btn-lg">
-                  <span class="glyphicon" aria-hidden="true"></span> Assigner les terrains
-                </button>
-                </center>
-                {{/with}}
-                {{/with}}
-              {{/if}}
-            </div>
-          </div>
           <div id="infoBox" class="alert alert-info" role="alert" hidden>
             <h4>
               <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>

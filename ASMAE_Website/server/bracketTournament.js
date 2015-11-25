@@ -62,7 +62,7 @@ var getPoolWinners = function(poolId, MAXWINNERS){
 
       // If the key doesn't exist yet, initialize it to 0
       if(pairPoints[pairId]==undefined){
-        pairPoints[pairId] = {"points":0, "victories":0, "pairId":pairId, "poolId":poolId, "courtNumber":"?"};//TODO : courtNumber
+        pairPoints[pairId] = {"points":0, "victories":0, "pairId":pairId, "poolId":poolId, "courtNumber":pool.courtId};//TODO : courtNumber
       }
 
       // Increase that pair's total score
