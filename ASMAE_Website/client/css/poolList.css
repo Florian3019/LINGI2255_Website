@@ -55,6 +55,10 @@
   padding-right: 10px;
 }
 
+.leaderStar{
+  color:#4CC417;
+}
+
 .poolContainer {
   display: table-cell;
   width: 5%;
