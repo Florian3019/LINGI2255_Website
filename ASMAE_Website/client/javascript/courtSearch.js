@@ -25,7 +25,7 @@ var courtToString = function(court){
     var theString = "";
 
     var user = Meteor.users.findOne({_id:court.ownerID});
-    theString += user.profile.lastName + " " + user.profile.firstName + " ";
+    if(user!==null && user!==undefined) theString += user.profile.lastName + " " + user.profile.firstName + " ";
 
     var address = Addresses.findOne({_id:court.addressID});
     theString += addressToString(address);
@@ -36,14 +36,54 @@ var courtToString = function(court){
     return theString.toLowerCase();
 };
 
+Template.allCourtsTable.onRendered(function(){
+    Session.set("courtSearch/saturday","");
+    Session.set("courtSearch/sunday","");
+    Session.set("courtSearch/lend","");
+    Session.set("courtSearch/input","");
+    Session.set("courtNumber/courtNumber","");
+})
+
 
 Template.allCourtsTable.helpers({
     courtsCollection: function () {
         input = Session.get("courtSearch/input").toLowerCase();
 
-        if(input ==="" || input===undefined || input === null) return Courts.find({});
+        saturday = Session.get("courtSearch/saturday");
+        sunday = Session.get("courtSearch/sunday");
+        lend = Session.get("courtSearch/lend");
+        courtNumb = Session.get("courtNumber/courtNumber");
+
+        noInput = (input ==="" || input===undefined || input === null) && saturday==="Ignore" && sunday==="Ignore" && lend==="Ignore";
+
+        if(noInput) return Courts.find({});
         inputArray = input.split(" ");
         query = {$where: function(){
+            if(saturday=="Yes"){
+              if(!this.dispoSamedi) return false;
+            }
+            else if(saturday=="No"){
+              if(this.dispoSamedi) return false;
+            }
+
+            if(sunday=="Yes"){
+              if(!this.dispoSamedi) return false;
+            }
+            else if(sunday=="No"){
+              if(this.dispoSamedi) return false;
+            }
+
+            if(lend=="Yes"){
+              if(!this.lendThisYear) return false;
+            }
+            else if(lend=="No"){
+              if(this.lendThisYear) return false;
+            }
+
+            if(courtNumb!=="" && courtNumb!==null && courtNumb!==undefined){
+              if(this.courtNumber.indexOf(Number(courtNumb))==-1) return false;
+            }
+
             var searchString = courtToString(this);
 
             for(var i=0; i<inputArray.length;i++){
@@ -62,10 +102,12 @@ Template.allCourtsTable.helpers({
         fields:[
           { key: 'ownerID', label: 'Propriétaire', fn: function(value, object){
             user= Meteor.users.findOne({_id:value},{"profile":1});
-            return user.profile.firstName + " " + user.profile.lastName;
+            if(user!==undefined && user!==null) return user.profile.firstName + " " + user.profile.lastName;
+            else return "";
           }},
           { key: 'addressID', label: 'Adresse' , fn: function(value, object){
             addr = Addresses.findOne({"_id":value});
+            if(addr!==undefined){
             var ret = ""
                     if(addr.street != undefined) {
                         ret = ret+addr.street + ", ";
@@ -85,7 +127,9 @@ Template.allCourtsTable.helpers({
                     if(addr.country != undefined) {
                         ret = ret+addr.country;
                     }
-                    return ret
+                    return ret;
+            }
+            return "";
           }},
           { key: 'surface', label: "Surface"},
           { key: 'dispoSamedi', label:"Samedi", tmpl:Template.dispoSaturdayLabel},
@@ -106,5 +150,21 @@ Template.allCourtsTable.helpers({
 Template.courtSearch.events({
     'click .courtRow' : function(event){
         Router.go('courtInfoPage',{_id:this._id});
+    },
+
+    'change #saturdaySelect':function(event){
+      Session.set("courtSearch/saturday",event.currentTarget.value);
+    },
+
+    'change #sundaySelect':function(event){
+      Session.set("courtSearch/sunday",event.currentTarget.value);
+    },
+
+    'change #lendSelect':function(event){
+      Session.set("courtSearch/lend",event.currentTarget.value);
+    },
+
+    'change #courtNumberInput':function(event){
+      Session.set("courtNumber/courtNumber",event.currentTarget.value);
     }
 });
