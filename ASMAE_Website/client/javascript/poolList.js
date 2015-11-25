@@ -220,9 +220,14 @@ Template.poolsSidebarCollapsableMenu.helpers({
 	// Returns a yearData with id year (copy of the same function in poolList.helpers)
 	'getYear' : function(){
 		var year = Session.get('PoolList/Year');
+		if(year===""){
+			setInfo(document, "Veuillez choisir l'année");
+			return;
+		}
+
 		var y = Years.findOne({_id:year});
 
-		if(year!=undefined && y==undefined){
+		if(year!=="" && y==undefined){
 			setInfo(document, "Pas de données trouvées pour l'année "+ year);
 		}
 		else{
@@ -913,9 +918,13 @@ Template.poolList.helpers({
 	// Returns a typeData
 	'getType' : function(yearData){
 		var type = Session.get('PoolList/Type');
+		if(type===""){
+			setInfo(document, "Veuillez choisir parmis les types homme, femme, mixte ou familles");
+			return;
+		}
 		var t = Types.findOne({_id:yearData[type]});
 
-		if(type!=undefined && t==undefined){
+		if(type!=undefined && type!=="" && t==undefined){
 			setInfo(document, "Pas de données trouvées pour le type "+ typesTranslate[Session.get("PoolList/Type")] + " de l'année "+Session.get('PoolList/Year'));
 		}
 		else{
