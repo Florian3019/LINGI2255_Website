@@ -27,7 +27,6 @@ Template.adminAddCourt.helpers({
         }
     },
     'isClub': function(value){
-        console.log(value);
         if(value === "club"){
             return 'checked';
         }
@@ -36,6 +35,7 @@ Template.adminAddCourt.helpers({
         }
     },
     'player': function(){
+        Session.set("adminAddCourt/selected", "");
         lastName = Session.get('adminAddCourt/lastName');
         firstName = Session.get('adminAddCourt/firstName');
         address = Session.get('adminAddCourt/address');
@@ -47,11 +47,9 @@ Template.adminAddCourt.helpers({
 
         cursor = [];
         if(query.length>0) cursor = Meteor.users.find({$and:query}).fetch();
-        console.log(cursor);
 
         infoBox = document.getElementById("infoBox");
         if(infoBox!==null && infoBox!==undefined){
-            console.log(infoBox);
             if(cursor.length==0){
                 infoBox.removeAttribute("hidden");
                 return [];
@@ -65,16 +63,20 @@ Template.adminAddCourt.helpers({
     }
 });
 
+Template.adminAddCourt.onRendered(function(){
+    Session.set("adminAddCourt/selected", ""); //Reset
+});
+
 Template.adminAddCourt.events({
-    'change #lastName':function(event){
+    'keyup #lastName':function(event){
         Session.set('adminAddCourt/lastName', event.currentTarget.value);
     },
 
-    'change #firstName':function(event){
+    'keyup #firstName':function(event){
         Session.set('adminAddCourt/firstName', event.currentTarget.value);
     },
 
-    'change #address':function(event){
+    'keyup #address':function(event){
         Session.set('adminAddCourt/address', event.currentTarget.value);
     },
 
@@ -121,7 +123,6 @@ Template.adminAddCourt.events({
             else if(result == null){
                 console.error("No result");
             }
-            console.log(result);
             Router.go('confirmationRegistrationCourt', {_id: result});
         });
     },
