@@ -180,7 +180,7 @@ Meteor.methods({
 	},
 
 	'turnAdmin': function(nid){
-		if(Meteor.call('isAdmin')){
+		if(Meteor.call('isAdmin', nid)){
 			Meteor.users.update({_id:nid}, {
            		$set: {"profile.isAdmin":1,"profile.isStaff":0}
          	});
@@ -192,7 +192,7 @@ Meteor.methods({
 	},
 
 	'turnStaff': function(nid){
-		if(Meteor.call('isAdmin')){
+		if(Meteor.call('isAdmin', nid)){
 			Meteor.users.update({_id:nid}, {
            		$set: {"profile.isAdmin":0,"profile.isStaff":1}
          	});
@@ -204,7 +204,7 @@ Meteor.methods({
 	},
 
 	'turnNormal': function(nid){
-		if(Meteor.call('isAdmin')){
+		if(Meteor.call('isAdmin', nid)){
 			Meteor.users.update({_id:nid}, {
 	        	$set: {"profile.isAdmin":0,"profile.isStaff":0}
 	      	});
