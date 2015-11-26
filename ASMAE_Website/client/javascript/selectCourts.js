@@ -42,10 +42,8 @@ var checkNumberCourts = function(courtsSat,courtsSun,poolsSat,poolsSun){
 */
 var getNCourts = function(previouscourts, courts, n, start){
 	var result = [];
-
+console.log(n);
 	if(typeof previouscourts === "undefined"){
-
-		console.log(n);
 
 		for(var k=0; k<n;k++){
 			result.push(courts[(start+k) % courts.length]);
@@ -115,7 +113,7 @@ var getNumberMatches = function(nbrPairs,round){
 
 	// get the number of matches for the other rounds
 	// get the number of match for the first round if the nbr of pairs were a power of 2
-	var full = Math.pow(2,Math.floor(logPairs))/2;
+	var full = Math.pow(2,Math.floor(logPairs));
 
 	for(var k=0;k<round;k++){
 		full=full/2;
@@ -249,48 +247,37 @@ Template.selectCourts.events({
 			}
 		}
 
-		var finished = false;
-		var first = true;
-		var round = 0;
+		// !!!!TO CHANGE!!!!
+		for(var g=0;g<numberDays;g++){ // loop through the days
 
-		while(!finished){
-			finished = true;
+			var typesDoc = typesDocs[g];
 
-			for(var g=0;g<numberDays;g++){
+			for(var k=0;k<typesDoc.length;k++){ // loop through the types
 
-				var typesDoc = typesDocs[g];
+				for(var t=0;t<categoriesKeys.length;t++){ // loop through the categories
 
-				for(var k=0;k<typesDoc.length;k++){
+					var temp = categoriesKeys[t]+"Bracket";
 
-					for(var t=0;t<categoriesKeys.length;t++){
+					if(typesDoc[k][categoriesKeys[t]]!=null && typesDoc[k][temp]!=null){
 
-						var temp = categoriesKeys[t]+"Bracket";
+			 			var nameField = categoriesKeys[t]+"Courts";
 
-						if(typesDoc[k][categoriesKeys[t]]!=null && typesDoc[k][temp]!=null){
+			 			var nbr = getNumberMatches(typesDoc[k][temp].length,round);
 
-				 			var nameField = categoriesKeys[t]+"Courts";
+			 			if(!first &&typesDoc[k][nameField].length<(typesDoc[k][temp].length-1)){
+			 				typesDoc[k][nameField]=typesDoc[k][nameField].concat(getNCourts(typesDoc[k][nameField],courtsTable[g],nbr,start));
+			 				finished=false;
+			 			}
 
-				 			var nbr = getNumberMatches(typesDoc[k][temp].length,round);
+			 			if(first){
+			 				typesDoc[k][nameField] = getNCourts(undefined, courtsTable[g],nbr,start);
+			 				finished = false;
+			 			}
 
-				 			if(!first &&typesDoc[k][nameField].length<(typesDoc[k][temp].length-1)){
-				 				typesDoc[k][nameField]=typesDoc[k][nameField].concat(getNCourts(typesDoc[k][nameField],courtsTable[g],nbr,start));
-				 				finished=false;
-				 			}
-
-				 			if(first){
-				 				typesDoc[k][nameField] = getNCourts(undefined, courtsTable[g],nbr,start);
-				 				finished = false;
-				 			}
-
-				 			start=(start+nbr) % courtsTable[g].length;
-				 		}
-					}
+			 			start=(start+nbr) % courtsTable[g].length;
+			 		}
 				}
 			}
-
-			start = 0;
-			first=false;
-			round++;
 		}
 
 		for(var g=0;g<numberDays;g++){
