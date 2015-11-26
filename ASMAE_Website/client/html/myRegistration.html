@@ -1,3 +1,14 @@
 <template name="myRegistration">
-
+<div>
+	<h3 id="Status"> Statut de votre inscription : {{hasPairPlayer "true"}} </h3>
+</div>
+<div>
+    {{>playerInfoTemplate ID=setCurrentPlayer}}
+</div>
+<div>
+	{{#if hasPairPlayer "false"}}
+  		<h3> Votre coéquipier : </h3>
+  		{{>playerInfoTemplate ID=setPairPlayer}}
+	{{/if}}
+</div>
 </template>

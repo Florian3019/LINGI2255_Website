@@ -1,6 +1,6 @@
 Template.myRegistration.helpers({
   'setCurrentPlayer': function(){
-  	return Meteor.userId();
+    return Meteor.userId();
   },
 
 
@@ -53,10 +53,10 @@ Template.myRegistration.helpers({
 });
 
 Template.myRegistration.onCreated(function (){
-	var id = Meteor.userId();
+  var id = Meteor.userId();
     var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
-	if(pair){
+  if(pair){
     this.subscribe("PairInfo");
-	this.subscribe("PartnerAdress");
+  this.subscribe("PartnerAdress");
   }
 });

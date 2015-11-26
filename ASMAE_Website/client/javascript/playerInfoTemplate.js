@@ -199,7 +199,6 @@ Template.playerInfoTemplate.events({
 		}
 	},
 	'click #deleteUser' : function(event){
-
 		user = Meteor.users.findOne({"_id":this.id})
 		if(Session.get('closeModal') != undefined){	
 			if (confirm('Impossible de supprimer un joueur depuis ce menu.\n Voulez vous être redirigé ?')) {
@@ -212,19 +211,16 @@ Template.playerInfoTemplate.events({
         		
 			}
 		}
-		else {
-			
-			player1 = Pairs.find({"player1._id": this.id}).fetch()
-			player2 = Pairs.find({"player2._id": this.id}).fetch()
-			if(player1.length == 0 && player2 == 0){
-				console.log(user)
+		else {		
+			player = Meteor.users.find({"_id": this.id}).fetch()
+			if(false){
 				if (confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
 					Meteor.call('deleteUser',this.id);
 					Router.go('home')
 				}
 			}
 			else{
-				Meteor.call('getYear',player1, player2, function(error, result){
+				Meteor.call('getYear',player, function(error, result){
             		if(error){
                 		console.error('CourtRegistration error');
                 		console.error(error);
@@ -237,7 +233,7 @@ Template.playerInfoTemplate.events({
             			var max_year1 = result[1]
             			var bool =true
             			for(i = 0; years_in1 && max_year1 && i < years_in1.length; i++){
-							if(years_in1[i] === max_year1){
+							if(years_in1[i][1] === max_year1){
 								bool = false
 								alert("Veuillez désinscrire le joueur du tournoi de cette année avant de le supprimer.")
 								Router.go('home')
