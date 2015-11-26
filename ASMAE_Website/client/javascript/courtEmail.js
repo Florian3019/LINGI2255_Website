@@ -3,7 +3,7 @@ Template.courtEmail.returnAllCourts = function(){
 }
 
 Template.courtEmail.events({
-	'click .reactive-table tbody tr' : function(event){
+	'click .courtRow' : function(event){
 		var target = event.currentTarget;
 		var courtSelected = (' ' + target.className + ' ').indexOf(' courtSelected ') > -1;
 		if(courtSelected){
@@ -19,7 +19,6 @@ Template.courtEmail.events({
     },
 
     'click #Boutton': function(event){
-	console.log("Check d'une Check");
         event.preventDefault();
          var checkboxes = document.getElementsByClassName("courtSelected");
 
@@ -32,28 +31,27 @@ Template.courtEmail.events({
 		var em = Meteor.users.findOne({_id:Courts.findOne({_id : checkboxes[i].id}).ownerID}).emails[0].address;
 		//Print du texte à envoyer
 	     	if(mail.value!=""){
-	     		Meteor.call('emailFeedback',em,"Charles De Lorraine : mail relatif à votre terrain",mail.value);
+	     		Meteor.call('emailFeedback',em,"Charles De Lorraine : mail relatif à votre terrain",mail.value, Meteor.userId());
 			checkboxesChecked.push(checkboxes[i]);
 	     		Meteor.call("addToModificationsLog", {"opType":"Envoi de mails aux courtsowners","details": "Mail envoyé : "+mail.value+"\n à : "+em});
 	     	}
 	  }
 	  // Return the array if it is non-empty, or null
-	  if(checkboxesChecked.length > 0){		
+	  if(checkboxesChecked.length > 0){
 	  	if(checkboxesChecked.length==1){
 	  		alert("Mail envoyé !")
 	  	}
 	  	else{
 	  		alert("Mails envoyés !")
 	  	}
-	  	Router.go('home');	  
+	  	Router.go('home');
 	  }
 	  else{
 	  	alert("vous n'avez pas coché de case ou entré de texte pour le mail que vous désirez envoyer.")
 	  }
-        
+
     },
     'click #SelectAll':function(event){
-    	console.log("SelectAll");
         event.preventDefault();
         var checkboxes = document.getElementsByTagName("tbody")[0].children;
  		for (var i=0; i<checkboxes.length; i++) {
@@ -66,10 +64,9 @@ Template.courtEmail.events({
 	       		target.id = this._id;
 	       	}
 	  	}
-	
+
     },
     'click #UnselectAll':function(event){
-    	console.log("UnselectAll");
         event.preventDefault();
          var checkboxes = document.getElementsByTagName("tbody")[0].children;
 		 for (var i=0; i<checkboxes.length; i++) {
@@ -82,8 +79,7 @@ Template.courtEmail.events({
 				target.className = target.className.replace('courtSelected', '');
 	       	}
 		  }
-	
-    }
-    
-});
 
+    }
+
+});

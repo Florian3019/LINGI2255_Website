@@ -143,11 +143,6 @@ Router.route('/lancer-inscriptions-tournoi', {
 	template: 'launchTournament'
 });
 
-Router.route('/template-admin', {
-	name: 'adminTemplate',
-	template: 'adminTemplate'
-});
-
 Router.route('/admin-ajout-terrain', {
 	name: 'adminAddCourt',
 	template: 'adminAddCourt'
@@ -240,8 +235,8 @@ Router.route('/modifier-terrain/:_id', {
 });
 
 Router.route('/recherche-terrain', {
-	name: 'courtSearch',
-	template: 'courtSearch'
+	name: 'courtSearchTemplate',
+	template: 'courtSearchTemplate'
 });
 
 Router.route('/print', {

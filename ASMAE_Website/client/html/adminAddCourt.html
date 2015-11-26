@@ -4,146 +4,159 @@
 			<div class="form-group">
 				<div class="row">
           			<div class="col-sm-6 col-sm-offset-3">
-						<h2>Informations sur le terrain:</h2>
+						<h2>Ajouter un terrain</h2>
 					</div>
                 </div>
+                <div class="row">
+	                <div class="col-sm-6 col-sm-offset-3">
+	                	<h6>Entrez l'une de ces trois informations pour associer le terrain à un propriétaire:</h6>
+	                </div>
+                </div>
 				<div class="row">
-					<div class="col-sm-3 col-sm-offset-3">
+					<div class="col-sm-2 col-sm-offset-3">
 						<label for="lastName">Nom:</label>
 						<input type="text" name="lastName" id="lastName" value="{{users.lastName}}" class="form-control">
 					</div>
-					<div class="col-sm-3">
+					<div class="col-sm-2">
 						<label for="firstName">Prénom:</label>
 						<input type="text" name="firstName" id="firstName" value="{{users.firstName}}" class="form-control">
 					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-sm-3 col-sm-offset-3">
-						<label for="address">Adresse email:</label>
+					<div class="col-sm-2">
+						<label for="address">Email:</label>
 						<input type="text" name="address" id="address" value="{{users.address}}" class="form-control">
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-sm-6 col-sm-offset-3">
-				          <div id="infoBox" class="alert alert-info" role="alert" hidden>
-					        <h4>
-					          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-					          <span class="sr-only">Info:</span>
-					          <span id="infoMsg">Pas de propriétaire trouvé...</span>
-					        </h4>
-					      </div>
-  					</div>
-				</div>
-				<div class="row">
-	        		<div class="col-sm-3 col-sm-offset-3">
-	  					<ul class="list-group">
-	    					{{#each player}}
-	      					<li class="list-group-item playerFound" id="{{this._id}}">{{profile.lastName}}, {{profile.firstName}}</li>
-	    					{{/each}}
-	  					</ul>
-	  				</div>
-				</div>
 				<br>
-				<div class="row">
-					<div class="col-sm-2 col-sm-offset-3">
-						<label for="street">Rue:</label>
-						<input type="text" name="street" id="street" value="{{address.street}}" class="form-control" required>
-					</div>
-					<div class = "col-sm-2">
-						<label for="addressNumber">Numéro:</label>
-						<input type="text" name="addressNumber" id="addressNumber" value="{{address.number}}" class="form-control" required>
-					</div>
-					<div class="col-sm-2">
-						<label for="box">Boîte:</label>
-						<input type="text" name="box" id="box" value="{{address.box}}" class="form-control">
-					</div>
-				</div>
-				<br>
-				<div class ="row">
-					<div class="col-sm-2 col-sm-offset-3">
-			 		 	<div class="form-group">
-							<label for="zipCode">Code postal:</label>
-							<input type="text" name="zipCode" id="zipCode" value="{{address.zipCode}}" class="form-control">
-			 		   	</div>
-	     		 	</div>
-	     		 	<div class="col-sm-2">
-						<label for="city">Ville:</label>
-						<input type="text" name="city" id="city" value="{{address.city}}" class="form-control">
-					</div>
-					<div class="col-sm-2">
-						<label for="text">Pays</label>
-						<input type="text" class="form-control" id="country" value="{{#if address.country}}{{address.country}}{{else}}Belgique{{/if}}" name="country">
-					</div>
-				</div>
-				
-     		 	<div class="row">
-            		<div class="col-sm-12 col-sm-offset-3">
-						<div class="form-group">
-							<label for="surface">Surface:</label>
-							<br>
-							<select name="surface" id="surface" class="form-control custom-inline-radio" style="width: 15%; display: inline">
-								<option value="Autre" {{selectedSurface court.surface "Autre"}}>Autre</option>
-								<option value="Terre Battue" {{selectedSurface court.surface "Terre Battue"}}>Terre Battue</option>
-								<option value="Gazon" {{selectedSurface court.surface "Gazon"}}>Gazon</option>
-								<option value="Synthétique" {{selectedSurface court.surface "Synthétique"}}>Synthétique</option>
-								<option value="Béton" {{selectedSurface court.surface "Béton"}}>Béton</option>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-          			<div class="col-sm-3 col-sm-offset-3">
-						<div class="form-group">
-							<h5><b>Type:</b></h5>
-							<div class="radio">
-								<label><input type="radio" name="courtType" value="privé" {{isPrivate court.courtType}} />Privé</label><br />
-							</div>
-							<div class="radio">
-								<label><input type="radio" name="courtType" value="club" {{isClub court.courtType}} />Club</label>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="form-group">
+				{{#if searchComplete}}
 					<div class="row">
-						<div class="col-sm-2 col-sm-offset-3">
-							<label for="numberOfCourts">Nombre de terrains:</label>
-							<input type="number" min="1" name="numberOfCourts" id="numberOfCourts" class="form-control" value="{{#if court}}{{court.numberOfCourts}}{{else}}1{{/if}}">
+						<div class="col-sm-6 col-sm-offset-3">
+				        	<h6>Choisissez un propriétaire parmis la liste :</h6>
 						</div>
 					</div>
-				</div>
+					<div class="row">
+		        		<div class="col-sm-3 col-sm-offset-3">
+		  					<ul class="list-group">
+		    					{{#each player}}
+		      					<li class="list-group-item playerFound" id="{{this._id}}">{{profile.lastName}}, {{profile.firstName}}</li>
+		    					{{/each}}
+		  					</ul>
+		  				</div>
+					</div>
+					<br>
+					{{#with getSelectedOwner}}
+						<div class="row">
+							<div class="col-sm-2 col-sm-offset-3">
+								<label for="street">Rue:</label>
+								<input type="text" name="street" id="street" value="{{address.street}}" class="form-control" required>
+							</div>
+							<div class = "col-sm-2">
+								<label for="addressNumber">Numéro:</label>
+								<input type="text" name="addressNumber" id="addressNumber" value="{{address.number}}" class="form-control" required>
+							</div>
+							<div class="col-sm-2">
+								<label for="box">Boîte:</label>
+								<input type="text" name="box" id="box" value="{{address.box}}" class="form-control">
+							</div>
+						</div>
+						<br>
+						<div class ="row">
+							<div class="col-sm-2 col-sm-offset-3">
+					 		 	<div class="form-group">
+									<label for="zipCode">Code postal:</label>
+									<input type="text" name="zipCode" id="zipCode" value="{{address.zipCode}}" class="form-control">
+					 		   	</div>
+			     		 	</div>
+			     		 	<div class="col-sm-2">
+								<label for="city">Ville:</label>
+								<input type="text" name="city" id="city" value="{{address.city}}" class="form-control">
+							</div>
+							<div class="col-sm-2">
+								<label for="text">Pays</label>
+								<input type="text" class="form-control" id="country" value="{{#if address.country}}{{address.country}}{{else}}Belgique{{/if}}" name="country">
+							</div>
+						</div>
+						
+		     		 	<div class="row">
+		            		<div class="col-sm-12 col-sm-offset-3">
+								<div class="form-group">
+									<label for="surface">Surface:</label>
+									<br>
+									<select name="surface" id="surface" class="form-control custom-inline-radio" style="width: 15%; display: inline">
+										<option value="Autre" {{selectedSurface court.surface "Autre"}}>Autre</option>
+										<option value="Terre Battue" {{selectedSurface court.surface "Terre Battue"}}>Terre Battue</option>
+										<option value="Gazon" {{selectedSurface court.surface "Gazon"}}>Gazon</option>
+										<option value="Synthétique" {{selectedSurface court.surface "Synthétique"}}>Synthétique</option>
+										<option value="Béton" {{selectedSurface court.surface "Béton"}}>Béton</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+		          			<div class="col-sm-3 col-sm-offset-3">
+								<div class="form-group">
+									<h5><b>Type:</b></h5>
+									<div class="radio">
+										<label><input type="radio" name="courtType" value="privé" {{isPrivate court.courtType}} />Privé</label><br />
+									</div>
+									<div class="radio">
+										<label><input type="radio" name="courtType" value="club" {{isClub court.courtType}} />Club</label>
+									</div>
+								</div>
+							</div>
+						</div>
 
-				<div class="row">
-					<div class="col-sm-6 col-sm-offset-3">
-						<label for="instructions">Instructions d'accès au terrain:</label>
-						<textarea name="instructions" id="instructions" class="form-control" value="{{court.instructions}}" placeholder="Facultatif"></textarea>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-sm-6 col-sm-offset-3">
-						<label for="ownerComment">Commentaires sur le terrain:</label>
-						<textarea name="ownerComment" id="ownerComment" class="form-control" value="{{court.ownerComment}}" placeholder="Facultatif"></textarea>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-          			<div class="col-sm-3 col-sm-offset-3">
 						<div class="form-group">
-							<label class="control-label">Disponibilité du terrain:</label><br />
-							<label class="checkbox-inline"><input type="checkbox" {{availableThisDay court.dispoSamedi}} name="dispoSamedi" id="dispoSamedi" value="samedi"/>Samedi</label>
-							<br>
-							<label class="checkbox-inline"><input type="checkbox" {{availableThisDay court.dispoDimanche}} name="dispoDimanche" id="dispoDimanche" value="dimanche"/>Dimanche</label>
+							<div class="row">
+								<div class="col-sm-2 col-sm-offset-3">
+									<label for="numberOfCourts">Nombre de terrains:</label>
+									<input type="number" min="1" name="numberOfCourts" id="numberOfCourts" class="form-control" value="{{#if court}}{{court.numberOfCourts}}{{else}}1{{/if}}">
+								</div>
+							</div>
 						</div>
+
+						<div class="row">
+							<div class="col-sm-6 col-sm-offset-3">
+								<label for="instructions">Instructions d'accès au terrain:</label>
+								<textarea name="instructions" id="instructions" class="form-control" value="{{court.instructions}}" placeholder="Facultatif"></textarea>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-sm-6 col-sm-offset-3">
+								<label for="ownerComment">Commentaires sur le terrain:</label>
+								<textarea name="ownerComment" id="ownerComment" class="form-control" value="{{court.ownerComment}}" placeholder="Facultatif"></textarea>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+		          			<div class="col-sm-3 col-sm-offset-3">
+								<div class="form-group">
+									<label class="control-label">Disponibilité du terrain:</label><br />
+									<label class="checkbox-inline"><input type="checkbox" {{availableThisDay court.dispoSamedi}} name="dispoSamedi" id="dispoSamedi" value="samedi"/>Samedi</label>
+									<br>
+									<label class="checkbox-inline"><input type="checkbox" {{availableThisDay court.dispoDimanche}} name="dispoDimanche" id="dispoDimanche" value="dimanche"/>Dimanche</label>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+		          			<div class="col-sm-3 col-sm-offset-3">
+								<button type="submit" class="btn btn-default">Enregistrer</button>
+							</div>
+						</div>
+					{{/with}}
+				{{else}}
+					<div class="row">
+						<div class="col-sm-6 col-sm-offset-3">
+					          <div id="infoBox" class="alert alert-info" role="alert">
+						        <h4>
+						          <span class="glyphicon glyphicon-info-sign"></span>
+						          <span class="sr-only">Info:</span>
+						          <span id="infoMsg">Pas de propriétaire trouvé...</span>
+						        </h4>
+						      </div>
+	  					</div>
 					</div>
-				</div>
-				<div class="row">
-          			<div class="col-sm-3 col-sm-offset-3">
-						<button type="submit" class="btn btn-default">Enregistrer</button>
-					</div>
-				</div>
+				{{/if}}
 			</div>
 		</form>
 	</div>

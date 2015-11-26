@@ -14,8 +14,16 @@ Template.adminAddCourt.helpers({
         }
     },
 
+    'getSelectedOwner':function(){
+        return Session.get("adminAddCourt/selected");
+    },
+
     'selectedSurface': function(value, surfaceName){
         return value === surfaceName ? 'selected' : '';
+    },
+
+    'searchComplete':function(){
+        return Session.get("adminAddCourt/searchComplete");
     },
 
     'isPrivate': function(value){
@@ -27,7 +35,6 @@ Template.adminAddCourt.helpers({
         }
     },
     'isClub': function(value){
-        console.log(value);
         if(value === "club"){
             return 'checked';
         }
@@ -36,46 +43,55 @@ Template.adminAddCourt.helpers({
         }
     },
     'player': function(){
+        Session.set("adminAddCourt/selected", "");
         lastName = Session.get('adminAddCourt/lastName');
+        if(lastName!==undefined) lastName = lastName.toLowerCase();
         firstName = Session.get('adminAddCourt/firstName');
+        if(firstName!==undefined) firstName = firstName.toLowerCase();
         address = Session.get('adminAddCourt/address');
+        if(address!==undefined) address = address.toLowerCase();
+
 
         var query = [];
-        if(lastName!=="" && lastName!==undefined) query.push({$where:function(){return this.profile.lastName.indexOf(lastName)>-1;}});
-        if(firstName!=="" && firstName!==undefined) query.push({$where:function(){return this.profile.firstName.indexOf(firstName)>-1;}});
-        if(address!=="" && address!==undefined) query.push({$where:function(){return this.emails[0].address.indexOf(address)>-1;}});
+        if(lastName!=="" && lastName!==undefined) query.push({$where:function(){if(this.profile.lastName!==undefined) return this.profile.lastName.toLowerCase().indexOf(lastName)>-1;}});
+        if(firstName!=="" && firstName!==undefined) query.push({$where:function(){if(this.profile.firstName!==undefined) return this.profile.firstName.toLowerCase().indexOf(firstName)>-1;}});
+        if(address!=="" && address!==undefined) query.push({$where:function(){return this.emails[0].address.toLowerCase().indexOf(address)>-1;}});
 
         cursor = [];
         if(query.length>0) cursor = Meteor.users.find({$and:query}).fetch();
-        console.log(cursor);
 
-        infoBox = document.getElementById("infoBox");
-        if(infoBox!==null && infoBox!==undefined){
-            console.log(infoBox);
-            if(cursor.length==0){
-                infoBox.removeAttribute("hidden");
-                return [];
-            }
-            else{
-                infoBox.setAttribute("hidden","");
-            }
+        if(cursor.length>0){
+            Session.set("adminAddCourt/searchComplete",true);
         }
-
+        else{
+            Session.set("adminAddCourt/searchComplete",false);
+        }
         return cursor;
     }
 });
 
+Template.adminAddCourt.onRendered(function(){
+    Session.set("adminAddCourt/selected", ""); //Reset
+    Session.set('adminAddCourt/lastName',"");
+    Session.set('adminAddCourt/firstName',"");
+    Session.set('adminAddCourt/address',"");
+    Session.set("adminAddCourt/searchComplete",false);
+});
+
 Template.adminAddCourt.events({
-    'change #lastName':function(event){
+    'keyup #lastName':function(event){
         Session.set('adminAddCourt/lastName', event.currentTarget.value);
+        Session.set("adminAddCourt/searchComplete",true);
     },
 
-    'change #firstName':function(event){
+    'keyup #firstName':function(event){
         Session.set('adminAddCourt/firstName', event.currentTarget.value);
+        Session.set("adminAddCourt/searchComplete",true);
     },
 
-    'change #address':function(event){
+    'keyup #address':function(event){
         Session.set('adminAddCourt/address', event.currentTarget.value);
+        Session.set("adminAddCourt/searchComplete",true);
     },
 
 
@@ -121,7 +137,6 @@ Template.adminAddCourt.events({
             else if(result == null){
                 console.error("No result");
             }
-            console.log(result);
             Router.go('confirmationRegistrationCourt', {_id: result});
         });
     },

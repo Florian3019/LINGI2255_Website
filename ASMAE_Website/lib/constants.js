@@ -99,7 +99,12 @@ getCategoryForBirth = function(birth, tournamentDate) {
  *  @param birthDate is of type Date
  */
 getAge = function(birthDate, tournamentDateSpecified){
-    var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
+    var currentYearData = (GlobalValues.findOne({_id:"currentYear"}));
+    if(currentYearData===undefined){
+        console.error("getAge : currentYear is not defined");
+        return;
+    }
+    var currentYear = currentYearData.value;
     var tournamentDate;
     if (typeof tournamentDateSpecified !== 'undefined') {
         tournamentDate = tournamentDateSpecified;
@@ -176,3 +181,53 @@ getColorFromPlayer = function(player){
         if(code == 3) return 'magenta';
         return "";
 }
+
+addressToString = function(theAddress){
+    var theString = "";
+    if(theAddress!=undefined &&theAddress!=null){
+        theString +=theAddress.city+" ";
+        theString +=theAddress.street+" ";
+        theString += theAddress.country+" ";
+        theString += theAddress.box+" ";
+        theString += theAddress.number+" ";
+        theString += theAddress.zipCode+" ";
+    }
+    return theString;
+};
+
+courtToString = function(court){
+    if(court===undefined || court===null){
+        return "";
+    }
+    var theString = "";
+
+    var user = Meteor.users.findOne({_id:court.ownerID});
+    if(user!==null && user!==undefined) theString += user.profile.lastName + " " + user.profile.firstName + " ";
+
+    var address = Addresses.findOne({_id:court.addressID});
+    theString += addressToString(address);
+
+    theString += court.surface;
+    theString += court.courtType;
+
+    return theString.toLowerCase();
+};
+
+playerToString = function(player){
+    var theString = "";
+    if(player==undefined) return theString;
+    addr = Addresses.findOne({_id:player.profile.addressID}); 
+    if(addr!==undefined) theString += addressToString(addr);
+    theString += player.profile.firstName += " ";
+    theString += player.profile.lastName += " ";
+    if(player.profile.phone!==undefined) theString += player.profile.phone += " ";
+    if(player.profile.AFT!==undefined) theString += player.profile.AFT += " ";
+    if(player.profile.gender!==undefined) theString += player.profile.gender += " ";
+    if(player.profile.birthDate!==undefined) theString += player.profile.birthDate.toLocaleString() + " ";
+
+    for(var i=0; i<player.emails.length;i++){
+        theString += player.emails[i].address;
+    }
+
+    return theString.toLowerCase();
+};

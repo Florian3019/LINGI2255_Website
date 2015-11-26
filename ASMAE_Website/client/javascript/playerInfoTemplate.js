@@ -184,13 +184,80 @@ Template.playerInfoTemplate.events({
 		/*
 			Check if the button was in a popup (modal), if so, close it before going to profileEdit
 		*/
-		var modalId = event.currentTarget.dataset.modal;
-		if(modalId) $(modalId).modal('hide');
-
-		/*	Go to profile edit	*/
-		Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
-		console.log("clicked modifier");
+		if(Session.get('closeModal') != undefined){
+			var modalId = '#pairModal'+Session.get('closeModal')
+			Session.set('closeModal', undefined)
+			$(modalId).on('hidden.bs.modal', function() {
+            	Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
+        	}).modal('hide');
+        		
+		}
+		else{
+			/*	Go to profile edit	*/
+			Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
+			console.log("clicked modifier");
+		}
 	},
+	'click #deleteUser' : function(event){
+
+		user = Meteor.users.findOne({"_id":this.id})
+		if(Session.get('closeModal') != undefined){	
+			if (confirm('Impossible de supprimer un joueur depuis ce menu.\n Voulez vous être redirigé ?')) {
+				Session.set('selected', user);
+				var modalId = '#pairModal'+Session.get('closeModal')
+				Session.set('closeModal', undefined)
+				$(modalId).on('hidden.bs.modal', function() {
+            		Router.go('playerInfoPage');
+        		}).modal('hide');
+        		
+			}
+		}
+		else {
+			
+			player1 = Pairs.find({"player1._id": this.id}).fetch()
+			player2 = Pairs.find({"player2._id": this.id}).fetch()
+			if(player1.length == 0 && player2 == 0){
+				console.log(user)
+				if (confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
+					Meteor.call('deleteUser',this.id);
+					Router.go('home')
+				}
+			}
+			else{
+				Meteor.call('getYear',player1, player2, function(error, result){
+            		if(error){
+                		console.error('CourtRegistration error');
+                		console.error(error);
+            		}
+            		else if(result == null){
+                		console.error("No result");
+            		}
+            		else{
+            			var years_in1 = result[0]
+            			var max_year1 = result[1]
+            			var bool =true
+            			for(i = 0; years_in1 && max_year1 && i < years_in1.length; i++){
+							if(years_in1[i] === max_year1){
+								bool = false
+								alert("Veuillez désinscrire le joueur du tournoi de cette année avant de le supprimer.")
+								Router.go('home')
+							}
+						}
+            		}
+            		
+					if(bool && confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
+						Meteor.call('deleteUser',this.id);
+					}
+					else if(bool){
+						alert("Joueur non supprimé.")
+					}
+					Router.go('home')
+        		});
+			
+			}
+		}
+		
+	}
 
 });
 

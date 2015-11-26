@@ -227,7 +227,7 @@ Template.poolsSidebarCollapsableMenu.helpers({
 
 		var y = Years.findOne({_id:year});
 
-		if(year!=="" && y==undefined){
+		if(year!=="" && year!==undefined && y==undefined){
 			setInfo(document, "Pas de données trouvées pour l'année "+ year);
 		}
 		else{
@@ -666,7 +666,7 @@ Template.poolList.helpers({
 			setInfo(document, "Veuillez choisir l'année");
 		}
 
-		if(year!=undefined && y==undefined){
+		if(year!=undefined && year !==undefined && y==undefined){
 			setInfo(document, "Pas de données trouvées pour l'année "+ year);
 		}
 		else{
@@ -896,6 +896,15 @@ Template.poolList.helpers({
 /******************************************************************************************************************
 											alonePairsContainerTemplate
 *******************************************************************************************************************/
+
+var showPairModal = function(event){
+	Session.set('closeModal',event.currentTarget.dataset.id)
+	user = Meteor.user();
+	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
+		return; // Do nothing
+	}
+	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
+}
 
 Template.alonePairsContainerTemplate.onRendered(function(){
 	// Add the container of this template as a container that can receive draggable objects
