@@ -26,7 +26,7 @@
 */
 
 var isAllowed = function(){
-	if( !(Meteor.call('isAdmin',Meteor.userId()) || Meteor.call('isStaff',Meteor.userId())) ){
+	if( !(Meteor.call('isAdmin') || Meteor.call('isStaff')) ){
 		return false;
 	}
 	return true;

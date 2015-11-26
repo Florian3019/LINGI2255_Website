@@ -13,7 +13,7 @@ Meteor.methods({
 	//TODO: remove this when going to production !!!
 	'turnAdminInsecure' : function(nid){
 		Meteor.users.update({_id:nid}, {
-			$set: {"profile.isAdmin":1,"profile.isStaff":1}
+			$set: {"profile.isAdmin":true,"profile.isStaff":true}
 		});
 
 	},
@@ -22,7 +22,7 @@ Meteor.methods({
 		if (!GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
 
-			Meteor.call('activateCourtDB', "2015");		//TODO: not need the year?
+			Meteor.call('activateCourtDB');
 		}
 		if (!GlobalValues.findOne({_id:"registrationsON"})) {
 			GlobalValues.insert({_id:"registrationsON", value: false});
@@ -36,8 +36,8 @@ Meteor.methods({
 	},
 
 	// Method to launch the tournament registrations for this year's tournament.
-	'launchTournament': function(launchTournamentData,nid){
-		if(Meteor.call('isAdmin',nid)){
+	'launchTournament': function(launchTournamentData){
+		if(Meteor.call('isAdmin')){
 			var data = {};
 			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
@@ -168,20 +168,20 @@ Meteor.methods({
 		return false;
 	},
 
-	'isAdmin' : function(nid){
-		var res = Meteor.users.findOne({_id:nid}, {"profile.isAdmin":1});
+	'isAdmin' : function(){
+		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isAdmin":1});
 		return res ? res.profile.isAdmin : false;
 	},
 
-	'isStaff' : function(nid){
-		var res = Meteor.users.findOne({_id:nid}, {"profile.isStaff":1});
+	'isStaff' : function(){
+		var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isStaff":1});
 		return (res ? res.profile.isStaff : false);
 	},
 
 	'turnAdmin': function(nid){
-		if(Meteor.call('isAdmin', nid)){
+		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
-           		$set: {"profile.isAdmin":1,"profile.isStaff":0}
+           		$set: {"profile.isAdmin":true,"profile.isStaff":true}
          	});
 		}
 		else {
@@ -191,9 +191,9 @@ Meteor.methods({
 	},
 
 	'turnStaff': function(nid){
-		if(Meteor.call('isAdmin', nid)){
+		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
-           		$set: {"profile.isAdmin":0,"profile.isStaff":1}
+           		$set: {"profile.isAdmin":false,"profile.isStaff":true}
          	});
 		}
 		else {
@@ -203,9 +203,9 @@ Meteor.methods({
 	},
 
 	'turnNormal': function(nid){
-		if(Meteor.call('isAdmin', nid)){
+		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
-	        	$set: {"profile.isAdmin":0,"profile.isStaff":0}
+	        	$set: {"profile.isAdmin":false,"profile.isStaff":true}
 	      	});
 		}
 		else {
@@ -409,6 +409,19 @@ Meteor.methods({
 			seniorsBracket:<list of pairId>
 			elitesBracket:<list of pairId>
 			listBracket:<list of pairID>
+			
+
+			// Staff responsables
+				Can only add a single staff for each update to a category.
+			preminimesResp:<list of userId>
+			minimesResp:<list of userId>
+			cadetsResp:<list of userId>
+			scolarsResp:<list of userId>
+			juniorsResp:<list of userId>
+			seniorsResp:<list of userId>
+			elitesResp:<list of userId>
+			listResp:<list of pairID>
+
 			NOTE : for the family tournament, only one list of pools :
 			all:<list of poolIDs>
 		}
@@ -418,29 +431,42 @@ Meteor.methods({
 			console.error("updateType : no typeData provided : "+typeData);
 			return;
 		}
-
+		var hasData = false;
 		var data = {};
 		for (var i=0;i<categoriesKeys.length;i++){
 			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
 				data.$addToSet[categoriesKeys[i]] = {$each : typeData[categoriesKeys[i]]};
+				hasData = true;
 			}
 			var b = categoriesKeys[i].concat("Bracket");
 			if(typeData[b]!=undefined){
-				if(!data.$set) data['$set'] = {};
+				if(data.$set===undefined) data['$set'] = {};
 				data.$set[b] = typeData[b];
+				hasData = true;
 			}
 
 			var c = categoriesKeys[i].concat("Courts");
 			if(typeData[c]!=undefined){
-				if(!data.$set) data['$set'] = {};
+				if(data.$set===undefined) data['$set'] = {};
 				data.$set[c] = typeData[c];
+				hasData = true;
+			}
+
+			var r = categoriesKeys[i].concat("Resp");
+			if(typeData[r]!=undefined){
+				if(data.$addToSet===undefined) data.$addToSet = {};
+				data.$addToSet[r] = typeData[r];
+				hasData = true;
 			}
 		}
 		if(!typeData._id){
 			return Types.insert(data);
 		}
-
+		if(!hasData){
+			console.warn("Warning : called updateType with no input");
+			return;
+		}
 		Types.update({_id: typeData._id} , data);
 		return typeData._id;
 	},
@@ -478,8 +504,8 @@ Meteor.methods({
 			return false;
 		}
 
-		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
-		const isStaff = Meteor.call('isStaff',Meteor.userId());
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = courtData.ownerID == Meteor.userId();
 
 		if(! (userIsOwner || isAdmin || isStaff) ){
@@ -621,8 +647,8 @@ Meteor.methods({
 			return false;
 		}
 
-		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
-		const isStaff = Meteor.call('isStaff',Meteor.userId());
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = court.ownerID == Meteor.userId();
 
 		if(userIsOwner || isAdmin || isStaff){
@@ -690,8 +716,8 @@ Meteor.methods({
 			return;
 		}
 
-		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
-		const isStaff = Meteor.call('isStaff',Meteor.userId());
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = userData._id == Meteor.userId();
 
 		if(!(userIsOwner || isAdmin || isStaff)){
@@ -839,8 +865,8 @@ Meteor.methods({
 		}
 
 
-		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
-		const isStaff = Meteor.call('isStaff',Meteor.userId());
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = userId == Meteor.userId();
 
 		if(!(userIsOwner || isAdmin || isStaff)){
@@ -953,8 +979,8 @@ Meteor.methods({
 			console.error("updatePair : pairData is undefined");
 			return;
 		}
-		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
-		const isStaff = Meteor.call('isStaff',Meteor.userId());
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
 		ID = {};
 		if(pairData.player1){
 			P1_id= pairData.player1._id;
@@ -1212,8 +1238,8 @@ Meteor.methods({
 			return;
 		}
 
-		const isAdmin = Meteor.call('isAdmin',Meteor.userId());
-		const isStaff = Meteor.call('isStaff',Meteor.userId());
+		const isAdmin = Meteor.call('isAdmin');
+		const isStaff = Meteor.call('isStaff');
 
 		if(!(isAdmin || isStaff)){
 			console.error("updateMatch : You don't have the required permissions!");
@@ -1650,7 +1676,7 @@ Meteor.methods({
 			texte:"lorem 2",
 			encadre:"final2"};
 	*/
-	'emailFeedback': function (to, subject, data,nid) {
+	'emailFeedback': function (to, subject, data) {
 
 
 							// Don't wait for result
@@ -1672,7 +1698,7 @@ Meteor.methods({
 								}
 
 								// Send the request
-                if(Meteor.call('isStaff',nid) || Meteor.call('isAdmin',nid)){
+                if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
                   Meteor.http.post(postURL, options, onError);
                   console.log("Email sent");
                 }
@@ -1681,7 +1707,7 @@ Meteor.methods({
                 }
 	},
 
-  'emailtoAllUsers':function(nid){
+  'emailtoAllUsers':function(){
     var mails=[];
     var usersCursor = Meteor.users.find();
     usersCursor.forEach( function(user) {
@@ -1694,7 +1720,7 @@ Meteor.methods({
       texte:"Depuis aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
       encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
     };
-    Meteor.call('emailFeedback',mails.toString(),subject,data,nid);
+    Meteor.call('emailFeedback',mails.toString(),subject,data);
 
   },
 

@@ -19,6 +19,9 @@
           {{#with getYear}} <!-- Returns a yearData -->
             {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
             {{#with getType this}}
+
+              {{>responsablesTemplate this}}
+
               <!-- Pool Tables -->
               {{#unless thereIsNoPool this}}
               <table id='allTables' class='table'>
@@ -341,4 +344,45 @@ Takes 2 arguments :
     {{>modalItem PAIR=this POOL=../POOLID SHOWOPTIONS=true}} <!-- Don't set SEX here, since we should not be able to change the type of the pair -->
     {{/unless}}
   {{/with}}
+</template>
+
+
+<template name="responsablesTemplate">
+  <div>
+    <h3 style="display:inline">Responsables: </h3>
+    {{#if isAdminOrStaff}}
+      {{#if isResponsable}}
+      <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right">
+          <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Ne plus être responsable
+      </button>
+      {{else}}
+        <button type="button" id="becomeResponsable" class="btn btn-default btn-lg pull-right">
+          <span class="glyphicon glyphicon-star" aria-hidden="true"></span>Devenir responsable 
+        </button>
+      {{/if}}
+    {{/if}}
+  </div>
+
+  <table class="table">
+    <tbody>
+      {{#each getResponsables}} <!-- Array of columns -->
+        <tr>
+        {{#each this}}  <!-- Array of userId -->
+          <td align="center">
+          {{#with getPlayer this}}
+            <address>
+              <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
+                <i class="fa fa-user fa-5x"></i><br/>
+                <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
+                {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
+                {{getEmail this}}<br>
+              </a>
+            </address>
+          {{/with}}
+          </td>
+        {{/each}}
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
 </template>

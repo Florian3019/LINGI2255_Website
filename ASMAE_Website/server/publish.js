@@ -1,10 +1,6 @@
 var isStaffOrAdmin = function(nid){
-      if(Meteor.call('isStaff',nid) || Meteor.call('isAdmin',nid)){
-          return true;
-      }
-      else{
-        return false;
-      }
+      var user = Meteor.users.findOne(nid);
+      return (user.profile.isStaff || user.profile.isAdmin);
 };
 
 Meteor.publish('Courts', function(){
@@ -184,14 +180,11 @@ Meteor.publish("PartnerAdress", function() {
 
 
 Meteor.publish('Payments', function(){
-    if(this.userId) {
-        var user = Meteor.users.findOne(this.userId);
-        if(user.profile.isStaff || user.profile.isAdmin){
-        return Payments.find();
-      }
-      else{
-      var id = this.userId;
-        return Payments.find({userID: id});
-      }
-    }
+  var id = this.userId;
+  if(isStaffOrAdmin(id)){
+      return Payments.find();
+  }
+  else{
+    return Payments.find({userID: id});
+  }
 });

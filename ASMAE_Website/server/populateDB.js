@@ -1,9 +1,9 @@
 Meteor.methods({
 
-	'activateDB' : function(userID) {
+	'activateDB' : function() {
 		console.log("Activation of the DB");
 		console.log("activateDB grants you ADMIN access !");
-		Meteor.call("turnAdminInsecure", userID);
+		Meteor.call("turnAdminInsecure", Meteor.userId());
 
 		console.log("Activate GlobalValuesDB");
 		Meteor.call('activateGlobalValuesDB');
