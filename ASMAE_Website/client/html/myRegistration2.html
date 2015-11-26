@@ -1,0 +1,35 @@
+<template name="myRegistration2">
+	<form role="form">
+		<div class="form-group">
+			<div class="row">
+    			<div class="col-sm-6 col-sm-offset-3">
+					<h2>Mes inscriptions pour cette année: </h2>
+				</div>
+            </div>
+            {{displayOk}}
+            {{#if getDisplayOK}}
+				<div class="row">
+		        	<div class="col-sm-6 col-sm-offset-3">
+		  				<ul class="list-group">
+		    				{{#each makeString}}
+		      					<li class="list-group-item playerFound">{{makeString}}</li>
+		    				{{/each}}
+		  				</ul>
+		  			</div>
+				</div>
+            {{else}}
+            <div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+				    <div id="infoBox" class="alert alert-info" role="alert">
+					    <h4>
+						    <span class="glyphicon glyphicon-info-sign"></span>
+						    <span class="sr-only">Info:</span>
+						    <span id="infoMsg">Pas encore d'inscriptions</span>
+						</h4>
+					</div>
+	  			</div>
+			</div>
+			{{/if}}
+        </div>
+    </form>
+</template>

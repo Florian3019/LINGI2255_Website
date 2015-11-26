@@ -40,8 +40,11 @@
               {{#if registrationsON}}
               <li class="dropdown"><a class="dropdown-togglebis" data-toggle="dropdown" href="#" id="Droop">Inscription <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="{{pathFor route='myRegistration'}}">Mes inscription</a></li>
+                  {{#if registered}}
+                  <li><a href="{{pathFor route='myRegistration2'}}">Mes inscriptions</a></li>
+                  {{else}}
                   <li><a href="{{pathFor route='tournamentRegistration'}}" id="Registr">Inscription au tournoi</a></li>
+                  {{/if}}
                   <li><a href="{{pathFor route='courtRegistration'}}">Inscription d'un terrain</a></li>
                 </ul>
               </li>
