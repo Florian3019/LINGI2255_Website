@@ -32,6 +32,20 @@ Meteor.publish('Questions', function(){
     return Questions.find({userID: this.userId});
 });
 
+Meteor.publish('Threads', function(){
+    if(isStaffOrAdmin(this.userId)){
+          return Threads.find();
+    }
+    return;
+});
+
+Meteor.publish('Topics', function(){
+    if(isStaffOrAdmin(this.userId)){
+          return Topics.find();
+    }
+    return;
+});
+
 Meteor.publish('Extras', function(){
   return Extras.find();
 });

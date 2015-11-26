@@ -1,0 +1,114 @@
+<template name="forum">
+
+<div class="row">
+	<div class="col-sm-6 col-sm-offset-3">
+		<h2> Forum</h2>
+	</div>
+</div>
+
+
+<div class="forumContainer">
+{{#each getThreads}}
+	<h3 style="display:inline">{{this.name}}</h3>
+  	<div class="form-group pull-right" style="display:inline">
+		<label for="topicName">Ajouter un sujet: </label>
+    	<input name="topicName" id="topicName{{this._id}}" class="form-control" placeholder="Nom" style="width:25%;display:inline">
+    	<button type="button" class="btn btn-default addTopic" id="{{this._id}}" style="display:inline">
+	  		<span class="glyphicon glyphicon-plus"></span>
+		</button>
+	</div>
+
+	<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Dernière mise à jour</th>
+        <th>Sujet</th>
+        <th>Commentaires</th>
+      </tr>
+    </thead>
+
+	<tbody>
+		{{#each this.topics}}
+		<tr class="topicRow" id="{{this}}" data-threadname="{{../name}}">
+			{{#with getTopic this}}
+				<td>
+					{{getTime this.lastUpdatedTime}}
+					par 
+					{{#with getAuthorInfo this.lastUpdatedUser}}
+						{{this.profile.firstName}} {{this.profile.lastName}}
+					{{/with}}
+				</td>
+				<td>
+					{{this.name}}
+				</td>
+				<td>
+					{{getLength this.posts}}
+				</td>
+					<!-- {{>topic TOPICID=this}} -->
+			{{/with}}
+		</tr>
+		{{/each}}
+    </tbody>
+  </table>
+
+{{/each}}
+</div>
+
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      	<div class="form-group">
+			<label for="threadName">Ajouter une catégorie</label>
+	    	<input name="threadName" id="threadName" class="form-control" placeholder="Nom">
+    	</div>
+	</div>
+	<br>
+	<button type="button" class="btn btn-default" id="addThread">
+  		<span class="glyphicon glyphicon-plus"></span>
+	</button>
+</div>
+
+
+
+</template>
+
+<!-- 
+	Args :
+	topicId
+ -->
+<template name="topic">
+<button type="button" class="btn btn-default" id="goBack">
+	<span class="glyphicon glyphicon-arrow-left"></span> Retour
+</button>
+
+{{#with getTopic topicId}}
+
+<h3>{{../threadName}} > {{this.name}}</h3>
+
+{{> reactiveTable collection=this.posts settings=settings fields=fields}}
+	<div class="row">
+	    <div class="col-sm-6 col-sm-offset-3">
+	      	<div class="form-group">
+		    	<textarea name="postText" id="postText{{this._id}}" class="form-control" placeholder="Message"></textarea>
+	    	</div>
+		</div>
+		<br>
+		<button type="button" class="btn btn-default addPost" id="{{this._id}}">
+	  		<span class="glyphicon glyphicon-plus"></span>
+		</button>
+	</div>
+{{/with}}
+</template>
+
+<template name="emptyPost">
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-3">
+	          <div id="infoBox" class="alert alert-info" role="alert">
+		        <h4>
+		          <span class="glyphicon glyphicon-info-sign"></span>
+		          <span class="sr-only">Info:</span>
+		          <span id="infoMsg">Aucun message</span>
+		        </h4>
+		      </div>
+			</div>
+	</div>
+</template>

@@ -249,6 +249,11 @@ Router.route('/terrains', {
 	template: 'courtsList'
 });
 
+Router.route('/forum', {
+	name: 'forum',
+	template: 'forum'
+});
+
 Router.route('/modifier-extras',{
 	name: "modifyExtras",
 	template: 'modifyExtras'
@@ -262,6 +267,22 @@ Router.route('/confirmation-pair/:_id',{
 		var data = {};
 		data.idPair = this.params._id;
 		return data;
+	}
+});
+
+Router.route('/topic/:_id/:tname',{
+	name: 'topic',
+	template: 'topic',
+	
+	data: function(){
+		var data = {};
+		data.topicId = this.params._id;
+		data.threadName  = this.params.tname;
+		return data;
+	},
+
+	waitOn: function(){
+		return [ Meteor.subscribe('Threads'), Meteor.subscribe('Topics') ];
 	}
 });
 
