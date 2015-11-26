@@ -18,14 +18,19 @@ Template.printSheets.events({
         return undefined
       }
       else{
-        if(info.cat!="all"){
-          var poolList = type[info.cat];
+        if(info.type=="family"){
+          var poolList = type["all"]
         }
         else{
-          var poolList = new Array();
-          for (var i in allcat) {
-            for (var j in type[allcat[i]]) {
-              poolList.push(type[allcat[i]][j]);
+          if(info.cat!="all"){
+            var poolList = type[info.cat];
+          }
+          else{
+            var poolList = new Array();
+            for (var i in allcat) {
+              for (var j in type[allcat[i]]) {
+                poolList.push(type[allcat[i]][j]);
+              }
             }
           }
         }
@@ -100,7 +105,7 @@ Template.printSheets.events({
       add_header(pdf,pools[i]);
 
       var st = "#pool"+i.toString();
-      console.log($(st));
+      // console.log($(st));
 
       pdf.addHTML($(st),
       30,
@@ -116,7 +121,11 @@ Template.printSheets.events({
 
         if(i+1==length){
           var info = Session.get("printSheets/info");
-          var filename = info.year+"_"+info.type+"_"+info.cat+".pdf";
+          if(info.type=="family"){
+            var filename = info.year+"_"+info.type+".pdf"
+          }else{
+            var filename = info.year+"_"+info.type+"_"+info.cat+".pdf";
+          }
           pdf.output('save', filename);
           Session.set("printSheets/poolList","");
           console.log("set to null");
