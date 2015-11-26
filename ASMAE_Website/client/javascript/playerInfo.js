@@ -84,6 +84,17 @@ Template.playersInfo.helpers({
                     return ret
                 }},
                 { key: 'profile.isStaff', label:'Permissions', tmpl:Template.changePermissions},
+                { key: '_id', label:"Paiement", fn: function(value, object){
+                        var payment = Payments.findOne({userID:value}); 
+                        if(payment===undefined){
+                            return "Pas inscrit";
+                        } 
+                        else{
+
+                            return paymentTranslate[payment.status] + " ("+payment.balance+"€ )";
+                        }
+                    }
+                }
             ],
              filters: ['NomDeFamille'],
              rowClass: "playerInfoRow",

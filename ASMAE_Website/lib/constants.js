@@ -6,6 +6,8 @@ paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
+paymentTranslate = {"paid":"Payé", "pending":"En attente"};
+
 
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;
