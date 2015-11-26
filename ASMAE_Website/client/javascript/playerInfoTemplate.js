@@ -224,94 +224,36 @@ Template.playerInfoTemplate.events({
 				}
 			}
 			else{
-				pools = Pools.find().fetch()
-				var pool_in = []
-				for(i = 0; i < pools.length; i++){
-					for(j = 0; j<pools[i].pairs.length; j++){
-						for(k = 0; k<player1.length; k++){
-							if(pools[i].pairs[j] === player1[k]._id){
-								pool_in.push(pools[i]._id);      
+				Meteor.call('getYear',player1, player2, function(error, result){
+            		if(error){
+                		console.error('CourtRegistration error');
+                		console.error(error);
+            		}
+            		else if(result == null){
+                		console.error("No result");
+            		}
+            		else{
+            			var years_in1 = result[0]
+            			var max_year1 = result[1]
+            			var bool =true
+            			for(i = 0; years_in1 && max_year1 && i < years_in1.length; i++){
+							if(years_in1[i] === max_year1){
+								bool = false
+								alert("Veuillez désinscrire le joueur du tournoi de cette année avant de le supprimer.")
+								Router.go('home')
 							}
 						}
-						for(k = 0; k<player2.length; k++){
-							if(pools[i].pairs[j] === player2[k]._id){
-								pool_in.push(pools[i]._id);
-							}
-						}
+            		}
+            		
+					if(bool && confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
+						Meteor.call('deleteUser',this.id);
 					}
-				}
-				types = Types.find().fetch()
-				var types_in = []
-				for(i = 0; i < types.length; i++){
-					for(j = 0; j < pool_in.length; j++){
-						for(k = 0; types[i].preminimes !== undefined && k < types[i].preminimes.length; k++){
-							if(types[i].preminimes[k] === pool_in[j]){
-								types_in.push(types[i]._id);
-								k = types[i].preminimes.length;   
-							}	
-						}
-						for(k = 0; types[i].minimes !== undefined && k < types[i].minimes.length; k++){
-							if(types[i].minimes[k] === pool_in[j]){
-								types_in.push(types[i]._id); 
-								k = types[i].preminimes.length;     
-							}	
-						}
-						for(k = 0; types[i].cadets !== undefined && k < types[i].cadets.length; k++){
-							if(types[i].cadets[k] === pool_in[j]){
-								types_in.push(types[i]._id);
-								k = types[i].preminimes.length;      
-							}	
-						}
-						for(k = 0; types[i].scolars !== undefined && k < types[i].scolars.length; k++){
-							if(types[i].scolars[k] === pool_in[j]){
-								types_in.push(types[i]._id);
-								k = types[i].preminimes.length;      
-							}	
-						}
-						for(k = 0; types[i].juniors !== undefined && k < types[i].juniors.length; k++){
-							if(types[i].juniors[k] === pool_in[j]){
-								types_in.push(types[i]._id); 
-								k = types[i].preminimes.length;     
-							}	
-						}
-						for(k = 0; types[i].seniors !== undefined && k < types[i].seniors.length; k++){
-							if(types[i].seniors[k] === pool_in[j]){
-								types_in.push(types[i]._id); 
-								k = types[i].preminimes.length;     
-							}	
-						}
-						for(k = 0; types[i].elites !== undefined && k < types[i].elites.length; k++){
-							if(types[i].elites[k] === pool_in[j]){
-								types_in.push(types[i]._id);  
-								k = types[i].preminimes.length;    
-							}	
-						}
+					else if(bool){
+						alert("Joueur non supprimé.")
 					}
-				}
-				years = Years.find().fetch()
-				var years_in = []
-				var max_year = years[0]._id ;
-				for(i = 0; i < years.length; i++){
-					if(years[i]._id > max_year){
-						max_year = years[i]._id
-					}
-					for(j = 0; j < types_in.length; j++){
-						if(years[i].men === types_in[j] || years[i].women === types_in[j] || years[i].mixed === types_in[j] || years[i].family === types_in[j]){
-							years_in.push(years[i]._id); 
-						}
-					}
-				}
-				var bool = true
-				for(i = 0; i < years_in.length; i++){
-					if(years_in[i] === max_year){
-						bool = false
-						alert("impossible de supprimer ce joueur")
-					}
-				}
-				if(bool && confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
-					Meteor.call('deleteUser',this.id);
-				}
-				Router.go('home')
+					Router.go('home')
+        		});
+			
 			}
 		}
 		
