@@ -427,7 +427,7 @@ Template.tournamentRegistration.events({
 		total = tournamentPrice;
 		for(var i=0;i<extras.length;i++){
 			var extr = extras[i];
-			var quantity = parseFloat(extr.value,10);
+			var quantity = parseInt(extr.value,10);
 			total += extr.dataset.price * quantity;
 		}
 
