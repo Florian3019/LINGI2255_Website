@@ -16,8 +16,11 @@ Template.allCourtsTable.onRendered(function(){
 
 Template.allCourtsTable.helpers({
     courtsCollection: function () {
-        input = Session.get("courtSearch/input").toLowerCase();
-
+        input = Session.get("courtSearch/input");
+        if(input!==undefined){
+          input = input.toLowerCase();
+        }
+        
         saturday = Session.get("courtSearch/saturday");
         sunday = Session.get("courtSearch/sunday");
         lend = Session.get("courtSearch/lend");

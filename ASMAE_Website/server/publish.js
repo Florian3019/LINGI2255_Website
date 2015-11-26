@@ -1,5 +1,6 @@
 var isStaffOrAdmin = function(nid){
       var user = Meteor.users.findOne(nid);
+      if(user===undefined) return false;
       return (user.profile.isStaff || user.profile.isAdmin);
 };
 
