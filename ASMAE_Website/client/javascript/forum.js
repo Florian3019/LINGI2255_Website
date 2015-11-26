@@ -80,16 +80,16 @@ Template.topic.helpers({
 	settings : function(){
       return {
         fields:[
-		          { key: 'time', label: 'Date', fn: function(value, object){
+		          { key: 'time', label: 'Date', sortOrder: 0, sortDirection: 'descending', fn: function(value, object){
 		           		return value.toLocaleString();
 		          	}
 		      	  },
-		          { key:'author', label: 'Auteur', fn:function(value, object){
+		          { key:'author', label: 'Auteur', sortable: false, fn:function(value, object){
 			          	var user = Meteor.users.findOne({_id:value});
 			          	return user.profile.firstName + " " + user.profile.lastName;
 		          	}
 		          },
-		          { key:'postText', label: 'Message'}
+		          { key:'postText', label: 'Message', sortable: false}
       		],
              showFilter: false,
              noDataTmpl : Template.emptyPost
