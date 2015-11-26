@@ -19,8 +19,8 @@ Template.mailing.helpers({
 	importanthtml: function(){
 		 return this.important;
 	},
-	texthtml: function(){
-		 return this.text;
+	textehtml: function(){
+		 return this.texte;
 	},
 	encadrehtml : function(){
 		return this.encadre;

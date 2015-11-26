@@ -1,42 +1,59 @@
 <template name="staffManagement">
 <div class="row">
   <div class="col-sm-6 col-sm-offset-3">
-    <h2>Question des joueurs:</h2>
+    <h2>Questions des joueurs:</h2>
     <br>
   </div>
 </div>
-<table class="table table-bordered">
-    <thead>
-	<tr>
-		<th>Nom:</th>
-		<th>Prénom:</th>
-		<th>Email:</th>
-		<th>Question:</th>
-		<th>Date:</th>
-		<th>Déja traité:</th>
-		<th>Répondre:</th>
-	</tr>
-	</thead>
-	<tbody>
-{{#each showStaff}}
-	<tr>
-	<td>{{lastname}}</td>
-	<td>{{firstname}}</td>
-	<td>{{email}}</td>
-	<td>{{question}}</td>
-	<td>{{date}}</td>
-	<td>{{isProcessed}}</td>
-	<td><button type='button' class='btn btn-primary btn-md' style={{showIt}}>Répondre</button><button type='button' class='btn btn-primary btn-md' style={{dontShowIt}}>Voir la réponse</button></td>
-	</tr>
-{{/each}}
-	
-	</tbody>
-</table>
-{{printContent}}
-	<form role="form">
-    <div class="form-group">
-      <label for="comment">Entrez votre réponse, puis cliquez sur Répondre à droite de la ligne correspondant à la bonne question</label>
-      <textarea class="form-control" rows="5" id="comment"></textarea>
-      </div>
-  </form>
+
+
+{{#if hasQuestions}}
+	<table class="table table-bordered">
+	    <thead>
+		<tr>
+			<th>Nom:</th>
+			<th>Prénom:</th>
+			<th>Email:</th>
+			<th>Question:</th>
+			<th>Date:</th>
+			<th>Déja traité:</th>
+			<th>Répondre:</th>
+		</tr>
+		</thead>
+		<tbody>
+	{{#each showStaff}}
+		<tr>
+		<td>{{lastname}}</td>
+		<td>{{firstname}}</td>
+		<td>{{email}}</td>
+		<td>{{question}}</td>
+		<td>{{date}}</td>
+		<td>{{isProcessed}}</td>
+		<td><button type='button' class='btn btn-primary btn-md' style={{showIt}}>Répondre</button><button type='button' class='btn btn-primary btn-md' style={{dontShowIt}}>Voir la réponse</button></td>
+		</tr>
+	{{/each}}
+		
+		</tbody>
+	</table>
+	{{printContent}}
+		<form role="form">
+	    <div class="form-group">
+	      <label for="comment">Entrez votre réponse, puis cliquez sur Répondre à droite de la ligne correspondant à la bonne question</label>
+	      <textarea class="form-control" rows="5" id="comment"></textarea>
+	      </div>
+	  </form>
+{{else}}
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-3">
+          <div id="infoBox" class="alert alert-info" role="alert">
+	        <h4>
+	          <span class="glyphicon glyphicon-info-sign"></span>
+	          <span class="sr-only">Info:</span>
+	          <span id="infoMsg">Pas de questions !</span>
+	        </h4>
+	      </div>
+		</div>
+	</div>
+{{/if}}
 </template>
+

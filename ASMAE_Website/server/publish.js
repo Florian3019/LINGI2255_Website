@@ -1,21 +1,18 @@
-var isStaffOrAdmin = function(){
-      if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
-          return true;
-      }
-      else{
-        return false;
-      }
+var isStaffOrAdmin = function(nid){
+      var user = Meteor.users.findOne(nid);
+      if(user===undefined) return false;
+      return (user.profile.isStaff || user.profile.isAdmin);
 };
 
 Meteor.publish('Courts', function(){
-    if(isStaffOrAdmin()) {
+    if(isStaffOrAdmin(this.userId)) {
         return Courts.find();
     }
     return Courts.find({ownerID: this.userId});
 });
 
 Meteor.publish('Addresses', function(){
-      if(isStaffOrAdmin()) {
+      if(isStaffOrAdmin(this.userId)) {
         return Addresses.find();
       }
       return Addresses.find({userID: this.userId});
@@ -26,10 +23,24 @@ Meteor.publish('AddressesNoSafe', function() {
 });
 
 Meteor.publish('Questions', function(){
-    if(isStaffOrAdmin()){
+    if(isStaffOrAdmin(this.userId)){
           return Questions.find();
     }
     return Questions.find({userID: this.userId});
+});
+
+Meteor.publish('Threads', function(){
+    if(isStaffOrAdmin(this.userId)){
+          return Threads.find();
+    }
+    return;
+});
+
+Meteor.publish('Topics', function(){
+    if(isStaffOrAdmin(this.userId)){
+          return Topics.find();
+    }
+    return;
 });
 
 Meteor.publish('Extras', function(){
@@ -62,17 +73,17 @@ var allowForStaffOrAdmin = {
   'insert': function (userId,doc) {
         /* user and doc checks ,
         return true to allow insert */
-        return isStaffOrAdmin();
+        return isStaffOrAdmin(userId);
   },
   'update': function (userId,doc) {
         /* user and doc checks ,
         return true to allow update */
-        return isStaffOrAdmin();
+        return isStaffOrAdmin(userId);
   },
   'remove': function (userId,doc) {
         /* user and doc checks ,
         return true to allow remove */
-        return isStaffOrAdmin();
+        return isStaffOrAdmin(userId);
   }
 };
 
@@ -85,7 +96,7 @@ Pairs.allow(allowForStaffOrAdmin);
 /*  Known uses : client/scoreTable  */
 Matches.allow(allowForStaffOrAdmin);
 
-Meteor.users.deny({'update':function(userId, doc){return !isStaffOrAdmin()}});
+Meteor.users.deny({'update':function(userId, doc){return !isStaffOrAdmin(userId)}});
 
 
 Meteor.publish("Pools", function(){
@@ -170,14 +181,11 @@ Meteor.publish("PartnerAdress", function() {
 
 
 Meteor.publish('Payments', function(){
-    if(this.userId) {
-        var user = Meteor.users.findOne(this.userId);
-        if(user.profile.isStaff || user.profile.isAdmin){
-        return Payments.find();
-      }
-      else{
-      var id = this.userId;
-        return Payments.find({userID: id});
-      }
-    }
+  var id = this.userId;
+  if(isStaffOrAdmin(id)){
+      return Payments.find();
+  }
+  else{
+    return Payments.find({userID: id});
+  }
 });

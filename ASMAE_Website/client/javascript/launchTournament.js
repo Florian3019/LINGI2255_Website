@@ -23,7 +23,7 @@ Template.launchTournament.events({
             tournamentPrice: price
         };
 
-		Meteor.call('launchTournament', launchData, function(error, result){
+		Meteor.call('launchTournament', launchData, Meteor.userId(), function(error, result){
             if(error){
                 console.error('launchTournament error');
                 console.error(error);
@@ -32,8 +32,9 @@ Template.launchTournament.events({
                 console.error("No result in launchTournament...");
             }
 
-            alert("Les inscriptions au tournoi sont lancées.");
+            alert("Les inscriptions au tournoi sont lancées.\n Un Email va être envoyé à tous les utilisateurs.");
 
+            Meteor.call('emailtoAllUsers',Meteor.userId());
 	    });
 
     },

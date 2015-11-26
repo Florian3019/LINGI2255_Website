@@ -143,11 +143,6 @@ Router.route('/lancer-inscriptions-tournoi', {
 	template: 'launchTournament'
 });
 
-Router.route('/template-admin', {
-	name: 'adminTemplate',
-	template: 'adminTemplate'
-});
-
 Router.route('/admin-ajout-terrain', {
 	name: 'adminAddCourt',
 	template: 'adminAddCourt'
@@ -240,8 +235,8 @@ Router.route('/modifier-terrain/:_id', {
 });
 
 Router.route('/recherche-terrain', {
-	name: 'courtSearch',
-	template: 'courtSearch'
+	name: 'courtSearchTemplate',
+	template: 'courtSearchTemplate'
 });
 
 Router.route('/print', {
@@ -252,6 +247,11 @@ Router.route('/print', {
 Router.route('/terrains', {
 	name: 'courtsList',
 	template: 'courtsList'
+});
+
+Router.route('/forum', {
+	name: 'forum',
+	template: 'forum'
 });
 
 Router.route('/modifier-extras',{
@@ -270,6 +270,22 @@ Router.route('/confirmation-pair/:_id',{
 	}
 });
 
+Router.route('/topic/:_id/:tname',{
+	name: 'topic',
+	template: 'topic',
+	
+	data: function(){
+		var data = {};
+		data.topicId = this.params._id;
+		data.threadName  = this.params.tname;
+		return data;
+	},
+
+	waitOn: function(){
+		return [ Meteor.subscribe('Threads'), Meteor.subscribe('Topics') ];
+	}
+});
+
 Router.route('/payment', {
 	name: 'payment',
 	template: 'payment'
@@ -278,4 +294,9 @@ Router.route('/payment', {
 Router.route('/payment-confirmation', {
   name: 'paymentConfirmation',
 	template: 'paymentConfirmation'
+});
+
+Router.route('/select-courts', {
+	name: 'selectCourts',
+	template: 'selectCourts'
 });

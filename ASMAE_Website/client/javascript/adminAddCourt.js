@@ -14,8 +14,16 @@ Template.adminAddCourt.helpers({
         }
     },
 
+    'getSelectedOwner':function(){
+        return Session.get("adminAddCourt/selected");
+    },
+
     'selectedSurface': function(value, surfaceName){
         return value === surfaceName ? 'selected' : '';
+    },
+
+    'searchComplete':function(){
+        return Session.get("adminAddCourt/searchComplete");
     },
 
     'isPrivate': function(value){
@@ -27,7 +35,6 @@ Template.adminAddCourt.helpers({
         }
     },
     'isClub': function(value){
-        console.log(value);
         if(value === "club"){
             return 'checked';
         }
@@ -36,11 +43,58 @@ Template.adminAddCourt.helpers({
         }
     },
     'player': function(){
-        return Session.get('cursor1');
+        Session.set("adminAddCourt/selected", "");
+        lastName = Session.get('adminAddCourt/lastName');
+        if(lastName!==undefined) lastName = lastName.toLowerCase();
+        firstName = Session.get('adminAddCourt/firstName');
+        if(firstName!==undefined) firstName = firstName.toLowerCase();
+        address = Session.get('adminAddCourt/address');
+        if(address!==undefined) address = address.toLowerCase();
+
+
+        var query = [];
+        if(lastName!=="" && lastName!==undefined) query.push({$where:function(){if(this.profile.lastName!==undefined) return this.profile.lastName.toLowerCase().indexOf(lastName)>-1;}});
+        if(firstName!=="" && firstName!==undefined) query.push({$where:function(){if(this.profile.firstName!==undefined) return this.profile.firstName.toLowerCase().indexOf(firstName)>-1;}});
+        if(address!=="" && address!==undefined) query.push({$where:function(){return this.emails[0].address.toLowerCase().indexOf(address)>-1;}});
+
+        cursor = [];
+        if(query.length>0) cursor = Meteor.users.find({$and:query}).fetch();
+
+        if(cursor.length>0){
+            Session.set("adminAddCourt/searchComplete",true);
+        }
+        else{
+            Session.set("adminAddCourt/searchComplete",false);
+        }
+        return cursor;
     }
 });
 
+Template.adminAddCourt.onRendered(function(){
+    Session.set("adminAddCourt/selected", ""); //Reset
+    Session.set('adminAddCourt/lastName',"");
+    Session.set('adminAddCourt/firstName',"");
+    Session.set('adminAddCourt/address',"");
+    Session.set("adminAddCourt/searchComplete",false);
+});
+
 Template.adminAddCourt.events({
+    'keyup #lastName':function(event){
+        Session.set('adminAddCourt/lastName', event.currentTarget.value);
+        Session.set("adminAddCourt/searchComplete",true);
+    },
+
+    'keyup #firstName':function(event){
+        Session.set('adminAddCourt/firstName', event.currentTarget.value);
+        Session.set("adminAddCourt/searchComplete",true);
+    },
+
+    'keyup #address':function(event){
+        Session.set('adminAddCourt/address', event.currentTarget.value);
+        Session.set("adminAddCourt/searchComplete",true);
+    },
+
+
     'submit form': function(event){
         event.preventDefault();
         var address = {
@@ -51,29 +105,20 @@ Template.adminAddCourt.events({
             zipCode : $('[name=zipCode]').val(),
             country : $('[name=country]').val()
         };
-        var user = {
-            firstName : $('[name=firstName]').val(),
-            lastName : $('[name=lastName]').val(),
-            address : $('[name=address]').val()
-        };
-        var go = false;
-        var query = {};
-        if(user.lastName){query["profile.lastName"] = user.lastName;}
-        if(user.firstName){query["profile.firstName"] = user.firstName;}
-        if(user.address){query["emails.address"] = user.address;}
-        cursor = Meteor.users.find(query).fetch();
-        var id, currentOwnerID; //Used for the update of an existing court
-        if(cursor.length == 0) {
-            alert("Personne ne correpond à votre recherche, veuillez vérifier les informations suivantes: \nNom,\nPrénom\nAddresse email.");
-            return;
+
+        var currentOwnerID = Session.get("adminAddCourt/selected");
+        infoBox = document.getElementById("infoBox");
+        if(currentOwnerID=="" || currentOwnerID===undefined){
+            if(infoBox!==null && infoBox!==undefined){
+                infoBox.removeAttribute("hidden");
+                return;
+            }
+        }
+        else{
+            if(infoBox!==null && infoBox!==undefined) infoBox.setAttribute("hidden","");
         }
 
-        if(typeof this.court !== 'undefined'){
-            id = this.court._id;
-            currentOwnerID = cursor[0]._id;
-        }
         var courtData = {
-            _id : id,
             ownerID : currentOwnerID,
             surface : $('[name=surface]').val(),
             courtType : $('[name=courtType]:checked').val(),
@@ -83,14 +128,6 @@ Template.adminAddCourt.events({
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked")
         };
-        Session.set('cursor1',cursor);
-        Session.set('courtData', courtData);
-        Session.set('address', address);
-    },
-    'click li': function() {
-        var courtData = Session.get('courtData');
-        var address = Session.get('address');
-        courtData.ownerID = this._id;
 
         Meteor.call('updateCourt', courtData, address, function(error, result){
             if(error){
@@ -102,6 +139,15 @@ Template.adminAddCourt.events({
             }
             Router.go('confirmationRegistrationCourt', {_id: result});
         });
+    },
+    'click .playerFound': function(event) {
+        playerId = event.currentTarget.id;
 
+        oldPlayer = document.getElementById(Session.get("adminAddCourt/selected"));
+        if(oldPlayer!==undefined && oldPlayer!==null) oldPlayer.className = oldPlayer.className.replace(' courtSelected', '');
+
+        Session.set("adminAddCourt/selected", playerId);
+        
+        document.getElementById(playerId).className += " courtSelected";
     }
 });

@@ -1,66 +1,56 @@
-<template name="courtSearch">
+<template name="courtSearchTemplate">
   <div class="row">
     <div class="col-sm-6 col-sm-offset-3">
-      <h2>Recherche d'un terrain:</h2>
+      <h2>Rechercher un terrain</h2>
       <br>
     </div>
   </div>
-<!--   <center><input type="text" id="search-box" class="form-control" placeholder="Rechercher l'adresse d'un terrain" /></center>
-  <div>
+  {{>courtSearch}}
+</template>
 
-      <table class="table">
-    		<thead>
-          		<tr>
-                  <th>Owner</th>
-            	    <th>Addresse</th>
-                  <th>Surface</th>
-            	    <th>Type</th>
-                  <th>Samedi</th>
-                  <th>Dimanche</th>
-          		</tr>
-        	</thead>
-        	<tbody>
-        		{{#each getCourts}}
-            {{#with courtInfos this}}
-            {{#if court._id}}
-        		<tr>
-              <td><a href="{{pathFor route='playerInfoPage'}}">{{courtOwner court.ownerID}}</a></td>
-        			<td><a href="{{pathFor route='courtInfoPage' _id=court._id}}">{{{address.street}}}, {{{address.number}}}, {{{address.city}}}, {{{address.zipCode}}}</a></td>
-              <td>{{court.surface}}</td>
-        			<td>{{court.courtType}}</td>
-              <td><span class="glyphicon {{checkedForDay court.dispoSamedi}}"></span></td>
-              <td><span class="glyphicon {{checkedForDay court.dispoDimanche}}"></span></td>
-        		</tr>
-            {{/if}}
-            {{/with}}
-        		{{/each}}
-        	</tbody>
-    	</table>
+<template name="courtSearch">
 
-      {{#if isLoading}}
-        searching ...
-      {{/if}}
-
-  </div>
-
-  <br />
-  <div>
-    <center><a href="{{pathFor route='courtsList'}}" class="btn btn-default">Voir tous les terrains</a></center>
-  </div> -->
 <div class="row">
-  <div class="col-sm-3 col-sm-offset-3">
-    {{> mySpecialFilterAddressCourt}}
-  </div>
   <div class="col-sm-3">
-    {{> mySpecialFilterSurface}}
+    {{> mySpecialFilterCourt}}
+  </div>
+
+  <div class="col-sm-2">
+    <label for="saturdaySelect">Samedi</label>
+    <select id="saturdaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
+                  <option value="Ignore" selected="selected">Ignorer</option>
+                  <option value="Yes" >Oui</option>
+                  <option value="No">Non</option>
+    </select>
+  </div>
+  <div class="col-sm-2">
+    <label for="sundaySelect">Dimanche</label>
+    <select id="sundaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
+                  <option value="Ignore" selected="selected">Ignorer</option>
+                  <option value="Yes">Oui</option>
+                  <option value="No">Non</option>
+    </select>
+  </div>
+  <div class="col-sm-2">
+    <label for="lendSelect">Loué</label>
+    <select id="lendSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
+                  <option value="Ignore" selected="selected">Ignorer</option>
+                  <option value="Yes" >Oui</option>
+                  <option value="No">Non</option>
+    </select>
+  </div>
+  <div class="col-sm-2">
+    <label for="lendSelect">Numéro</label>
+    <input
+      id="courtNumberInput"
+      type="number"
+      min="0"
+      step="1"
+      class="form-control"
+      style="text-align:center; width=15%; display:inline">
   </div>
 </div>
-<br>
-<div class="row">
-  <div class="col-sm-3 col-sm-offset-3">
-    {{> mySpecialFilterPrivate}}
-  </div>
-</div>
+
 {{>allCourtsTable}}
 </template>
 
@@ -93,15 +83,6 @@
   {{/if}}
 </template>
 
-<template name="mySpecialFilterAddressCourt">
-  <input class="form-control addressFilter" type="text" placeholder="Adresse:"/>
-</template>
-
-<template name="mySpecialFilterSurface">
-  <input class="form-control surfaceFilter" type="text" placeholder="Surface:"/>
-</template>
-
-
-<template name="mySpecialFilterPrivate">
-  <input class="form-control privateFilter" type="text" placeholder="Privé/public:"/>
+<template name="mySpecialFilterCourt">
+  <input class="form-control courtFilter" type="text" placeholder="Rechercher"/>
 </template>

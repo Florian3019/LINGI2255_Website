@@ -13,7 +13,7 @@ Meteor.methods({
 	//TODO: remove this when going to production !!!
 	'turnAdminInsecure' : function(nid){
 		Meteor.users.update({_id:nid}, {
-			$set: {"profile.isAdmin":1,"profile.isStaff":1}
+			$set: {"profile.isAdmin":true,"profile.isStaff":true}
 		});
 
 	},
@@ -22,23 +22,22 @@ Meteor.methods({
 		if (!GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
 
-			Meteor.call('activateCourtDB', "2015");		//TODO: not need the year?
+			Meteor.call('activateCourtDB');
 		}
 		if (!GlobalValues.findOne({_id:"registrationsON"})) {
 			GlobalValues.insert({_id:"registrationsON", value: false});
 		}
 	},
 
-	'activateCourtDB' : function(tournamentYear) {
-		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
-			GlobalValues.insert({_id:"nextCourtNumber"+tournamentYear, value:1});
+	'activateCourtDB' : function() {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
+			GlobalValues.insert({_id:"nextCourtNumber", value:1});
 		}
 	},
 
 	// Method to launch the tournament registrations for this year's tournament.
 	'launchTournament': function(launchTournamentData){
 		if(Meteor.call('isAdmin')){
-
 			var data = {};
 			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
@@ -76,9 +75,7 @@ Meteor.methods({
 			GlobalValues.update({_id:"registrationsON"}, {$set: {
 				value : true
 			}}, {upsert: true}, function(err, result){
-				console.log("coucou 1");
 				if(err){
-					console.log("coucou 2");
 					throw new Meteor.Error("update GlobalValues registrationsON in launchTournament error: ", err);
 				}
 			});
@@ -124,19 +121,19 @@ Meteor.methods({
 		return y;
 	},
 
-	'getNextCourtNumber' : function(tournamentYear) {
-		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear})) {
+	'getNextCourtNumber' : function() {
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
 			console.warn("No court number yet, activating CourtDB");
-			Meteor.call('activateCourtDB',tournamentYear);
+			Meteor.call('activateCourtDB');
 			return 1;
 		}
-		return GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear});
+		return GlobalValues.findOne({_id:"nextCourtNumber"});
 	},
 
-	'setNextCourtNumber' : function(tournamentYear, value) {
-		globalValueDocument = GlobalValues.findOne({_id:"nextCourtNumber"+tournamentYear});
+	'setNextCourtNumber' : function(value) {
+		globalValueDocument = GlobalValues.findOne({_id:"nextCourtNumber"});
 		if (typeof globalValueDocument === 'undefined') {
-			console.error("Error setNextCourtNumber : globalValueDocument not found for year "+tournamentYear);
+			console.error("Error setNextCourtNumber : globalValueDocument not found");
 			return undefined;
 		}
 		GlobalValues.update(globalValueDocument, {$set: {
@@ -184,7 +181,7 @@ Meteor.methods({
 	'turnAdmin': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
-           		$set: {"profile.isAdmin":1,"profile.isStaff":0}
+           		$set: {"profile.isAdmin":true,"profile.isStaff":true}
          	});
 		}
 		else {
@@ -196,7 +193,7 @@ Meteor.methods({
 	'turnStaff': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
-           		$set: {"profile.isAdmin":0,"profile.isStaff":1}
+           		$set: {"profile.isAdmin":false,"profile.isStaff":true}
          	});
 		}
 		else {
@@ -208,7 +205,7 @@ Meteor.methods({
 	'turnNormal': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
-	        	$set: {"profile.isAdmin":0,"profile.isStaff":0}
+	        	$set: {"profile.isAdmin":false,"profile.isStaff":true}
 	      	});
 		}
 		else {
@@ -216,7 +213,23 @@ Meteor.methods({
 			return false;
 		}
 	},
-
+	'deleteUser': function(nid){
+		userToDelete = Meteor.users.findOne({"_id":nid});
+		addressId = userToDelete.profile.addressID;
+		if(addressId != undefined){
+			Addresses.remove({_id:addressId});
+			Meteor.users.update({_id: nid} , {$set: {"profile.addressID": undefined}});
+		}
+		courtId = Courts.findOne({"ownerID":nid});
+		if(courtId != undefined){
+			Courts.remove({_id:courtId});
+			//Meteor.users.update({_id: nid} , {$set: {"profile.courtID": undefined}});
+		}
+		Meteor.users.update({_id: nid} , {$set: {"profile.isStaff": false}});
+		Meteor.users.update({_id: nid} , {$set: {"profile.isAdmin": false}});
+		Meteor.users.update({_id: nid} , {$set: {"services": undefined}});
+		Meteor.users.update({_id: nid} , {$set: {"profile.phone": undefined}});
+	},
 	'getPairCategory' : function(type, p1, p2){
 		var category;
 		if(type==="family"){
@@ -396,6 +409,19 @@ Meteor.methods({
 			seniorsBracket:<list of pairId>
 			elitesBracket:<list of pairId>
 			listBracket:<list of pairID>
+			
+
+			// Staff responsables
+				Can only add a single staff for each update to a category.
+			preminimesResp:<list of userId>
+			minimesResp:<list of userId>
+			cadetsResp:<list of userId>
+			scolarsResp:<list of userId>
+			juniorsResp:<list of userId>
+			seniorsResp:<list of userId>
+			elitesResp:<list of userId>
+			listResp:<list of pairID>
+
 			NOTE : for the family tournament, only one list of pools :
 			all:<list of poolIDs>
 		}
@@ -405,29 +431,42 @@ Meteor.methods({
 			console.error("updateType : no typeData provided : "+typeData);
 			return;
 		}
-
+		var hasData = false;
 		var data = {};
 		for (var i=0;i<categoriesKeys.length;i++){
 			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
 				data.$addToSet[categoriesKeys[i]] = {$each : typeData[categoriesKeys[i]]};
+				hasData = true;
 			}
 			var b = categoriesKeys[i].concat("Bracket");
 			if(typeData[b]!=undefined){
-				if(!data.$set) data['$set'] = {};
+				if(data.$set===undefined) data['$set'] = {};
 				data.$set[b] = typeData[b];
+				hasData = true;
 			}
 
 			var c = categoriesKeys[i].concat("Courts");
 			if(typeData[c]!=undefined){
-				if(!data.$set) data['$set'] = {};
+				if(data.$set===undefined) data['$set'] = {};
 				data.$set[c] = typeData[c];
+				hasData = true;
+			}
+
+			var r = categoriesKeys[i].concat("Resp");
+			if(typeData[r]!=undefined){
+				if(data.$addToSet===undefined) data.$addToSet = {};
+				data.$addToSet[r] = typeData[r];
+				hasData = true;
 			}
 		}
 		if(!typeData._id){
 			return Types.insert(data);
 		}
-
+		if(!hasData){
+			console.warn("Warning : called updateType with no input");
+			return;
+		}
 		Types.update({_id: typeData._id} , data);
 		return typeData._id;
 	},
@@ -473,6 +512,8 @@ Meteor.methods({
 			console.error("updateCourt : You don't have the permissions to update a court !");
 			return false;
 		}
+
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 
 
        		/*			TODO
@@ -560,7 +601,7 @@ Meteor.methods({
 			}
 
 			// Create a new court
-			var courtId = Courts.insert(data, function(err, courtId){
+			courtId = Courts.insert(data, function(err, courtId){
 				if(err){
 					throw new Meteor.Error("updateCourt error: during Courts.insert", err);
 				}
@@ -1629,10 +1670,11 @@ Meteor.methods({
 /*
 	@param to: is for the receiver email,
 	@param subject : is for the object of the mail,
-	@param data : var dataContext = {
-											intro:"Bonjour tdc,",
-											message:"j'aurais pu mettre un lorem..."
-										};
+	@param data : var data = {
+      intro:"Bonjour Joseph !",
+			important:"lorem1",
+			texte:"lorem 2",
+			encadre:"final2"};
 	*/
 	'emailFeedback': function (to, subject, data) {
 
@@ -1656,7 +1698,7 @@ Meteor.methods({
 								}
 
 								// Send the request
-                if (Meteor.call('isStaff') || Meteor.call('isAdmin')){// || Meteor.user().emails[0].address == to) {
+                if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
                   Meteor.http.post(postURL, options, onError);
                   console.log("Email sent");
                 }
@@ -1664,6 +1706,23 @@ Meteor.methods({
                   console.error("Forbidden permissions to send mail");
                 }
 	},
+
+  'emailtoAllUsers':function(){
+    var mails=[];
+    var usersCursor = Meteor.users.find();
+    usersCursor.forEach( function(user) {
+      mails.push(user.emails[0].address);
+    });
+    var subject = "[Le Charles De Lorraine] Lancement des inscriptions";
+    var data  ={
+      intro:"Bonjour,",
+      important:"Nous avons une grande nouvelle à vous annoncer !",
+      texte:"Depuis aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
+      encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
+    };
+    Meteor.call('emailFeedback',mails.toString(),subject,data);
+
+  },
 
 
 
@@ -1699,6 +1758,107 @@ Meteor.methods({
 		if(logData.details!=undefined) data.details = logData.details;
 
 		ModificationsLog.insert(data);
+	},
+	'getYear':function(player1, player2){
+		function get_type (pool_id) {
+			var types = Types.find().fetch()
+			for(i = 0; i < types.length; i++){
+				for(j = 0; types[i].preminimes !== undefined && j < types[i].preminimes.length; j++){
+					if(types[i].preminimes[j] === pool_id){
+						return ['preminimes',types[i]._id];
+					}
+				}
+				for(j = 0; types[i].minimes !== undefined && j < types[i].minimes.length; j++){
+					if(types[i].minimes[j] === pool_id){
+						return ['minimes',types[i]._id];
+					}
+				}
+				for(j = 0; types[i].cadets !== undefined && j < types[i].cadets.length; j++){
+					if(types[i].cadets[j] === pool_id){
+						return ['cadets',types[i]._id];
+					}
+				}
+				for(j = 0; types[i].scolars !== undefined && j < types[i].scolars.length; j++){
+					if(types[i].scolars[j] === pool_id){
+						return ['scolars',types[i]._id];
+					}
+				}
+				for(j = 0; types[i].juniors !== undefined && j < types[i].juniors.length; j++){
+					if(types[i].juniors[j] === pool_id){
+						return ['juniors',types[i]._id];
+					}
+				}	
+				for(j = 0; types[i].seniors !== undefined && j < types[i].seniors.length; j++){
+					if(types[i].seniors[j] === pool_id){
+						return ['seniors',types[i]._id];
+					}
+				}	
+				for(j = 0; types[i].elites !== undefined && j < types[i].elites.length; j++){
+					if(types[i].elites[j] === pool_id){
+						return ['elites',types[i]._id];
+					}
+				}	
+				return undefined;			
+			}
+		}
+		function get_year(type_id) {
+			var years = Years.find().fetch()
+			for(i = 0; i < years.length; i++){
+				if(years[i].men === type_id){
+					return ['men',years[i]._id]; 
+				}
+				else if(years[i].women === type_id){
+					return ['women',years[i]._id]; 
+				}
+				else if(years[i].mixed === type_id){
+					return ['mixed',years[i]._id]; 
+				}
+				else if(years[i].family === type_id){
+					return ['family',years[i]._id];
+				}
+			}
+			return undefined;
+		}
+		function get_max_year(){
+			var years = Years.find().fetch();
+			var max_year = years[0]._id;
+			for(i = 0; i < years.length; i++){
+				if(years[i]._id > max_year){
+					max_year = years[i]._id;
+				}
+			}
+			return max_year;
+		}
+		function make_all(pool_in){
+			year = []
+			for(i=0; i<pool_in.length;i++){
+				var type_id = get_type(pool_in[i])[1];
+				year.push(get_year(type_id)[1]);
+			}
+			return year;
+		}
+		function make_pool_id(player1, player2){
+			var pools = Pools.find().fetch()
+			var pool_in = []
+			for(i = 0; i < pools.length; i++){
+				for(j = 0; j<pools[i].pairs.length; j++){
+					for(k = 0;player1 && k<player1.length; k++){
+						if(pools[i].pairs[j] === player1[k]._id){
+							pool_in.push(pools[i]._id);      
+						}
+					}
+					for(k = 0;player2 && k<player2.length; k++){
+						if(pools[i].pairs[j] === player2[k]._id){
+							pool_in.push(pools[i]._id);      
+						}
+					}
+				}
+			}
+			return pool_in
+		}
+		ret = [] 
+		ret[0] = make_all(make_pool_id(player1, player2));
+		ret[1] = get_max_year();
+		return ret
 	}
-
 });

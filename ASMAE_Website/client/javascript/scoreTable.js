@@ -31,6 +31,20 @@ Template.scorePage.helpers({
       }
       return undefined;
     },
+
+        // Returns a yearData with id year (copy of the same function in poolsSidebarCollapsableMenu.helpers)
+    'getYear' : function(){
+      var year = Session.get('PoolList/Year');
+      var y = Years.findOne({_id:year});
+      return y;
+    },
+
+    // Returns a typeData
+    'getType' : function(yearData){
+      var type = Session.get('PoolList/Type');
+      var t = Types.findOne({_id:yearData[type]});
+      return t;
+    },
 });
 
 Template.scoreTable.events({
