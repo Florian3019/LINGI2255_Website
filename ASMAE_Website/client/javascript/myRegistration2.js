@@ -47,7 +47,6 @@ Template.myRegistration2.helpers({
       ret_obj = {'id': pair_id,'value':str_return}
       result.push(ret_obj)
     }
-    console.log(result)
     return result;
   }
 });
@@ -56,7 +55,6 @@ Template.myRegistration2.events({
     if(confirm("Voulez vous vous désinscrire ?")){
       var pair_id = event.currentTarget.dataset.pairid
       var pair = Pairs.findOne({'_id':pair_id});
-      console.log(pair)
       if(pair.player2 == undefined){
         Pairs.remove({'_id':pair_id});
         var pools = Pools.find().fetch()
@@ -82,8 +80,9 @@ Template.myRegistration2.events({
           Pairs.update({'_id': pair_id}, {$set: {'player1': pair.player2}});
         }
         Pairs.update({'_id': pair_id}, {$unset: {'player2': ""}});
-        pair = Pairs.findOne({'_id':pair_id});
-        var email = pair.player1.emails[0].address
+        var new_pair = Pairs.findOne({'_id':pair_id});
+        var new_p = Meteor.users.findOne({'_id':new_pair.player1._id});
+        var email = new_p.emails[0].address
       }
       Router.go('home');
     }
