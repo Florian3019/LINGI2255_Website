@@ -801,9 +801,26 @@ Template.poolList.helpers({
 	},
 
 	'getChosenScorePool' : function(){
-		poolId = Session.get("PoolList/ChosenScorePool")
+		poolId = Session.get("PoolList/ChosenScorePool");
+    var year = Session.get('PoolList/Year');
+    var type = Session.get('PoolList/Type');
+    var category = Session.get('PoolList/Category');
+
+    if(year===undefined || type===undefined || category===undefined){
+      return;
+    }
+
+    var field = category.concat("Resp");
+    var yearData = Years.findOne({_id:year});
+    var typeData = Types.findOne({_id:yearData[type]});
+
+
+    var responsables = typeData[field];
+
+    console.log(responsables[0]);
 		if(poolId!=""){
-			return {_id:poolId};
+			return {_id:poolId,
+        resp:responsables[0]};
 		}
 		else return "";
 	},
@@ -902,12 +919,12 @@ Template.poolList.helpers({
 						scrollPage(-scrollSpeed,0);
 				    }
 				    else{
-				    	m = false;				    	
+				    	m = false;
 				    }
 				}
 		    };
 
-			document.addEventListener('mousemove', onMouseMove); 
+			document.addEventListener('mousemove', onMouseMove);
 
 			hideSuccessBox(document);
   		  	el.className = el.className.replace('ex-moved', '');
@@ -1262,7 +1279,7 @@ Template.responsablesTemplate.helpers({
 	},
 
 	'getEmail' : function(player){
-		return player.emails[0].address; 
+		return player.emails[0].address;
 	},
 
 	'isResponsable':function(){
