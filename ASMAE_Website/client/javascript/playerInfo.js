@@ -86,7 +86,8 @@ Template.playersInfo.helpers({
                 { key: 'profile.isStaff', label:'Permissions', tmpl:Template.changePermissions},
             ],
              filters: ['NomDeFamille'],
-             rowClass: "playerInfoRow"
+             rowClass: "playerInfoRow",
+             showColumnToggles:true
         }
     }
     
