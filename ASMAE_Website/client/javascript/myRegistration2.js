@@ -65,6 +65,8 @@ Template.myRegistration2.events({
           Pairs.update({'_id': pair_id}, {$set: {player1: pair.player2}});
         }
         Pairs.update({'_id': pair_id}, {$unset: {player2: ""}});
+        pair = Pairs.findOne({'_id':pair_id});
+        var email = pair.player1.emails[0].address
       }
       Router.go('home');
     }
