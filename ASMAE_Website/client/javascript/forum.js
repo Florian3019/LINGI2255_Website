@@ -89,7 +89,7 @@ Template.topic.helpers({
 			          	return user.profile.firstName + " " + user.profile.lastName;
 		          	}
 		          },
-		          { key:'postText', label: 'Commentaire'}
+		          { key:'postText', label: 'Message'}
       		],
              showFilter: false,
              noDataTmpl : Template.emptyPost

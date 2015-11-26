@@ -12,7 +12,7 @@
 	<h3 style="display:inline">{{this.name}}</h3>
   	<div class="form-group pull-right" style="display:inline">
 		<label for="topicName">Ajouter un sujet: </label>
-    	<input name="topicName" id="topicName{{this._id}}" class="form-control" placeholder="Nom" style="width:25%;display:inline">
+    	<input name="topicName" id="topicName{{this._id}}" class="form-control" placeholder="Nom" style="width:25%;display:inline" onkeydown="if (event.keyCode == 13) document.getElementById('{{this._id}}').click()">
     	<button type="button" class="btn btn-default addTopic" id="{{this._id}}" style="display:inline">
 	  		<span class="glyphicon glyphicon-plus"></span>
 		</button>
@@ -58,7 +58,7 @@
     <div class="col-sm-6 col-sm-offset-3">
       	<div class="form-group">
 			<label for="threadName">Ajouter une catégorie</label>
-	    	<input name="threadName" id="threadName" class="form-control" placeholder="Nom">
+	    	<input name="threadName" id="threadName" class="form-control" placeholder="Nom" onkeydown="if (event.keyCode == 13) document.getElementById('addThread').click()">
     	</div>
 	</div>
 	<br>
