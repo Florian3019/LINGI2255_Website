@@ -515,16 +515,6 @@ Meteor.methods({
 
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 
-
-       		/*			TODO
-       		ADD:
-       		courtNumber
-       		zone
-       		mapNumber
-       		lendThisYear (ou alors noter l'id du tournoi (ou l'année du dernier tournoi où il était prêté), sinon je ne sais pas quand on pourra le remettre à 'false' après le tournoi)
-       		*/
-
-
 		var data = {};
 
 		data.ownerID = courtData.ownerID;
@@ -557,19 +547,19 @@ Meteor.methods({
 			data.dispoDimanche = courtData.dispoDimanche;
 		}
 
-		if(courtData.free !== null && typeof courtData.free !== 'undefined'){
-			data.free = courtData.free;
+		if(courtData.lendThisYear !== null && typeof courtData.lendThisYear !== 'undefined'){
+			data.lendThisYear = courtData.lendThisYear;
 		}
 
-		if(typeof courtData.dispoSamedi !== 'undefined' && typeof courtData.dispoDimanche !== 'undefined')
-		{
-			if(courtData.dispoSamedi || courtData.dispoDimanche){
-				data.lendThisYear = true;
-			}
-			else{
-				data.lendThisYear = false;
-			}
-		}
+		// if(typeof courtData.dispoSamedi !== 'undefined' && typeof courtData.dispoDimanche !== 'undefined')
+		// {
+		// 	if(courtData.dispoSamedi || courtData.dispoDimanche){
+		// 		data.lendThisYear = true;
+		// 	}
+		// 	else{
+		// 		data.lendThisYear = false;
+		// 	}
+		// }
 
 
 		if(courtData.numberOfCourts){
@@ -1759,66 +1749,95 @@ Meteor.methods({
 
 		ModificationsLog.insert(data);
 	},
-	'getYear':function(player1, player2){
-		function get_type (pool_id) {
-			var types = Types.find().fetch()
-			for(i = 0; i < types.length; i++){
-				for(j = 0; types[i].preminimes !== undefined && j < types[i].preminimes.length; j++){
-					if(types[i].preminimes[j] === pool_id){
-						return ['preminimes',types[i]._id];
+	'getYear':function(player){
+		function get_pair_id(player){
+			var pairs = Pairs.find().fetch()
+			var pair_in = []
+			for(i = 0; i < pairs.length; i++){
+				for(j = 0; j < player.length; j++){
+					if((pairs[i].player1 && player[j]._id==pairs[i].player1._id) || (pairs[i].player2 && player[j]._id==pairs[i].player2._id)){
+						pair_in.push(pairs[i]._id);
 					}
 				}
-				for(j = 0; types[i].minimes !== undefined && j < types[i].minimes.length; j++){
-					if(types[i].minimes[j] === pool_id){
-						return ['minimes',types[i]._id];
-					}
-				}
-				for(j = 0; types[i].cadets !== undefined && j < types[i].cadets.length; j++){
-					if(types[i].cadets[j] === pool_id){
-						return ['cadets',types[i]._id];
-					}
-				}
-				for(j = 0; types[i].scolars !== undefined && j < types[i].scolars.length; j++){
-					if(types[i].scolars[j] === pool_id){
-						return ['scolars',types[i]._id];
-					}
-				}
-				for(j = 0; types[i].juniors !== undefined && j < types[i].juniors.length; j++){
-					if(types[i].juniors[j] === pool_id){
-						return ['juniors',types[i]._id];
-					}
-				}	
-				for(j = 0; types[i].seniors !== undefined && j < types[i].seniors.length; j++){
-					if(types[i].seniors[j] === pool_id){
-						return ['seniors',types[i]._id];
-					}
-				}	
-				for(j = 0; types[i].elites !== undefined && j < types[i].elites.length; j++){
-					if(types[i].elites[j] === pool_id){
-						return ['elites',types[i]._id];
-					}
-				}	
-				return undefined;			
 			}
+			return pair_in}
+		function get_pool_id(pair_id){
+			var pools = Pools.find().fetch()
+			var pool_in = []
+			for(i = 0; i < pools.length; i++){
+				for(j = 0; j<pools[i].pairs.length; j++){
+					for(k = 0; k<pair_id.length; k++){
+						if(pair_id[k]==pools[i].pairs[j]){
+							pool_in.push([pools[i]._id, pair_id[k]]);
+						}
+					}
+				}
+			}
+			return pool_in}
+		function get_type (pool_id) { 
+			var types = Types.find().fetch()
+			var type_in = []
+			for(i = 0; i < types.length; i++){
+				for(k = 0; k < pool_id.length; k++){
+					for(j = 0; types[i].preminimes !== undefined && j < types[i].preminimes.length; j++){
+						if(types[i].preminimes[j] === pool_id[k][0]){
+							type_in.push(['Préminimes',types[i]._id, pool_id[k][1]]);
+						}
+					}
+					for(j = 0; types[i].minimes !== undefined && j < types[i].minimes.length; j++){
+						if(types[i].minimes[j] === pool_id[k][0]){
+							type_in.push(['Minimes',types[i]._id, pool_id[k][1]]);
+						}
+					}
+					for(j = 0; types[i].cadets !== undefined && j < types[i].cadets.length; j++){
+						if(types[i].cadets[j] === pool_id[k][0]){
+							type_in.push(['Cadets',types[i]._id, pool_id[k][1]]);
+						}
+					}
+					for(j = 0; types[i].scolars !== undefined && j < types[i].scolars.length; j++){
+						if(types[i].scolars[j] === pool_id[k][0]){
+							type_in.push(['Scolaires',types[i]._id, pool_id[k][1]]);
+						}
+					}
+					for(j = 0; types[i].juniors !== undefined && j < types[i].juniors.length; j++){
+						if(types[i].juniors[j] === pool_id[k][0]){
+							type_in.push(['Juniors',types[i]._id, pool_id[k][1]]);
+						}
+					}		
+					for(j = 0; types[i].seniors !== undefined && j < types[i].seniors.length; j++){
+						if(types[i].seniors[j] === pool_id[k][0]){
+							type_in.push(['Seniors',types[i]._id, pool_id[k][1]]);
+						}
+					}		
+					for(j = 0; types[i].elites !== undefined && j < types[i].elites.length; j++){
+						if(types[i].elites[j] === pool_id[k][0]){
+							type_in.push(['Elites',types[i]._id, pool_id[k][1]]);
+						}
+					}	
+				}				
+			}
+			return type_in;
 		}
 		function get_year(type_id) {
 			var years = Years.find().fetch()
+			year_in = []
 			for(i = 0; i < years.length; i++){
-				if(years[i].men === type_id){
-					return ['men',years[i]._id]; 
-				}
-				else if(years[i].women === type_id){
-					return ['women',years[i]._id]; 
-				}
-				else if(years[i].mixed === type_id){
-					return ['mixed',years[i]._id]; 
-				}
-				else if(years[i].family === type_id){
-					return ['family',years[i]._id];
+				for(j = 0; j < type_id.length; j++){
+					if(years[i].men === type_id[j][1]){
+						year_in.push(['Homme',years[i]._id, type_id[j][0], type_id[j][2]]); 
+					}
+					else if(years[i].women === type_id[j][1]){
+						year_in.push(['Femme',years[i]._id, type_id[j][0], type_id[j][2]]);  
+					}
+					else if(years[i].mixed === type_id[j][1]){
+						year_in.push(['Mixte',years[i]._id, type_id[j][0], type_id[j][2]]); 
+					}
+					else if(years[i].family === type_id[j][1]){
+						year_in.push(['Famille',years[i]._id, type_id[j][0], type_id[j][2]]); 
+					}
 				}
 			}
-			return undefined;
-		}
+			return year_in;}
 		function get_max_year(){
 			var years = Years.find().fetch();
 			var max_year = years[0]._id;
@@ -1827,38 +1846,26 @@ Meteor.methods({
 					max_year = years[i]._id;
 				}
 			}
-			return max_year;
-		}
-		function make_all(pool_in){
-			year = []
-			for(i=0; i<pool_in.length;i++){
-				var type_id = get_type(pool_in[i])[1];
-				year.push(get_year(type_id)[1]);
+			return max_year;}
+		function make_all(player){
+			var pair_id;
+			var new_player;
+			if(player.length || player.length == 0){
+				new_player = player;
 			}
-			return year;
-		}
-		function make_pool_id(player1, player2){
-			var pools = Pools.find().fetch()
-			var pool_in = []
-			for(i = 0; i < pools.length; i++){
-				for(j = 0; j<pools[i].pairs.length; j++){
-					for(k = 0;player1 && k<player1.length; k++){
-						if(pools[i].pairs[j] === player1[k]._id){
-							pool_in.push(pools[i]._id);      
-						}
-					}
-					for(k = 0;player2 && k<player2.length; k++){
-						if(pools[i].pairs[j] === player2[k]._id){
-							pool_in.push(pools[i]._id);      
-						}
-					}
-				}
+			else{
+				new_player = [player];
 			}
-			return pool_in
+
+			if(new_player.length != 0){
+				pair_id = get_pair_id(new_player);
+			}
+			pool_id = get_pool_id(pair_id);
+			type_id = get_type(pool_id);
+			year_id = get_year(type_id);
+			return year_id;
 		}
-		ret = [] 
-		ret[0] = make_all(make_pool_id(player1, player2));
-		ret[1] = get_max_year();
-		return ret
+		ret = [make_all(player), get_max_year()];
+		return ret;
 	}
 });

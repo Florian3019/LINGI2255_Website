@@ -114,7 +114,8 @@ Template.allCourtsTable.helpers({
           { key: 'courtNumber', label:"Numéros"}
       ],
              filters: ['NomDeFamille'],
-             rowClass: "courtRow"
+             rowClass: "courtRow",
+             showColumnToggles:true
       }
     }
 });

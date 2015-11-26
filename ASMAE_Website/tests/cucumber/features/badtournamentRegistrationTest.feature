@@ -7,11 +7,11 @@ Feature: Incorrect fill of the form
 
     Background: Tournament registrations launched
         Given An admin has been created
-        Given The tournament inscriptions were launched
 
     @watch
     Scenario: Authenticated user can register to the tournament
         Given I am logged in
+        And The tournament inscriptions were launched
         When I navigate to the tournament registration page
         And I fill nothing in the inscription form but submit
         Then I should see the correct errors corresponding to the unfilled boxes

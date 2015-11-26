@@ -57,6 +57,7 @@ Template.courtRegistration.events({
         	ownerComment : $('[name=ownerComment]').val(),
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked"),
+            lendThisYear : true // Default to true
 
         };
         if(this.court){ //Used for the update of an existing court
