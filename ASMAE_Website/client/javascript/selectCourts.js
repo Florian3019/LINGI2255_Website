@@ -12,6 +12,41 @@ var getCourtNumbers = function(courts){
 	return result;
 }
 
+var getOrder = function(size){
+
+  var partial = function(n ,ni,result){
+
+    var half = result.length/2;
+
+    for(var i=0;i<ni;i++){
+      result[ni+i] = result[i]+n;
+      result[half+ni+i] = result[half+i]+n;
+    }
+  }
+
+  var result=[];
+
+  for(var k=0;k<size;k++){
+    if(k==size/2){
+      result.push(1);
+    }
+    else{
+      result.push(0);
+    }
+  }
+
+  var n=size/2;
+  var ni=1;
+
+  while(n>1){
+    partial(n,ni,result);
+    n=n/2;
+    ni=ni*2;
+  }
+
+  return result;
+}
+
 var checkNumberCourts = function(courtsSat,courtsSun,poolsSat,poolsSun){
 
 	if(courtsSat.length<poolsSat.length){
@@ -22,6 +57,9 @@ var checkNumberCourts = function(courtsSat,courtsSun,poolsSat,poolsSun){
 	if(courtsSat.length>poolsSat.length){
 		console.log((courtsSat.length-poolsSat.length) + " terrains en trop pour samedi matin");
 	}
+
+	console.log('courts '+courtsSun);
+	console.log('pools '+poolsSun);
 
 	if(courtsSun.length<poolsSun.length){
 		console.error((poolsSun.length-courtsSun.length) + " terrains manquants pour dimanche matin");
@@ -40,88 +78,76 @@ var checkNumberCourts = function(courtsSat,courtsSun,poolsSat,poolsSun){
 	Return N courts, starting at index start and using a modulo to loop through the array
 	nextNumber is the next number to assign to the court if it hasn't a number yet
 */
-var getNCourts = function(previouscourts, courts, n, start){
+var setCourts = function(listPairs, courts, start,final_result){
+
+		console.log(courts);
+
 	var result = [];
+	var next=0;
 
-	if(typeof previouscourts === "undefined"){
+	var logPairs = Math.log2(listPairs.length);
+	var numMatchesFull = Math.pow(2,Math.ceil(logPairs))/2;
+	var index=getOrder(numMatchesFull);
 
-		console.log(n);
-
-		for(var k=0; k<n;k++){
-			result.push(courts[(start+k) % courts.length]);
-		}
-
-	}
-	else{
-		var l = previouscourts.length-1;
-
-		var strt = 0;
-		var last;
-
-		if(previouscourts.length%2!=0){
-			strt=1
-		}
-
-		if(previouscourts.length<=n){
-			for(var k=0; k<n && l>=k;k++){
-				result.push(previouscourts[l-k]);
-			}
-
-			last=k;
-		}
-		else{
-			for(var k=strt; k<n+strt && l>=(2*k);k++){
-				result.push(previouscourts[l-(2*k)]);
-			}
-			last=k;
-		}
-
-		result = result.reverse();
-
-		for(var k=last; k<n;k++){
-			result.push(courts[(start+k) % courts.length]);
-		}
-
+	for(var k=0;k<numMatchesFull;k++){
+		result.push(-1);
 	}
 
-	return result;
+	var num = getNumberMatchesFirstRound(listPairs.length);
+
+	for(var m=0;m<num;m++){
+		result[index[m]]=courts[(start+next) % courts.length];
+		next++;
+	}
+
+	var max=numMatchesFull;
+
+	var begin_previous=0;
+	var size_previous=result.length;
+
+	while(result.length<(2*max-1)){ // to change
+
+		var inter_result=[];
+		var count=0;
+
+		for(var m=0;m<size_previous;m=m+2){
+			if(result[begin_previous+m]==-1){
+				result.push(courts[(start+next) % courts.length]);
+				next++;
+			}
+			else{
+				result.push(result[begin_previous+m]);
+			}	
+		}
+		begin_previous+=size_previous;
+		size_previous=size_previous/2;
+	}
+
+	for(var j=0;j<result.length;j++){
+		if(result[j]!=-1){
+			final_result.push(result[j]);
+		}
+	}
+
+	return next;
 }
 
 /*
 	Return the number of matches to play for this round
 */
 
-var getNumberMatches = function(nbrPairs,round){
-
-	if(round<0){
-		return 0;
-	}
+var getNumberMatchesFirstRound = function(nbrPairs){
 
 	var logPairs = Math.log2(nbrPairs);
 
-	if(round==0){
-
-		// get the number of matches to play for the first round
-
 		var numMatchesFull = Math.floor(logPairs);
 
-		if(logPairs!=numMatchesFull){
-			return nbrPairs - Math.pow(2,numMatchesFull);// the nbr of pairs is not a multiple of 2
-		}
-		else{
-			return nbrPairs/2; // the nbr of pairs is a multiple of 2
-		}
+	if(logPairs!=numMatchesFull){
+		return nbrPairs - Math.pow(2,numMatchesFull);// the nbr of pairs is not a multiple of 2
 	}
-
-	// get the number of matches for the other rounds
-	// get the number of match for the first round if the nbr of pairs were a power of 2
-	var full = Math.pow(2,Math.floor(logPairs))/2;
-
-	for(var k=0;k<round;k++){
-		full=full/2;
+	else{
+		return nbrPairs/2; // the nbr of pairs is a multiple of 2
 	}
-
-	return full;
 }
 
 
@@ -233,71 +259,32 @@ Template.selectCourts.events({
 
 		////////// Saturday and Sunday \\\\\\\\\\
 
-		var typesDocs= [];
+		for(var g=0;g<numberDays;g++){ // loop through the days
 
-		for(var g=0;g<numberDays;g++){
-			typesDocs.push([]);
-			var types = typesTable[g];
-			for(var k=0;k<types.length;k++){
-				if(year[types[k]]){
-					var temp = Types.findOne({_id:year[types[k]]});
+			var typesDay = typesTable[g];
 
-					if(typeof temp !== "undefined"){
-						typesDocs[g].push(temp);
-					}
+			for(var k=0;k<typesDay.length;k++){ // loop through the types
+
+				var typeDoc = Types.findOne({_id:year[typesDay[k]]});
+
+				for(var t=0;t<categoriesKeys.length;t++){ // loop through the categories
+
+					var temp = categoriesKeys[t]+"Bracket";
+
+					if(typeDoc[categoriesKeys[t]]!=null && typeDoc[temp]!=null){
+
+			 			var nameField = categoriesKeys[t]+"Courts";
+			 			typeDoc[nameField] = [];
+
+				 		var next = setCourts(typeDoc[temp], courtsTable[g],start,typeDoc[nameField]);
+
+			 			start=(start+next) % courtsTable[g].length;
+			 		}
 				}
+
+				Meteor.call('updateType',typeDoc);
 			}
 		}
 
-		var finished = false;
-		var first = true;
-		var round = 0;
-
-		while(!finished){
-			finished = true;
-
-			for(var g=0;g<numberDays;g++){
-
-				var typesDoc = typesDocs[g];
-
-				for(var k=0;k<typesDoc.length;k++){
-
-					for(var t=0;t<categoriesKeys.length;t++){
-
-						var temp = categoriesKeys[t]+"Bracket";
-
-						if(typesDoc[k][categoriesKeys[t]]!=null && typesDoc[k][temp]!=null){
-
-				 			var nameField = categoriesKeys[t]+"Courts";
-
-				 			var nbr = getNumberMatches(typesDoc[k][temp].length,round);
-
-				 			if(!first &&typesDoc[k][nameField].length<(typesDoc[k][temp].length-1)){
-				 				typesDoc[k][nameField]=typesDoc[k][nameField].concat(getNCourts(typesDoc[k][nameField],courtsTable[g],nbr,start));
-				 				finished=false;
-				 			}
-
-				 			if(first){
-				 				typesDoc[k][nameField] = getNCourts(undefined, courtsTable[g],nbr,start);
-				 				finished = false;
-				 			}
-
-				 			start=(start+nbr) % courtsTable[g].length;
-				 		}
-					}
-				}
-			}
-
-			start = 0;
-			first=false;
-			round++;
-		}
-
-		for(var g=0;g<numberDays;g++){
-			for(var k=0;k<typesDocs[g].length;k++){
-				var types = typesDocs[g];
-				Meteor.call('updateType',types[k]);
-			}
-		}
 	}
 });
