@@ -31,7 +31,7 @@ Template.courtEmail.events({
 		var em = Meteor.users.findOne({_id:Courts.findOne({_id : checkboxes[i].id}).ownerID}).emails[0].address;
 		//Print du texte à envoyer
 	     	if(mail.value!=""){
-	     		Meteor.call('emailFeedback',em,"Charles De Lorraine : mail relatif à votre terrain",mail.value, Meteor.userId());
+	     		Meteor.call('emailFeedback',em,"Charles De Lorraine : mail relatif à votre terrain",mail.value);
 			checkboxesChecked.push(checkboxes[i]);
 	     		Meteor.call("addToModificationsLog", {"opType":"Envoi de mails aux courtsowners","details": "Mail envoyé : "+mail.value+"\n à : "+em});
 	     	}

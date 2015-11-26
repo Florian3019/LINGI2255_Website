@@ -42,23 +42,6 @@
           </div>
         {{/with}}
         </td>
-
-        <!-- {{#with getStaff this._id}} -->
-        <!-- <td align="center">
-          <h3>Responsable: </h3>
-          <address>
-            <a href="mailto:#" class="btn btn-sq-lg btn-primary">
-              <i class="fa fa-user fa-5x"></i><br/>
-              <strong> Nom Prénom </strong> <br>
-              <abbr title="Phone">Téléphone:</abbr> 0032 12345678<br>
-              mail
-              <! <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
-              {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
-              {{getEmail this}}<br>
-            </a>
-          </address>
-          <! {{/with}} COMMENT HERE>
-        </td> -->
       </tr>
     </tbody>
   </table>
@@ -66,7 +49,7 @@
   {{>scoreTable this}}
 
   {{#if isAdminOrStaff}}
-    <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}">
+    <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}" data-resp="{{this.resp}}">
       <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
     </button>
   {{/if}}
@@ -129,7 +112,7 @@
                     data-pairid="{{../../_id}}"
                     value="{{getPoints this ../../_id}}"
                     style="text-align:center; width=15%">
-                    
+
                     <input
                     type="number"
                     min="0"
