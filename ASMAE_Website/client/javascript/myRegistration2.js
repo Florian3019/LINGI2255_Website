@@ -17,7 +17,7 @@ Template.myRegistration2.helpers({
         else {
           Session.set("myRegistration/String",result);
         }
-      }       
+      }
     });
   },
   'getDisplayOK': function(){
@@ -83,6 +83,13 @@ Template.myRegistration2.events({
         var new_pair = Pairs.findOne({'_id':pair_id});
         var new_p = Meteor.users.findOne({'_id':new_pair.player1._id});
         var email = new_p.emails[0].address
+        var data ={
+          intro:"Bonjour "+new_p.profile.firstName+",",
+          important:"Nous avons une mauvaise nouvelle pour vous.",
+          texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
+          encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !\n A très bientôt, \n Le staff Le Charles de Lorraine."
+        }
+      //TODO sent by staff  Meteor.call('emailFeedback',email,"Concernant votre inscription au tournoi",data);
       }
       Router.go('home');
     }
