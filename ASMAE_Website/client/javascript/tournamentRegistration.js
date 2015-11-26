@@ -1,6 +1,11 @@
 var aloneDependency = new Deps.Dependency();
 
 Template.tournamentRegistration.helpers({
+	'getTournamentPrice':function(){
+		var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
+		return Years.findOne({_id:currentYear}).tournamentPrice;
+	},
+
     'getPay1' : function() {
         return paymentTypes[0];
     },
@@ -414,6 +419,20 @@ Template.tournamentRegistration.helpers({
 
 
 Template.tournamentRegistration.events({
+	"change .extraItem":function(event){
+		var extras = document.getElementsByClassName("extraItem");
+		
+		var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
+		var tournamentPrice = Years.findOne({_id:currentYear}).tournamentPrice;
+		total = tournamentPrice;
+		for(var i=0;i<extras.length;i++){
+			var extr = extras[i];
+			var quantity = parseFloat(extr.value,10);
+			total += extr.dataset.price * quantity;
+		}
+
+		document.getElementById("totalToPay").value = total;
+	},
 
 	"change .checkboxAloneDiv input": function (event) {
 		var e = document.getElementById("emailPlayer");

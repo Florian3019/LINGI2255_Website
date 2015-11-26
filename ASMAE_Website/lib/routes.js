@@ -97,6 +97,12 @@ Router.route('/inscription-tournoi',  {
 		else {
 			this.render("login");
 		}
+	},
+	waitOn: function(){
+		return [
+			Meteor.subscribe('GlobalValues'),
+			Meteor.subscribe('users')
+		]
 	}
 });
 

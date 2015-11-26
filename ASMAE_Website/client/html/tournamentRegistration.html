@@ -270,10 +270,19 @@
             {{#each extras}}
             <div class="form-group">
               <label for="number">{{getName}} ({{getPrice}}&euro;)</label>
-              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" value="0" class="form-control" style="width: 15%; display: inline; text-align:center">
+              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" data-price="{{getPrice}}" value="0" class="form-control extraItem" style="width: 15%; display: inline; text-align:center">
               <p style="font-size:100%">{{getComment}}</p>
             </div>
             {{/each}}
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+          Prix du tournoi : {{getTournamentPrice}} €
+          <br> 
+          Total : <input class="form-control" type="number" id="totalToPay" disabled value="{{getTournamentPrice}}" style="width: 15%; display: inline; text-align:center">€
         </div>
       </div>
 
