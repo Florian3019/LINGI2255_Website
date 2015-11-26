@@ -43,6 +43,20 @@ Template.courtInfoPage.helpers({
 
 
 Template.courtInfoPage.events({
+    'click #button_lendThisYear':function(event){
+      var data = event.currentTarget.dataset;
+      var courtId = data.id;
+      var ownerId = data.ownerid;
+      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, lendThisYear:true},function(err, status){if(err) console.err(err);});
+    },
+    
+    'click #button_dontLendThisYear':function(event){
+      var data = event.currentTarget.dataset;
+      var courtId = data.id;
+      var ownerId = data.ownerid;
+      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, lendThisYear:false},function(err, status){if(err) console.err(err);});
+    },
+
     'click #deleteCourt': function(event){
         event.preventDefault();
 

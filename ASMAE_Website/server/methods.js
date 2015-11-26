@@ -515,16 +515,6 @@ Meteor.methods({
 
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 
-
-       		/*			TODO
-       		ADD:
-       		courtNumber
-       		zone
-       		mapNumber
-       		lendThisYear (ou alors noter l'id du tournoi (ou l'année du dernier tournoi où il était prêté), sinon je ne sais pas quand on pourra le remettre à 'false' après le tournoi)
-       		*/
-
-
 		var data = {};
 
 		data.ownerID = courtData.ownerID;
@@ -557,19 +547,19 @@ Meteor.methods({
 			data.dispoDimanche = courtData.dispoDimanche;
 		}
 
-		if(courtData.free !== null && typeof courtData.free !== 'undefined'){
-			data.free = courtData.free;
+		if(courtData.lendThisYear !== null && typeof courtData.lendThisYear !== 'undefined'){
+			data.lendThisYear = courtData.lendThisYear;
 		}
 
-		if(typeof courtData.dispoSamedi !== 'undefined' && typeof courtData.dispoDimanche !== 'undefined')
-		{
-			if(courtData.dispoSamedi || courtData.dispoDimanche){
-				data.lendThisYear = true;
-			}
-			else{
-				data.lendThisYear = false;
-			}
-		}
+		// if(typeof courtData.dispoSamedi !== 'undefined' && typeof courtData.dispoDimanche !== 'undefined')
+		// {
+		// 	if(courtData.dispoSamedi || courtData.dispoDimanche){
+		// 		data.lendThisYear = true;
+		// 	}
+		// 	else{
+		// 		data.lendThisYear = false;
+		// 	}
+		// }
 
 
 		if(courtData.numberOfCourts){

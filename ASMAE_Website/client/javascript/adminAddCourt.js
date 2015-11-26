@@ -126,7 +126,8 @@ Template.adminAddCourt.events({
             instructions : $('[name=instructions]').val(),
             ownerComment : $('[name=ownerComment]').val(),
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
-            dispoDimanche : $('[name=dispoDimanche]').is(":checked")
+            dispoDimanche : $('[name=dispoDimanche]').is(":checked"),
+            lendThisYear: true
         };
 
         Meteor.call('updateCourt', courtData, address, function(error, result){
