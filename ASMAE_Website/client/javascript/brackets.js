@@ -364,14 +364,14 @@ var handleBracketErrors = function(document){
     if(allWinners==undefined){
       if(bracketOptions!=undefined){
         console.info("Tournament not started");
-        if(startButton!=undefined && startButton!=null) startButton.innerHTML="Démarrer ce tournoi";
+        if(startButton!=undefined && startButton!=null) startButton.innerHTML="Démarrer ce knock-off";
         if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
         if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
       }
       return;
     }
     if(bracketOptions!==undefined){
-      if(startButton!=undefined && startButton!=null) startButton.innerHTML="Redémarrer ce tournoi";
+      if(startButton!=undefined && startButton!=null) startButton.innerHTML="Redémarrer ce knock-off";
       if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
       if(pdfButton!==undefined && pdfButton!==null) pdfButton.style.display = 'block';
     }
@@ -381,7 +381,7 @@ var handleBracketErrors = function(document){
       setInfo(document, "Pas de matchs pour l'année "+year
         + " type " + typesTranslate[type]
         + " de la catégorie " + categoriesTranslate[category]
-        + ". Si vous en avez créé, cliquez sur redémarrer le tournoi pour mettre à jour");
+        + ". Si vous en avez créé, cliquez sur redémarrer le knock-off pour mettre à jour");
       return;
     }
     infoBox = document.getElementById("infoBox");

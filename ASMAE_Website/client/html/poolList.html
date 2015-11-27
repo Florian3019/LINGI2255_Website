@@ -3,9 +3,6 @@
     <div id="page-content-wrapper">
       <div class="container-fluid">
         <div class="col-lg-20">
-          <button type="button" id="assignCourts" class="btn btn-default btn-lg">
-            <span class="glyphicon"></span> Assigner les terrains
-          </button>
           <div id="infoBox" class="alert alert-info" role="alert" hidden>
             <h4>
               <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
@@ -25,7 +22,11 @@
               {{#with getYear}} <!-- Returns a yearData -->
                 {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
                 {{#with getType this}}
-
+                  <div class="row">
+                    <button type="button" id="assignCourts" class="btn btn-default btn-lg">
+                      <span class="glyphicon"></span> Assigner les terrains
+                    </button>
+                  </div>
               {{>responsablesTemplate this}}
 
               <!-- Pool Tables -->
@@ -140,7 +141,7 @@
       <ul>
       <li>
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_bracket" style="display:none"></span>
-      <a href="#" style="text-decoration: none;display:inline;" class="menuItem">Tournoi {{getBracketCompletion this.ID this.CAT}}</a>
+      <a href="#" style="text-decoration: none;display:inline;" class="menuItem">Knock-offs {{getBracketCompletion this.ID this.CAT}}</a>
       </li>
       </ul>
     </li>
@@ -215,7 +216,7 @@
         <div id="{{this.pair._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{this.startingPoolId}}">
           {{#with getPlayer this.pair.player1._id}}
           <ul class="list-group clickablePoolItem" data-id="{{../pair._id}}">
-            <li class="list-group-item pairPlayer {{getColor ../pair/player1}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}</li>
+            <li class="list-group-item pairPlayer" style="color:{{getColor ../pair.player1}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}</li>
           </ul>
           {{>modalItem PAIR=../pair POOL=../startingPoolId SEX=profile.gender BIRTHDATE=profile.birthDate SHOWOPTIONS=true}}
           {{/with}}
@@ -247,7 +248,7 @@
 
 <template name="modalItem">
   <!-- Modal -->
-  <div id="pairModal{{PAIR._id}}" class="modal fade" >
+  <div id="pairModal{{PAIR._id}}" class="modal fade" data-backdrop="false" >
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
@@ -340,10 +341,10 @@ Takes 2 arguments :
     <div id="{{this._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
       <ul class="list-group clickablePoolItem" data-id="{{this._id}}">
         {{#with getPlayer this.player1._id}}
-        <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}{{getColor ../player1}}{{/if}}" id="{{this.player1._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
+        <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}color:{{getColor ../player1}}{{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
         {{#with getPlayer this.player2._id}}
-        <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}{{getColor ../player1}}{{/if}}" id="{{this.player2._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player2._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
+        <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}color:{{getColor ../player2}}{{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player2._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
       </ul>
     </div>

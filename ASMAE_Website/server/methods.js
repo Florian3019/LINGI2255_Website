@@ -498,8 +498,8 @@ Meteor.methods({
 			staffComment:<staffComment>,
 			dispoSamedi:<boolean>,
 			dispoDimanche:<boolean>,
-			ownerOK:<true | false>,
-			staffOK:<true | false>
+			ownerOK:<boolean>,
+			staffOK:<boolean>
 		}
 	*/
 	'updateCourt' : function(courtData){
@@ -785,7 +785,7 @@ Meteor.methods({
 			city:<city>,
 			zipCode:<zipCode>,
 			country:<country>,
-			isCourtAddress:<true | false>
+			isCourtAddress:<boolean>
 		}
 		Returns the addressID
 	*/

@@ -1131,7 +1131,9 @@ var showPairModal = function(event){
 	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
 		return; // Do nothing
 	}
+	// Move the modal out of its current position to avoid bugs
 	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
+	$("#myModal").css("z-index", "1500");
 }
 
 Template.alonePairsContainerTemplate.onRendered(function(){
@@ -1164,7 +1166,7 @@ Template.alonePairsContainerTemplate.helpers({
 	},
 
 	'getColor' : function(player){
-		getColorFromPlayer(player);
+		return getColorFromPlayer(player);
 	},
 
 	'getPlayer' : function(playerId){
@@ -1194,7 +1196,7 @@ Template.poolItem.helpers({
 	},
 
 	'getColor' : function(player){
-		getColorFromPlayer(player);
+		return getColorFromPlayer(player);
 	}
 });
 
@@ -1435,10 +1437,10 @@ Template.modalItem.events({
 	},
 
 	'click .setLeader':function(event){
-		target = event.currentTarget;
-		poolId = target.dataset.poolid;
-		playerId = target.dataset.player;
-		pool = Pools.update({_id:poolId},{$set:{"leader":playerId}});
+		var target = event.currentTarget;
+		var poolId = target.dataset.poolid;
+		var playerId = target.dataset.player;
+		Pools.update({_id:poolId},{$set:{"leader":playerId}});
 	}
 });
 
