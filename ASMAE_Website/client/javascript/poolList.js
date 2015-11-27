@@ -1005,7 +1005,7 @@ Template.alonePairsContainerTemplate.helpers({
 	},
 
 	'getColor' : function(player){
-		getColorFromPlayer(player);
+		return getColorFromPlayer(player);
 	},
 
 	'getPlayer' : function(playerId){
@@ -1035,7 +1035,7 @@ Template.poolItem.helpers({
 	},
 
 	'getColor' : function(player){
-		getColorFromPlayer(player);
+		return getColorFromPlayer(player);
 	}
 });
 

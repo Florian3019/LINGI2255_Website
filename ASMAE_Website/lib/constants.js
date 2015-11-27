@@ -185,8 +185,7 @@ getColorFromPlayer = function(player){
             count+=1;
             code = 3;
         }
-
-        if(count>1) return 'cyan';
+        if(count>1) return '#4782ff';
         if(code == 1) return 'orange';
         if(code == 2) return 'red';
         if(code == 3) return 'magenta';
