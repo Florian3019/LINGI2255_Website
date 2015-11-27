@@ -194,20 +194,19 @@ Router.route('/info-joueurs', {
 	}
 });
 
-Router.route('/page-info-joueur', {
-	name: 'playerInfoPage',
-	template: 'playerInfoPage',
-	waitOn: function() {
-		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users')];
-	}
-});
-Router.route('/template-info-joueur', {
+Router.route('/page-info-joueur/:_id', {
 	name: 'playerInfoTemplate',
 	template: 'playerInfoTemplate',
+	data: function(){
+		if (this.ready()) {
+			return {ID:this.params._id};
+		}
+	},
 	waitOn: function() {
 		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users')];
 	}
 });
+
 Router.route('/gestion-staff', {
 	name: 'staffManagement',
 	template: 'staffManagement',
