@@ -871,8 +871,7 @@ Meteor.methods({
 			},
 			tournament :[<pointsRound1>, <pointsRound2>, ....],
 			tournamentCourts:[<courtForRound1>, ...],
-			day: family | saturday | sunday ,
-			category: <category>
+			year:<year>
 		}
 		@return : the pair id if successful, otherwise returns false
 	*/
@@ -899,11 +898,8 @@ Meteor.methods({
 		}
 
 		var data = {};
-		if (pairData.day) {
-			data.day = pairData.day;
-		}
-		if (pairData.category) {
-			data.category = pairData.category;
+		if (pairData.year) {
+			data.year = pairData.year;
 		}
 
 		//Amount for extras
@@ -1067,95 +1063,6 @@ Meteor.methods({
 
 		return pairData['_id'];
 	},
-
-	/*
-		TODO: deprecated version (we don't use Pairs anymore)
-
-		A payment is structured as follows :
-		{
-			_id:<id>,
-			status:<status>, // paid or pending
-			balance:<balance>,
-			date:<date>,
-			method:<method>, // Cash, CreditCard or BankTransfer
-		}
-		player : can either be player1 or player2
-	*/
-	/*
-	'updatePayment' : function(paymentData, pairId, player){
-		if(!pairId){
-			console.error('updatePayment : you must provide the pairId');
-			return false;
-		}
-		if(player!="player1" || player!="player2"){
-			console.error('updatePayment : player is not recognized');
-			return false;
-		}
-
-		// Check that that pair really exists :
-		var p = Pairs.findOne({_id:pairId});
-		if(!p){
-			console.error('updatePayment : that pair doesn\'t exist !');
-			return false;
-		}
-
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
-
-		if(!(isAdmin || isStaff)){
-			console.error("updatePayment : You don't have the required permissions!");
-			return false;
-		}
-
-		var data = {};
-		if(paymentData._id){
-			var str = "paymentID.";
-			var str2 = str.concat(player);
-			if(p[str2] && paymentData._id != p[str2]){
-				console.error('updatePayment : trying to update a payment not belonging to the pair provided !');
-				return false;
-			}
-		}
-		if(paymentData.status){
-			data.status = paymentData.status;
-		}
-		if(paymentData.balance){
-			data.payment = paymentData.balance;
-		}
-		if(paymentData.date){
-			data.date = paymentData.date;
-		}
-		if(paymentData.method){
-			data.method = paymentData.method;
-		}
-
-		if(!paymentData._id){
-			return Payments.insert(data, function(err, paymId){
-				if(err){
-					console.error('updatePayment error');
-					console.error(err);
-				}
-
-				var str = "paymentID.";
-				var str2 = str.concat(player);
-				// Update paymentID in the pair
-				var upd = {};
-				upd["_id"] = pairId;
-				upd[str2] = paymId;
-        			Meteor.call('updatePair', upd);
-				});
-		}
-
-		Payments.update({_id: paymentData._id} , {$set: data}, function(err, count, status){
-			if(err){
-				console.error('updatePayment error');
-				console.error(err);
-			}
-		});
-		return paymentData._id;
-	},
-	*/
-
 
 	/*
 		/!\  IF changes are made to the structure of a match, don't forget to update the method getOtherPair in bracketTournament.js !!!			/!\
@@ -1417,7 +1324,7 @@ Meteor.methods({
 			return undefined;
 		}
 
-		pair = Pairs.findOne({_id:pairID});
+		var pair = Pairs.findOne({_id:pairID});
 		if(typeof pair === 'undefined'){
 			console.error("addPairToTournament : invalid pairID, "+pairID+"/ "+pair);
 			return false;
@@ -1444,7 +1351,7 @@ Meteor.methods({
 		/*
 				Set the category
 		*/
-		type = Meteor.call('getPairType', dateMatch, p1, p2);
+		var type = Meteor.call('getPairType', dateMatch, p1, p2);
 		if(typeof type === undefined) {
 			console.error("addPairToTournament : getPairType returns undefined");
 		}
@@ -1453,11 +1360,10 @@ Meteor.methods({
 			return false;
 		}
 
-		category = Meteor.call('getPairCategory', type, p1, p2);
+		var category = Meteor.call('getPairCategory', type, p1, p2);
 		if(category === false) return false; // An error occured, detail of the error has already been displayed in console
 
-		var pair = Pairs.findOne({_id:pairID});
-		poolID = Meteor.call('getPoolToFill', year, type, category);
+		var poolID = Meteor.call('getPoolToFill', year, type, category);
 
 		var pool = Pools.findOne({_id:poolID});
 		var pairs = pool.pairs;
@@ -1465,7 +1371,7 @@ Meteor.methods({
 			pairs = [];
 		}
 		pairs.push(pairID);
-		data = {};
+		var data = {};
 		data._id = poolID;
 		data.type=type;
 		data.pairs = pairs;
@@ -1686,6 +1592,106 @@ Meteor.methods({
 
   },
 
+  'emailtoPoolPlayers':function(poolId){
+    if(poolId != undefined){
+      var mails = [];
+      var pool = Pools.findOne({_id:poolId});
+      for (var i in pool.pairs) {
+        var p = Pairs.findOne({_id:pool.pairs[i]});
+        if(p.player1!=undefined){
+          var p1 = Meteor.users.findOne({_id:p.player1._id});
+          mails.push(p1.emails[0].address);
+        }
+        if(p.player2!=undefined){
+          var p2 = Meteor.users.findOne({_id:p.player2._id});
+          mails.push(p2.emails[0].address);
+        }
+      }
+      var leaduser = Meteor.users.findOne({_id:pool.leader});
+      var leader= leaduser.profile.firstName+" "+leaduser.profile.lastName+" ("+leaduser.profile.phone+")"; //string
+
+      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+      var responsableList=[];
+      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+      for (var j in allcat){
+        var cat = allcat[j];
+        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+          var r= cat.concat("Resp")
+          var resplist=type[r];
+          if (resplist!=undefined && resplist.length>0){
+            for (var k = 0; k < resplist.length; k++) {
+              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+            }
+          }
+        }
+      }
+      var responsables="";//string
+      for (var i = 0; i < responsableList.length; i++) {
+        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
+      }
+
+      var adresse="";//string
+      if(pool.courtId!=undefined){
+        court = Courts.findOne({"courtNumber":pool.courtId});
+        if(court && court.addressID){
+          address = Addresses.findOne({_id:court.addressID});
+          adresse = address.street+" "+address.number+" "+address.zipCode+" "+address.city;
+        }
+      }
+      if(responsableList.length>1){
+        var encadre="Voici le nom et le numéro de téléphone des membres du staff qui encadrent votre poule :" + responsables +"\n Votre chef de poule est : "+leader+". C'est auprès de lui que vous obtiendrez les dernières informations."+"\n La poule se déroulera à l'adresse suivante : "+adresse;
+      }else{
+        var encadre="Voici le nom et le numéro de téléphone du membre du staff qui encadre votre poule :" + responsables +"\n Votre chef de poule est : "+leader+". C'est auprès de lui que vous obtiendrez les dernières informations."+"\n La poule se déroulera à l'adresse suivante : "+adresse;
+      }
+      var subject = "Quelques informations concernant votre poule.";
+      var data = {
+        intro:"Bonjour,",
+        important:"",
+        texte:"Nous voici bientôt arrivé à notre très attendu tournoi de tennis Le Charles de Lorraine et pour que tout se déroule pour le mieux, vous trouverez les informations concernant votre poule dans l'encadré suivant.",
+        encadre:encadre,
+      };
+      Meteor.call('emailFeedback',mails.toString(),subject,data);
+    }
+    else{
+      console.error("emailtoPoolPlayers/ UNDEFINED POOLID");
+    }
+  },
+
+  'emailtoLeader':function(poolId){
+    if(poolId!=undefined){
+      var pool = Pools.findOne({_id:poolId});
+      leader = Meteor.users.findOne({_id:pool.leader});
+
+      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+      var responsableList=[];
+      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+      for (var j in allcat){
+        var cat = allcat[j];
+        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+          var r= cat.concat("Resp")
+          var resplist=type[r];
+          if (resplist!=undefined && resplist.length>0){
+            for (var k = 0; k < resplist.length; k++) {
+              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+            }
+          }
+        }
+      }
+      var responsables="";//string
+      for (var i = 0; i < responsableList.length; i++) {
+        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
+      }
+      var subject = "[IMPORTANT] Concernant le déroulement du tournoi de tennis Le Charles de Lorraine.";
+      var data={
+        intro:"Bonjour "+leader.profile.firstName+",",
+        important:"Vous avez été choisi pour être le chef de la poule à laquelle vous allez jouer.",
+        texte:"Cette responsabilité ne vous demande que quelques instants au début à la fin de la poule. Premièrement, il vous sera demandé d'aller récupérer la feuille de poule au quartier général avant d'aller jouer. Ensuite, veillez à ce que les points de chaque match soient inscrits dans les cases correspondantes. Finalement, nous vous demanderons aussi de ramener cette feuille au quartier général. Si vous avez besoin de plus d'informations, n'hésitez pas à contacter un membre du staff ou un responsable.",
+        encadre:"Les responsables de votre poules sont : "+responsables+"\n Merci d'avance pour votre implication !",
+      };
+      Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
+
+    }
+  },
 
 
 	/*
@@ -1721,6 +1727,7 @@ Meteor.methods({
 
 		ModificationsLog.insert(data);
 	},
+
 	'getYear':function(player){
 		function get_pair_id(player){
 			var pairs = Pairs.find().fetch()

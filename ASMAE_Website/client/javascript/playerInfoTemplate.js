@@ -48,7 +48,7 @@ function initializeBraintree (clientToken) {
 
 function getExtras(){
 	var id = Meteor.userId();
-	var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+	var pair = getPairFromPlayerID();;
 	if(pair.player1 && id === pair.player1._id){
 		return pair.player1.extras;
 	}

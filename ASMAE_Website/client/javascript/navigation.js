@@ -20,9 +20,8 @@ Template.navigation.helpers({
 			return false;
 		}
 	},
-	'registered': function() {
-		var id = Meteor.userId();
-		var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+	'registered': function() {		
+		var pair = getPairFromPlayerID();;
 		if (pair) {
 			return true;
 		}
