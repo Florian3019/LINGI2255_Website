@@ -390,15 +390,19 @@ var handleBracketErrors = function(document){
 }
 
 var setCompletion = function(completion){
-  year = Session.get("PoolList/Year");
-  type = Session.get("PoolList/Type");
-  category = Session.get("PoolList/Category");
+  var user = Meteor.user();
+  if(!(user.profile.isStaff || user.profile.isAdmin)){
+    return;
+  }
+  var year = Session.get("PoolList/Year");
+  var type = Session.get("PoolList/Type");
+  var category = Session.get("PoolList/Category");
 
-  yearData = Years.findOne({"_id":year},{reactive:false});
-  typeId = yearData[type];
+  var yearData = Years.findOne({"_id":year},{reactive:false});
+  var typeId = yearData[type];
   var str = "completion.brackets.";
   str = str.concat(category);
-  data = {};
+  var data = {};
   data[str] = completion;
   Types.update({"_id":typeId}, {$set:data},{reactive:false});
 }
