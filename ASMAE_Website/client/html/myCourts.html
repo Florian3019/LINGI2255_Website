@@ -1,5 +1,9 @@
 <template name="myCourts">
-	<h3>Mes terrains</h3>
+
+<div id="MyCourtWrapper">
+    <div class="page-header">
+        <h3>Mes terrains</h3>
+    </div>
 	<table class="table">
 		<thead>
       		<tr>
@@ -18,7 +22,7 @@
     		{{/each}}
     	</tbody>
 	</table>
-
-	<br />
+	<br/>
 	<center><a class="btn btn-default" href="{{pathFor route='courtRegistration'}}">Ajouter un terrain</a></center>
+</div>
 </template>
