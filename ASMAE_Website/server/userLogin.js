@@ -21,7 +21,7 @@ if (isProdEnv()) {
 
     ServiceConfiguration.configurations.insert({
         service: 'google',
-        appId: '413437801707-k3bevh2blautvhg0m2mtac69up6jl5ge.apps.googleusercontent.com',
+        clientId: '413437801707-k3bevh2blautvhg0m2mtac69up6jl5ge.apps.googleusercontent.com',
         secret: 'mXBYrXgom9rVMKsog_K1JsIL'
     });
     ServiceConfiguration.configurations.insert({
