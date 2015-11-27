@@ -486,10 +486,6 @@ Meteor.methods({
 	/*
 		@param courtData is structured as a court, if _id is missing,
 		a new court will be created and linked to the owner. OwnerID must be provided.
-		@param address is structured as an address
-		(fields can be missing, if the _id field is missing, a new address will be linked to this court,
-		erasing reference to previous addressID if existing). Can be null.
-		This function does a check to prevent a user from adding a new court with an existing court address (preventing duplicates)
 		A court structure is as follows :
 		{
 			_id:<courtId>,
@@ -500,22 +496,12 @@ Meteor.methods({
 			instructions:<instructions>,
 			ownerComment:<ownerComment>,
 			staffComment:<staffComment>,
-			availability:<availability>
+			ownerOK:<true | false>,
+			staffOK:<true | false>
 		}
 	*/
-	'updateCourt' : function(courtData, address){
+	'updateCourt' : function(courtData){
 		var courtId = courtData._id;
-		if(!courtData.ownerID) //New court
-		{
-			courtData.ownerID = Meteor.userId();
-		}
-
-		var u = Meteor.users.findOne({_id:courtData.ownerID});
-		if(!u){
-			console.error('updateCourt : owner does not exist !');
-			return false;
-		}
-
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = courtData.ownerID == Meteor.userId();
@@ -559,19 +545,13 @@ Meteor.methods({
 			data.dispoDimanche = courtData.dispoDimanche;
 		}
 
-		if(courtData.lendThisYear !== null && typeof courtData.lendThisYear !== 'undefined'){
-			data.lendThisYear = courtData.lendThisYear;
+		if(courtData.ownerOK !== null && typeof courtData.ownerOK !== 'undefined'){
+			data.ownerOK = courtData.ownerOK;
 		}
 
-		// if(typeof courtData.dispoSamedi !== 'undefined' && typeof courtData.dispoDimanche !== 'undefined')
-		// {
-		// 	if(courtData.dispoSamedi || courtData.dispoDimanche){
-		// 		data.lendThisYear = true;
-		// 	}
-		// 	else{
-		// 		data.lendThisYear = false;
-		// 	}
-		// }
+		if(courtData.staffOK !== null && typeof courtData.staffOK !== 'undefined'){
+			data.staffOK = courtData.staffOK;
+		}
 
 
 		if(courtData.numberOfCourts){
@@ -593,40 +573,21 @@ Meteor.methods({
 		}
 
 
-		if(!courtId){
-
-			// Check that a court with that address does not already exist :
-			if(address && Meteor.call('addressExists', address)){
-				console.error("Court already exists :");
-				console.error(address);
-				return null;
-			}
-
+		if(courtId === undefined){
 			// Create a new court
-			courtId = Courts.insert(data, function(err, courtId){
+			return Courts.insert(data, function(err, courtId){
 				if(err){
 					throw new Meteor.Error("updateCourt error: during Courts.insert", err);
 				}
-
-				// Update addressID in the user
-				if(address){
-					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
-				}
 			});
 		}
-		else
-		{
-			// Court already exists, so just update it :
 
-			Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
-				if(err){
-					throw new Meteor.Error("updateCourt error : during Courts.update", err);
-				}
-				if(address){
-					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
-				}
-			});
-		}
+		// Court already exists, so just update it :
+		Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
+			if(err){
+				throw new Meteor.Error("updateCourt error : during Courts.update", err);
+			}
+		});
 		return courtId;
 	},
 
@@ -811,12 +772,8 @@ Meteor.methods({
 		Accounts.sendVerificationEmail(userId);
 	},
 	/*
-		@param userId : Updates the address of the user with id userId.
-				If courtId is provided, updates the court address (userId is then the owner's id).
-				userId must be provided.
 		@param AddressData : if it does not contain a field _id, this will
-		create a new address for the user or court (removing the reference to the previous one if there was one) and link its
-		_id to the profile.addressID field of the user or the .addressID field of the court.
+		create a new address
 		The addressData structure is as follows :
 		{
 			_id:<id>, // Omit this if you want to create a new address, this will be auto-generated
@@ -825,59 +782,25 @@ Meteor.methods({
 			box:<box>,
 			city:<city>,
 			zipCode:<zipCode>,
-			country:<country>
+			country:<country>,
+			isCourtAddress:<true | false>
 		}
-		If some fields are missing, they will be left untouched.
-		Returns false on failure and true on success
+		Returns the addressID
 	*/
-	'updateAddress' : function(addressData, userId, courtId){
-		if(!userId && !courtId){
-			console.error("updateAddress : Must provide user id or courtId to update the address !");
-			return false;
-		}
-		if(courtId && !userId){
-			console.error("updateAddress : must provide the userId of the person trying to make the request if trying to modify a court!");
-			return false;
-		}
-
-		var u = Meteor.users.findOne({_id:userId});
-		if(!u){
-			console.error('updateAddress : that user doesn\'t exist !');
-			return false;
-		}
-
-		if(courtId){
-			// Check that courtId really exists :
-			var c = Courts.findOne({_id:courtId});
-			if(!c){
-				console.error('updateAddress : that court doesn\'t exist !');
-				return false;
-			}
-			// If an address id is provided, make sure that addressId is the one from the court
-			if(addressData._id && c.addressID!=addressData._id){
-				console.error('updateAddress : trying to update an address not belonging to the court provided!');
-				return false;
-			}
-		}
-		else{
-			if(addressData._id && u.profile && u.profile.addressID && u.profile.addressID != addressData._id){
-				console.error('updateAddress : trying to update an address not belonging to the user provided!');
-				return false;
-			}
-		}
-
-
+	'updateAddress' : function(addressData){
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
-		const userIsOwner = userId == Meteor.userId();
 
-		if(!(userIsOwner || isAdmin || isStaff)){
-			console.error("updateUser : You don't have the required permissions!");
-			return false;
+		userHasAddress = Meteor.user().profile.addressID !==undefined;
+		if(userHasAddress && addressData._id!==undefined && !(isAdmin ||isStaff) ){
+			userIsOwner = addressData._id == Meteor.user().profile.addressID;
+			if(!userIsOwner){
+				console.error("updateUser : You don't have the required permissions!");
+				return false;
+			}
 		}
 
 		var data = {};
-		data.userID = userId;
 
 		if(addressData.street){
 			data.street = addressData.street;
@@ -897,50 +820,27 @@ Meteor.methods({
 		if(addressData.country){
 			data.country = addressData.country;
 		}
+		if(addressData.isCourtAddress){
+			data.isCourtAddress = addressData.isCourtAddress;
+		}
 
-		if(!addressData._id){
-
-			if(userId && !courtId){
-				var addressID;
-				Addresses.insert(data, function(err, addrId){
-					if(err){
-						console.error('updateAddress error: while insert for courtId=false');
-						console.error(err);
-						return false;
-					}
-					addressID = addrId;
-					// Update addressID in the user
-	        		Meteor.call('updateUser', {_id:userId, profile:{addressID:addrId}});
-				});
-				// Done with new insert
-				return addressID;
-			}
-			if(courtId){
-				var addressID;
-				Addresses.insert(data, function(err, addrId){
-					if(err){
-						console.error('updateAddress error: while insert for courtId=true');
-						console.error(err);
-						return false;
-					}
-					addressID = addrId;
-					// Update addressID in the user
-	        		Meteor.call('updateCourt', {_id:courtId, ownerID:userId, addressID:addrId});
-				});
-				// Done with new insert
-				return addressID;
-			}
+		if(addressData._id === undefined){
+			return Addresses.insert(data, function(err, addrId){
+				if(err){
+					console.error('updateAddress error on insert');
+					console.error(err);
+				}
+			});
 		}
 
 		// Add the address in the DB
-		var writeResult = Addresses.update({_id: addressData._id} , {$set: data}, function(err, count, status){
+		Addresses.update({_id: addressData._id} , {$set: data}, function(err, count, status){
 			if(err){
 				console.error('updateAddress error : while update existing address');
 				console.error(err);
-				return false;
 			}
 		});
-		return writeResult;
+		return addressData._id;
 	},
 
 	/*

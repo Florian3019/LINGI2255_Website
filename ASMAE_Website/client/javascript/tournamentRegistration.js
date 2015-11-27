@@ -921,8 +921,15 @@ Template.tournamentRegistration.events({
 			Update the db !
         */
 
-        Meteor.call('updateAddress', addressData, Meteor.userId(), null);
-        Meteor.call('updateUser', curUserData);
+        Meteor.call('updateAddress', addressData, function(err, res){
+        	if(err){
+        		console.error("tournamentRegistration : updateAddress error");
+        		console.error(err);
+        	}
+        	curUserData.profile.addressID = res; // Set the addressID
+        	Meteor.call('updateUser', curUserData);
+        });
+
 
         var callback = function(err, pairID){
         	if(err){

@@ -10,12 +10,12 @@ Template.myCourts.helpers({
     },
 
   	'checked': function(){
-  		if(this.lendThisYear){
-  			return "glyphicon-ok lendOk"
+  		if(this.staffOK){
+  			return "glyphicon-ok lendOk";
   		}
   		else
   		{
-  			return "glyphicon-remove lendNot"
+  			return "glyphicon-remove lendNot";
   		}
   	}
 
