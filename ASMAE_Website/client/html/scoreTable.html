@@ -148,3 +148,26 @@
   <br>
 
 </template>
+
+<template name="modalChangeCourt">
+  <!-- Modal -->
+  <div id="courtToChange" class="modal fade" >
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-title page-header">
+            <h3>Changer le terrain</h3>
+          </div>
+        </div>
+        <div class="modal-body">
+         {{> courtSearch}} 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

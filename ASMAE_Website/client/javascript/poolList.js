@@ -817,7 +817,7 @@ Template.poolList.helpers({
 
     var responsables = typeData[field];
 
-    console.log(responsables[0]);
+    
 		if(poolId!=""){
 			return {_id:poolId,
         resp:responsables[0]};

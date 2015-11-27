@@ -749,6 +749,11 @@ Template.brackets.events({
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   },
 
+  'click #changeCourt':function(event){
+    console.log("ok");
+    $("#modalItem").modal('show');
+  },
+
   'click #getPDF':function(event){
     /*
       Unhide the pdf preview window
