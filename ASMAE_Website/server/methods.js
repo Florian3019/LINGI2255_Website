@@ -213,23 +213,32 @@ Meteor.methods({
 			return false;
 		}
 	},
+
 	'deleteUser': function(nid){
-		userToDelete = Meteor.users.findOne({"_id":nid});
-		addressId = userToDelete.profile.addressID;
-		if(addressId != undefined){
-			Addresses.remove({_id:addressId});
-			Meteor.users.update({_id: nid} , {$set: {"profile.addressID": undefined}});
+		if(nid === Meteor.userId() || Meteor.call('isAdmin') || Meteor.call('isStaff'))
+		{
+			userToDelete = Meteor.users.findOne({"_id":nid});
+			addressId = userToDelete.profile.addressID;
+			if(addressId != undefined){
+				Addresses.remove({_id:addressId});
+				Meteor.users.update({_id: nid} , {$set: {"profile.addressID": undefined}});
+			}
+			courtId = Courts.findOne({"ownerID":nid});
+			if(courtId != undefined){
+				Courts.remove({_id:courtId});
+				//Meteor.users.update({_id: nid} , {$set: {"profile.courtID": undefined}});
+			}
+			Meteor.users.update({_id: nid} , {$set: {"profile.isStaff": false}});
+			Meteor.users.update({_id: nid} , {$set: {"profile.isAdmin": false}});
+			Meteor.users.update({_id: nid} , {$set: {"services": undefined}});
+			Meteor.users.update({_id: nid} , {$set: {"profile.phone": undefined}});
 		}
-		courtId = Courts.findOne({"ownerID":nid});
-		if(courtId != undefined){
-			Courts.remove({_id:courtId});
-			//Meteor.users.update({_id: nid} , {$set: {"profile.courtID": undefined}});
+		else {
+			console.error("You don't have the permission to do that.");
 		}
-		Meteor.users.update({_id: nid} , {$set: {"profile.isStaff": false}});
-		Meteor.users.update({_id: nid} , {$set: {"profile.isAdmin": false}});
-		Meteor.users.update({_id: nid} , {$set: {"services": undefined}});
-		Meteor.users.update({_id: nid} , {$set: {"profile.phone": undefined}});
+
 	},
+
 	'getPairCategory' : function(type, p1, p2){
 		var category;
 		if(type==="family"){
@@ -409,7 +418,7 @@ Meteor.methods({
 			seniorsBracket:<list of pairId>
 			elitesBracket:<list of pairId>
 			listBracket:<list of pairID>
-			
+
 
 			// Staff responsables
 				Can only add a single staff for each update to a category.
@@ -1076,20 +1085,52 @@ Meteor.methods({
 
 		paymentData = {
 			userID : Meteor.userId(),
+			tournamentYear : currentYear,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
 			balance : amount
 		};
-		Payments.insert(paymentData, function(err, paymId){
-			if(err){
-				console.error('insert payment error');
-				console.error(err);
+
+		//Check if payment already exists for this player
+		var paymentAlreadyExists = Payments.findOne({'userID': Meteor.userId(), 'tournamentDate': currentYear});
+		if(paymentAlreadyExists){
+			console.error("updatePair: Payment already exists for this player");
+		}
+		else {
+
+			//Send emails if the payment method is by cash or by bank transfer
+			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
+				/*	TODO Alexandre
+
+					Envoyer un mail contenant les informations pour payer par cash:
+					- addresse du QG : on peut l'hardcoder ici?
+					- montant à payer: accessible via la variable amount
+
+				*/
 			}
-		});
+			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
+				/*	TODO Alexandre
+
+					Envoyer un mail contenant les informations pour payer par virement bancaire:
+					- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
+					- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
+						peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
+						input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
+					- montant à payer: accessible via la variable amount
+
+				*/
+			}
+
+			Payments.insert(paymentData, function(err, paymId){
+				if(err){
+					console.error('insert payment error');
+					console.error(err);
+				}
+			});
+		}
 
 
-
-		if(!pairData._id){
+		if(!pairData._id){ 		// New Pair
 			return Pairs.insert(data, function(err, res){
 				if(err){
 					console.error("updatePair error");
@@ -1622,38 +1663,47 @@ Meteor.methods({
 	},
 
 	'removeExtra' : function(extraId){
-		Extras.remove({_id:extraId});
+		if(Meteor.call('isAdmin') || Meteor.call('isStaff')){
+			Extras.remove({_id:extraId});
+		}
+		else {
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	'updateExtra' : function(extraData){
-		data = {};
-		extraId = undefined;
-		if(extraData._id!==undefined){
-			extraId = extraData._id;
-		}
-		if(extraData.name!==undefined){
-			data.name = extraData.name;
-		}
-		if(extraData.price!==undefined){
-			data.price = extraData.price;
-		}
-		if(extraData.comment!==undefined){
-			data.comment = extraData.comment;
-		}
-		if(extraId===undefined){
-			extraId = Extras.insert(data);
+		if(Meteor.call('isAdmin') || Meteor.call('isStaff')){
+			data = {};
+			extraId = undefined;
+			if(extraData._id!==undefined){
+				extraId = extraData._id;
+			}
+			if(extraData.name!==undefined){
+				data.name = extraData.name;
+			}
+			if(extraData.price!==undefined){
+				data.price = extraData.price;
+			}
+			if(extraData.comment!==undefined){
+				data.comment = extraData.comment;
+			}
+			if(extraId===undefined){
+				extraId = Extras.insert(data);
+				return extraId;
+			}
+			data2 = {$set:data};
+			Extras.update({_id:extraId}, data2);
 			return extraId;
 		}
-		data2 = {$set:data};
-		Extras.update({_id:extraId}, data2);
-		return extraId;
-
+		else {
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
 		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
         	$set: {processed: true,answer:nanswer}
-      		});
+      	});
 	},
 
 	//You need to add the secrets.js file inside the server folder.
@@ -1774,7 +1824,7 @@ Meteor.methods({
 				}
 			}
 			return pool_in}
-		function get_type (pool_id) { 
+		function get_type (pool_id) {
 			var types = Types.find().fetch()
 			var type_in = []
 			for(i = 0; i < types.length; i++){
@@ -1803,18 +1853,18 @@ Meteor.methods({
 						if(types[i].juniors[j] === pool_id[k][0]){
 							type_in.push(['Juniors',types[i]._id, pool_id[k][1]]);
 						}
-					}		
+					}
 					for(j = 0; types[i].seniors !== undefined && j < types[i].seniors.length; j++){
 						if(types[i].seniors[j] === pool_id[k][0]){
 							type_in.push(['Seniors',types[i]._id, pool_id[k][1]]);
 						}
-					}		
+					}
 					for(j = 0; types[i].elites !== undefined && j < types[i].elites.length; j++){
 						if(types[i].elites[j] === pool_id[k][0]){
 							type_in.push(['Elites',types[i]._id, pool_id[k][1]]);
 						}
-					}	
-				}				
+					}
+				}
 			}
 			return type_in;
 		}
@@ -1824,16 +1874,16 @@ Meteor.methods({
 			for(i = 0; i < years.length; i++){
 				for(j = 0; j < type_id.length; j++){
 					if(years[i].men === type_id[j][1]){
-						year_in.push(['Homme',years[i]._id, type_id[j][0], type_id[j][2]]); 
+						year_in.push(['Homme',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 					else if(years[i].women === type_id[j][1]){
-						year_in.push(['Femme',years[i]._id, type_id[j][0], type_id[j][2]]);  
+						year_in.push(['Femme',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 					else if(years[i].mixed === type_id[j][1]){
-						year_in.push(['Mixte',years[i]._id, type_id[j][0], type_id[j][2]]); 
+						year_in.push(['Mixte',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 					else if(years[i].family === type_id[j][1]){
-						year_in.push(['Famille',years[i]._id, type_id[j][0], type_id[j][2]]); 
+						year_in.push(['Famille',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 				}
 			}

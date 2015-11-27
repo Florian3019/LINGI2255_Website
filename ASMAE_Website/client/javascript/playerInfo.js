@@ -85,10 +85,11 @@ Template.playersInfo.helpers({
                 }},
                 { key: 'profile.isStaff', label:'Permissions', tmpl:Template.changePermissions},
                 { key: '_id', label:"Paiement", fn: function(value, object){
-                        var payment = Payments.findOne({userID:value}); 
+                        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+            		    var payment = Payments.findOne({"userID": value, "tournamentYear": currentYear});
                         if(payment===undefined){
                             return "Pas inscrit";
-                        } 
+                        }
                         else{
 
                             return paymentTranslate[payment.status] + " ("+payment.balance+"€ )";
@@ -101,7 +102,7 @@ Template.playersInfo.helpers({
              showColumnToggles:true
         }
     }
-    
+
 });
 
 Template.playersInfo.events({
@@ -132,8 +133,8 @@ Template.changePermissions.events({
             Meteor.call('turnAdmin',target.id);
         }
 
-        Meteor.call("addToModificationsLog", 
-        {"opType":"Changement de permission", 
+        Meteor.call("addToModificationsLog",
+        {"opType":"Changement de permission",
         "details":
             this.profile.firstName + " " + this.profile.lastName + " est passé en mode "+value
         });
