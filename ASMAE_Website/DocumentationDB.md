@@ -78,7 +78,8 @@ A court structure is as follows :
     dispoSamedi:<boolean>,
     dispoDimanche:<boolean>,
     ownerOK:<boolean>,
-    staffOK:<boolean>
+    staffOK:<boolean>,
+    numberOfCourts:<integer>
 }
 
 
