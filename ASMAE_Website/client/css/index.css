@@ -78,7 +78,7 @@ body {
 /* Footer of the web site */
 .footer {
     width: auto;
-    height: 300px;
+    height: auto;
     position: relative;
     background: white;
 }
