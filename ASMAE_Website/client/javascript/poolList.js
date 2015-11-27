@@ -220,6 +220,7 @@ Template.poolsSidebarCollapsableMenu.helpers({
 	// Returns a yearData with id year (copy of the same function in poolList.helpers)
 	'getYear' : function(){
 		var year = Session.get('PoolList/Year');
+
 		if(year==="" || year===undefined){
 			setInfo(document, "Veuillez choisir l'année");
 			return;
@@ -830,10 +831,14 @@ Template.poolList.helpers({
     }
     if(poolId!=""){
   			return {_id:poolId,
-          resp:responsables[0]};
+          resp:-1};
   		}
   		else return "";
 
+	},
+
+	'getChosenCourt':function(){
+		return Session.get("PoolList/ChosenCourt");
 	},
 
 	'chosenBrackets' : function(){

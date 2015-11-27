@@ -1,0 +1,41 @@
+<template name="selectNewCourt">
+
+	 <div class="row">
+   		<div class="col-sm-6 col-sm-offset-3">
+      	<h2>Sélectionnez un terrain</h2>
+      	<br>
+    	</div>
+  	</div>
+  {{>chooseCourtsModal}}
+  {{>courtSearch}}
+
+</template>
+
+<template name="chooseCourtsModal">
+  <!-- Modal -->
+  <div id="chooseCourtsModal" class="modal" >
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-title page-header">
+            <h3>Choisissez un numéro</h3>
+          </div>
+        </div>
+        <div class="modal-body">
+
+        	<select class="form-control" id="selectCourt" style="width:50%;" text-align="center">
+			       {{#each CourtsNumber}}
+			      		<option value="{{this}}"> {{this}} </option>
+			      {{/each}}
+     		 </select>
+        </div>
+        <div class="modal-footer">
+        	<button type="button" class="btn btn-default valid" data-dismiss="modal">Valider</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

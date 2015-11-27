@@ -122,7 +122,7 @@ Template.allCourtsTable.helpers({
 
 Template.courtSearchTemplate.events({
     'click .courtRow' : function(event){
-        Router.go('courtInfoPage',{_id:this._id});
+          Router.go('courtInfoPage',{_id:this._id});
     },
 })
 

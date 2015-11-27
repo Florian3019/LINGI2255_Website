@@ -34,6 +34,7 @@
         <td align="center">
           {{#with getCourt this._id}}
           <h3>Terrain :</h3>
+          <button type="button" id="changeCourt" class="btn btn-default btn-lg"><span class="glyphicon" aria-hidden="true"></span>   Changer</button>
           <div class="btn btn-sq-lg btn-primary">
             <i class="fa fa-home fa-5x"></i><br/>
             <strong> Numéro : {{this.id}} </strong><br>
@@ -140,34 +141,8 @@
       </table>
     </div>
   </div>
-
-
-
   <!-- Frame for the pdf viewer -->
   <iframe class="preview-pane" type="application/pdf" height="900" width="100%" frameborder="0" hidden></iframe>
   <br>
 
-</template>
-
-<template name="modalChangeCourt">
-  <!-- Modal -->
-  <div id="courtToChange" class="modal fade" >
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <div class="modal-title page-header">
-            <h3>Changer le terrain</h3>
-          </div>
-        </div>
-        <div class="modal-body">
-         {{> courtSearch}} 
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>

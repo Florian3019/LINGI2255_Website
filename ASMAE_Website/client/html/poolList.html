@@ -10,15 +10,18 @@
               <span id="infoMsg"></span>
             </h4>
           </div>
-          {{#if getChosenScorePool}}
-            {{>scorePage getChosenScorePool}}
-          {{else}}
-            {{#if chosenBrackets}}
-          {{>brackets}}
-            {{else}}
-          {{#with getYear}} <!-- Returns a yearData -->
-            {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
-            {{#with getType this}}
+          {{#if getChosenCourt}}
+            {{>selectNewCourt}}
+              {{else}}
+              {{#if getChosenScorePool}}
+                {{>scorePage getChosenScorePool}}
+              {{else}}
+                {{#if chosenBrackets}}
+              {{>brackets}}
+                {{else}}
+              {{#with getYear}} <!-- Returns a yearData -->
+                {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
+                {{#with getType this}}
 
               {{>responsablesTemplate this}}
 
@@ -68,6 +71,7 @@
               <span id="infoMsg">Poules sauvées !</span>
             </h4>
           </div>
+          {{/if}}
           {{/if}}
           {{/if}}
         </div>
