@@ -500,7 +500,9 @@ Meteor.methods({
 			instructions:<instructions>,
 			ownerComment:<ownerComment>,
 			staffComment:<staffComment>,
-			availability:<availability>
+			dispoSamedi:<boolean>,
+			dispoDimanche:<boolean>,
+			lendThisYear:<boolean> 
 		}
 	*/
 	'updateCourt' : function(courtData, address){
@@ -1666,10 +1668,6 @@ Meteor.methods({
 		})
 	},
 
-	'removePair' : function(pairId){
-		Pairs.remove({_id:pairId});
-	},
-
 	'insertQuestion' : function(Question){
 		var data ={
 			lastname : Question.lastname,
@@ -1721,9 +1719,14 @@ Meteor.methods({
 	},
 
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
-		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
-        	$set: {processed: true,answer:nanswer}
-      	});
+		if(Meteor.call('isAdmin') || Meteor.call('isStaff')){
+			Questions.update({email:nemail,question:nquestion,date:ndate}, {
+        		$set: {processed: true,answer:nanswer}
+      		});
+		}
+		else {
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	//You need to add the secrets.js file inside the server folder.
@@ -1787,7 +1790,6 @@ Meteor.methods({
   },
 
 
-
 	/*
 		You can't modify these entries once they are added.
 		An entry is as follows :
@@ -1821,6 +1823,7 @@ Meteor.methods({
 
 		ModificationsLog.insert(data);
 	},
+
 	'getYear':function(player){
 		function get_pair_id(player){
 			var pairs = Pairs.find().fetch()
@@ -1832,7 +1835,8 @@ Meteor.methods({
 					}
 				}
 			}
-			return pair_in}
+			return pair_in;
+		}
 		function get_pool_id(pair_id){
 			var pools = Pools.find().fetch()
 			var pool_in = []
@@ -1845,7 +1849,8 @@ Meteor.methods({
 					}
 				}
 			}
-			return pool_in}
+			return pool_in;
+		}
 		function get_type (pool_id) {
 			var types = Types.find().fetch()
 			var type_in = []
@@ -1909,7 +1914,8 @@ Meteor.methods({
 					}
 				}
 			}
-			return year_in;}
+			return year_in;
+		}
 		function get_max_year(){
 			var years = Years.find().fetch();
 			var max_year = years[0]._id;
@@ -1918,7 +1924,8 @@ Meteor.methods({
 					max_year = years[i]._id;
 				}
 			}
-			return max_year;}
+			return max_year;
+		}
 		function make_all(player){
 			var pair_id;
 			var new_player;
@@ -1939,5 +1946,55 @@ Meteor.methods({
 		}
 		ret = [make_all(player), get_max_year()];
 		return ret;
+	},
+
+	'unsubscribeTournament': function(pair_id){
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')))
+		{
+			console.error("You don't have the permission do to that");
+			throw new Meteor.error("unsubscribeTournament: no permissions");
+			return false;
+		}
+
+		var pair = Pairs.findOne({'_id':pair_id});
+        if(typeof pair.player2 === 'undefined'){
+          Pairs.remove({'_id':pair_id});
+          var pools = Pools.find().fetch();
+          var pool_id;
+          for(i = 0; i < pools.length; i++){
+              var poolPairs = pools[i].pairs;
+              for(k = 0; k < poolPairs.length; k++){
+                  if(pair_id == pools[i].pairs[k]){
+                      pool_id = pools[i]._id;
+                      var array = [];
+                      for(l = 0; l < pair_id.length; l++){
+                          if(k != l){
+                              array.push(pools[i].pairs[l]);
+                          }
+                      }
+                      break;
+                      Pools.update({'_id': pool_id}, {$set: {'pairs': array}});
+                  }
+              }
+          }
+        }
+        else {
+          if(pair.player1._id == Meteor.userId()){
+            Pairs.update({'_id': pair_id}, {$set: {'player1': pair.player2}});
+          }
+          Pairs.update({'_id': pair_id}, {$unset: {'player2': ""}});
+          var new_pair = Pairs.findOne({'_id':pair_id});
+          var new_p = Meteor.users.findOne({'_id':new_pair.player1._id});
+          var email = new_p.emails[0].address;
+          var data ={
+            intro:"Bonjour "+new_p.profile.firstName+",",
+            important:"Nous avons une mauvaise nouvelle pour vous.",
+            texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
+            encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !\n A très bientôt, \n Le staff Le Charles de Lorraine."
+          };
+          //TODO sent by staff  Meteor.call('emailFeedback',email,"Concernant votre inscription au tournoi",data);
+        }
 	}
+
+
 });
