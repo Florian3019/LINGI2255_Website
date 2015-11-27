@@ -41,12 +41,36 @@ Template.printSheets.events({
 
   'click #Print':function(event){
     var pools = Session.get("printSheets/poolList");
+    var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+    var infoPools = Session.get("printSheets/info");
 
     /* Create an array of Pools*/
     var poolsObject = new Array(pools.length);
+    var responsables = new Array(pools.length);
     for (var i = 0; i < pools.length; i++) {
       var pool = Pools.findOne({_id:pools[i]});
       poolsObject[i]=pool;
+      var responsable=undefined;
+      if(infoPools.type=="family"){
+        var type = Types.findOne({"all":pools[i]});
+        var resplist = type["allResp"];
+        if (resplist!=undefined && resplist.length>0){
+          responsable = Meteor.users.findOne({_id:resplist[0]});
+        }
+      }else{
+      var type = Types.findOne({$or:[{"preminimes":pools[i]},{"minimes":pools[i]},{"cadets":pools[i]},{"scolars":pools[i]},{"juniors":pools[i]},{"seniors":pools[i]},{"elites":pools[i]}]});
+      for (var j in allcat){
+        var cat = allcat[j];
+        if($.inArray(pools[i], type[cat])>-1){ //Look if our pool is in a cat
+          var r= cat.concat("Resp")
+          var resplist=type[r];
+          if (resplist!=undefined && resplist.length>0){
+            responsable = Meteor.users.findOne({_id:resplist[0]});
+          }
+        }
+      }
+    }
+      responsables[i]=responsable;
     }
 
     var options = {
@@ -62,7 +86,7 @@ Template.printSheets.events({
 
     /*Define some util function*/
 
-    function add_header(pdf,pool){
+    function add_header(pdf,pool,resp){
       /*
       HEADER
       */
@@ -85,31 +109,38 @@ Template.printSheets.events({
       pdf.addImage(logo, 'JPEG', margins.left, 40, 500, 114);
 
       pdf.setFontSize(15);
-      pdf.text("Feuille de poule\n", margins.left, 180); // DONE : change this to contain the court name. Would be good to add leader/staff info too
+      if (resp!=undefined) {
+        respText = "Responsable de poule : " + resp.profile.firstName+" "+resp.profile.lastName;
+        if(resp.emails) respText += "\n"+resp.emails[0].address;
+        if(resp.profile.phone) respText += "    "+ resp.profile.phone;
+        pdf.text(respText, margins.left, 180);
+      }else{
+        pdf.text("Pas de responsable Staff",margins.left,180);
+      }
       if(leader!=undefined){
         leaderText = "Chef de poule : " + leader.profile.firstName + " " + leader.profile.lastName;
 
         if(leader.emails) leaderText += "\n" + leader.emails[0].address;
         if(leader.profile.phone) leaderText += "    " + leader.profile.phone;
-        pdf.text(leaderText, margins.left, 210);
+        pdf.text(leaderText, margins.left, 225);
       }
       if(courtAddress!=undefined){
         pdf.setFontSize(15);
         var addr = "Terrain n°"+pool.courtId+"\n"+courtAddress.street +" "+ courtAddress.number +"\n"+courtAddress.zipCode+" "+ courtAddress.city;
-        pdf.text(addr,margins.left+400,200);
+        pdf.text(addr,margins.left+350,200);
       }
     }
 
     function printPage(pdf,i,pools){
       /*Add header*/
-      add_header(pdf,pools[i]);
+      add_header(pdf,pools[i],responsables[i]);
 
       var st = "#pool"+i.toString();
       // console.log($(st));
 
       pdf.addHTML($(st),
       30,
-      250,
+      255,
       {},
       function() {
         /*

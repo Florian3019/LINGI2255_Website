@@ -55,7 +55,7 @@ Template.myRegistration2.events({
     if(confirm("Voulez vous vous désinscrire ?")){
       var pair_id = event.currentTarget.dataset.pairid
       var pair = Pairs.findOne({'_id':pair_id});
-      if(pair.player2 == undefined){
+      if(typeof pair.player2 === 'undefined'){
         Pairs.remove({'_id':pair_id});
         var pools = Pools.find().fetch()
         var pool_id

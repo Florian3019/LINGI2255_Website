@@ -1,11 +1,20 @@
 # Mini doc pour la db
 
+## GlobalValues
+
+The website always needs some GlobalValues.
+A global value structure is as follows:
+{
+    _id: <string: key>,
+    value: <value>
+}
 
 ## Year
 
 A year structure is as follows :
 {
-    _id:<date>,
+    _id:<string: year>,
+    tournamentPrice: <number>,
     mixed:<typeID>,
     men:<typeID>,
     women:<typeID>,
@@ -149,10 +158,12 @@ A pair is structured as follows:
 A payment is structured as follows :
 {
     _id:<id>,
-    status:<status>, // paid or pending
-    balance:<balance>,
+    userID: <user id>,
+    tournamentYear: <tournament year>,
+    status:<string: status>, // paid or pending
+    balance:<number: balance>,
     date:<date>,
-    paymentMethod:<method>, // Cash, CreditCard or BankTransfer
+    paymentMethod:<string: method>, // Cash, CreditCard or BankTransfer
 }
 
 
