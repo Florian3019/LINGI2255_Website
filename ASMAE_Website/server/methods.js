@@ -1786,6 +1786,71 @@ Meteor.methods({
 
   },
 
+  'emailtoPoolPlayers':function(poolId){
+    if(poolId != undefined){
+      var mails = [];
+      var pool = Pools.findOne({_id:poolId});
+      for (var i in pool.pairs) {
+        var p = Pairs.findOne({_id:pool.pairs[i]});
+        if(p.player1!=undefined){
+          var p1 = Meteor.users.findOne({_id:p.player1._id});
+          mails.push(p1.emails[0].address);
+        }
+        if(p.player2!=undefined){
+          var p2 = Meteor.users.findOne({_id:p.player2._id});
+          mails.push(p2.emails[0].address);
+        }
+      }
+      var leaduser = Meteor.users.findOne({_id:pool.leader});
+      var leader= leaduser.profile.firstName+" "+leaduser.profile.lastName+" ("+leaduser.profile.phone+")"; //string
+      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+
+      var responsableList=[];
+      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+      for (var j in allcat){
+        var cat = allcat[j];
+        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+          var r= cat.concat("Resp")
+          var resplist=type[r];
+          if (resplist!=undefined && resplist.length>0){
+            for (var k = 0; k < resplist.length; k++) {
+              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+            }
+          }
+        }
+      }
+      var responsables="";//string
+      for (var i = 0; i < responsableList.length; i++) {
+        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
+      }
+
+      var adresse="";//string
+      if(pool.courtId!=undefined){
+        court = Courts.findOne({"courtNumber":pool.courtId});
+        if(court && court.addressID){
+          address = Addresses.findOne({_id:court.addressID});
+          adresse = address.street+" "+address.number+" "+address.zipCode+" "+address.city;
+        }
+      }
+      if(responsableList.length>1){
+        var encadre="Voici le nom et le numéro de téléphone des membres du staff qui encadrent votre poule :" + responsables +"\n Votre chef de poule est : "+leader+". C'est auprès de lui que vous obtiendrez les dernières informations."+"\n La poule se déroulera à l'adresse suivante : "+adresse;
+      }else{
+        var encadre="Voici le nom et le numéro de téléphone du membre du staff qui encadre votre poule :" + responsables +"\n Votre chef de poule est : "+leader+". C'est auprès de lui que vous obtiendrez les dernières informations."+"\n La poule se déroulera à l'adresse suivante : "+adresse;
+      }
+      var subject = "Quelques informations concernant votre poule.";
+      var data = {
+        intro:"Bonjour,",
+        important:"",
+        texte:"Nous voici bientôt arrivé à notre très attendu tournoi de tennis Le Charles de Lorraine et pour que tout se déroule pour le mieux, vous trouverez les informations concernant votre poule dans l'encadré suivant.",
+        encadre:encadre,
+      };
+      Meteor.call('emailFeedback',mails.toString(),subject,data);
+    }
+    else{
+      console.error("emailtoPoolPlayers/ UNDEFINED POOLID");
+    }
+  },
+
 
 
 	/*
