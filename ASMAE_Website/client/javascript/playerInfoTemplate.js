@@ -34,7 +34,13 @@ function initializeBraintree (clientToken) {
       Meteor.call('createTransaction', data, function (err, result) {
         Session.set('paymentFormStatus', null);
 		$("#dropinModal").modal("hide");
-        Router.go('paymentConfirmation');
+		if(err){
+			console.log(err);
+	        Router.go('paymentError');
+		}
+		else {
+	        Router.go('paymentConfirmation');
+		}
       });
     }
   });
