@@ -34,7 +34,13 @@ function initializeBraintree (clientToken) {
       Meteor.call('createTransaction', data, function (err, result) {
         Session.set('paymentFormStatus', null);
 		$("#dropinModal").modal("hide");
-        Router.go('paymentConfirmation');
+		if(err){
+			console.log(err);
+	        Router.go('paymentError');
+		}
+		else {
+	        Router.go('paymentConfirmation');
+		}
       });
     }
   });
@@ -214,14 +220,13 @@ Template.playerInfoTemplate.events({
 		}
 	},
 	'click #deleteUser' : function(event){
-		user = Meteor.users.findOne({"_id":this.id})
+		// user = Meteor.users.findOne({"_id":this.id})
 		if(Session.get('closeModal') != undefined){
 			if (confirm('Impossible de supprimer un joueur depuis ce menu.\n Voulez vous être redirigé ?')) {
-				Session.set('selected', user);
 				var modalId = '#pairModal'+Session.get('closeModal')
 				Session.set('closeModal', undefined)
 				$(modalId).on('hidden.bs.modal', function() {
-            		Router.go('playerInfoPage');
+            		Router.go('playerInfoTemplate',{_id:this.id});
         		}).modal('hide');
 
 			}
