@@ -36,19 +36,16 @@ Template.profileEdit.events({
 			box : $('[name=box]').val(),
 			city : $('[name=city]').val(),
 			zipCode : $('[name=zipcode]').val(),
-			country : $('[name=country]').val()
+			country : $('[name=country]').val(),
+			isCourtAddress : false
 		};
-		console.log(this.ID)
-			Meteor.call('updateAddress',address,this.ID, function(error, result){
-			if(error){
-				console.error('profileEdit adress error');
-				console.error(error);
-			}
-			else if(result == null){
-				console.error("No result");
-			}
-			
-		});
+
+		var user = Meteor.users.findOne({_id:this.ID},{"profile.addressID":1});
+
+		// If user has an address, update that one
+		if(user.addressID!==undefined){
+			address._id = user.addressID;
+		}
 
 		var lastName = $('[name=lastname]').val();
 		var firstName = $('[name=firstname]').val();
@@ -56,11 +53,11 @@ Template.profileEdit.events({
 		var sex = $('[name=sex]').val();
 		var rank = $('[name=rank]').val();
 
-    var birthDay = event.target.birthDay.value;
-    var birthMonth = event.target.birthMonth.value;
-    var birthYear = event.target.birthYear.value;
+	    var birthDay = event.target.birthDay.value;
+	    var birthMonth = event.target.birthMonth.value;
+	    var birthYear = event.target.birthYear.value;
 
-    var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
+	    var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
 
 		var userData = {
 			_id: this.ID,
@@ -74,15 +71,17 @@ Template.profileEdit.events({
 			}
 		};
 
-		Meteor.call('updateUser',userData, function(error, result){
+		Meteor.call('updateAddress',address, function(error, result){
 			if(error){
-				console.error('profileEdit player error');
+				console.error('profileEdit adress error');
 				console.error(error);
 			}
 			else if(result == null){
 				console.error("No result");
 			}
 
+			userData.profile.addressID = result;// Link the address
+			Meteor.call("updateUser", userData);
 		});
 
 		Router.go('home');

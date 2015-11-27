@@ -13,34 +13,29 @@
 body {
 		padding-top: 64px;
 }
+
 /* Navbar on the top */
 /*.navbar {
 }*/
 
-.menuItem{
-	color:black;
-}
-
 /* Sidebar on the left */
 .sidebar {
-	background-color: #ecf0f1;
-	padding-bottom: 0;
-	padding-left: 0px;
-	padding-top: 0px;
-	padding-right: 0px;
-	-webkit-box-shadow: 4px 0 3px -1px #888;
-	-moz-box-shadow: 4px 0 3px -1px #888;
-    -o-box-shadow: 4px 0 3px -1px #888;
-    box-shadow: 4px 0 3px -1px #888;
-    background-color: #AFAFAF;
+    position: fixed;
+    width: 240px;
+    height: 100%;
+    background: #afafaf;
+	overflow-y:auto;
+}
 
+.menuItem {
+	color:black;
 }
 
 .sidebar-nav li {
     line-height: 40px;
     display: block;
     text-decoration: none;
-    cursor:pointer;
+    cursor: pointer;
     background-color: rgba(51, 153, 255,0.15);
 }
 
@@ -48,29 +43,49 @@ body {
 	color: #fff;
 }
 
+.nav-sidebar-header {
+	padding: 10px;
+}
+
 /* Content of the web site */
+.page-content {
+    margin-left: 240px;
+	height: 100%;
+    width: auto;
+    position: relative;
+    background: #ecf0f1;
+    overflow: auto;
+    z-index: 1;
+}
+
+.page-content-no-left-margin {
+	height: 100%;
+    width: auto;
+    position: relative;
+    background: #ecf0f1;
+    overflow: auto;
+    z-index: 1;
+}
+
 .content {
 	padding-top: 30px;
 	padding-bottom: 30px;
   	color: inherit;
   	background-color: #ecf0f1;
-  	min-height: 538px;
-}
-
-/* Row that contain the SideBar and the content */
-.main {
-	background-color: #AFAFAF;
+  	min-height: 652px;
 }
 
 /* Footer of the web site */
 .footer {
-	padding: 0 !important;
-   	margin: 0 !important;
+    width: auto;
+    height: auto;
+    position: relative;
+    background: white;
 }
 
 /* Home page disign */
 .homePage {
-    min-height: 650px;
+	padding: 30px;
     background: url(main2.jpg) no-repeat center center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -84,12 +99,28 @@ body {
    		margin: 0 !important;
 }
 
-/*
-	Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris
-*/
+/* Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris */
 .dropdown:hover .dropdown-menu {
-display: block;
+	display: block;
 }
+
+/* Columun same height */
+/* top row */
+.col .well{
+	margin-bottom: -99999px;
+	padding-bottom: 99999px;
+}
+
+
+/* bottom row */
+.col-base{
+    margin-top: -15px; /* cut off top portion of bottom wells */
+}
+
+.col-wrap {
+    overflow: hidden;
+}
+
 
 
 /**
@@ -102,14 +133,6 @@ display: block;
 *
 **/
 
-@media (min-width: 1400px) {
-	.homePage {
-		min-height: 730px;
-	}
-}
-
-
-
 @media (min-width: 981px) {
 	body {
 		padding-top: 64px;
@@ -117,33 +140,6 @@ display: block;
 	}
 }
 
-/* Columun same height */
 
-@media (min-width: 768px) {
 
-	/* top row */
-	.col .well{
-	    margin-bottom: -99999px;
-	    padding-bottom: 99999px;
-	    padding-left: 0px;
-	    padding-top: 0px;
-	    padding-right: 0px;
-	   	background-color: #AFAFAF;
-	}
-
-	/* bottom row */
-	.col-base{
-	    margin-top: -15px; /* cut off top portion of bottom wells */
-	}
-}
-
-@media (max-width: 767px) {
-	.row.base{
-	    display:none;
-	}
-}
-
-.col-wrap{
-    overflow: hidden;
-    background-color: #AFAFAF;
-}
+ 

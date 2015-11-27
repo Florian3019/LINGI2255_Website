@@ -3,10 +3,8 @@ Template.myRegistration.helpers({
     return Meteor.userId();
   },
 
-
   'hasPairPlayer' : function(status){
-    var id = Meteor.userId();
-    var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+    var pair = getPairFromPlayerID();
 
     if(!pair){
       if(status == "true"){
@@ -34,8 +32,7 @@ Template.myRegistration.helpers({
 
   // Returns the player playing with the current player, if any
   'setPairPlayer': function(){
-    var id = Meteor.userId();
-    var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+    var pair = getPairFromPlayerID();
     if(!pair){
       return false;
     }
@@ -53,8 +50,7 @@ Template.myRegistration.helpers({
 });
 
 Template.myRegistration.onCreated(function (){
-  var id = Meteor.userId();
-    var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+    var pair = getPairFromPlayerID();
   if(pair){
     this.subscribe("PairInfo");
   this.subscribe("PartnerAdress");

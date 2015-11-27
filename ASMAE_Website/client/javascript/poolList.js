@@ -781,13 +781,18 @@ Template.poolList.helpers({
 			}
 		}
 
+		/*
+			Update completion
+		*/
 		var completion = (totalNumberOfPairs==0) ? 0 : totalCompletion/totalNumberOfPairs;
-
-		if(totalNumberOfPairs!=0){
-			var str = "completion.pools.".concat(category);
-			updateData = {};
-			updateData[str] = completion
-			Types.update({_id:typeData._id},{$set:updateData});
+		var user = Meteor.user();
+		if(user.profile.isStaff || user.profile.isAdmin){
+			if(totalNumberOfPairs!=0){
+				var str = "completion.pools.".concat(category);
+				updateData = {};
+				updateData[str] = completion
+				Types.update({_id:typeData._id},{$set:updateData});
+			}
 		}
 		return poolList;
 	},

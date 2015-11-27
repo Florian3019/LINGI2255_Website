@@ -1,5 +1,9 @@
 var aloneDependency = new Deps.Dependency();
 
+function isEmptyTable() {
+	return Session.get("emptyTable");
+}
+
 Template.tournamentRegistration.helpers({
 	'getTournamentPrice':function(){
 		var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
@@ -22,6 +26,7 @@ Template.tournamentRegistration.helpers({
         function setAlonePlayers(){
 
     		if (Session.get("firstTime")) {
+				console.log("returning undefined yey yey");
     			return undefined;
     		}
 
@@ -160,9 +165,11 @@ Template.tournamentRegistration.helpers({
 			Session.set("type",type);
 			Session.set("category",category);
             var pairsAlonePlayers = Meteor.call('getPairsAlonePlayers', type, category, date, gender, function(err, returnValue) {
-				var emptyArray = [];
-				if (returnValue===emptyArray || returnValue===undefined) {
+				if (returnValue===undefined || returnValue.length < 1) {
 					Session.set("emptyTable", true);
+				}
+				else {
+					Session.set("emptyTable", false);
 				}
                 Session.set("alonePlayers", returnValue);
             });
@@ -175,6 +182,7 @@ Template.tournamentRegistration.helpers({
     },
 
 	'emptyTableMessage' : function() {
+		aloneDependency.depend();
 		var type = Session.get("type");
 		var category = Session.get("category");
 		var age = Session.get("age");
@@ -203,11 +211,6 @@ Template.tournamentRegistration.helpers({
 				return "Aucune joueuse dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi des doubles dames.";
 			}
 		}
-
-	},
-
-	'isEmptyTable' : function() {
-		return Session.get("emptyTable");
 	},
 
 	'getPlayer' : function(userId){
@@ -479,35 +482,56 @@ Template.tournamentRegistration.events({
 	},
 
 	"change .checkboxAloneDiv input": function (event) {
+		event.preventDefault();
 		var e = document.getElementById("emailPlayer");
 		var table = document.getElementById("tableAlone");
 		var later = document.getElementById("checkboxLater");
 		var refresh = document.getElementById("refresh");
+		var message = document.getElementById("emptyTableMessage");
 		document.getElementById("later").checked = false; // reset "later" checkbox
+		Session.set("firstTime", false);
+		aloneDependency.changed();
+
+
 		if(event.target.checked){
+			table.style.display = 'none';
+			message.style.display = 'none';
+
 			later.style.display = 'block';
-			table.style.display = 'block';
 			refresh.style.display = 'block';
 			e.setAttribute("disabled","true");
-			Session.set("firstTime", false);
-			aloneDependency.changed();
+			if (isEmptyTable()) {
+				message.style.display = 'block';
+			}
+			else {
+				table.style.display = 'block';
+			}
 		}else{
 			later.style.display = 'none';
 			table.style.display = 'none';
 			refresh.style.display = 'none';
+			message.style.display = 'none';
 			e.removeAttribute("disabled","false");
 		}
     },
 
     "change .checkboxLater input": function (event) {
+		event.preventDefault();
+		aloneDependency.changed();
 		var table = document.getElementById("tableAlone");
+		var message = document.getElementById("emptyTableMessage");
 		if(event.target.checked){
 			table.style.display = 'none';
 			refresh.style.display = 'none';
+			message.style.display = 'none';
 		}else{
-			table.style.display = 'block';
 			refresh.style.display = 'block';
-			aloneDependency.changed();
+			if (isEmptyTable()) {
+				message.style.display = 'block';
+			}
+			else {
+				table.style.display = 'block';
+			}
 		}
     },
 
@@ -524,6 +548,18 @@ Template.tournamentRegistration.events({
 	"click [data-action='refresh']" : function(event) {
 		event.preventDefault();
 		aloneDependency.changed();
+
+		var table = document.getElementById("tableAlone");
+		var message = document.getElementById("emptyTableMessage");
+
+		table.style.display = 'none';
+		message.style.display = 'none';
+		if (isEmptyTable()) {
+			message.style.display = 'block';
+		}
+		else {
+			table.style.display = 'block';
+		}
 	},
 
     "submit form":function(){
@@ -566,9 +602,9 @@ Template.tournamentRegistration.events({
 			Returns the pair if userId is already in a pair. Else, returns false.
 		*/
 		function getPairId(userId){
-
-			var res = Pairs.findOne({$or: [{"player1._id":userId},{"player2._id":userId}]}, {_id:1});
-			if(res){
+			var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
+		    var res = Pairs.findOne({$or:[{"player1._id":userId, year:currentYear},{"player2._id":userId, year:currentYear}]}, {_id:1});
+			if(res !== undefined){
 				return res;
 			}
 			return false;
@@ -885,8 +921,15 @@ Template.tournamentRegistration.events({
 			Update the db !
         */
 
-        Meteor.call('updateAddress', addressData, Meteor.userId(), null);
-        Meteor.call('updateUser', curUserData);
+        Meteor.call('updateAddress', addressData, function(err, res){
+        	if(err){
+        		console.error("tournamentRegistration : updateAddress error");
+        		console.error(err);
+        	}
+        	curUserData.profile.addressID = res; // Set the addressID
+        	Meteor.call('updateUser', curUserData);
+        });
+
 
         var callback = function(err, pairID){
         	if(err){
@@ -919,6 +962,7 @@ Template.tournamentRegistration.events({
 		//		  This is because a player can have multiple Pairs (multiple tournaments).
 		pairData.paymentMethod = $('[name=paymentMethod]:checked').val();
 
+		pairData.year = currentYear;
         Meteor.call('updatePair', pairData, callback);
         Session.set('aloneSelected',null); // To avoid bugs if trying to register again
 

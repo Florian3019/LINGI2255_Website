@@ -48,7 +48,7 @@ function initializeBraintree (clientToken) {
 
 function getExtras(){
 	var id = Meteor.userId();
-	var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+	var pair = getPairFromPlayerID();;
 	if(pair.player1 && id === pair.player1._id){
 		return pair.player1.extras;
 	}
@@ -220,14 +220,13 @@ Template.playerInfoTemplate.events({
 		}
 	},
 	'click #deleteUser' : function(event){
-		user = Meteor.users.findOne({"_id":this.id})
+		// user = Meteor.users.findOne({"_id":this.id})
 		if(Session.get('closeModal') != undefined){
 			if (confirm('Impossible de supprimer un joueur depuis ce menu.\n Voulez vous être redirigé ?')) {
-				Session.set('selected', user);
 				var modalId = '#pairModal'+Session.get('closeModal')
 				Session.set('closeModal', undefined)
 				$(modalId).on('hidden.bs.modal', function() {
-            		Router.go('playerInfoPage');
+            		Router.go('playerInfoTemplate',{_id:this.id});
         		}).modal('hide');
 
 			}

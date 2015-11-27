@@ -15,11 +15,8 @@ Meteor.publish('Addresses', function(){
       if(isStaffOrAdmin(this.userId)) {
         return Addresses.find();
       }
-      return Addresses.find({userID: this.userId});
-});
-
-Meteor.publish('AddressesNoSafe', function() {
-  return Addresses.find();
+      var user = Meteor.users.findOne({_id:this.userId},{"profile.addressID":1});
+      return Addresses.find({$or:[{_id: user.profile.addressID}, {"isCourtAddress":true}]});
 });
 
 Meteor.publish('Questions', function(){
@@ -57,7 +54,7 @@ Meteor.publish('users', function () {
 });
 
 Meteor.publish("Pairs", function () {
-  var res = Pairs.find({},{});
+  var res = Pairs.find({});
   return res;
 });
 
@@ -92,6 +89,8 @@ Pools.allow(allowForStaffOrAdmin);
 Types.allow(allowForStaffOrAdmin);
 
 Pairs.allow(allowForStaffOrAdmin);
+
+GlobalValues.allow(allowForStaffOrAdmin);
 
 /*  Known uses : client/scoreTable  */
 Matches.allow(allowForStaffOrAdmin);
@@ -136,7 +135,7 @@ Meteor.publish("PairInfo", function(){
 */
 Meteor.publish("PartnerAdress", function() {
     var id = this.userId;
-    pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+    var pair = getPairFromPlayerID();
     if (!pair) {
         console.error("Error publish PartnerAdress : no pair found in the DB for this user.");
         return undefined;
