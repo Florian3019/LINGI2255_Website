@@ -15,11 +15,7 @@ Meteor.publish('Addresses', function(){
       if(isStaffOrAdmin(this.userId)) {
         return Addresses.find();
       }
-      return Addresses.find({userID: this.userId});
-});
-
-Meteor.publish('AddressesNoSafe', function() {
-  return Addresses.find();
+      return Addresses.find({$or:[{userID: this.userId}, {"isCourtAddress":true}]});
 });
 
 Meteor.publish('Questions', function(){

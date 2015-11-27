@@ -14,7 +14,7 @@
       	<tbody>
       		{{#each courts}}
       		<tr>
-            <td><a href="{{pathFor route='playerInfoTemplate' _id=this._id}}">{{courtOwner ownerID}}</a></td>
+            <td><a href="{{pathFor route='playerInfoTemplate' _id=ownerID}}">{{courtOwner ownerID}}</a></td>
       			<td><a href="{{pathFor route='courtInfoPage' _id=this._id}}">{{courtAddress addressID}}</a></td>
             <td>{{surface}}</td>
       			<td>{{courtType}}</td>

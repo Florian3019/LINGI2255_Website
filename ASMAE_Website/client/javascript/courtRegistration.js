@@ -46,7 +46,8 @@ Template.courtRegistration.events({
             box : $('[name=box]').val(),
             city : $('[name=city]').val(),
             zipCode : $('[name=zipCode]').val(),
-            country : $('[name=country]').val()
+            country : $('[name=country]').val(),
+            isCourtAddress : true
         };
 
 		var courtData = {
@@ -57,35 +58,50 @@ Template.courtRegistration.events({
         	ownerComment : $('[name=ownerComment]').val(),
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked"),
-            lendThisYear : true // Default to true
-
+            staffOK : false, // Default to false
+            ownerOK : true // Default to true
         };
         if(this.court){ //Used for the update of an existing court
             courtData._id = this.court._id;
             courtData.ownerID = this.court.ownerID;
             courtData.courtNumber = this.court.courtNumber;
         }
+        else{
+            courtData.ownerID = Meteor.userId();
+        }
 
-		Meteor.call('updateCourt', courtData, address, function(error, result){
-            if(error){
-                console.error('CourtRegistration error');
-                console.error(error);
+        Meteor.call("updateAddress",address, function(err, res){
+            if(err){
+                console.error("courtRegistration error");
+                console.error(err);
+                return;
             }
-            else if(result == null){
-                console.error("No result");
-            }
-			if(!Meteor.user().profile.isStaff){
-				var data = {
-				intro:"Bonjour "+Meteor.user().username+",",
-				important:"Merci pour le prêt de votre terrain !",
-				texte:"Si vous recevez ce mail, c'est que vous venez d'inscrire votre terrain ou que vous venez de modifier certaines informations par rapport à celui-ci.",
-				encadre:"Si jamais les informations par rapport à votre terrain sont erronées, n'hésitez pas à nous envoyer un email ou de modifier vous-même les informations !\n Pour toutes questions notre staff sera ravi de vour répondre via l'onglet \"contact\"/.",
 
-			};
-			Meteor.call('emailFeedback',Meteor.user().emails[0].address,"Concernant le prêt de votre terrain",data);}
+            // Set addressID :
+            courtData.addressID = res;
 
-			Router.go('confirmationRegistrationCourt', {_id: result});
-	    });
+            Meteor.call('updateCourt', courtData, function(error, result){
+                if(error){
+                    console.error('CourtRegistration error');
+                    console.error(error);
+                }
+                else if(result == null){
+                    console.error("No result");
+                }
+                if(!Meteor.user().profile.isStaff){
+                    var data = {
+                    intro:"Bonjour "+Meteor.user().username+",",
+                    important:"Merci pour le prêt de votre terrain !",
+                    texte:"Si vous recevez ce mail, c'est que vous venez d'inscrire votre terrain ou que vous venez de modifier certaines informations par rapport à celui-ci.",
+                    encadre:"Si jamais les informations par rapport à votre terrain sont erronées, n'hésitez pas à nous envoyer un email ou de modifier vous-même les informations !\n Pour toutes questions notre staff sera ravi de vour répondre via l'onglet \"contact\"/.",
+
+                };
+                Meteor.call('emailFeedback',Meteor.user().emails[0].address,"Concernant le prêt de votre terrain",data);}
+
+                Router.go('confirmationRegistrationCourt', {_id: result});
+            });
+        })
+		
 
 
     }

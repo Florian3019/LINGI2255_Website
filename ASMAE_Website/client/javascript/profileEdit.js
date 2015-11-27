@@ -36,10 +36,10 @@ Template.profileEdit.events({
 			box : $('[name=box]').val(),
 			city : $('[name=city]').val(),
 			zipCode : $('[name=zipcode]').val(),
-			country : $('[name=country]').val()
+			country : $('[name=country]').val(),
+			isCourtAddress : false
 		};
-		console.log(this.ID)
-			Meteor.call('updateAddress',address,this.ID, function(error, result){
+		Meteor.call('updateAddress',address, function(error, result){
 			if(error){
 				console.error('profileEdit adress error');
 				console.error(error);
@@ -48,6 +48,7 @@ Template.profileEdit.events({
 				console.error("No result");
 			}
 			
+			Meteor.call("updateUser", {_id:this.ID, profile:{addressID:result}});
 		});
 
 		var lastName = $('[name=lastname]').val();

@@ -35,7 +35,10 @@ Router.onStop(function(){
 
 Router.route('/', {
 	template: 'home',
-	name: 'home'
+	name: 'home',
+	waitOn: function(){
+		return [ Meteor.subscribe('GlobalValues'), Meteor.subscribe('Years') ]
+	}
 });
 
 Router.route('/email-terrain', {

@@ -318,13 +318,14 @@ Meteor.methods({
 				var owner = getRandomElement(users);
 
 				court = {
-					addressID : insertAddress(),
+					addressID : insertAddress(true),
 					courtNumber : courtArray,
 					courtType : flipCoin() ? "club" : "privé",
 					dispoSamedi : saturdayAvailable,
 					dispoDimanche : sundayAvailable,
 					instructions : getInstructions(),
-					lendThisYear : tournamentYear.toString() === "2015",
+					staffOK : false,
+					ownerOK : tournamentYear.toString() === "2015",
 					numberOfCourts : courtArray.length,
 					ownerComment : getComment(),
 					ownerID : owner._id,
@@ -335,14 +336,15 @@ Meteor.methods({
 			}
 		}
 
-		function insertAddress() {
+		function insertAddress(isCourt) {
 			var addressData = {
                 street:getRandomElement(streets),
                 number:getRandomInt(1,200),
                 box:getRandomInt(1,10).toString(),
                 city:getRandomElement(cities),
                 zipCode:getRandomInt(1000,6000),
-                country:"Belgique"
+                country:"Belgique",
+                isCourtAddress:isCourt
             };
 			var addressID = Addresses.insert(addressData);
 			if (typeof addressID1 === undefined) {
@@ -441,10 +443,10 @@ Meteor.methods({
                     console.error("Error populateDB : createPair : type is not good");
             }
 
-            var addressID1 = insertAddress();
+            var addressID1 = insertAddress(false);
 			var addressID2;
 			if (!alone) {
-				addressID2 = insertAddress();
+				addressID2 = insertAddress(false);
 			}
 
             var phone1 = "04"+getRandomInt(10000000,99999999).toString();
