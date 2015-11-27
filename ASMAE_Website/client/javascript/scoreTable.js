@@ -236,7 +236,7 @@ Template.scorePage.events({
     }
     resp = undefined;
     var respId = event.currentTarget.dataset.resp;
-    if(respId!=undefined){
+    if(respId!=undefined && respId != -1){
       resp = Meteor.users.findOne({_id:respId});
     }
 

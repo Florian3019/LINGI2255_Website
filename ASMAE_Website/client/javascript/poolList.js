@@ -831,7 +831,7 @@ Template.poolList.helpers({
     }
     if(poolId!=""){
   			return {_id:poolId,
-          resp:responsables[0]};
+          resp:-1};
   		}
   		else return "";
 
