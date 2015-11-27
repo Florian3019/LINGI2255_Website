@@ -17,7 +17,6 @@
 </script>
 
 <div id="LoginWrapper">
-  
     <div class="modal" id="forgotten" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -105,23 +104,23 @@
                 <div class="inside">
                     <h4>Essayer aussi</h4>
                     <br>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <button id="google-login" class="btn btn-lg btn-danger btn-block">Se connecter avec Google</button>
+                    <div id="flex-container">
+                        <div id="button-connection">
+                            <button id="google-login" class="btn btn-lg btn-danger btn-block">Google</button>
                         </div>
-                        <div class="col-md-2">
-                            <img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="90%" height="90%%">
+                        <div id="logos">
+                            <img src="new-google-favicon-logo-5F554/new-google-favicon-logo.png" width="90%" height="90%">
                         </div>
                     </div>
                     <br>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <button id="facebook-login" class="btn btn-lg  btn-primary btn-block">Se connecter avec Facebook</button>
+                    <div id="flex-container">
+                        <div id="button-connection">
+                            <button id="facebook-login" class="btn btn-lg  btn-primary btn-block">Facebook</button>
                         </div>
-                        <div class="col-md-2">
+                        <div id="logos">
                             <img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="90%" height="90%">
                         </div>
-                    </div>
+                    </div>         
                 </div>
             </div>
         </div>
@@ -136,16 +135,13 @@
 				<div class="row">
                     <div class="col-md-4 col-md-offset-4 column">
 						<form class="login">
-							<h2 class="lead">Inscription</h2>
-                            
-							<label class="header pull-left" for="inputEmail">Addresse mail :</label>
+                            <h4> Inscription </h4>
                             <div class="form-group" id="inputEmailGroup">
                                 <input type="email" id="inputEmail" name="email-sign" class="form-control" placeholder="Email" required autofocus>
                             </div>
                             
 							<p> </p> <!-- Espace -->
                             
-							<label class="header pull-left" for="inputPassword">Mot de passe :</label>
                             <div class="form-group" id="inputPasswordGroup">
                                 <input type="password" id="inputPassword" name="password-sign" class="form-control" placeholder="Mot de passe" required>
                             </div>

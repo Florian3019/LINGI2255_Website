@@ -4,14 +4,7 @@ Router.configure({
 });
 
 function isRegistered() {
-	var id = Meteor.userId();
-	var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
-	if (pair) {
-		return true;
-	}
-	else {
-		return false;
-	}
+	return getPairFromPlayerID() !== undefined;
 }
 
 Router.onBeforeAction(function() {
@@ -35,7 +28,10 @@ Router.onStop(function(){
 
 Router.route('/', {
 	template: 'home',
-	name: 'home'
+	name: 'home',
+	waitOn: function(){
+		return [ Meteor.subscribe('GlobalValues'), Meteor.subscribe('Years') ]
+	}
 });
 
 Router.route('/email-terrain', {
@@ -76,6 +72,11 @@ Router.route('/mon-inscription', {
 		else {
 			this.render("login");
 		}
+	},
+	waitOn: function(){
+		return [
+			Meteor.subscribe('GlobalValues'),
+		]
 	}
 });
 Router.route('/mon-inscription2', {
@@ -88,6 +89,11 @@ Router.route('/mon-inscription2', {
 		else {
 			this.render("login");
 		}
+	},
+	waitOn: function(){
+		return [
+			Meteor.subscribe('GlobalValues'),
+		]
 	}
 });
 Router.route('/inscription-tournoi',  {
@@ -113,7 +119,7 @@ Router.route('/liste-poules', {
 	name: 'poolList',
 	template: 'poolList',
 	waitOn: function(){
-		return [ Meteor.subscribe('Years'), Meteor.subscribe('Types'), Meteor.subscribe('users'), Meteor.subscribe('Pairs'), Meteor.subscribe('Pools'), Meteor.subscribe('Matches') ]
+		return [ Meteor.subscribe('Years'), Meteor.subscribe('Types'), Meteor.subscribe('users'), Meteor.subscribe('Pairs'), Meteor.subscribe('Pools'), Meteor.subscribe('Matches'), Meteor.subscribe('GlobalValues')]
 	}
 });
 
@@ -121,7 +127,7 @@ Router.route('/table-scores', {
 	name: 'scoreTable',
 	template: 'scoreTable',
 	waitOn: function(){
-		return [ Meteor.subscribe('Matches'), Meteor.subscribe('Users'), Meteor.subscribe('Pairs') ]
+		return [ Meteor.subscribe('Matches'), Meteor.subscribe('Users'), Meteor.subscribe('Pairs'), Meteor.subscribe('GlobalValues') ]
 	}
 });
 
@@ -194,20 +200,19 @@ Router.route('/info-joueurs', {
 	}
 });
 
-Router.route('/page-info-joueur', {
-	name: 'playerInfoPage',
-	template: 'playerInfoPage',
-	waitOn: function() {
-		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users')];
-	}
-});
-Router.route('/template-info-joueur', {
+Router.route('/page-info-joueur/:_id', {
 	name: 'playerInfoTemplate',
 	template: 'playerInfoTemplate',
+	data: function(){
+		if (this.ready()) {
+			return {ID:this.params._id};
+		}
+	},
 	waitOn: function() {
-		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users')];
+		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users'), Meteor.subscribe('GlobalValues')];
 	}
 });
+
 Router.route('/gestion-staff', {
 	name: 'staffManagement',
 	template: 'staffManagement',
@@ -328,14 +333,14 @@ Router.route('/confirmation-pair/:_id',{
 		return data;
 	},
 	waitOn: function() {
-		return [Meteor.subscribe('Pairs'), Meteor.subscribe('users')];
+		return [Meteor.subscribe('Pairs'), Meteor.subscribe('users'), Meteor.subscribe('GlobalValues')];
 	}
 });
 
 Router.route('/topic/:_id/:tname',{
 	name: 'topic',
 	template: 'topic',
-	
+
 	data: function(){
 		var data = {};
 		data.topicId = this.params._id;

@@ -86,13 +86,13 @@ var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 
 
 var getPlaceHolder = function(round){
   return {
-    "pair":"placeHolder", 
+    "pair":"placeHolder",
     "data":{
-      "player1":placeHolderPlayer, 
-      "player2":placeHolderPlayer, 
-      "id":undefined, 
-      "score":placeHolderScore, 
-      "round":round, 
+      "player1":placeHolderPlayer,
+      "player2":placeHolderPlayer,
+      "id":undefined,
+      "score":placeHolderScore,
+      "round":round,
       "display":"block",
       "clickable":false,
       "placeHolder":true,
@@ -104,10 +104,10 @@ var getEmpty = function(round, court){
   return {
     "pair":"empty",
     "data":{
-      "player1":emptyPlayer, 
-      "player2":emptyPlayer, 
-      "id":undefined, 
-      "score":emptyScore, 
+      "player1":emptyPlayer,
+      "player2":emptyPlayer,
+      "id":undefined,
+      "score":emptyScore,
       "display":"block",
       "round":round,
       "clickable":false,
@@ -122,10 +122,10 @@ var setRoundData = function(roundData){
   newRoundData = {
     "pair":roundData.pair,
     "data":{
-      "player1":roundData.data.player1, 
-      "player2":roundData.data.player2, 
-      "id":roundData.data.id, 
-      "score":undefined, 
+      "player1":roundData.data.player1,
+      "player2":roundData.data.player2,
+      "id":roundData.data.id,
+      "score":undefined,
       "display":"block",
       "round":round+1,
       "placeHolder":false,
@@ -151,9 +151,9 @@ var forwardData = function(roundData){
   return {
     "pair":roundData.pair,
     "data":{
-      "player1":roundData.data.player1, 
-      "player2":roundData.data.player2, 
-      "id":roundData.data.id, 
+      "player1":roundData.data.player1,
+      "player2":roundData.data.player2,
+      "id":roundData.data.id,
       "score":points==undefined ? (roundData.data.player1===emptyPlayer ? emptyScore : inGame) : points,
       "display":"block",
       "round":round+1, // increase the round
@@ -390,15 +390,19 @@ var handleBracketErrors = function(document){
 }
 
 var setCompletion = function(completion){
-  year = Session.get("PoolList/Year");
-  type = Session.get("PoolList/Type");
-  category = Session.get("PoolList/Category");
+  var user = Meteor.user();
+  if(!(user.profile.isStaff || user.profile.isAdmin)){
+    return;
+  }
+  var year = Session.get("PoolList/Year");
+  var type = Session.get("PoolList/Type");
+  var category = Session.get("PoolList/Category");
 
-  yearData = Years.findOne({"_id":year},{reactive:false});
-  typeId = yearData[type];
+  var yearData = Years.findOne({"_id":year},{reactive:false});
+  var typeId = yearData[type];
   var str = "completion.brackets.";
   str = str.concat(category);
-  data = {};
+  var data = {};
   data[str] = completion;
   Types.update({"_id":typeId}, {$set:data},{reactive:false});
 }
@@ -482,7 +486,7 @@ var getTournamentFirstRound = function(pairs){
 
   var k = 0; // Index in pairs
   for(var i=0; i< tournamentSize; i++){
-    
+
     if(k<pairs.length){
       a = pairs[k];
       k++;
@@ -525,7 +529,7 @@ var makeBrackets = function(document){
   }
 
   // {pair:<pair>, data:<bracketPairData>} List of the pairs that made it this round (contains roundData)
-  thisRound = getTournamentFirstRound(pairData); // Size of a power of 2 
+  thisRound = getTournamentFirstRound(pairData); // Size of a power of 2
 
   brackets = [];
   /********************************************

@@ -9,11 +9,13 @@ var updateSelectedNumber = function(document){
 
 Template.buildTournament.helpers({
 	'getNotSelectedSize':function(){
-		return Session.get("brackets/selectedSize")[1];
+		var x = Session.get("brackets/selectedSize");
+		if(x!==undefined) return x[1];
 	},
 
 	'getSelectedSize':function(){
-		return Session.get("brackets/selectedSize")[0];
+		var x = Session.get("brackets/selectedSize");
+		if(x!==undefined) return x[0];
 	},
 
 	'getCurrentlyBuilding':function(){
@@ -81,12 +83,12 @@ Template.buildTournament.helpers({
 						scrollPage(-scrollSpeed,0);
 				    }
 				    else{
-				    	m = false;				    	
+				    	m = false;
 				    }
 				}
 		    };
 
-			document.addEventListener('mousemove', onMouseMove); 
+			document.addEventListener('mousemove', onMouseMove);
   		  	el.className = el.className.replace('ex-moved', '');
   	  	}).on('drop', function (el, target, source, sibling) {
 	  		updateSelectedNumber(document);
@@ -174,7 +176,7 @@ Template.buildTournamentItem.helpers({
 	},
 
 	'getPair' : function(pairId, poolId) {
-		var pair = Pairs.findOne({_id:pairId})
+		var pair = Pairs.findOne({_id:pairId});
 		if(!pair) return undefined;
 
 		// Add this pair to the list of alone pairs, if this pair is not full
@@ -209,13 +211,17 @@ Template.buildContainer.onRendered(function(){
 Template.buildContainer.helpers({
 	'getLoserPairPoints':function(){
 		var pairPoints = Session.get("brackets/pairPoints");
-		Session.set("brackets/selectedSize",[pairPoints.winnerPairPoints.length,pairPoints.loserPairPoints.length]);
-		return pairPoints.loserPairPoints;
+		if(pairPoints!==undefined){
+			Session.set("brackets/selectedSize",[pairPoints.winnerPairPoints.length,pairPoints.loserPairPoints.length]);
+			return pairPoints.loserPairPoints;
+		}
 	},
 
 	'getWinnerPairPoints':function(){
 		var pairPoints = Session.get("brackets/pairPoints");
-		Session.set("brackets/selectedSize",[pairPoints.winnerPairPoints.length,pairPoints.loserPairPoints.length]);
-		return pairPoints.winnerPairPoints;
+		if(pairPoints!==undefined){
+			Session.set("brackets/selectedSize",[pairPoints.winnerPairPoints.length,pairPoints.loserPairPoints.length]);
+			return pairPoints.winnerPairPoints;
+		}
 	},
 })

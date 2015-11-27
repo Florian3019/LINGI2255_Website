@@ -103,7 +103,8 @@ Template.adminAddCourt.events({
             box : $('[name=box]').val(),
             city : $('[name=city]').val(),
             zipCode : $('[name=zipCode]').val(),
-            country : $('[name=country]').val()
+            country : $('[name=country]').val(),
+            isCourtAddress : true
         };
 
         var currentOwnerID = Session.get("adminAddCourt/selected");
@@ -127,19 +128,31 @@ Template.adminAddCourt.events({
             ownerComment : $('[name=ownerComment]').val(),
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked"),
-            lendThisYear: true
+            staffOK : true, // Default to true
+            ownerOK : true // Default to true
         };
 
-        Meteor.call('updateCourt', courtData, address, function(error, result){
-            if(error){
-                console.error('CourtRegistration error');
-                console.error(error);
+        Meteor.call('updateAddress', address, function(err, res){
+            if(err){
+                console.error("CourtRegistration updateAddress error");
+                console.error(err);
+                return;
             }
-            else if(result == null){
-                console.error("No result");
-            }
-            Router.go('confirmationRegistrationCourt', {_id: result});
+            // Set addressId :
+            courtData.addressID = res;
+
+            Meteor.call('updateCourt', courtData, function(error, result){
+                if(error){
+                    console.error('CourtRegistration error');
+                    console.error(error);
+                }
+                else if(result == null){
+                    console.error("No result");
+                }
+                Router.go('confirmationRegistrationCourt', {_id: result});
+            });
         });
+        
     },
     'click .playerFound': function(event) {
         playerId = event.currentTarget.id;

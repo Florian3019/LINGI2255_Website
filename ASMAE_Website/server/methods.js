@@ -21,17 +21,12 @@ Meteor.methods({
 	'activateGlobalValuesDB' : function() {
 		if (!GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
-
-			Meteor.call('activateCourtDB');
+		}
+		if(GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
+			GlobalValues.insert({_id:"nextCourtNumber", value:1});
 		}
 		if (!GlobalValues.findOne({_id:"registrationsON"})) {
 			GlobalValues.insert({_id:"registrationsON", value: false});
-		}
-	},
-
-	'activateCourtDB' : function() {
-		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
-			GlobalValues.insert({_id:"nextCourtNumber", value:1});
 		}
 	},
 
@@ -41,26 +36,23 @@ Meteor.methods({
 			var data = {};
 			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
-				return false;
-			}
-			else {
-				data.tournamentDate = launchTournamentData.tournamentDate;
-				data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
+				return undefined;
 			}
 
+			data.tournamentDate = launchTournamentData.tournamentDate;
+			data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
+
 			if (typeof Years.findOne({_id:data._id}) !== 'undefined') {
-				// Tournament already exists
-				console.log("shit !");
+				console.error("Tournament already exists");
 				return undefined;
 			}
 
 			if(typeof launchTournamentData.tournamentPrice === 'undefined') {
 				console.error("launchTournament: No price for the tournament");
-				return false;
+				return undefined;
 			}
-			else{
-				data.tournamentPrice = launchTournamentData.tournamentPrice;
-			}
+
+			data.tournamentPrice = launchTournamentData.tournamentPrice;
 
 			//Insert in database
 
@@ -74,14 +66,11 @@ Meteor.methods({
 
 			GlobalValues.update({_id:"registrationsON"}, {$set: {
 				value : true
-			}}, {upsert: true}, function(err, result){
+			}}, function(err, result){
 				if(err){
 					throw new Meteor.Error("update GlobalValues registrationsON in launchTournament error: ", err);
 				}
 			});
-
-			//Activate court DB for this year's tournament
-			Meteor.call("activateCourtDB", data._id);
 
 			return Years.insert(data);
 		}
@@ -89,6 +78,16 @@ Meteor.methods({
 			console.error("You are not an administrator, you don't have the permission to do this action.");
 			return false;
 		}
+	},
+
+	'deleteCurrentYear': function(){
+			if(!Meteor.call('isAdmin')){
+				console.error("You don't have the permission to do that.");
+				return false;
+			}
+
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			Years.remove({_id: currentYear});
 	},
 
 	'setCurrentYear' : function(currentYear) {
@@ -102,13 +101,18 @@ Meteor.methods({
 	},
 
 	'stopTournamentRegistrations': function(){
-		GlobalValues.update({_id:"registrationsON"}, {$set: {
-			value : false
-		}}, function(err, result){
-			if(err){
-				throw new Meteor.Error("update GlobalValues registrationsON in stopTournamentRegistrations error: ", err);
-			}
-		});
+		if(Meteor.call('isAdmin')){
+			GlobalValues.update({_id:"registrationsON"}, {$set: {
+				value : false
+			}}, function(err, result){
+				if(err){
+					throw new Meteor.Error("update GlobalValues registrationsON in stopTournamentRegistrations error: ", err);
+				}
+			});
+		}
+		else{
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	'getAllYears': function(){
@@ -123,8 +127,7 @@ Meteor.methods({
 
 	'getNextCourtNumber' : function() {
 		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
-			console.warn("No court number yet, activating CourtDB");
-			Meteor.call('activateCourtDB');
+			console.error("No court number yet !");
 			return 1;
 		}
 		return GlobalValues.findOne({_id:"nextCourtNumber"});
@@ -213,23 +216,32 @@ Meteor.methods({
 			return false;
 		}
 	},
+
 	'deleteUser': function(nid){
-		userToDelete = Meteor.users.findOne({"_id":nid});
-		addressId = userToDelete.profile.addressID;
-		if(addressId != undefined){
-			Addresses.remove({_id:addressId});
-			Meteor.users.update({_id: nid} , {$set: {"profile.addressID": undefined}});
+		if(nid === Meteor.userId() || Meteor.call('isAdmin') || Meteor.call('isStaff'))
+		{
+			userToDelete = Meteor.users.findOne({"_id":nid});
+			addressId = userToDelete.profile.addressID;
+			if(addressId != undefined){
+				Addresses.remove({_id:addressId});
+				Meteor.users.update({_id: nid} , {$set: {"profile.addressID": undefined}});
+			}
+			courtId = Courts.findOne({"ownerID":nid});
+			if(courtId != undefined){
+				Courts.remove({_id:courtId});
+				//Meteor.users.update({_id: nid} , {$set: {"profile.courtID": undefined}});
+			}
+			Meteor.users.update({_id: nid} , {$set: {"profile.isStaff": false}});
+			Meteor.users.update({_id: nid} , {$set: {"profile.isAdmin": false}});
+			Meteor.users.update({_id: nid} , {$set: {"services": undefined}});
+			Meteor.users.update({_id: nid} , {$set: {"profile.phone": undefined}});
 		}
-		courtId = Courts.findOne({"ownerID":nid});
-		if(courtId != undefined){
-			Courts.remove({_id:courtId});
-			//Meteor.users.update({_id: nid} , {$set: {"profile.courtID": undefined}});
+		else {
+			console.error("You don't have the permission to do that.");
 		}
-		Meteor.users.update({_id: nid} , {$set: {"profile.isStaff": false}});
-		Meteor.users.update({_id: nid} , {$set: {"profile.isAdmin": false}});
-		Meteor.users.update({_id: nid} , {$set: {"services": undefined}});
-		Meteor.users.update({_id: nid} , {$set: {"profile.phone": undefined}});
+
 	},
+
 	'getPairCategory' : function(type, p1, p2){
 		var category;
 		if(type==="family"){
@@ -409,7 +421,7 @@ Meteor.methods({
 			seniorsBracket:<list of pairId>
 			elitesBracket:<list of pairId>
 			listBracket:<list of pairID>
-			
+
 
 			// Staff responsables
 				Can only add a single staff for each update to a category.
@@ -474,10 +486,6 @@ Meteor.methods({
 	/*
 		@param courtData is structured as a court, if _id is missing,
 		a new court will be created and linked to the owner. OwnerID must be provided.
-		@param address is structured as an address
-		(fields can be missing, if the _id field is missing, a new address will be linked to this court,
-		erasing reference to previous addressID if existing). Can be null.
-		This function does a check to prevent a user from adding a new court with an existing court address (preventing duplicates)
 		A court structure is as follows :
 		{
 			_id:<courtId>,
@@ -488,22 +496,14 @@ Meteor.methods({
 			instructions:<instructions>,
 			ownerComment:<ownerComment>,
 			staffComment:<staffComment>,
-			availability:<availability>
+			dispoSamedi:<boolean>,
+			dispoDimanche:<boolean>,
+			ownerOK:<true | false>,
+			staffOK:<true | false>
 		}
 	*/
-	'updateCourt' : function(courtData, address){
+	'updateCourt' : function(courtData){
 		var courtId = courtData._id;
-		if(!courtData.ownerID) //New court
-		{
-			courtData.ownerID = Meteor.userId();
-		}
-
-		var u = Meteor.users.findOne({_id:courtData.ownerID});
-		if(!u){
-			console.error('updateCourt : owner does not exist !');
-			return false;
-		}
-
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
 		const userIsOwner = courtData.ownerID == Meteor.userId();
@@ -547,19 +547,13 @@ Meteor.methods({
 			data.dispoDimanche = courtData.dispoDimanche;
 		}
 
-		if(courtData.lendThisYear !== null && typeof courtData.lendThisYear !== 'undefined'){
-			data.lendThisYear = courtData.lendThisYear;
+		if(courtData.ownerOK !== null && typeof courtData.ownerOK !== 'undefined'){
+			data.ownerOK = courtData.ownerOK;
 		}
 
-		// if(typeof courtData.dispoSamedi !== 'undefined' && typeof courtData.dispoDimanche !== 'undefined')
-		// {
-		// 	if(courtData.dispoSamedi || courtData.dispoDimanche){
-		// 		data.lendThisYear = true;
-		// 	}
-		// 	else{
-		// 		data.lendThisYear = false;
-		// 	}
-		// }
+		if(courtData.staffOK !== null && typeof courtData.staffOK !== 'undefined'){
+			data.staffOK = courtData.staffOK;
+		}
 
 
 		if(courtData.numberOfCourts){
@@ -581,40 +575,21 @@ Meteor.methods({
 		}
 
 
-		if(!courtId){
-
-			// Check that a court with that address does not already exist :
-			if(address && Meteor.call('addressExists', address)){
-				console.error("Court already exists :");
-				console.error(address);
-				return null;
-			}
-
+		if(courtId === undefined){
 			// Create a new court
-			courtId = Courts.insert(data, function(err, courtId){
+			return Courts.insert(data, function(err, courtId){
 				if(err){
 					throw new Meteor.Error("updateCourt error: during Courts.insert", err);
 				}
-
-				// Update addressID in the user
-				if(address){
-					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
-				}
 			});
 		}
-		else
-		{
-			// Court already exists, so just update it :
 
-			Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
-				if(err){
-					throw new Meteor.Error("updateCourt error : during Courts.update", err);
-				}
-				if(address){
-					Meteor.call('updateAddress', address, courtData.ownerID, courtId);
-				}
-			});
-		}
+		// Court already exists, so just update it :
+		Courts.update({_id: courtId} , {$set: data}, function(err, count, status){
+			if(err){
+				throw new Meteor.Error("updateCourt error : during Courts.update", err);
+			}
+		});
 		return courtId;
 	},
 
@@ -799,12 +774,8 @@ Meteor.methods({
 		Accounts.sendVerificationEmail(userId);
 	},
 	/*
-		@param userId : Updates the address of the user with id userId.
-				If courtId is provided, updates the court address (userId is then the owner's id).
-				userId must be provided.
 		@param AddressData : if it does not contain a field _id, this will
-		create a new address for the user or court (removing the reference to the previous one if there was one) and link its
-		_id to the profile.addressID field of the user or the .addressID field of the court.
+		create a new address
 		The addressData structure is as follows :
 		{
 			_id:<id>, // Omit this if you want to create a new address, this will be auto-generated
@@ -813,59 +784,25 @@ Meteor.methods({
 			box:<box>,
 			city:<city>,
 			zipCode:<zipCode>,
-			country:<country>
+			country:<country>,
+			isCourtAddress:<true | false>
 		}
-		If some fields are missing, they will be left untouched.
-		Returns false on failure and true on success
+		Returns the addressID
 	*/
-	'updateAddress' : function(addressData, userId, courtId){
-		if(!userId && !courtId){
-			console.error("updateAddress : Must provide user id or courtId to update the address !");
-			return false;
-		}
-		if(courtId && !userId){
-			console.error("updateAddress : must provide the userId of the person trying to make the request if trying to modify a court!");
-			return false;
-		}
-
-		var u = Meteor.users.findOne({_id:userId});
-		if(!u){
-			console.error('updateAddress : that user doesn\'t exist !');
-			return false;
-		}
-
-		if(courtId){
-			// Check that courtId really exists :
-			var c = Courts.findOne({_id:courtId});
-			if(!c){
-				console.error('updateAddress : that court doesn\'t exist !');
-				return false;
-			}
-			// If an address id is provided, make sure that addressId is the one from the court
-			if(addressData._id && c.addressID!=addressData._id){
-				console.error('updateAddress : trying to update an address not belonging to the court provided!');
-				return false;
-			}
-		}
-		else{
-			if(addressData._id && u.profile && u.profile.addressID && u.profile.addressID != addressData._id){
-				console.error('updateAddress : trying to update an address not belonging to the user provided!');
-				return false;
-			}
-		}
-
-
+	'updateAddress' : function(addressData){
 		const isAdmin = Meteor.call('isAdmin');
 		const isStaff = Meteor.call('isStaff');
-		const userIsOwner = userId == Meteor.userId();
 
-		if(!(userIsOwner || isAdmin || isStaff)){
-			console.error("updateUser : You don't have the required permissions!");
-			return false;
+		userHasAddress = Meteor.user().profile.addressID !==undefined;
+		if(userHasAddress && addressData._id!==undefined && !(isAdmin ||isStaff) ){
+			userIsOwner = addressData._id == Meteor.user().profile.addressID;
+			if(!userIsOwner){
+				console.error("updateUser : You don't have the required permissions!");
+				return false;
+			}
 		}
 
 		var data = {};
-		data.userID = userId;
 
 		if(addressData.street){
 			data.street = addressData.street;
@@ -885,50 +822,27 @@ Meteor.methods({
 		if(addressData.country){
 			data.country = addressData.country;
 		}
+		if(addressData.isCourtAddress){
+			data.isCourtAddress = addressData.isCourtAddress;
+		}
 
-		if(!addressData._id){
-
-			if(userId && !courtId){
-				var addressID;
-				Addresses.insert(data, function(err, addrId){
-					if(err){
-						console.error('updateAddress error: while insert for courtId=false');
-						console.error(err);
-						return false;
-					}
-					addressID = addrId;
-					// Update addressID in the user
-	        		Meteor.call('updateUser', {_id:userId, profile:{addressID:addrId}});
-				});
-				// Done with new insert
-				return addressID;
-			}
-			if(courtId){
-				var addressID;
-				Addresses.insert(data, function(err, addrId){
-					if(err){
-						console.error('updateAddress error: while insert for courtId=true');
-						console.error(err);
-						return false;
-					}
-					addressID = addrId;
-					// Update addressID in the user
-	        		Meteor.call('updateCourt', {_id:courtId, ownerID:userId, addressID:addrId});
-				});
-				// Done with new insert
-				return addressID;
-			}
+		if(addressData._id === undefined){
+			return Addresses.insert(data, function(err, addrId){
+				if(err){
+					console.error('updateAddress error on insert');
+					console.error(err);
+				}
+			});
 		}
 
 		// Add the address in the DB
-		var writeResult = Addresses.update({_id: addressData._id} , {$set: data}, function(err, count, status){
+		Addresses.update({_id: addressData._id} , {$set: data}, function(err, count, status){
 			if(err){
 				console.error('updateAddress error : while update existing address');
 				console.error(err);
-				return false;
 			}
 		});
-		return writeResult;
+		return addressData._id;
 	},
 
 	/*
@@ -959,8 +873,7 @@ Meteor.methods({
 			},
 			tournament :[<pointsRound1>, <pointsRound2>, ....],
 			tournamentCourts:[<courtForRound1>, ...],
-			day: family | saturday | sunday ,
-			category: <category>
+			year:<year>
 		}
 		@return : the pair id if successful, otherwise returns false
 	*/
@@ -987,11 +900,8 @@ Meteor.methods({
 		}
 
 		var data = {};
-		if (pairData.day) {
-			data.day = pairData.day;
-		}
-		if (pairData.category) {
-			data.category = pairData.category;
+		if (pairData.year) {
+			data.year = pairData.year;
 		}
 
 		//Amount for extras
@@ -1076,20 +986,69 @@ Meteor.methods({
 
 		paymentData = {
 			userID : Meteor.userId(),
+			tournamentYear : currentYear,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
 			balance : amount
 		};
-		Payments.insert(paymentData, function(err, paymId){
-			if(err){
-				console.error('insert payment error');
-				console.error(err);
+
+		//Check if payment already exists for this player
+		var paymentAlreadyExists = Payments.findOne({'userID': Meteor.userId(), 'tournamentDate': currentYear});
+		if(paymentAlreadyExists){
+			console.error("updatePair: Payment already exists for this player");
+		}
+		else {
+
+			//Send emails if the payment method is by cash or by bank transfer
+			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
+        var user = Meteor.users.findOne({_id:paymentData.userID});
+        var data = {
+          intro:"Bonjour "+user.profile.firstName+",",
+          important:"Nous avons bien reçu votre inscription",
+          texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
+          encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
+        };
+        Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+				/*
+
+					Envoyer un mail contenant les informations pour payer par cash:
+					- addresse du QG : on peut l'hardcoder ici?
+					- montant à payer: accessible via la variable amount
+
+				*/
 			}
-		});
+			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
+        var bank = "BE33 3753 3397 1254";
+        var user = Meteor.users.findOne({_id:paymentData.userID});
+        var data = {
+          intro:"Bonjour "+user.profile.firstName+",",
+          important:"Nous avons bien reçu votre inscription",
+          texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
+          encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASAME (Place des Carabiniers 5 à 1030 Bruxelles) et d'y insérer les nom et prénom du joueur ainsi que le jour où il joue au tournoi."
+        };
+        Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+				/*
+
+					Envoyer un mail contenant les informations pour payer par virement bancaire:
+					- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
+					- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
+						peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
+						input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
+					- montant à payer: accessible via la variable amount
+
+				*/
+			}
+
+			Payments.insert(paymentData, function(err, paymId){
+				if(err){
+					console.error('insert payment error');
+					console.error(err);
+				}
+			});
+		}
 
 
-
-		if(!pairData._id){
+		if(!pairData._id){ 		// New Pair
 			return Pairs.insert(data, function(err, res){
 				if(err){
 					console.error("updatePair error");
@@ -1106,95 +1065,6 @@ Meteor.methods({
 
 		return pairData['_id'];
 	},
-
-	/*
-		TODO: deprecated version (we don't use Pairs anymore)
-
-		A payment is structured as follows :
-		{
-			_id:<id>,
-			status:<status>, // paid or pending
-			balance:<balance>,
-			date:<date>,
-			method:<method>, // Cash, CreditCard or BankTransfer
-		}
-		player : can either be player1 or player2
-	*/
-	/*
-	'updatePayment' : function(paymentData, pairId, player){
-		if(!pairId){
-			console.error('updatePayment : you must provide the pairId');
-			return false;
-		}
-		if(player!="player1" || player!="player2"){
-			console.error('updatePayment : player is not recognized');
-			return false;
-		}
-
-		// Check that that pair really exists :
-		var p = Pairs.findOne({_id:pairId});
-		if(!p){
-			console.error('updatePayment : that pair doesn\'t exist !');
-			return false;
-		}
-
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
-
-		if(!(isAdmin || isStaff)){
-			console.error("updatePayment : You don't have the required permissions!");
-			return false;
-		}
-
-		var data = {};
-		if(paymentData._id){
-			var str = "paymentID.";
-			var str2 = str.concat(player);
-			if(p[str2] && paymentData._id != p[str2]){
-				console.error('updatePayment : trying to update a payment not belonging to the pair provided !');
-				return false;
-			}
-		}
-		if(paymentData.status){
-			data.status = paymentData.status;
-		}
-		if(paymentData.balance){
-			data.payment = paymentData.balance;
-		}
-		if(paymentData.date){
-			data.date = paymentData.date;
-		}
-		if(paymentData.method){
-			data.method = paymentData.method;
-		}
-
-		if(!paymentData._id){
-			return Payments.insert(data, function(err, paymId){
-				if(err){
-					console.error('updatePayment error');
-					console.error(err);
-				}
-
-				var str = "paymentID.";
-				var str2 = str.concat(player);
-				// Update paymentID in the pair
-				var upd = {};
-				upd["_id"] = pairId;
-				upd[str2] = paymId;
-        			Meteor.call('updatePair', upd);
-				});
-		}
-
-		Payments.update({_id: paymentData._id} , {$set: data}, function(err, count, status){
-			if(err){
-				console.error('updatePayment error');
-				console.error(err);
-			}
-		});
-		return paymentData._id;
-	},
-	*/
-
 
 	/*
 		/!\  IF changes are made to the structure of a match, don't forget to update the method getOtherPair in bracketTournament.js !!!			/!\
@@ -1456,7 +1326,7 @@ Meteor.methods({
 			return undefined;
 		}
 
-		pair = Pairs.findOne({_id:pairID});
+		var pair = Pairs.findOne({_id:pairID});
 		if(typeof pair === 'undefined'){
 			console.error("addPairToTournament : invalid pairID, "+pairID+"/ "+pair);
 			return false;
@@ -1483,7 +1353,7 @@ Meteor.methods({
 		/*
 				Set the category
 		*/
-		type = Meteor.call('getPairType', dateMatch, p1, p2);
+		var type = Meteor.call('getPairType', dateMatch, p1, p2);
 		if(typeof type === undefined) {
 			console.error("addPairToTournament : getPairType returns undefined");
 		}
@@ -1492,11 +1362,10 @@ Meteor.methods({
 			return false;
 		}
 
-		category = Meteor.call('getPairCategory', type, p1, p2);
+		var category = Meteor.call('getPairCategory', type, p1, p2);
 		if(category === false) return false; // An error occured, detail of the error has already been displayed in console
 
-		var pair = Pairs.findOne({_id:pairID});
-		poolID = Meteor.call('getPoolToFill', year, type, category);
+		var poolID = Meteor.call('getPoolToFill', year, type, category);
 
 		var pool = Pools.findOne({_id:poolID});
 		var pairs = pool.pairs;
@@ -1504,7 +1373,7 @@ Meteor.methods({
 			pairs = [];
 		}
 		pairs.push(pairID);
-		data = {};
+		var data = {};
 		data._id = poolID;
 		data.type=type;
 		data.pairs = pairs;
@@ -1605,10 +1474,6 @@ Meteor.methods({
 		})
 	},
 
-	'removePair' : function(pairId){
-		Pairs.remove({_id:pairId});
-	},
-
 	'insertQuestion' : function(Question){
 		var data ={
 			lastname : Question.lastname,
@@ -1622,38 +1487,52 @@ Meteor.methods({
 	},
 
 	'removeExtra' : function(extraId){
-		Extras.remove({_id:extraId});
+		if(Meteor.call('isAdmin') || Meteor.call('isStaff')){
+			Extras.remove({_id:extraId});
+		}
+		else {
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	'updateExtra' : function(extraData){
-		data = {};
-		extraId = undefined;
-		if(extraData._id!==undefined){
-			extraId = extraData._id;
-		}
-		if(extraData.name!==undefined){
-			data.name = extraData.name;
-		}
-		if(extraData.price!==undefined){
-			data.price = extraData.price;
-		}
-		if(extraData.comment!==undefined){
-			data.comment = extraData.comment;
-		}
-		if(extraId===undefined){
-			extraId = Extras.insert(data);
+		if(Meteor.call('isAdmin') || Meteor.call('isStaff')){
+			data = {};
+			extraId = undefined;
+			if(extraData._id!==undefined){
+				extraId = extraData._id;
+			}
+			if(extraData.name!==undefined){
+				data.name = extraData.name;
+			}
+			if(extraData.price!==undefined){
+				data.price = extraData.price;
+			}
+			if(extraData.comment!==undefined){
+				data.comment = extraData.comment;
+			}
+			if(extraId===undefined){
+				extraId = Extras.insert(data);
+				return extraId;
+			}
+			data2 = {$set:data};
+			Extras.update({_id:extraId}, data2);
 			return extraId;
 		}
-		data2 = {$set:data};
-		Extras.update({_id:extraId}, data2);
-		return extraId;
-
+		else {
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
-		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
-        	$set: {processed: true,answer:nanswer}
+		if(Meteor.call('isAdmin') || Meteor.call('isStaff')){
+			Questions.update({email:nemail,question:nquestion,date:ndate}, {
+        		$set: {processed: true,answer:nanswer}
       		});
+		}
+		else {
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	//You need to add the secrets.js file inside the server folder.
@@ -1688,7 +1567,9 @@ Meteor.methods({
 								}
 
 								// Send the request
-                if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+                var user = Meteor.users.findOne({_id:Meteor.userId()});
+                var usermail = user.emails[0].address;
+                if(Meteor.call('isStaff') || Meteor.call('isAdmin') || usermail==to){
                   Meteor.http.post(postURL, options, onError);
                   console.log("Email sent");
                 }
@@ -1714,7 +1595,106 @@ Meteor.methods({
 
   },
 
+  'emailtoPoolPlayers':function(poolId){
+    if(poolId != undefined){
+      var mails = [];
+      var pool = Pools.findOne({_id:poolId});
+      for (var i in pool.pairs) {
+        var p = Pairs.findOne({_id:pool.pairs[i]});
+        if(p.player1!=undefined){
+          var p1 = Meteor.users.findOne({_id:p.player1._id});
+          mails.push(p1.emails[0].address);
+        }
+        if(p.player2!=undefined){
+          var p2 = Meteor.users.findOne({_id:p.player2._id});
+          mails.push(p2.emails[0].address);
+        }
+      }
+      var leaduser = Meteor.users.findOne({_id:pool.leader});
+      var leader= leaduser.profile.firstName+" "+leaduser.profile.lastName+" ("+leaduser.profile.phone+")"; //string
 
+      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+      var responsableList=[];
+      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+      for (var j in allcat){
+        var cat = allcat[j];
+        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+          var r= cat.concat("Resp")
+          var resplist=type[r];
+          if (resplist!=undefined && resplist.length>0){
+            for (var k = 0; k < resplist.length; k++) {
+              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+            }
+          }
+        }
+      }
+      var responsables="";//string
+      for (var i = 0; i < responsableList.length; i++) {
+        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
+      }
+
+      var adresse="";//string
+      if(pool.courtId!=undefined){
+        court = Courts.findOne({"courtNumber":pool.courtId});
+        if(court && court.addressID){
+          address = Addresses.findOne({_id:court.addressID});
+          adresse = address.street+" "+address.number+" "+address.zipCode+" "+address.city;
+        }
+      }
+      if(responsableList.length>1){
+        var encadre="Voici le nom et le numéro de téléphone des membres du staff qui encadrent votre poule :" + responsables +"\n Votre chef de poule est : "+leader+". C'est auprès de lui que vous obtiendrez les dernières informations."+"\n La poule se déroulera à l'adresse suivante : "+adresse;
+      }else{
+        var encadre="Voici le nom et le numéro de téléphone du membre du staff qui encadre votre poule :" + responsables +"\n Votre chef de poule est : "+leader+". C'est auprès de lui que vous obtiendrez les dernières informations."+"\n La poule se déroulera à l'adresse suivante : "+adresse;
+      }
+      var subject = "Quelques informations concernant votre poule.";
+      var data = {
+        intro:"Bonjour,",
+        important:"",
+        texte:"Nous voici bientôt arrivé à notre très attendu tournoi de tennis Le Charles de Lorraine et pour que tout se déroule pour le mieux, vous trouverez les informations concernant votre poule dans l'encadré suivant.",
+        encadre:encadre,
+      };
+      Meteor.call('emailFeedback',mails.toString(),subject,data);
+    }
+    else{
+      console.error("emailtoPoolPlayers/ UNDEFINED POOLID");
+    }
+  },
+
+  'emailtoLeader':function(poolId){
+    if(poolId!=undefined){
+      var pool = Pools.findOne({_id:poolId});
+      leader = Meteor.users.findOne({_id:pool.leader});
+
+      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+      var responsableList=[];
+      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+      for (var j in allcat){
+        var cat = allcat[j];
+        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+          var r= cat.concat("Resp")
+          var resplist=type[r];
+          if (resplist!=undefined && resplist.length>0){
+            for (var k = 0; k < resplist.length; k++) {
+              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+            }
+          }
+        }
+      }
+      var responsables="";//string
+      for (var i = 0; i < responsableList.length; i++) {
+        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
+      }
+      var subject = "[IMPORTANT] Concernant le déroulement du tournoi de tennis Le Charles de Lorraine.";
+      var data={
+        intro:"Bonjour "+leader.profile.firstName+",",
+        important:"Vous avez été choisi pour être le chef de la poule à laquelle vous allez jouer.",
+        texte:"Cette responsabilité ne vous demande que quelques instants au début à la fin de la poule. Premièrement, il vous sera demandé d'aller récupérer la feuille de poule au quartier général avant d'aller jouer. Ensuite, veillez à ce que les points de chaque match soient inscrits dans les cases correspondantes. Finalement, nous vous demanderons aussi de ramener cette feuille au quartier général. Si vous avez besoin de plus d'informations, n'hésitez pas à contacter un membre du staff ou un responsable.",
+        encadre:"Les responsables de votre poules sont : "+responsables+"\n Merci d'avance pour votre implication !",
+      };
+      Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
+
+    }
+  },
 
 	/*
 		You can't modify these entries once they are added.
@@ -1749,6 +1729,7 @@ Meteor.methods({
 
 		ModificationsLog.insert(data);
 	},
+
 	'getYear':function(player){
 		function get_pair_id(player){
 			var pairs = Pairs.find().fetch()
@@ -1760,7 +1741,8 @@ Meteor.methods({
 					}
 				}
 			}
-			return pair_in}
+			return pair_in;
+		}
 		function get_pool_id(pair_id){
 			var pools = Pools.find().fetch()
 			var pool_in = []
@@ -1773,8 +1755,9 @@ Meteor.methods({
 					}
 				}
 			}
-			return pool_in}
-		function get_type (pool_id) { 
+			return pool_in;
+		}
+		function get_type (pool_id) {
 			var types = Types.find().fetch()
 			var type_in = []
 			for(i = 0; i < types.length; i++){
@@ -1803,18 +1786,18 @@ Meteor.methods({
 						if(types[i].juniors[j] === pool_id[k][0]){
 							type_in.push(['Juniors',types[i]._id, pool_id[k][1]]);
 						}
-					}		
+					}
 					for(j = 0; types[i].seniors !== undefined && j < types[i].seniors.length; j++){
 						if(types[i].seniors[j] === pool_id[k][0]){
 							type_in.push(['Seniors',types[i]._id, pool_id[k][1]]);
 						}
-					}		
+					}
 					for(j = 0; types[i].elites !== undefined && j < types[i].elites.length; j++){
 						if(types[i].elites[j] === pool_id[k][0]){
 							type_in.push(['Elites',types[i]._id, pool_id[k][1]]);
 						}
-					}	
-				}				
+					}
+				}
 			}
 			return type_in;
 		}
@@ -1824,20 +1807,21 @@ Meteor.methods({
 			for(i = 0; i < years.length; i++){
 				for(j = 0; j < type_id.length; j++){
 					if(years[i].men === type_id[j][1]){
-						year_in.push(['Homme',years[i]._id, type_id[j][0], type_id[j][2]]); 
+						year_in.push(['Homme',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 					else if(years[i].women === type_id[j][1]){
-						year_in.push(['Femme',years[i]._id, type_id[j][0], type_id[j][2]]);  
+						year_in.push(['Femme',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 					else if(years[i].mixed === type_id[j][1]){
-						year_in.push(['Mixte',years[i]._id, type_id[j][0], type_id[j][2]]); 
+						year_in.push(['Mixte',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 					else if(years[i].family === type_id[j][1]){
-						year_in.push(['Famille',years[i]._id, type_id[j][0], type_id[j][2]]); 
+						year_in.push(['Famille',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 				}
 			}
-			return year_in;}
+			return year_in;
+		}
 		function get_max_year(){
 			var years = Years.find().fetch();
 			var max_year = years[0]._id;
@@ -1846,7 +1830,8 @@ Meteor.methods({
 					max_year = years[i]._id;
 				}
 			}
-			return max_year;}
+			return max_year;
+		}
 		function make_all(player){
 			var pair_id;
 			var new_player;
@@ -1867,5 +1852,55 @@ Meteor.methods({
 		}
 		ret = [make_all(player), get_max_year()];
 		return ret;
+	},
+
+	'unsubscribeTournament': function(pair_id){
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')))
+		{
+			console.error("You don't have the permission do to that");
+			throw new Meteor.error("unsubscribeTournament: no permissions");
+			return false;
+		}
+
+		var pair = Pairs.findOne({'_id':pair_id});
+        if(typeof pair.player2 === 'undefined'){
+          Pairs.remove({'_id':pair_id});
+          var pools = Pools.find().fetch();
+          var pool_id;
+          for(i = 0; i < pools.length; i++){
+              var poolPairs = pools[i].pairs;
+              for(k = 0; k < poolPairs.length; k++){
+                  if(pair_id == pools[i].pairs[k]){
+                      pool_id = pools[i]._id;
+                      var array = [];
+                      for(l = 0; l < pair_id.length; l++){
+                          if(k != l){
+                              array.push(pools[i].pairs[l]);
+                          }
+                      }
+                      break;
+                      Pools.update({'_id': pool_id}, {$set: {'pairs': array}});
+                  }
+              }
+          }
+        }
+        else {
+          if(pair.player1._id == Meteor.userId()){
+            Pairs.update({'_id': pair_id}, {$set: {'player1': pair.player2}});
+          }
+          Pairs.update({'_id': pair_id}, {$unset: {'player2': ""}});
+          var new_pair = Pairs.findOne({'_id':pair_id});
+          var new_p = Meteor.users.findOne({'_id':new_pair.player1._id});
+          var email = new_p.emails[0].address;
+          var data ={
+            intro:"Bonjour "+new_p.profile.firstName+",",
+            important:"Nous avons une mauvaise nouvelle pour vous.",
+            texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
+            encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !\n A très bientôt, \n Le staff Le Charles de Lorraine."
+          };
+          //TODO sent by staff  Meteor.call('emailFeedback',email,"Concernant votre inscription au tournoi",data);
+        }
 	}
+
+
 });

@@ -8,7 +8,8 @@ Template.mySpecialFilterCourt.events({
 Template.allCourtsTable.onRendered(function(){
     Session.set("courtSearch/saturday","");
     Session.set("courtSearch/sunday","");
-    Session.set("courtSearch/lend","");
+    Session.set("courtSearch/staffOK","");
+    Session.set("courtSearch/ownerOK","");
     Session.set("courtSearch/input","");
     Session.set("courtSearch/courtNumber","");
 })
@@ -16,20 +17,25 @@ Template.allCourtsTable.onRendered(function(){
 
 Template.allCourtsTable.helpers({
     courtsCollection: function () {
-        input = Session.get("courtSearch/input");
+        var input = Session.get("courtSearch/input");
         if(input!==undefined){
           input = input.toLowerCase();
         }
-        
-        saturday = Session.get("courtSearch/saturday");
-        sunday = Session.get("courtSearch/sunday");
-        lend = Session.get("courtSearch/lend");
-        courtNumb = Session.get("courtSearch/courtNumber");
 
-        noInput = (input ==="" || input===undefined || input === null) && saturday==="Ignore" && sunday==="Ignore" && lend==="Ignore";
+        var saturday = Session.get("courtSearch/saturday");
+        var sunday = Session.get("courtSearch/sunday");
+        var owner = Session.get("courtSearch/ownerOK");
+        var staff = Session.get("courtSearch/staffOK");
+        var courtNumb = Session.get("courtSearch/courtNumber");
+
+        if (input===undefined || input === null) {
+            input = "";
+        }
+        noInput = input ==="" && saturday==="Ignore" && sunday==="Ignore" && staff==="Ignore" && owner==="Ignore";
 
         if(noInput) return Courts.find({});
         inputArray = input.split(" ");
+
         query = {$where: function(){
             if(saturday=="Yes"){
               if(!this.dispoSamedi) return false;
@@ -45,11 +51,18 @@ Template.allCourtsTable.helpers({
               if(this.dispoDimanche) return false;
             }
 
-            if(lend=="Yes"){
-              if(!this.lendThisYear) return false;
+            if(staff=="Yes"){
+              if(!this.staffOK) return false;
             }
-            else if(lend=="No"){
-              if(this.lendThisYear) return false;
+            else if(staff=="No"){
+              if(this.staffOK) return false;
+            }
+
+            if(owner=="Yes"){
+              if(!this.ownerOK) return false;
+            }
+            else if(owner=="No"){
+              if(this.ownerOK) return false;
             }
 
             if(courtNumb!=="" && courtNumb!==null && courtNumb!==undefined){
@@ -106,7 +119,8 @@ Template.allCourtsTable.helpers({
           { key: 'surface', label: "Surface"},
           { key: 'dispoSamedi', label:"Samedi", tmpl:Template.dispoSaturdayLabel},
           { key: 'dispoDimanche', label:"Dimanche", tmpl:Template.dispoSundayLabel},
-          { key: 'lendThisYear', label:"Loué", tmpl:Template.dispoLendLabel},
+          { key: 'ownerOK', label:"OK Proprio", tmpl:Template.ownerOKLabel},
+          { key: 'staffOK', label:"OK Staff", tmpl:Template.staffOKLabel},
           { key: 'courtType', label:"Type"},
           { key: 'instructions', label:"Instructions"},
           { key: 'ownerComment', label:"Commentaire propriétaire"},
@@ -135,8 +149,12 @@ Template.courtSearch.events({
       Session.set("courtSearch/sunday",event.currentTarget.value);
     },
 
-    'change #lendSelect':function(event){
-      Session.set("courtSearch/lend",event.currentTarget.value);
+    'change #ownerOKSelect':function(event){
+      Session.set("courtSearch/ownerOK",event.currentTarget.value);
+    },
+
+    'change #staffOKSelect':function(event){
+      Session.set("courtSearch/staffOK",event.currentTarget.value);
     },
 
     'change #courtNumberInput':function(event){

@@ -32,8 +32,16 @@
     </select>
   </div>
   <div class="col-sm-2">
-    <label for="lendSelect">Loué </label>
-    <select id="lendSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
+    <label for="ownerOKSelect">OK proprio </label>
+    <select id="ownerOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
+                  <option value="Ignore" selected="selected">Ignorer</option>
+                  <option value="Yes" >Oui</option>
+                  <option value="No">Non</option>
+    </select>
+  </div>
+  <div class="col-sm-2">
+    <label for="staffOKSelect">OK staff </label>
+    <select id="staffOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" selected="selected">Ignorer</option>
                   <option value="Yes" >Oui</option>
                   <option value="No">Non</option>
@@ -79,8 +87,16 @@
 </template>
 
 
-<template name="dispoLendLabel">
-  {{#if this.lendThisYear}}
+<template name="ownerOKLabel">
+  {{#if this.ownerOK}}
+    <span class="glyphicon glyphicon-ok lendOk"></span>
+  {{else}}
+    <span class="glyphicon glyphicon-remove lendNot"></span>
+  {{/if}}
+</template>
+
+<template name="staffOKLabel">
+  {{#if this.staffOK}}
     <span class="glyphicon glyphicon-ok lendOk"></span>
   {{else}}
     <span class="glyphicon glyphicon-remove lendNot"></span>

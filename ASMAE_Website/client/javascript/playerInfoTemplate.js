@@ -34,7 +34,13 @@ function initializeBraintree (clientToken) {
       Meteor.call('createTransaction', data, function (err, result) {
         Session.set('paymentFormStatus', null);
 		$("#dropinModal").modal("hide");
-        Router.go('paymentConfirmation');
+		if(err){
+			console.log(err);
+	        Router.go('paymentError');
+		}
+		else {
+	        Router.go('paymentConfirmation');
+		}
       });
     }
   });
@@ -42,12 +48,12 @@ function initializeBraintree (clientToken) {
 
 function getExtras(){
 	var id = Meteor.userId();
-	var pair = Pairs.findOne({$or:[{"player1._id":id},{"player2._id":id}]});
+	var pair = getPairFromPlayerID();;
 	if(pair.player1 && id === pair.player1._id){
 		return pair.player1.extras;
 	}
 	else {
-			return pair.player2.extras;
+		return pair.player2.extras;
 	}
 }
 
@@ -138,12 +144,9 @@ Template.playerInfoTemplate.helpers({
     	return Session.get('paymentFormStatus') ? '' : 'hide';
  	},
 
-	'getExtras' : function() {
-		getExtras();
-	},
-
 	'paymentMethod' : function(){
-		var payment = Payments.findOne({"userID": Meteor.userId()});
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+		var payment = Payments.findOne({"userID": Meteor.userId(), "tournamentYear": currentYear});
 		if(payment){
 			return paymentTypesTranslate[payment.paymentMethod];
 		}
@@ -154,7 +157,8 @@ Template.playerInfoTemplate.helpers({
 	},
 
 	'paymentBalance' : function(){
-		var payment = Payments.findOne({"userID": Meteor.userId()});
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+		var payment = Payments.findOne({"userID": Meteor.userId(), "tournamentYear": currentYear});
 		if(payment)
 		{
 			return payment.balance;
@@ -163,7 +167,8 @@ Template.playerInfoTemplate.helpers({
 
 	'notPaid' : function(passedID){
 		if(Meteor.userId() === passedID){
-			var payment = Payments.findOne({"userID" : Meteor.userId()});
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			var payment = Payments.findOne({"userID": Meteor.userId(), "tournamentYear": currentYear});
 			if(payment)
 			{
 				return (payment.status !== "paid");
@@ -176,6 +181,22 @@ Template.playerInfoTemplate.helpers({
 			return false;
 		}
 	},
+
+	'playerExtras' : function(){
+		var extras = getExtras();
+		if(extras)
+		{
+			var extrasArray = [];
+			for(extra in extras){
+				extraObject = {
+					extraName: extra,
+					extraQuantity: extras[extra]
+				};
+				extrasArray.push(extraObject);
+			}
+			return extrasArray;
+		}
+	}
 
 });
 
@@ -190,7 +211,7 @@ Template.playerInfoTemplate.events({
 			$(modalId).on('hidden.bs.modal', function() {
             	Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
         	}).modal('hide');
-        		
+
 		}
 		else{
 			/*	Go to profile edit	*/
@@ -199,19 +220,18 @@ Template.playerInfoTemplate.events({
 		}
 	},
 	'click #deleteUser' : function(event){
-		user = Meteor.users.findOne({"_id":this.id})
-		if(Session.get('closeModal') != undefined){	
+		// user = Meteor.users.findOne({"_id":this.id})
+		if(Session.get('closeModal') != undefined){
 			if (confirm('Impossible de supprimer un joueur depuis ce menu.\n Voulez vous être redirigé ?')) {
-				Session.set('selected', user);
 				var modalId = '#pairModal'+Session.get('closeModal')
 				Session.set('closeModal', undefined)
 				$(modalId).on('hidden.bs.modal', function() {
-            		Router.go('playerInfoPage');
+            		Router.go('playerInfoTemplate',{_id:this.id});
         		}).modal('hide');
-        		
+
 			}
 		}
-		else {		
+		else {
 			player = Meteor.users.find({"_id": this.id}).fetch()
 			if(false){
 				if (confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
@@ -240,7 +260,7 @@ Template.playerInfoTemplate.events({
 							}
 						}
             		}
-            		
+
 					if(bool && confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
 						Meteor.call('deleteUser',this.id);
 					}
@@ -249,10 +269,10 @@ Template.playerInfoTemplate.events({
 					}
 					Router.go('home')
         		});
-			
+
 			}
 		}
-		
+
 	}
 
 });

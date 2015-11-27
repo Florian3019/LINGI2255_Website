@@ -36,6 +36,11 @@ Template.courtInfoPage.helpers({
       }
       else
         return null;
+    },
+
+    'isAdminOrStaffOrOwner':function(ownerId){
+      var profile = Meteor.user().profile;
+      return profile.isAdmin || profile.isStaff || ownerId===Meteor.userId();
     }
 
 });
@@ -43,18 +48,32 @@ Template.courtInfoPage.helpers({
 
 
 Template.courtInfoPage.events({
-    'click #button_lendThisYear':function(event){
+    'click #button_ownerOK':function(event){
       var data = event.currentTarget.dataset;
       var courtId = data.id;
       var ownerId = data.ownerid;
-      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, lendThisYear:true},function(err, status){if(err) console.err(err);});
+      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, ownerOK:true},function(err, status){if(err) console.err(err);});
     },
     
-    'click #button_dontLendThisYear':function(event){
+    'click #button_ownerNotOK':function(event){
       var data = event.currentTarget.dataset;
       var courtId = data.id;
       var ownerId = data.ownerid;
-      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, lendThisYear:false},function(err, status){if(err) console.err(err);});
+      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, ownerOK:false},function(err, status){if(err) console.err(err);});
+    },
+
+    'click #button_staffOK':function(event){
+      var data = event.currentTarget.dataset;
+      var courtId = data.id;
+      var ownerId = data.ownerid;
+      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, staffOK:true},function(err, status){if(err) console.err(err);});
+    },
+    
+    'click #button_staffNotOK':function(event){
+      var data = event.currentTarget.dataset;
+      var courtId = data.id;
+      var ownerId = data.ownerid;
+      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, staffOK:false},function(err, status){if(err) console.err(err);});
     },
 
     'click #deleteCourt': function(event){

@@ -22,6 +22,15 @@ acceptForFamily = function(birthDate, tournamentDate){
 }
 
 /*
+    return the pair corresponding to the current year for the current user
+*/
+getPairFromPlayerID = function() {
+    var id = this.userId;
+    var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
+    return Pairs.findOne({$or:[{"player1._id":id, year:currentYear},{"player2._id":id, year:currentYear}]});
+}
+
+/*
     @returns true if the 2 players whose birthDates are given can play together at the family tournament
 */
 acceptPairForFamily = function(birthDate1, birthDate2, tournamentDate){
@@ -176,7 +185,7 @@ getColorFromPlayer = function(player){
             count+=1;
             code = 3;
         }
-    
+
         if(count>1) return 'cyan';
         if(code == 1) return 'orange';
         if(code == 2) return 'red';
@@ -218,7 +227,7 @@ courtToString = function(court){
 playerToString = function(player){
     var theString = "";
     if(player==undefined) return theString;
-    addr = Addresses.findOne({_id:player.profile.addressID}); 
+    addr = Addresses.findOne({_id:player.profile.addressID});
     if(addr!==undefined) theString += addressToString(addr);
     theString += player.profile.firstName += " ";
     theString += player.profile.lastName += " ";
@@ -271,3 +280,4 @@ getOrder = function(size){
 
   return result;
 };
+

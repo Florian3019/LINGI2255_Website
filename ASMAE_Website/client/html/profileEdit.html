@@ -69,9 +69,8 @@
 							<label for="sex"> Genre:</label>
 							<br>
 							<select name="sex" id="sex" class="form-control" style="width: 15%; display: inline">
-								<option value=""></option>
-								<option value="M"> Homme </option>
-								<option value="F"> Femme </option>
+								{{#if equals user.profile.gender 'M'}} <option value="M" selected> Homme </option> {{else}}<option value="M"> Homme </option> {{/if}}
+								{{#if equals user.profile.gender 'F'}} <option value="F" selected> Femme </option> {{else}}<option value="F"> Femme </option> {{/if}}
 							</select>
 					  	</div>
   					</div>

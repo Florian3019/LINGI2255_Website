@@ -1,16 +1,23 @@
 Meteor.methods({
-    'getPairsAlonePlayers' : function(type, category, date) {
-        var pairs = Meteor.call('getPlayersID', type, category);
+    'getPairsAlonePlayers' : function(type, category, date, gender) {
+        var pairs = Meteor.call('getPairsID', type, category);
         if(typeof pairs !== 'undefined') {
             var pairsAlonePlayers = [];
             var pair;
             for (var i=0; i<pairs.length; i++) {
                 pair = Pairs.findOne({_id:pairs[i]});
-                if (typeof pair.player2 === 'undefined' && typeof pair.player1 !== 'undefined') {
+                if (typeof pair !== 'undefined' && typeof pair.player2 === 'undefined' && typeof pair.player1 !== 'undefined') {
                     if (type === 'family') {
                         var other = Meteor.users.findOne({_id:pair.player1._id});
                         var otherDate = other.profile.birthDate;
                         if (acceptPairForFamily(date,otherDate)) {
+                            pairsAlonePlayers.push(pair);
+                        }
+                    }
+                    else if(type === 'mixed') {
+                        var other = Meteor.users.findOne({_id:pair.player1._id});
+                        var otherGender = other.profile.gender;
+                        if (otherGender != gender) {
                             pairsAlonePlayers.push(pair);
                         }
                     }
@@ -27,7 +34,7 @@ Meteor.methods({
 
     },
 
-    'getPlayersID' : function(type, category) {
+    'getPairsID' : function(type, category) {
         if (typeKeys.indexOf(type) < 0) {
             console.error("getPlayersID error : type provided is not supported ("+type+")");
             return undefined;
@@ -60,9 +67,13 @@ Meteor.methods({
 
         var pool;
         var pairs = [];
-        for(var i=0;i<poolList.length;i++){
+        for(i=0;i<poolList.length;i++){
             pool = Pools.findOne({_id:poolList[i]});
             pairs = pairs.concat(pool['pairs']);
+        }
+
+        if (pairs.length < 1) {
+            return undefined;
         }
         return pairs;
     }

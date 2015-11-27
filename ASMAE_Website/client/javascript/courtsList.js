@@ -1,6 +1,6 @@
 Template.courtsList.helpers({
   'courts': function(){
-    return Courts.find({lendThisYear : true});
+    return Courts.find({ownerID:Meteor.userId()});
   },
 
   'courtOwner': function(ownerID){

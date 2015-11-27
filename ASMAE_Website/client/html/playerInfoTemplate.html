@@ -47,6 +47,14 @@
                     <td id="rank">{{rank}}</td>
                   </tr>
                   {{#if isCurrentUser id}}
+
+                  {{#each playerExtras}}
+                  <tr>
+                      <td>{{extraName}}</td>
+                      <td>{{extraQuantity}}</td>
+                  </tr>
+                  {{/each}}
+
                   <tr>
                    <td>Méthode de paiement</td>
                    <td id="paiement">{{paymentMethod}}</td>
