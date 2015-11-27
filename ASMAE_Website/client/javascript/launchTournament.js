@@ -36,7 +36,8 @@ Template.launchTournament.events({
 
             alert("Les inscriptions au tournoi sont lancées.\n Un Email va être envoyé à tous les utilisateurs.");
 
-            Meteor.call('emailtoAllUsers', Meteor.userId());
+            console.log("Emails not send due to Mailgun");
+            // Meteor.call('emailtoAllUsers', Meteor.userId());
 	    });
 
     },
