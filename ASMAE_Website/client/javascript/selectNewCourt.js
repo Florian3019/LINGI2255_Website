@@ -4,7 +4,7 @@ Template.selectNewCourt.events({
     		var courts = event.currentTarget.lastElementChild.innerText;
     		Session.set("selectNewCourt/courts",courts);
     	
-            $('#chooseCourtsModal').appendTo("body").modal('show');
+            $('#chooseCourtsModal').modal('show');
      }
 });
 
@@ -12,6 +12,7 @@ Template.chooseCourtsModal.helpers({
     'CourtsNumber': function(){
 
     	var courts = Session.get("selectNewCourt/courts",courts);
+        if(courts==undefined) return undefined;
     	var courtsArray = courts.split(',');
     	return courtsArray;
     }
