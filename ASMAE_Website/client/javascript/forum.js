@@ -39,10 +39,21 @@ Template.forum.events({
 
 	'click .topicRow':function(event){
 		var topicId = event.currentTarget.id;
-		console.log(topicId);
+		
+		var isDeleteButton = (' ' + event.originalEvent.srcElement.className + ' ').indexOf(' topic-delete ') > -1;
+		if(isDeleteButton) return; // Do nothing
 		var threadName = event.currentTarget.dataset.threadname;
 
 		Router.go('topic',{"_id":topicId, "tname":threadName});
+	},
+
+	'click .thread-delete':function(event){
+		Meteor.call('removeThread', event.currentTarget.dataset.threadid);
+	},
+
+	'click .topic-delete':function(event){
+		var data = event.currentTarget.dataset;
+		Meteor.call('removeTopic', data.threadid, data.topicid);
 	}
 });
 
@@ -74,9 +85,6 @@ Template.topic.helpers({
 		return Topics.findOne({"_id":topicId});
 	},
 
-
-
-
 	settings : function(){
       return {
         fields:[
@@ -95,14 +103,4 @@ Template.topic.helpers({
              noDataTmpl : Template.emptyPost
          }
     }
-
-
-
-
-
-
-
-
-
-
 });
