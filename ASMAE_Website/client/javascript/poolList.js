@@ -725,7 +725,7 @@ Template.poolList.events({
 
 			var logPairs = Math.log2(nbrPairs);
 
-				var numMatchesFull = Math.floor(logPairs);
+			var numMatchesFull = Math.floor(logPairs);
 
 			if(logPairs!=numMatchesFull){
 				return nbrPairs - Math.pow(2,numMatchesFull);// the nbr of pairs is not a multiple of 2
