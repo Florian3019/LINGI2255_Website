@@ -1,0 +1,9 @@
+
+/* If screen width larger than 460 px */
+@media (min-width: 460px) {
+	#HomeWrapper {
+		padding: 40px;
+		padding-left: 60px;
+	}
+}
+

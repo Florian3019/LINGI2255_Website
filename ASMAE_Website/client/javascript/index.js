@@ -40,6 +40,17 @@ Template.index.helpers({
 			return false;
 		}
 	},
+
+	'contentPadding': function(){
+		if(Meteor.user())
+		{
+			return '';
+		}
+		else
+		{
+			return 'nopadding';
+		}
+	},
 });
 
 Template.index.events({

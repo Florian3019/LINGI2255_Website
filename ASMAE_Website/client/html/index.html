@@ -18,24 +18,21 @@
 
     {{> navigation}}
 
-    {{#if isStaffMember}}
-    <div class="container-fluid">
-      <div class="row main col-wrap">
-        <div class="col-md-2 sidebar col">
-          <div class="well container-fluid sideBarUpper1">
-          <ul class="nav nav-sidebar fixedSideBar">
-            <li><a class="brand menuItem" href="#">Menu Staff</a></li>
+    {{#if isConnected}}
+    <div class="sidebar">
+          <ul class="nav nav-sidebar">
+            <div class="nav-sidebar-header">Menu Staff</div>
+            <hr class="nopadding">
+            {{#if isStaffMember}}
             <li><a href="{{pathFor route='launchTournament'}}" class="menuItem">Lancer les inscriptions</a></li>
+            {{/if}}
             <li><a href="{{pathFor route='poolList'}}" class="menuItem">Gestion du tournoi</a></li>
-
-              {{#if isTournamentPage}}
-                {{>poolsSidebarCollapsableMenu}}
-              {{/if}}
-
-             <li><a href="{{pathFor route='selectCourts'}}" class="menuItem">Sélectionner les terrains</a></li>
-
+            {{#if isTournamentPage}}
+              {{>poolsSidebarCollapsableMenu}}
+            {{/if}}
+            {{#if isStaffMember}}
+            <li><a href="{{pathFor route='selectCourts'}}" class="menuItem">Sélectionner les terrains</a></li>
             <li><a href="{{pathFor route='modifyExtras'}}" class="menuItem">Modifier les extras</a></li>
-
             <br>
             <li><a href="{{pathFor route='playersInfo'}}" class="menuItem">Rechercher un joueur</a></li>
             <li><a href="{{pathFor route='staffManagement'}}" class="menuItem">Questions des joueurs</a></li>
@@ -47,86 +44,48 @@
             <li><a href="{{pathFor route='printSheets'}}" class="menuItem">Feuille de poule</a></li>
             <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem">Log des modifications</a></li>
             <li><a href="{{pathFor route='forum'}}" class="menuItem">Forum</a></li>
-          </ul>
-        </div>
-        </div>
-        <div class="col-md-10 nopadding col">
-          <div class="well container-fluid">
-          <div class="content {{isHomePage}}">
-            <div class="container">
-              {{> yield}}
-            </div>
-          </div>
-        </div>
-        </div>
-      </div>
-
+            {{/if}}
+          </ul>  
     </div>
-      {{else}}
-      {{#if isConnected}}
-      <div class="container-fluid">
-        <div class="row main col-wrap">
-          <div class="col-md-2 sidebar col">
-            <div class="well container-fluid">
-            <ul class="nav nav-sidebar">
-              <li><a class="brand" href="#">Menu</a></li>
-              <li><a href="{{pathFor route='poolList'}}">Gestion du tournoi</a></li>
+    {{/if}}
 
-                {{#if isTournamentPage}}
-                  {{>poolsSidebarCollapsableMenu}}
-                {{/if}}
-            </ul>
-          </div>
-          </div>
-          <div class="col-md-10 nopadding col">
-            <div class="well container-fluid">
-            <div class="content {{isHomePage}}">
-              <div class="container">
-                {{> yield}}
-              </div>
-            </div>
-          </div>
-          </div>
-        </div>
-      </div>
-      {{else}}
-      <div class="content {{isHomePage}}">
-        <div class="container">
+    <div class="page-content {{contentPadding}}">
+      <div class="content {{isHomePage}} container-fluid">
+        <div class="container-fluid">
           {{> yield}}
         </div>
       </div>
-      {{/if}}
-    {{/if}}
 
-    <div class="footer">
-      <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-			  <h3>ASMAE, ASBL.</h3>
-			    Place des Carabiniers, 5<br>
-			    1030 Bruxelles<br>
-			    <abbr title="Phone">P:</abbr> +32 (0)2 742 03 01 <br>
-                Contact par <a href="http://asmae.org/contact.php" target="_blank">mail</a>
-        </div>
-        <div class="col-md-4">
-          <h3>Suivez-nous</h3>
-          <ul>
-            <li><a href="https://www.facebook.com/Asmae-asbl-officiel-161275587240084/timeline" target="_blank">Facebook</a></li>
-            <li><a href="https://twitter.com/asmae_ong" target="_blank">Twitter</a></li>
-            <li><a href="https://plus.google.com/111823322896172247261/about" target="_blank"> Google+ </a></li>
-          </ul>
-          {{#if currentUser}}
-    	  <button id="activateDB" class="btn btn-lg btn-default" style="margin-left: 20px" type="button">CLICK ME BEFORE POPDB</button>
-    	  <button id="popdb" class="btn btn-lg btn-default" style="margin-left: 20px" type="button"> populateDB</button>
-    	  {{/if}}
-        </div>
-        <div class="col-md-4">
-        <h3>Présentation</h3>
-          <p>Le Charles de Lorraine est un tournoi annuel se déroulant durant le 2ème week-end du mois de septembre, constitué uniquement de doubles. Convivial et accessible à tous !</p>
+      <div class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4">
+            <h3>ASMAE, ASBL.</h3>
+              Place des Carabiniers, 5<br>
+              1030 Bruxelles<br>
+              <abbr title="Phone">P:</abbr> +32 (0)2 742 03 01 <br>
+                    Contact par <a href="http://asmae.org/contact.php" target="_blank">mail</a>
+            </div>
+            <div class="col-md-4">
+              <h3>Suivez-nous</h3>
+              <ul>
+                <li><a href="https://www.facebook.com/Asmae-asbl-officiel-161275587240084/timeline" target="_blank">Facebook</a></li>
+                <li><a href="https://twitter.com/asmae_ong" target="_blank">Twitter</a></li>
+                <li><a href="https://plus.google.com/111823322896172247261/about" target="_blank"> Google+ </a></li>
+              </ul>
+              {{#if currentUser}}
+            <button id="activateDB" class="btn btn-lg btn-default" style="margin-left: 20px" type="button">CLICK ME BEFORE POPDB</button>
+            <button id="popdb" class="btn btn-lg btn-default" style="margin-left: 20px" type="button"> populateDB</button>
+            {{/if}}
+            </div>
+            <div class="col-md-4">
+            <h3>Présentation</h3>
+              <p>Le Charles de Lorraine est un tournoi annuel se déroulant durant le 2ème week-end du mois de septembre, constitué uniquement de doubles. Convivial et accessible à tous !</p>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
-  </div>
-    <br> <br> <br>
   </div>
 </template>
