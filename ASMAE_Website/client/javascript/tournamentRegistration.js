@@ -96,7 +96,7 @@ Template.tournamentRegistration.helpers({
     			// new Date object for the birthdate. Year : only 2 last digits. Month : from 0 to 11.
     			//var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
 
-    	        var dateMatch = document.getElementById("dateMatch").value;
+    	        var dateMatch = document.getElementById("dateMatchSelect").value;
     	        if(!dateMatch){
     	        	errors.push({id:"dateMatch", error:true});
     	        	hasError = true;
@@ -139,22 +139,24 @@ Template.tournamentRegistration.helpers({
     			e.style.display = 'none';
     		}
 
-    		var temp = document.getElementById("dateMatch");
+    		var temp = document.getElementById("dateMatchSelect");
     		var tournamentDateMatch = temp.options[temp.selectedIndex].value;
     		var date = new Date(document.getElementById("birthYear").value,document.getElementById("birthMonth").value-1,document.getElementById("birthDay").value);
     		var age = getAge(date);
 
     		var male = document.getElementById("male").checked;
+			var gender;
     		if (male) {
-    			sex = "M";
+    			gender = "M";
     		}
     		else {
-    			sex = "F";
+    			gender = "F";
     		}
+			console.log(gender);
 
-            var type = getTypeForPlayer(tournamentDateMatch, sex);
+            var type = getTypeForPlayer(tournamentDateMatch, gender);
     		var category = getCategory(age);
-            var pairsAlonePlayers = Meteor.call('getPairsAlonePlayers', type, category, date, function(err, returnValue) {
+            var pairsAlonePlayers = Meteor.call('getPairsAlonePlayers', type, category, date, gender, function(err, returnValue) {
                 Session.set("alonePlayers", returnValue);
             });
     	}
@@ -421,7 +423,7 @@ Template.tournamentRegistration.helpers({
 Template.tournamentRegistration.events({
 	"change .extraItem":function(event){
 		var extras = document.getElementsByClassName("extraItem");
-		
+
 		var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
 		var tournamentPrice = Years.findOne({_id:currentYear}).tournamentPrice;
 		total = tournamentPrice;

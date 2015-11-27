@@ -413,11 +413,12 @@ Meteor.methods({
                     gen2 = "F";
                     break;
                 case typeKeys[2]: // Mixed
+					b = flipCoin()
 					dateMatch="saturday";
-                    firstname1 = getRandomElement(firstnamesM);
-                    firstname2 = getRandomElement(firstnamesF);
-                    gen1 = "M";
-                    gen2 = "F";
+                    firstname1 = b ? getRandomElement(firstnamesM) : getRandomElement(firstnamesF);
+                    firstname2 = b ? getRandomElement(firstnamesF) : getRandomElement(firstnamesM);
+                    gen1 = b ? "M" : "F";
+                    gen2 = b ? "F" : "M";
                     break;
                 case typeKeys[3]: // Family
 					dateMatch="family";
