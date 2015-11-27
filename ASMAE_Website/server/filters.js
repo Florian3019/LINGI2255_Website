@@ -1,5 +1,5 @@
 Meteor.methods({
-    'getPairsAlonePlayers' : function(type, category, date) {
+    'getPairsAlonePlayers' : function(type, category, date, gender) {
         var pairs = Meteor.call('getPlayersID', type, category);
         if(typeof pairs !== 'undefined') {
             var pairsAlonePlayers = [];
@@ -11,6 +11,13 @@ Meteor.methods({
                         var other = Meteor.users.findOne({_id:pair.player1._id});
                         var otherDate = other.profile.birthDate;
                         if (acceptPairForFamily(date,otherDate)) {
+                            pairsAlonePlayers.push(pair);
+                        }
+                    }
+                    else if(type === 'mixed') {
+                        var other = Meteor.users.findOne({_id:pair.player1._id});
+                        var otherGender = other.profile.gender;
+                        if (otherGender != gender) {
                             pairsAlonePlayers.push(pair);
                         }
                     }

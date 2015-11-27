@@ -20,16 +20,20 @@ Template.allCourtsTable.helpers({
         if(input!==undefined){
           input = input.toLowerCase();
         }
-        
+
         saturday = Session.get("courtSearch/saturday");
         sunday = Session.get("courtSearch/sunday");
         lend = Session.get("courtSearch/lend");
         courtNumb = Session.get("courtSearch/courtNumber");
 
-        noInput = (input ==="" || input===undefined || input === null) && saturday==="Ignore" && sunday==="Ignore" && lend==="Ignore";
+        if (input===undefined || input === null) {
+            input = "";
+        }
+        noInput = input ==="" && saturday==="Ignore" && sunday==="Ignore" && lend==="Ignore";
 
         if(noInput) return Courts.find({});
         inputArray = input.split(" ");
+
         query = {$where: function(){
             if(saturday=="Yes"){
               if(!this.dispoSamedi) return false;
