@@ -496,8 +496,11 @@ Meteor.methods({
 			instructions:<instructions>,
 			ownerComment:<ownerComment>,
 			staffComment:<staffComment>,
-			ownerOK:<true | false>,
-			staffOK:<true | false>
+			dispoSamedi:<boolean>,
+			dispoDimanche:<boolean>,
+			ownerOK:<boolean>,
+			staffOK:<boolean>,
+			numberOfCourts: <integer>
 		}
 	*/
 	'updateCourt' : function(courtData){
@@ -783,7 +786,7 @@ Meteor.methods({
 			city:<city>,
 			zipCode:<zipCode>,
 			country:<country>,
-			isCourtAddress:<true | false>
+			isCourtAddress:<boolean>
 		}
 		Returns the addressID
 	*/
@@ -912,7 +915,7 @@ Meteor.methods({
 
 			var u = Meteor.users.findOne({_id:ID[player]});
 
-			if(typeof u === undefined){
+			if(typeof u === 'undefined'){
 				console.error("updatePair : "+player+" "+ID[player]+" doesn\'t exist !");
 				return false;
 			}
@@ -982,8 +985,14 @@ Meteor.methods({
 			amount += extrasAmount["player2"];
 		}
 
+		if(userIsOwner){
+			var paymentUser = Meteor.userId();
+		}
+		else {
+			var paymentUser = ID['player1'];
+		}
 		paymentData = {
-			userID : Meteor.userId(),
+			userID : paymentUser,
 			tournamentYear : currentYear,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
@@ -991,7 +1000,7 @@ Meteor.methods({
 		};
 
 		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': Meteor.userId(), 'tournamentDate': currentYear});
+		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear});
 		if(paymentAlreadyExists){
 			console.error("updatePair: Payment already exists for this player");
 		}
@@ -999,14 +1008,14 @@ Meteor.methods({
 
 			//Send emails if the payment method is by cash or by bank transfer
 			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
-        var user = Meteor.users.findOne({_id:paymentData.userID});
-        var data = {
-          intro:"Bonjour "+user.profile.firstName+",",
-          important:"Nous avons bien reçu votre inscription",
-          texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
-          encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
-        };
-        Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+        	var user = Meteor.users.findOne({_id:paymentData.userID});
+        	var data = {
+          		intro:"Bonjour "+user.profile.firstName+",",
+          		important:"Nous avons bien reçu votre inscription",
+          		texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
+          		encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
+        	};
+        	Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
 				/*
 
 					Envoyer un mail contenant les informations pour payer par cash:
@@ -1016,25 +1025,25 @@ Meteor.methods({
 				*/
 			}
 			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
-        var bank = "BE33 3753 3397 1254";
-        var user = Meteor.users.findOne({_id:paymentData.userID});
-        var data = {
-          intro:"Bonjour "+user.profile.firstName+",",
-          important:"Nous avons bien reçu votre inscription",
-          texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
-          encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASAME (Place des Carabiniers 5 à 1030 Bruxelles) et d'y insérer les nom et prénom du joueur ainsi que le jour où il joue au tournoi."
-        };
-        Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
-				/*
+        		var bank = "BE33 3753 3397 1254";
+        		var user = Meteor.users.findOne({_id:paymentData.userID});
+        		var data = {
+          			intro:"Bonjour "+user.profile.firstName+",",
+          			important:"Nous avons bien reçu votre inscription",
+          			texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
+          			encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) et d'y insérer les nom et prénom du joueur ainsi que le jour où il joue au tournoi."
+        		};
+        		Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+					/*
 
-					Envoyer un mail contenant les informations pour payer par virement bancaire:
-					- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
-					- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
-						peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
-						input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
-					- montant à payer: accessible via la variable amount
+						Envoyer un mail contenant les informations pour payer par virement bancaire:
+						- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
+						- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
+							peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
+							input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
+						- montant à payer: accessible via la variable amount
 
-				*/
+					*/
 			}
 
 			Payments.insert(paymentData, function(err, paymId){
@@ -1472,10 +1481,6 @@ Meteor.methods({
 		})
 	},
 
-	'removePair' : function(pairId){
-		Pairs.remove({_id:pairId});
-	},
-
 	'insertQuestion' : function(Question){
 		var data ={
 			lastname : Question.lastname,
@@ -1527,9 +1532,14 @@ Meteor.methods({
 	},
 
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
-		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
-        	$set: {processed: true,answer:nanswer}
-      	});
+		if(Meteor.call('isAdmin') || Meteor.call('isStaff')){
+			Questions.update({email:nemail,question:nquestion,date:ndate}, {
+        		$set: {processed: true,answer:nanswer}
+      		});
+		}
+		else {
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	//You need to add the secrets.js file inside the server folder.
@@ -1693,7 +1703,6 @@ Meteor.methods({
     }
   },
 
-
 	/*
 		You can't modify these entries once they are added.
 		An entry is as follows :
@@ -1739,7 +1748,8 @@ Meteor.methods({
 					}
 				}
 			}
-			return pair_in}
+			return pair_in;
+		}
 		function get_pool_id(pair_id){
 			var pools = Pools.find().fetch()
 			var pool_in = []
@@ -1752,7 +1762,8 @@ Meteor.methods({
 					}
 				}
 			}
-			return pool_in}
+			return pool_in;
+		}
 		function get_type (pool_id) {
 			var types = Types.find().fetch()
 			var type_in = []
@@ -1816,7 +1827,8 @@ Meteor.methods({
 					}
 				}
 			}
-			return year_in;}
+			return year_in;
+		}
 		function get_max_year(){
 			var years = Years.find().fetch();
 			var max_year = years[0]._id;
@@ -1825,7 +1837,8 @@ Meteor.methods({
 					max_year = years[i]._id;
 				}
 			}
-			return max_year;}
+			return max_year;
+		}
 		function make_all(player){
 			var pair_id;
 			var new_player;
@@ -1846,5 +1859,55 @@ Meteor.methods({
 		}
 		ret = [make_all(player), get_max_year()];
 		return ret;
+	},
+
+	'unsubscribeTournament': function(pair_id){
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')))
+		{
+			console.error("You don't have the permission do to that");
+			throw new Meteor.error("unsubscribeTournament: no permissions");
+			return false;
+		}
+
+		var pair = Pairs.findOne({'_id':pair_id});
+        if(typeof pair.player2 === 'undefined'){
+          Pairs.remove({'_id':pair_id});
+          var pools = Pools.find().fetch();
+          var pool_id;
+          for(i = 0; i < pools.length; i++){
+              var poolPairs = pools[i].pairs;
+              for(k = 0; k < poolPairs.length; k++){
+                  if(pair_id == pools[i].pairs[k]){
+                      pool_id = pools[i]._id;
+                      var array = [];
+                      for(l = 0; l < pair_id.length; l++){
+                          if(k != l){
+                              array.push(pools[i].pairs[l]);
+                          }
+                      }
+                      break;
+                      Pools.update({'_id': pool_id}, {$set: {'pairs': array}});
+                  }
+              }
+          }
+        }
+        else {
+          if(pair.player1._id == Meteor.userId()){
+            Pairs.update({'_id': pair_id}, {$set: {'player1': pair.player2}});
+          }
+          Pairs.update({'_id': pair_id}, {$unset: {'player2': ""}});
+          var new_pair = Pairs.findOne({'_id':pair_id});
+          var new_p = Meteor.users.findOne({'_id':new_pair.player1._id});
+          var email = new_p.emails[0].address;
+          var data ={
+            intro:"Bonjour "+new_p.profile.firstName+",",
+            important:"Nous avons une mauvaise nouvelle pour vous.",
+            texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
+            encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !\n A très bientôt, \n Le staff Le Charles de Lorraine."
+          };
+          //TODO sent by staff  Meteor.call('emailFeedback',email,"Concernant votre inscription au tournoi",data);
+        }
 	}
+
+
 });

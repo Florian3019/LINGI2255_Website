@@ -185,8 +185,7 @@ getColorFromPlayer = function(player){
             count+=1;
             code = 3;
         }
-
-        if(count>1) return 'cyan';
+        if(count>1) return '#4782ff';
         if(code == 1) return 'orange';
         if(code == 2) return 'red';
         if(code == 3) return 'magenta';
@@ -242,3 +241,42 @@ playerToString = function(player){
 
     return theString.toLowerCase();
 };
+
+/*
+  Returns the order in which to fill the first round of the tournament
+*/
+getOrder = function(size){
+
+  var partial = function(n ,ni,result){
+
+    var half = result.length/2;
+
+    for(var i=0;i<ni;i++){
+      result[ni+i] = result[i]+n;
+      result[half+ni+i] = result[half+i]+n;
+    }
+  }
+
+  var result=[];
+
+  for(var k=0;k<size;k++){
+    if(k==size/2){
+      result.push(1);
+    }
+    else{
+      result.push(0);
+    }
+  }
+
+  var n=size/2;
+  var ni=1;
+
+  while(n>1){
+    partial(n,ni,result);
+    n=n/2;
+    ni=ni*2;
+  }
+
+  return result;
+};
+

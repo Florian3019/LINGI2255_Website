@@ -147,7 +147,7 @@
           //     '</font>',
           //   '</h3>'
           // ].join("");
-          var c = (isFirst? '<span class="pull-right">' +data.court+'</span>' : "");
+          var c = (isFirst? '<span class="pull-right changeCourtsBracket" data-round='+data.round+' data-courtn='+data.court+' > (Terrain: ' +data.court+') </span>' : "");
           if(isNaN(data.score) || data.score===""){
             s = '<h3> '+ data.score + c + ' </h3>';
           }
@@ -156,7 +156,7 @@
           }
           var html = [
             s,
-            '<ul class="list-group">',
+            '<ul class="list-group changeScoreBracket" data-clickable=' + data.clickable + ' data-round=' + data.round +' data-pair1=' +data.pair1 +' data-pair2='+ data.pair2 + ' data-id='+data.id + ' >',
               '<li class="list-group-item" align="center">' + data.player1 + ' | ' + data.player2+ '</li>',
               // '<li class="list-group-item">' + data.player2 + '</li>',
             '</ul>'
@@ -165,14 +165,8 @@
           return team = $("<div />", {
             "html" : html,
             "style" : "display:"+data.display+";",
-            "data-clickable": data.clickable,
             "placeHolder":data.placeHolder,
-            "class" : node.teamClass + " " + (data.id || "id_null"),
-            "id" : data.id,
-            "data-round":data.round,
-            "data-pair1":data.pair1,
-            "data-pair2":data.pair2
-            // "data-court":data.court
+            "class" : node.teamClass + " " + (data.id || "id_null")
           });
         },
         game : function(node){

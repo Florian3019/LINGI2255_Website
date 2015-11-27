@@ -75,7 +75,11 @@ A court structure is as follows :
     instructions:<instructions>,
     ownerComment:<ownerComment>,
     staffComment:<staffComment>,
-    availability:<availability>
+    dispoSamedi:<boolean>,
+    dispoDimanche:<boolean>,
+    ownerOK:<boolean>,
+    staffOK:<boolean>,
+    numberOfCourts:<integer>
 }
 
 
@@ -120,7 +124,8 @@ The addressData structure is as follows :
     box:<box>,
     city:<city>,
     zipCode:<zipCode>,
-    country:<country>
+    country:<country>,
+    isCourtAddress:<boolean>
 }
 
 
@@ -134,24 +139,32 @@ A pair is structured as follows:
         extras:{
             <name>:<number>
         },
-        wish:<wish>,
-        constraint:<constraint>,
-        paymentID:<paymentID>
+        playerWish:<playerWish>,
+        courtWish:<courtWish>,
+        otherWish:<otherWish>
     }
     player2:{
         _id:<userID>,
         extras:{
             <name>:<number>
         },
-        wish:<wish>,
-        constraint:<constraint>,
-        paymentID:<paymentID>
+        playerWish:<playerWish>,
+        courtWish:<courtWish>,
+        otherWish:<otherWish>
     }
     tournament :[<pointsRound1>, <pointsRound2>, ....]
     day: family | saturday | sunday
     category: <category>
 }
 
+## Extra
+An extra is structured as follows :
+{
+    _id:<id>,
+    name:<extra name>,
+    price:<price>,
+    comment:<comment>
+}
 
 ## Payment
 
