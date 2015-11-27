@@ -499,7 +499,8 @@ Meteor.methods({
 			dispoSamedi:<boolean>,
 			dispoDimanche:<boolean>,
 			ownerOK:<boolean>,
-			staffOK:<boolean>
+			staffOK:<boolean>,
+			numberOfCourts: <integer>
 		}
 	*/
 	'updateCourt' : function(courtData){
@@ -914,7 +915,7 @@ Meteor.methods({
 
 			var u = Meteor.users.findOne({_id:ID[player]});
 
-			if(typeof u === undefined){
+			if(typeof u === 'undefined'){
 				console.error("updatePair : "+player+" "+ID[player]+" doesn\'t exist !");
 				return false;
 			}
@@ -984,8 +985,14 @@ Meteor.methods({
 			amount += extrasAmount["player2"];
 		}
 
+		if(userIsOwner){
+			var paymentUser = Meteor.userId();
+		}
+		else {
+			var paymentUser = ID['player1'];
+		}
 		paymentData = {
-			userID : Meteor.userId(),
+			userID : paymentUser,
 			tournamentYear : currentYear,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
