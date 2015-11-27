@@ -75,7 +75,10 @@ A court structure is as follows :
     instructions:<instructions>,
     ownerComment:<ownerComment>,
     staffComment:<staffComment>,
-    availability:<availability>
+    dispoSamedi:<boolean>,
+    dispoDimanche:<boolean>,
+    ownerOK:<true | false>,
+    staffOK:<true | false>
 }
 
 

@@ -20,9 +20,13 @@ Template.scorePage.helpers({
 
     'getCourt': function(poolId){
       if(poolId==undefined) return undefined;
+      Session.set("PoolList/poolID",poolId);
+
       pool = Pools.findOne({_id:poolId});
       if(pool.courtId!=undefined){
+        
         court = Courts.findOne({"courtNumber":pool.courtId});
+
         if(court && court.addressID){
           address = Addresses.findOne({_id:court.addressID});
           return {id:pool.courtId,
@@ -190,6 +194,10 @@ Template.scorePage.events({
     Session.set("scoreTable/emptyTable", checked);
   },
 
+  'click #changeCourt':function(event){
+    Session.set("PoolList/ChosenCourt","44");
+  },
+
   'click #getPDF':function(event){
     /*
       Unhide the pdf preview window
@@ -310,3 +318,9 @@ Template.scorePage.events({
 
   }
 });
+
+Template.courtSearchTemplate.events({
+    'click .courtRow' : function(event){
+        Router.go('courtInfoPage',{_id:this._id});
+    },
+})
