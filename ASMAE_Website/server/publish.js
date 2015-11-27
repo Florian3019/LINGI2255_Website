@@ -15,7 +15,8 @@ Meteor.publish('Addresses', function(){
       if(isStaffOrAdmin(this.userId)) {
         return Addresses.find();
       }
-      return Addresses.find({$or:[{userID: this.userId}, {"isCourtAddress":true}]});
+      var user = Meteor.users.findOne({_id:this.userId},{"profile.addressID":1});
+      return Addresses.find({$or:[{_id: user.profile.addressID}, {"isCourtAddress":true}]});
 });
 
 Meteor.publish('Questions', function(){
