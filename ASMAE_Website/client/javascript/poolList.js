@@ -1134,7 +1134,8 @@ var showPairModal = function(event){
 		return; // Do nothing
 	}
 	// Move the modal out of its current position to avoid bugs
-	$('#pairModal'+event.currentTarget.dataset.id).appendTo("body").modal('show');
+	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
+	$("#myModal").css("z-index", "1500");
 }
 
 Template.alonePairsContainerTemplate.onRendered(function(){
@@ -1438,10 +1439,10 @@ Template.modalItem.events({
 	},
 
 	'click .setLeader':function(event){
-		target = event.currentTarget;
-		poolId = target.dataset.poolid;
-		playerId = target.dataset.player;
-		pool = Pools.update({_id:poolId},{$set:{"leader":playerId}});
+		var target = event.currentTarget;
+		var poolId = target.dataset.poolid;
+		var playerId = target.dataset.player;
+		Pools.update({_id:poolId},{$set:{"leader":playerId}});
 	}
 });
 
