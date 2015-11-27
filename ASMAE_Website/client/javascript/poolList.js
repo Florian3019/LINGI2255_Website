@@ -809,20 +809,31 @@ Template.poolList.helpers({
     if(year===undefined || type===undefined || category===undefined){
       return;
     }
-
+    typeSearch = {};
+    typeSearch[type] = 1
     var field = category.concat("Resp");
-    var yearData = Years.findOne({_id:year});
-    var typeData = Types.findOne({_id:yearData[type]});
 
+    var yearData = Years.findOne({_id:year},typeSearch);
+    Data = {};
+    Data[field]=1;
+    var typeData = Types.findOne({_id:yearData[type]},Data);
 
-    var responsables = typeData[field];
+    if(typeData != undefined){
+      var responsables = typeData[field]; //TODO check le champs existe et non vide len >0
+      if(responsables != undefined && responsables.length>0){
+    		if(poolId!=""){
+    			return {_id:poolId,
+            resp:responsables[0]};
+    		}
+    		else return "";
+      }
+    }
+    if(poolId!=""){
+  			return {_id:poolId,
+          resp:responsables[0]};
+  		}
+  		else return "";
 
-    
-		if(poolId!=""){
-			return {_id:poolId,
-        resp:responsables[0]};
-		}
-		else return "";
 	},
 
 	'chosenBrackets' : function(){
