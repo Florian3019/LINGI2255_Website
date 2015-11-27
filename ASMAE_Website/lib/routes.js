@@ -368,8 +368,3 @@ Router.route('/payment-confirmation', {
 		return [Meteor.subscribe('Payments')];
 	}
 });
-
-Router.route('/select-courts', {
-	name: 'selectCourts',
-	template: 'selectCourts'
-});

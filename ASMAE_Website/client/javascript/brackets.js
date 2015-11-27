@@ -3,7 +3,7 @@
 
 const react = {reactive: false};
 const emptyCourt = "Terrain ?";
-const courtName = "Terrain";
+const courtName = "";
 const emptyScore = "";
 const emptyPlayer = "?";
 const placeHolderScore = "";
@@ -21,7 +21,7 @@ var canModifyCourt = function(pair, round){
 
 // Takes 2 round data, and returns which court to use for this match.
 var getCourt = function(courts,num){
-  return (courts == undefined ) ? emptyCourt : " ("+courtName+": " + courts[num]+")";
+  return (courts == undefined ) ? emptyCourt : courts[num];
 }
 
 /*
@@ -660,14 +660,24 @@ Template.brackets.onRendered(function(){
 
 Template.brackets.events({
 
+  // change the court
+
+  "click .changeCourtsBracket":function(event){
+    console.log(event);
+    var round = event.currentTarget.dataset.round;
+    var court = event.currentTarget.dataset.courtn;
+    console.log("change court bracket");
+    
+  },
+
 	// Do something when the user clicks on a player
-  "click .g_team":function(event, template){
+  "click .changeScoreBracket":function(event, template){
     var user = Meteor.user();
     if(user==null || !(user.profile.isAdmin || user.profile.isStaff)){
       return; // No action must be done
     }
 
-    var pairId = event.currentTarget.id;
+    var pairId = event.currentTarget.dataset.id;
     mod = document.getElementById("bracketModal");
     clickable = event.currentTarget.dataset.clickable;
     if(clickable==="false") return;
@@ -675,7 +685,7 @@ Template.brackets.events({
     // court = event.currentTarget.dataset.court; // can be undefined
 
     p1 = event.currentTarget.dataset.pair1;
-    if(p1!=undefined){
+    if(p1!=="undefined"){
       // pairId is the second pair
       x = [p1, pairId]
     }
@@ -685,7 +695,7 @@ Template.brackets.events({
     }
 
     // Display modal to edit the score
-    if(round!=undefined){ // Only allow to click on pairs that are not "?"
+    if(round!=="undefined"){ // Only allow to click on pairs that are not "?"
       Session.set('brackets/clicked', x);
       Session.set('brackets/round', round);
       $("#bracketModal").modal('show');
