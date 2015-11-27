@@ -81,12 +81,12 @@ Template.buildTournament.helpers({
 						scrollPage(-scrollSpeed,0);
 				    }
 				    else{
-				    	m = false;				    	
+				    	m = false;
 				    }
 				}
 		    };
 
-			document.addEventListener('mousemove', onMouseMove); 
+			document.addEventListener('mousemove', onMouseMove);
   		  	el.className = el.className.replace('ex-moved', '');
   	  	}).on('drop', function (el, target, source, sibling) {
 	  		updateSelectedNumber(document);
@@ -174,7 +174,7 @@ Template.buildTournamentItem.helpers({
 	},
 
 	'getPair' : function(pairId, poolId) {
-		var pair = Pairs.findOne({_id:pairId})
+		var pair = Pairs.findOne({_id:pairId});
 		if(!pair) return undefined;
 
 		// Add this pair to the list of alone pairs, if this pair is not full

@@ -6,7 +6,7 @@ Template.confirmPair.helpers({
 		if(!pair){
 			return "undefined pair";
 		}
-		
+
 		var  idPlayer= pair.player1._id;
 
 		Session.set("pair", pair);
