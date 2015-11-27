@@ -9,8 +9,8 @@ module.exports = function () {
             tournamentPrice: price
         };
         server.call('activateGlobalValuesDB',function(error,result){ 
-            server.call('launchTournament',launchData);
-        });
+            });
+        server.call('launchTournament',launchData);
         
     });
     this.When(/^I navigate to the tournament registration page$/, function () {
