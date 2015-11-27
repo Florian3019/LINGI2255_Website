@@ -806,7 +806,7 @@ Template.poolList.helpers({
     var type = Session.get('PoolList/Type');
     var category = Session.get('PoolList/Category');
 
-    if(year===undefined || type===undefined || category===undefined){
+    if(year===undefined || type===undefined || category===undefined || type==='' || category==='' || year===''){
       return;
     }
     typeSearch = {};
@@ -1328,6 +1328,9 @@ Template.responsablesTemplate.helpers({
 
 
 		var responsables = typeData[field];
+        if (typeof responsables === 'undefined') {
+            return [];
+        }
 
 		var respCol = [];
 		const chunk = 3; // Number of columns
