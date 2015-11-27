@@ -368,3 +368,16 @@ Router.route('/payment-confirmation', {
 		return [Meteor.subscribe('Payments')];
 	}
 });
+
+Router.route('/payment-error', {
+  name: 'paymentError',
+	template: 'paymentError',
+	waitOn: function() {
+		return [Meteor.subscribe('Payments')];
+	}
+});
+
+Router.route('/faq', {
+  	name: 'faq',
+	template: 'faq'
+});
