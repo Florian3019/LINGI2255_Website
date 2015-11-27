@@ -1133,7 +1133,8 @@ var showPairModal = function(event){
 	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
 		return; // Do nothing
 	}
-	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
+	// Move the modal out of its current position to avoid bugs
+	$('#pairModal'+event.currentTarget.dataset.id).appendTo("body").modal('show');
 }
 
 Template.alonePairsContainerTemplate.onRendered(function(){
