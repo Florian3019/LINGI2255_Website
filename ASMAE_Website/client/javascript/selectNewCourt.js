@@ -29,6 +29,10 @@ Template.chooseCourtsModal.events({
 
     	Meteor.call('updatePool',pool);
 
-    	Session.set("PoolList/ChosenCourt","");
+        $('#chooseCourtsModal')
+        .on('hidden.bs.modal', function() {
+            Session.set("PoolList/ChosenCourt","");
+        })
+        .modal('hide');
     }
   });
