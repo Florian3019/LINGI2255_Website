@@ -19,3 +19,17 @@
     border: 1px solid #5cb85c;
 }
 
+/* Flex container for button and logo */
+
+#flex-container {
+  display: flex;
+}
+#logos {
+  width: 50px;
+  margin-left: 10px;
+}
+#button-connection {
+  flex: 1;
+  padding-right: 20px;
+  /* Grow to rest of container */
+}
