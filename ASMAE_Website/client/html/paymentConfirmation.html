@@ -8,3 +8,15 @@
     </center>
   </div>
 </template>
+
+<template name="paymentError">
+    <div>
+        <center>
+            <h2 style="color: red">Error lors du paiement !</h2>
+            Veuillez réessayer ou envoyer un email au staff.<br>
+            {{#linkTo route="home"}}
+              Page d'accueil
+            {{/linkTo}}
+      </center>
+    </div>
+</template>

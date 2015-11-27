@@ -971,8 +971,7 @@ Meteor.methods({
 			},
 			tournament :[<pointsRound1>, <pointsRound2>, ....],
 			tournamentCourts:[<courtForRound1>, ...],
-			day: family | saturday | sunday ,
-			category: <category>
+			year:<year>
 		}
 		@return : the pair id if successful, otherwise returns false
 	*/
@@ -999,11 +998,8 @@ Meteor.methods({
 		}
 
 		var data = {};
-		if (pairData.day) {
-			data.day = pairData.day;
-		}
-		if (pairData.category) {
-			data.category = pairData.category;
+		if (pairData.year) {
+			data.year = pairData.year;
 		}
 
 		//Amount for extras
@@ -1167,95 +1163,6 @@ Meteor.methods({
 
 		return pairData['_id'];
 	},
-
-	/*
-		TODO: deprecated version (we don't use Pairs anymore)
-
-		A payment is structured as follows :
-		{
-			_id:<id>,
-			status:<status>, // paid or pending
-			balance:<balance>,
-			date:<date>,
-			method:<method>, // Cash, CreditCard or BankTransfer
-		}
-		player : can either be player1 or player2
-	*/
-	/*
-	'updatePayment' : function(paymentData, pairId, player){
-		if(!pairId){
-			console.error('updatePayment : you must provide the pairId');
-			return false;
-		}
-		if(player!="player1" || player!="player2"){
-			console.error('updatePayment : player is not recognized');
-			return false;
-		}
-
-		// Check that that pair really exists :
-		var p = Pairs.findOne({_id:pairId});
-		if(!p){
-			console.error('updatePayment : that pair doesn\'t exist !');
-			return false;
-		}
-
-		const isAdmin = Meteor.call('isAdmin');
-		const isStaff = Meteor.call('isStaff');
-
-		if(!(isAdmin || isStaff)){
-			console.error("updatePayment : You don't have the required permissions!");
-			return false;
-		}
-
-		var data = {};
-		if(paymentData._id){
-			var str = "paymentID.";
-			var str2 = str.concat(player);
-			if(p[str2] && paymentData._id != p[str2]){
-				console.error('updatePayment : trying to update a payment not belonging to the pair provided !');
-				return false;
-			}
-		}
-		if(paymentData.status){
-			data.status = paymentData.status;
-		}
-		if(paymentData.balance){
-			data.payment = paymentData.balance;
-		}
-		if(paymentData.date){
-			data.date = paymentData.date;
-		}
-		if(paymentData.method){
-			data.method = paymentData.method;
-		}
-
-		if(!paymentData._id){
-			return Payments.insert(data, function(err, paymId){
-				if(err){
-					console.error('updatePayment error');
-					console.error(err);
-				}
-
-				var str = "paymentID.";
-				var str2 = str.concat(player);
-				// Update paymentID in the pair
-				var upd = {};
-				upd["_id"] = pairId;
-				upd[str2] = paymId;
-        			Meteor.call('updatePair', upd);
-				});
-		}
-
-		Payments.update({_id: paymentData._id} , {$set: data}, function(err, count, status){
-			if(err){
-				console.error('updatePayment error');
-				console.error(err);
-			}
-		});
-		return paymentData._id;
-	},
-	*/
-
 
 	/*
 		/!\  IF changes are made to the structure of a match, don't forget to update the method getOtherPair in bracketTournament.js !!!			/!\
@@ -1517,7 +1424,7 @@ Meteor.methods({
 			return undefined;
 		}
 
-		pair = Pairs.findOne({_id:pairID});
+		var pair = Pairs.findOne({_id:pairID});
 		if(typeof pair === 'undefined'){
 			console.error("addPairToTournament : invalid pairID, "+pairID+"/ "+pair);
 			return false;
@@ -1544,7 +1451,7 @@ Meteor.methods({
 		/*
 				Set the category
 		*/
-		type = Meteor.call('getPairType', dateMatch, p1, p2);
+		var type = Meteor.call('getPairType', dateMatch, p1, p2);
 		if(typeof type === undefined) {
 			console.error("addPairToTournament : getPairType returns undefined");
 		}
@@ -1553,11 +1460,10 @@ Meteor.methods({
 			return false;
 		}
 
-		category = Meteor.call('getPairCategory', type, p1, p2);
+		var category = Meteor.call('getPairCategory', type, p1, p2);
 		if(category === false) return false; // An error occured, detail of the error has already been displayed in console
 
-		var pair = Pairs.findOne({_id:pairID});
-		poolID = Meteor.call('getPoolToFill', year, type, category);
+		var poolID = Meteor.call('getPoolToFill', year, type, category);
 
 		var pool = Pools.findOne({_id:poolID});
 		var pairs = pool.pairs;
@@ -1565,7 +1471,7 @@ Meteor.methods({
 			pairs = [];
 		}
 		pairs.push(pairID);
-		data = {};
+		var data = {};
 		data._id = poolID;
 		data.type=type;
 		data.pairs = pairs;
@@ -1886,6 +1792,7 @@ Meteor.methods({
 
 		ModificationsLog.insert(data);
 	},
+
 	'getYear':function(player){
 		function get_pair_id(player){
 			var pairs = Pairs.find().fetch()

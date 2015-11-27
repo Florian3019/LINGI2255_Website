@@ -52,14 +52,14 @@ Template.playersInfo.helpers({
             fields:[
                 { key: 'profile.lastName', label: 'Nom'},
                 { key: 'profile.firstName', label: 'Prénom'},
-                { key: 'emails', label: 'Email', fn: function(value, object){
+                { key: 'emails', label: 'Email', hidden:true , fn: function(value, object){
                     return value[0].address;
                 }},
                 { key: 'profile.gender', label:"Sexe"},
                 { key: 'profile.phone', label: "Numéro"},
                 { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "undefined" : value.toLocaleDateString()}},
                 { key: 'profile.AFT', label: "AFT"},
-                { key: 'profile.addressID', label: "Adresse", fn: function(value, object){
+                { key: 'profile.addressID', label: "Adresse",hidden:true , fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
                     if(addr==undefined) return "Pas défini";
                     var ret = ""
@@ -95,6 +95,17 @@ Template.playersInfo.helpers({
                             return paymentTranslate[payment.status] + " ("+payment.balance+"€ )";
                         }
                     }
+                },
+                { key: '_id', label:"Méthode", hidden:true ,fn: function(value, object){
+                        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+                        var payment = Payments.findOne({"userID": value, "tournamentYear": currentYear});
+                        if(payment===undefined){
+                            return "Pas inscrit";
+                        }
+                        else{
+                            return paymentTypesTranslate[payment.paymentMethod];
+                        }
+                    }
                 }
             ],
              filters: ['NomDeFamille'],
@@ -109,9 +120,7 @@ Template.playersInfo.events({
     'click .playerInfoRow' : function(event){
         var isPermSelect = (' ' + event.originalEvent.srcElement.className + ' ').indexOf(' myPermissionSelects ') > -1;
         if(isPermSelect) return; // Don't allow to change page if we clicked on the select
-        //Router.go('playerInfoPage',{_id:this._id});
-        Session.set('selected', this);
-        Router.go('playerInfoPage');
+        Router.go('playerInfoTemplate',{_id:this._id});
     },
     'change #permSelect':function(event){
         Session.set("playerInfo/permissions",event.currentTarget.value);

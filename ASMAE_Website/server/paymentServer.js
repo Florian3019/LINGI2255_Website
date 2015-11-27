@@ -42,28 +42,33 @@ Meteor.methods({
       amount: amount,
       paymentMethodNonce: data.nonce,
       customer: {
-        firstName: data.firstname,
-        lastName: data.lastname,
+        firstName: data.firstName,
+        lastName: data.lastName,
         email: data.email
       }
     });
 
+    if(response.success){
+        var currentDate = new Date();
+        var data = {
+            status : "paid",
+            date: currentDate,
+            paymentMethod: "CreditCard"
+        };
 
-    // Perform a server side action with response
-    var currentDate = new Date();
-    var data = {
-        status : "paid",
-        date: currentDate,
-        paymentMethod: "CreditCard"
-    };
+        Payments.update({"userID": Meteor.userId()} , {$set: data}, function(err, result){
+            if(err){
+                console.error('Payments.update error after transaction');
+                console.error(err);
+            }
+        });
 
-    Payments.update({"userID": Meteor.userId()} , {$set: data}, function(err, result){
-        if(err){
-            console.error('Payments.update error after transaction');
-            console.error(err);
-        }
-    });
+        return response;
+    }
+    else{
+        console.log("Payment was not succesful on Braintree :"+response);
+        throw new Meteor.Error("Payment was not succesful on Braintree");
+    }
 
-    return response;
   }
 });
