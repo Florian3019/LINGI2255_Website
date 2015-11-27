@@ -191,7 +191,6 @@ Template.scorePage.events({
   },
 
   'click #getPDF':function(event){
-    console.log(event);
     /*
       Unhide the pdf preview window
     */
@@ -248,6 +247,8 @@ Template.scorePage.events({
       if(resp.emails) respText += "\n"+resp.emails[0].address;
       if(resp.profile.phone) respText += "    "+ resp.profile.phone;
       pdf.text(respText, margins.left, 180);
+    }else{
+      pdf.text("Pas de responsable Staff",margins.left,180);
     }
 
     if(leader!=undefined){
@@ -256,12 +257,12 @@ Template.scorePage.events({
 
       if(leader.emails) leaderText += "\n" + leader.emails[0].address;
       if(leader.profile.phone) leaderText += "    " + leader.profile.phone;
-      pdf.text(leaderText, margins.left, 240);
+      pdf.text(leaderText, margins.left, 225);
     }
     if(courtAddress!=undefined){
         pdf.setFontSize(15);
         var addr = "Terrain n°"+pool.courtId+"\n"+courtAddress.street +" "+ courtAddress.number +"\n"+courtAddress.zipCode+" "+ courtAddress.city;
-        pdf.text(addr,margins.left+400,200);
+        pdf.text(addr,margins.left+350,200);
     }
 
     /*
@@ -276,10 +277,9 @@ Template.scorePage.events({
     }
     // var tab = document.getElementById("scoreTab");
     // tab.style.background='#fff';
-    console.log($("#scoreTab"));
     pdf.addHTML($("#scoreTab").css('background', '#fff'),
     30,
-    280,
+    255,
     {},
     function() {
       /*
