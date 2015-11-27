@@ -294,7 +294,7 @@
       <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
           Prix du tournoi : {{getTournamentPrice}} €
-          <br> 
+          <br>
           <b>Total</b> : <input class="form-control" type="number" id="totalToPay" disabled value="{{getTournamentPrice}}" style="width: 15%; display: inline; text-align:center">€
         </div>
       </div>
@@ -395,6 +395,7 @@
         </div>
       </div>
       <br>
+      {{#unless isEmptyTable}}
       <div class="panel panel-default col-sm-6 col-sm-offset-3" id="tableAlone" hidden>
           <!-- Default panel contents -->
         <div class="panel-heading">Liste des joueurs en attente de partenaire : </div>
@@ -405,6 +406,7 @@
               <tr>
                 <th>Nom</th>
                 <th>Prénom</th>
+                <th>Sexe</th>
                 <th>Age</th>
                 <th>Ville</th>
                 <th>Rang</th>
@@ -416,6 +418,7 @@
                     <tr class="aloneRow" id="{{../_id}}" style="cursor: pointer">
                       <td> {{profile.lastName}} </td>
                       <td> {{profile.firstName}} </td>
+                      <td> {{profile.gender}} </td>
                       <td> {{getAge profile.birthDate}} </td>
                       <td> {{getCity profile.addressID}}</td>
                       <td> {{profile.AFT}} </td>
@@ -426,6 +429,20 @@
           </table>
         </div>
       </div>
+      {{/unless}}
+      {{#if isEmptyTable}}
+    <div class="row">
+		<div class="col-sm-6 col-sm-offset-3">
+	          <div id="infoBox" class="alert alert-info" role="alert">
+		        <h4>
+		          <span class="glyphicon glyphicon-info-sign"></span>
+		          <span class="sr-only">Info:</span>
+		          <span id="infoMsg">{{emptyTableMessage}}</span>
+		        </h4>
+		      </div>
+			</div>
+	</div>
+      {{/if}}
       <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
   		    <button type="submit" class="btn btn-default" id="submit">Soumettre mon inscription</button>

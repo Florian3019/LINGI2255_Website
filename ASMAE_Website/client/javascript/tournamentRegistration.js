@@ -143,6 +143,7 @@ Template.tournamentRegistration.helpers({
     		var tournamentDateMatch = temp.options[temp.selectedIndex].value;
     		var date = new Date(document.getElementById("birthYear").value,document.getElementById("birthMonth").value-1,document.getElementById("birthDay").value);
     		var age = getAge(date);
+			Session.set("age", age);
 
     		var male = document.getElementById("male").checked;
 			var gender;
@@ -152,11 +153,17 @@ Template.tournamentRegistration.helpers({
     		else {
     			gender = "F";
     		}
-			console.log(gender);
+			Session.set("gender",gender);
 
             var type = getTypeForPlayer(tournamentDateMatch, gender);
     		var category = getCategory(age);
+			Session.set("type",type);
+			Session.set("category",category);
             var pairsAlonePlayers = Meteor.call('getPairsAlonePlayers', type, category, date, gender, function(err, returnValue) {
+				var emptyArray = [];
+				if (returnValue===emptyArray || returnValue===undefined) {
+					Session.set("emptyTable", true);
+				}
                 Session.set("alonePlayers", returnValue);
             });
     	}
@@ -167,6 +174,41 @@ Template.tournamentRegistration.helpers({
         return alone;
     },
 
+	'emptyTableMessage' : function() {
+		var type = Session.get("type");
+		var category = Session.get("category");
+		var age = Session.get("age");
+		var gender = Session.get("gender");
+		if (type==="family") {
+			if (age >= 25) {
+				return "Aucun joueur seul de moins de 15 ans n\'est en attente pour le tournoi des familles.";
+			}
+			else {
+				return "Aucun joueur seul de plus de 25 ans n\'est en attente pour le tournoi des familles.";
+			}
+		}
+		else if(type=="mixed") {
+			if (gender == "M") {
+				return "Aucune joueuse dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi mixte.";
+			}
+			else {
+				return "Aucun joueur dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi mixte.";
+			}
+		}
+		else {
+			if (gender == "M") {
+				return "Aucun joueur dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi des doubles messieurs.";
+			}
+			else {
+				return "Aucune joueuse dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi des doubles dames.";
+			}
+		}
+
+	},
+
+	'isEmptyTable' : function() {
+		return Session.get("emptyTable");
+	},
 
 	'getPlayer' : function(userId){
 		return Meteor.users.findOne({_id:userId},{profile:1});
