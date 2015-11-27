@@ -1000,7 +1000,7 @@ Meteor.methods({
 		};
 
 		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': Meteor.userId(), 'tournamentDate': currentYear});
+		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear});
 		if(paymentAlreadyExists){
 			console.error("updatePair: Payment already exists for this player");
 		}
@@ -1008,14 +1008,14 @@ Meteor.methods({
 
 			//Send emails if the payment method is by cash or by bank transfer
 			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
-        var user = Meteor.users.findOne({_id:paymentData.userID});
-        var data = {
-          intro:"Bonjour "+user.profile.firstName+",",
-          important:"Nous avons bien reçu votre inscription",
-          texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
-          encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
-        };
-        Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+        	var user = Meteor.users.findOne({_id:paymentData.userID});
+        	var data = {
+          		intro:"Bonjour "+user.profile.firstName+",",
+          		important:"Nous avons bien reçu votre inscription",
+          		texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
+          		encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
+        	};
+        	Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
 				/*
 
 					Envoyer un mail contenant les informations pour payer par cash:
@@ -1025,25 +1025,25 @@ Meteor.methods({
 				*/
 			}
 			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
-        var bank = "BE33 3753 3397 1254";
-        var user = Meteor.users.findOne({_id:paymentData.userID});
-        var data = {
-          intro:"Bonjour "+user.profile.firstName+",",
-          important:"Nous avons bien reçu votre inscription",
-          texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
-          encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASAME (Place des Carabiniers 5 à 1030 Bruxelles) et d'y insérer les nom et prénom du joueur ainsi que le jour où il joue au tournoi."
-        };
-        Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
-				/*
+        		var bank = "BE33 3753 3397 1254";
+        		var user = Meteor.users.findOne({_id:paymentData.userID});
+        		var data = {
+          			intro:"Bonjour "+user.profile.firstName+",",
+          			important:"Nous avons bien reçu votre inscription",
+          			texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
+          			encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) et d'y insérer les nom et prénom du joueur ainsi que le jour où il joue au tournoi."
+        		};
+        		Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+					/*
 
-					Envoyer un mail contenant les informations pour payer par virement bancaire:
-					- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
-					- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
-						peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
-						input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
-					- montant à payer: accessible via la variable amount
+						Envoyer un mail contenant les informations pour payer par virement bancaire:
+						- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
+						- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
+							peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
+							input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
+						- montant à payer: accessible via la variable amount
 
-				*/
+					*/
 			}
 
 			Payments.insert(paymentData, function(err, paymId){
