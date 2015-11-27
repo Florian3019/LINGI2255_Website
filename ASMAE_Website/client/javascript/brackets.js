@@ -2,7 +2,7 @@
 // Do Session.set('brackets/update',Session.get('brackets/update') when you want to update the brackets (and only then).
 
 const react = {reactive: false};
-const emptyCourt = "Terrain ?";
+const emptyCourt = "?";
 const courtName = "";
 const emptyScore = "";
 const emptyPlayer = "?";

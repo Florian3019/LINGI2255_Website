@@ -668,8 +668,6 @@ Template.poolList.events({
 		*/
 		var setCourts = function(listPairs, courts, start,final_result){
 
-				console.log(courts);
-
 			var result = [];
 			var next=0;
 
@@ -728,7 +726,7 @@ Template.poolList.events({
 
 			var logPairs = Math.log2(nbrPairs);
 
-				var numMatchesFull = Math.floor(logPairs);
+			var numMatchesFull = Math.floor(logPairs);
 
 			if(logPairs!=numMatchesFull){
 				return nbrPairs - Math.pow(2,numMatchesFull);// the nbr of pairs is not a multiple of 2

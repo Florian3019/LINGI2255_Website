@@ -1,9 +1,10 @@
 Template.selectNewCourt.events({
     'click .courtRow' : function(event){
+
     		var courts = event.currentTarget.lastElementChild.innerText;
     		Session.set("selectNewCourt/courts",courts);
     	
-    		$('#chooseCourtsModal').modal('show');
+            $('#chooseCourtsModal').appendTo("body").modal('show');
      }
 });
 
@@ -18,7 +19,6 @@ Template.chooseCourtsModal.helpers({
 
 Template.chooseCourtsModal.events({
     'click .valid': function(event){
-
     	var courtNumber = document.getElementById("selectCourt").value
 
     	var poolId = Session.get("PoolList/poolID");
