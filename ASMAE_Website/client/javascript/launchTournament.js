@@ -1,5 +1,7 @@
 Template.launchTournament.rendered=function() {
-    $('#launchTournamentDate').datepicker();
+    $('#launchTournamentDate').datepicker({
+        format: "dd/mm/yyyy"
+    });
 }
 
 
@@ -15,7 +17,7 @@ Template.launchTournament.events({
         event.preventDefault();
 
         var getDate = $('[name=launchTournamentDate]').val().split('/');
-        var getDateObject = new Date(getDate[2], getDate[0]-1, getDate[1]);
+        var getDateObject = new Date(getDate[2], getDate[1]-1, getDate[0]);
         var price = parseFloat($('[name=tournamentPrice]').val());
 
         var launchData = {
@@ -34,7 +36,7 @@ Template.launchTournament.events({
 
             alert("Les inscriptions au tournoi sont lancées.\n Un Email va être envoyé à tous les utilisateurs.");
 
-            Meteor.call('emailtoAllUsers',Meteor.userId());
+            Meteor.call('emailtoAllUsers', Meteor.userId());
 	    });
 
     },
@@ -50,6 +52,21 @@ Template.launchTournament.events({
                 });
         }
 
+    },
+
+    'click #modifyLaunchButton': function(){
+        Meteor.call('deleteCurrentYear', function(err, result){
+            if(err){
+                console.log(err);
+            }
+
+            Meteor.call('stopTournamentRegistrations', function(error, result){
+                if(error){
+                    console.error('stopTournamentRegistrations error');
+                    console.error(error);
+                }
+            });
+        });
     }
 
 });
