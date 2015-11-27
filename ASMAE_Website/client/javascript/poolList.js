@@ -667,9 +667,6 @@ Template.poolList.events({
 			nextNumber is the next number to assign to the court if it hasn't a number yet
 		*/
 		var setCourts = function(listPairs, courts, start,final_result){
-
-				console.log(courts);
-
 			var result = [];
 			var next=0;
 
