@@ -1100,6 +1100,14 @@ Meteor.methods({
 
 			//Send emails if the payment method is by cash or by bank transfer
 			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
+        var user = Meteor.users.findOne({_id:paymentData.userID});
+        var data = {
+          intro:"Bonjour "+user.profile.firstName+",",
+          important:"Nous avons bien reçu votre inscription",
+          texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
+          encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
+        };
+        Meteor.call('emailFeedback',user.emils[0],"Concernant votre inscription au tournoi",data);
 				/*	TODO Alexandre
 
 					Envoyer un mail contenant les informations pour payer par cash:
@@ -1738,7 +1746,9 @@ Meteor.methods({
 								}
 
 								// Send the request
-                if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+                var user = Meteor.users.findOne({_id:Meteor.userId()});
+                var usermail = user.emails[0].address;
+                if(Meteor.call('isStaff') || Meteor.call('isAdmin') || usermail==to){
                   Meteor.http.post(postURL, options, onError);
                   console.log("Email sent");
                 }
