@@ -1709,8 +1709,8 @@ Meteor.methods({
       }
       var leaduser = Meteor.users.findOne({_id:pool.leader});
       var leader= leaduser.profile.firstName+" "+leaduser.profile.lastName+" ("+leaduser.profile.phone+")"; //string
-      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
 
+      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
       var responsableList=[];
       var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
       for (var j in allcat){
@@ -1757,6 +1757,41 @@ Meteor.methods({
     }
   },
 
+  'emailtoLeader':function(poolId){
+    if(poolId!=undefined){
+      var pool = Pools.findOne({_id:poolId});
+      leader = Meteor.users.findOne({_id:pool.leader});
+
+      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+      var responsableList=[];
+      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+      for (var j in allcat){
+        var cat = allcat[j];
+        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+          var r= cat.concat("Resp")
+          var resplist=type[r];
+          if (resplist!=undefined && resplist.length>0){
+            for (var k = 0; k < resplist.length; k++) {
+              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+            }
+          }
+        }
+      }
+      var responsables="";//string
+      for (var i = 0; i < responsableList.length; i++) {
+        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
+      }
+      var subject = "[IMPORTANT] Concernant le déroulement du tournoi de tennis Le Charles de Lorraine.";
+      var data={
+        intro:"Bonjour "+leader.profile.firstName+",",
+        important:"Vous avez été choisi pour être le chef de la poule à laquelle vous allez jouer.",
+        texte:"Cette responsabilité ne vous demande que quelques instants au début à la fin de la poule. Premièrement, il vous sera demandé d'aller récupérer la feuille de poule au quartier général avant d'aller jouer. Ensuite, veillez à ce que les points de chaque match soient inscrits dans les cases correspondantes. Finalement, nous vous demanderons aussi de ramener cette feuille au quartier général. Si vous avez besoin de plus d'informations, n'hésitez pas à contacter un membre du staff ou un responsable.",
+        encadre:"Les responsables de votre poules sont : "+responsables+"\n Merci d'avance pour votre implication !",
+      };
+      Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
+
+    }
+  },
 
 
 	/*
