@@ -1097,6 +1097,30 @@ Meteor.methods({
 			console.error("updatePair: Payment already exists for this player");
 		}
 		else {
+
+			//Send emails if the payment method is by cash or by bank transfer
+			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
+				/*	TODO Alexandre
+
+					Envoyer un mail contenant les informations pour payer par cash:
+					- addresse du QG : on peut l'hardcoder ici?
+					- montant à payer: accessible via la variable amount
+
+				*/
+			}
+			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
+				/*	TODO Alexandre
+
+					Envoyer un mail contenant les informations pour payer par virement bancaire:
+					- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
+					- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
+						peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
+						input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
+					- montant à payer: accessible via la variable amount
+
+				*/
+			}
+
 			Payments.insert(paymentData, function(err, paymId){
 				if(err){
 					console.error('insert payment error');
@@ -1104,6 +1128,7 @@ Meteor.methods({
 				}
 			});
 		}
+
 
 		if(!pairData._id){ 		// New Pair
 			return Pairs.insert(data, function(err, res){
