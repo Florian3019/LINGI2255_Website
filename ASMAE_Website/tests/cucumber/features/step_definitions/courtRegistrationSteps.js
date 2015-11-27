@@ -29,7 +29,7 @@ module.exports = function () {
         client.setValue('#instructions', 'Passez par le jardin.');
         client.click('#dispoDimanche');
 
-        client.submitForm('#courtRegistrationForm');
+        client.click('#SubmitIt');
     });
 
     this.Then(/^I should see a confirmation page of the court registration$/, function(){

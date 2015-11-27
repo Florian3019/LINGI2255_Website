@@ -34,45 +34,8 @@ var setCourt = function(roundData1, roundData2, round,courts, num){
   pair2 = roundData2.pair; // Pair object
 
   automaticCourt = emptyCourt;
-  /*
-    Logic to choose the court
-  */
-  // if we can't modify the court, either we already did this computation or the user manually set the court --> don't touch it
-  // Can only modify courts in increasing round order (i.e. can't modify round 5 if round 4 is not set)
-//  if(canModifyCourt(pair1, round) && canModifyCourt(pair2, round)){
-  //   // Automatically set the court, or leave it undefined
-     automaticCourt = getCourt(courts,num);
-  //   if(automaticCourt!=emptyCourt){
-//       if(pair1.tournamentCourts==undefined) pair1.tournamentCourts = [];
-//       if(pair2.tournamentCourts==undefined) pair2.tournamentCourts = [];
 
-    //   pair1.tournamentCourts.push(automaticCourt);
-    //   pair2.tournamentCourts.push(automaticCourt);
-     //  Pairs.update({"_id":pair1._id},{$set:{"tournamentCourts":pair1.tournamentCourts}}); // update the db
-     //  Pairs.update({"_id":pair2._id},{$set:{"tournamentCourts":pair2.tournamentCourts}}); // update the db
-  //   }
-//   }
-
-  // if(pair1.tournamentCourts==undefined){
-  //   // No data
-  //   console.warn("setCourt : 2 pairs do not have a court to play");
-  //   console.warn(pair1);
-  //   console.warn(pair2);
-  //   console.warn("round "+round);
-  //   roundData1.data.court = emptyCourt;
-  //   roundData2.data.court = emptyCourt;
-  //   return;
-  // }
-
-  // court = pair1.tournamentCourts[round];
-  // if(court!=undefined && pair2!=undefined && pair2.tournament!=undefined && court!=pair2.tournamentCourts[round]){
-  //   // Inconsistent data
-  //   console.error("setCourt : 2 pairs that play together are not on the same court !");
-  //   console.error(pair1);
-  //   console.error(pair2);
-  //   console.error("court " + court + " round "+round);
-  //   return;
-  // }
+  automaticCourt = getCourt(courts,num);
   roundData1.data.court = automaticCourt;
   roundData2.data.court = automaticCourt;
 }
@@ -682,25 +645,10 @@ Template.gracketTemplate.onRendered(function(){
 });
 
 var getStringOptions = function(){
-  return "\ncatégorie: "+Session.get("PoolList/Category")+
-      " type: "+Session.get("PoolList/Type") +
-      " année: "+Session.get("PoolList/Year");
+  return " dans "+typesTranslate[Session.get("PoolList/Type")]+">"+
+      categoriesTranslate[Session.get("PoolList/Category")]+
+      " (" + Session.get("PoolList/Year")+")";
 }
-
-// var updateSelectedNumber = function(document){
-//   console.log("updateSelectedNumber");
-//   a = document.getElementById("selectedForTournament");
-//   b = document.getElementById("notSelectedForTournament");
-//   console.log(a);
-//   console.log(b);
-//   if(a!=null && a!==undefined && b!=null && b!=undefined){
-//     s = a.getElementsByClassName("pairs").length;
-//     ns =b.getElementsByClassName("pairs").length;
-//     console.log(s);
-//     console.log(ns);
-//     Session.set("brackets/selectedSize",[s,ns]);
-//   }
-// }
 
 Template.brackets.onRendered(function(){
   Session.set('brackets/buildingTournament', false); // By default, we are not building the tournament

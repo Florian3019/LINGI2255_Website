@@ -67,6 +67,6 @@ Template.index.events({
 	},
 
 	'click #activateDB' : function(event) {
-		Meteor.call('activateDB', Meteor.userId());
+		Meteor.call('activateDB');
 	}
 });

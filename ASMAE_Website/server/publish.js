@@ -1,10 +1,7 @@
 var isStaffOrAdmin = function(nid){
-      if(Meteor.call('isStaff',nid) || Meteor.call('isAdmin',nid)){
-          return true;
-      }
-      else{
-        return false;
-      }
+      var user = Meteor.users.findOne(nid);
+      if(user===undefined) return false;
+      return (user.profile.isStaff || user.profile.isAdmin);
 };
 
 Meteor.publish('Courts', function(){
@@ -30,6 +27,20 @@ Meteor.publish('Questions', function(){
           return Questions.find();
     }
     return Questions.find({userID: this.userId});
+});
+
+Meteor.publish('Threads', function(){
+    if(isStaffOrAdmin(this.userId)){
+          return Threads.find();
+    }
+    return;
+});
+
+Meteor.publish('Topics', function(){
+    if(isStaffOrAdmin(this.userId)){
+          return Topics.find();
+    }
+    return;
 });
 
 Meteor.publish('Extras', function(){
@@ -170,14 +181,11 @@ Meteor.publish("PartnerAdress", function() {
 
 
 Meteor.publish('Payments', function(){
-    if(this.userId) {
-        var user = Meteor.users.findOne(this.userId);
-        if(user.profile.isStaff || user.profile.isAdmin){
-        return Payments.find();
-      }
-      else{
-      var id = this.userId;
-        return Payments.find({userID: id});
-      }
-    }
+  var id = this.userId;
+  if(isStaffOrAdmin(id)){
+      return Payments.find();
+  }
+  else{
+    return Payments.find({userID: id});
+  }
 });

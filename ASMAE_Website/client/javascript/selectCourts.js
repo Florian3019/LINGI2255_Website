@@ -23,9 +23,6 @@ var checkNumberCourts = function(courtsSat,courtsSun,poolsSat,poolsSun){
 		console.log((courtsSat.length-poolsSat.length) + " terrains en trop pour samedi matin");
 	}
 
-	console.log('courts '+courtsSun);
-	console.log('pools '+poolsSun);
-
 	if(courtsSun.length<poolsSun.length){
 		console.error((poolsSun.length-courtsSun.length) + " terrains manquants pour dimanche matin");
 		return false;

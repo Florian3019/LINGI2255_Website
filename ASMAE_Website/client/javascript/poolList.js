@@ -653,7 +653,43 @@ Template.poolList.events({
 		"details":
 			"Poule ajoutée : "+newPoolId+getStringOptions()
 		});
-	}
+	},
+
+	'click #becomeResponsable':function(){
+		var user = Meteor.users.findOne({_id:Meteor.userId()});
+		if(!user.profile.isAdmin && !user.profile.isStaff){
+			console.error("becomeResponsable : you don't have the required permissions !");
+			return;
+		}
+
+		var year = Session.get('PoolList/Year');
+		var type = Session.get('PoolList/Type');
+		var category = Session.get('PoolList/Category');
+
+		var yearData = Years.findOne({_id:year});
+
+		var data =  {_id:yearData[type]};
+		data[category.concat("Resp")] = Meteor.userId();
+		Meteor.call('updateType',data);
+	},
+
+	'click #unbecomeResponsable':function(){
+		var user = Meteor.users.findOne({_id:Meteor.userId()});
+		if(!user.profile.isAdmin && !user.profile.isStaff){
+			console.error("unbecomeResponsable : you don't have the required permissions !");
+			return;
+		}
+
+		var year = Session.get('PoolList/Year');
+		var type = Session.get('PoolList/Type');
+		var category = Session.get('PoolList/Category');
+
+		var yearData = Years.findOne({_id:year});
+
+		var data =  {};
+		data[category.concat("Resp")] = Meteor.userId();
+		Types.update({_id:yearData[type]},{$pull:data});
+	},
 });
 
 Template.poolList.helpers({
@@ -765,9 +801,26 @@ Template.poolList.helpers({
 	},
 
 	'getChosenScorePool' : function(){
-		poolId = Session.get("PoolList/ChosenScorePool")
+		poolId = Session.get("PoolList/ChosenScorePool");
+    var year = Session.get('PoolList/Year');
+    var type = Session.get('PoolList/Type');
+    var category = Session.get('PoolList/Category');
+
+    if(year===undefined || type===undefined || category===undefined){
+      return;
+    }
+
+    var field = category.concat("Resp");
+    var yearData = Years.findOne({_id:year});
+    var typeData = Types.findOne({_id:yearData[type]});
+
+
+    var responsables = typeData[field];
+
+    console.log(responsables[0]);
 		if(poolId!=""){
-			return {_id:poolId};
+			return {_id:poolId,
+        resp:responsables[0]};
 		}
 		else return "";
 	},
@@ -829,7 +882,6 @@ Template.poolList.helpers({
 			var m = false; // To keep dragging when near the border
 
 			var scrollPage = function(dx,dy){
-				// console.log("scrolling "+dy);
 				window.scrollBy(dx,dy);
 				if(m===true && drake.dragging){
 					setTimeout(function(){scrollPage(dx,dy)}, 20);
@@ -867,12 +919,12 @@ Template.poolList.helpers({
 						scrollPage(-scrollSpeed,0);
 				    }
 				    else{
-				    	m = false;				    	
+				    	m = false;
 				    }
 				}
 		    };
 
-			document.addEventListener('mousemove', onMouseMove); 
+			document.addEventListener('mousemove', onMouseMove);
 
 			hideSuccessBox(document);
   		  	el.className = el.className.replace('ex-moved', '');
@@ -1212,4 +1264,69 @@ Template.modalItem.events({
 		playerId = target.dataset.player;
 		pool = Pools.update({_id:poolId},{$set:{"leader":playerId}});
 	}
+});
+
+
+/******************************************************************************************************************
+											reponsablesTemplate
+*******************************************************************************************************************/
+
+Template.responsablesTemplate.helpers({
+
+	'getPlayer' : function(playerId){
+		if(playerId==undefined) return undefined;
+		return Meteor.users.findOne({_id:playerId});
+	},
+
+	'getEmail' : function(player){
+		return player.emails[0].address;
+	},
+
+	'isResponsable':function(){
+		var year = Session.get('PoolList/Year');
+		var type = Session.get('PoolList/Type');
+		var category = Session.get('PoolList/Category');
+
+		if(year===undefined || type===undefined || category===undefined){
+			return;
+		}
+
+		var yearData = Years.findOne({_id:year});
+		var data = {"_id":yearData[type]};
+		data[category.concat("Resp")] = Meteor.userId();
+
+		var search = Types.findOne(data);
+		if(search===undefined) return false;
+		var val = search[category.concat("Resp")];
+		return val!==undefined;
+	},
+
+	'getResponsables':function(){
+		var year = Session.get('PoolList/Year');
+		var type = Session.get('PoolList/Type');
+		var category = Session.get('PoolList/Category');
+
+		if(year===undefined || type===undefined || category===undefined){
+			return;
+		}
+
+		var field = category.concat("Resp");
+		var yearData = Years.findOne({_id:year});
+		var typeData = Types.findOne({_id:yearData[type]});
+
+
+		var responsables = typeData[field];
+
+		var respCol = [];
+		const chunk = 3; // Number of columns
+		/*
+			Separate in multiple columns :
+		*/
+		for (i=0,j=responsables.length; i<j; i+=chunk) {
+	    	temparray = responsables.slice(i,i+chunk);
+	    	respCol.push(temparray);
+		}
+
+		return respCol;
+	},
 });

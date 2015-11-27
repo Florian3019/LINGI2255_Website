@@ -40,14 +40,18 @@
               {{#if registrationsON}}
               <li class="dropdown"><a class="dropdown-togglebis" data-toggle="dropdown" href="#" id="Droop">Inscription <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="{{pathFor route='myRegistration'}}">Mes inscription</a></li>
+                  {{#if registered}}
+                  <li><a href="{{pathFor route='myRegistration2'}}">Me désinscrire</a></li>
+                  <li><a href="{{pathFor route='myRegistration'}}">Mes inscriptions</a></li>
+                  {{else}}
                   <li><a href="{{pathFor route='tournamentRegistration'}}" id="Registr">Inscription au tournoi</a></li>
+                  {{/if}}
                   <li><a href="{{pathFor route='courtRegistration'}}">Inscription d'un terrain</a></li>
                 </ul>
               </li>
               {{/if}}
               <li><a href="{{pathFor route='myCourts'}}">Mes terrains</a></li>
-              <li><a href="{{pathFor route='contacts'}}">Poser une question</a></li>
+              <li><a href="{{pathFor route='contacts'}}" id="askQuestion">Poser une question</a></li>
               {{/if}}
               <li><a href="https://www.facebook.com/media/set/?set=a.10153598504984631.1073741844.9064359630&type=1&l=153e72eadf" target="_blank">Photos</a></li>
               <li><a href="{{pathFor route='rules'}}">Règlement</a></li>

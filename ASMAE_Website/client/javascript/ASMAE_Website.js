@@ -161,4 +161,6 @@ Tracker.autorun(function () {
   Meteor.subscribe("ModificationsLog");
   Meteor.subscribe("Payments");
   Meteor.subscribe("GlobalValues");
+  Meteor.subscribe("Threads");
+  Meteor.subscribe("Topics");
 });

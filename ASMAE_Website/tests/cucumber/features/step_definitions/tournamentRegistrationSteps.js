@@ -40,7 +40,7 @@ module.exports = function () {
     	client.setValue('#city','Louvain La Neuve');
     	client.setValue('#country','Belgique');
     	client.click('#Virement');
-    	client.setValue('#playerWishes','Avoir une grande piscine et plein d argent');
+    	client.setValue('textarea#playerWish.form-control','Avoir une grande piscine et plein d argent');
     	client.setValue('input#emailPlayer.form-control','serge@serge.com');
     	client.click('button#submit.btn.btn-default');
     });
