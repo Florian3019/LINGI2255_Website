@@ -15,16 +15,22 @@ body {
 }
 
 /* Navbar on the top */
-/*.navbar {
-}*/
+.navbar {
+   background-color: #EFCFA0 !important;
+   color:white !important;
+}
 
 /* Sidebar on the left */
 .sidebar {
     position: fixed;
     width: 240px;
     height: 100%;
-    background: #afafaf;
+    background: white;
 	overflow-y:auto;
+    -webkit-box-shadow: 4px 0 3px -1px #888;
+    -moz-box-shadow: 4px 0 3px -1px #888;
+    -o-box-shadow: 4px 0 3px -1px #888;
+    box-shadow: 4px 0 3px -1px #888;
 }
 
 .menuItem {
@@ -45,24 +51,21 @@ body {
 
 .nav-sidebar-header {
 	padding: 10px;
+    font-size: 25px;
+
 }
 
 /* Content of the web site */
 .page-content {
     margin-left: 240px;
-	height: 100%;
     width: auto;
-    position: relative;
-    background: #ecf0f1;
     overflow: auto;
     z-index: 1;
 }
 
 .page-content-no-left-margin {
-	height: 100%;
     width: auto;
     position: relative;
-    background: #ecf0f1;
     overflow: auto;
     z-index: 1;
 }
@@ -71,16 +74,18 @@ body {
 	padding-top: 30px;
 	padding-bottom: 30px;
   	color: inherit;
-  	background-color: #ecf0f1;
+  	/* background-color: #ecf0f1; */
+    background-color: white;
   	min-height: 652px;
+}
+#Wrapper {
+    background-color: white;
+
 }
 
 /* Footer of the web site */
 .footer {
-    width: auto;
-    height: auto;
-    position: relative;
-    background: white;
+    background: #EFCFA0;
 }
 
 /* Home page disign */
@@ -121,8 +126,6 @@ body {
     overflow: hidden;
 }
 
-
-
 /**
 * 	 __  __          _ _
 * 	|  \/  |        | (_)
@@ -133,6 +136,7 @@ body {
 *
 **/
 
+/* If screen width larger than 1200 px */
 @media (min-width: 981px) {
 	body {
 		padding-top: 64px;
@@ -140,6 +144,14 @@ body {
 	}
 }
 
+/* If screen width smaller than */
+/* Hide navside menu */
+@media only screen and (max-width: 500px) {
+    .sidebar {
+        display: none;
+    }
 
-
- 
+    .page-content {
+        margin-left: 0;
+    }
+}

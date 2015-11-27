@@ -1,40 +1,37 @@
 <template name="launchTournament">
-	<div class="container">
 
 		{{#if registrationsON}}
+		<div class="page-header">
+        	<h2>Les inscriptions au tournoi sont en cours</h2>
+    	</div>
 		<center>
-			<div style="font-size: 14px">
-				<p>
-					Les inscriptions au tournoi sont en cours.
-				</p>
-				<p>
-					Cliquez sur ce bouton pour fermer les inscriptions au tournoi de cette année:<br>
-					<button id="closeRegistrationsButton" type="button" class="btn btn-default">Fermer les inscriptions</button>
-				</p>
-				<p style="margin-top: 70px">
-					Si vous vous êtes trompé dans la date ou le prix du tournoi cliquez ici pour les modifier (ceci peut avoir des conséquences sur les inscriptions déjà effectuées):<br>
-					<button id="modifyLaunchButton" type="button" class="btn btn-default">Modifier</button>
-				</p>
-			</div>
+    			<br>
+    			<br>
+				<p> Cliquez sur ce bouton pour fermer les inscriptions au tournoi de cette année: </p>
+				<button id="closeRegistrationsButton" type="button" class="btn btn-default">Fermer les inscriptions</button>
+				<br>
+				<br>
+				<br>
+				<br>
+				<p> Si vous vous êtes trompé dans la date ou le prix du tournoi cliquez ici pour les modifier (ceci peut avoir des conséquences sur les inscriptions déjà effectuées):</p>
+				<button id="modifyLaunchButton" type="button" class="btn btn-default">Modifier</button>
 		</center>
 		{{else}}
+		<div class="page-header">
+        	<h2>Lancer les inscriptions au tournoi</h2>
+    	</div>
+    	<br>
 		<form id="launchTournamentForm" role="form">
 			<div class="form-group">
 				<div class="row">
-					<div class="col-sm-6 col-sm-offset-3">
-						<h2>Lancer les inscriptions au tournoi:</h2>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col-sm-5 col-sm-offset-3">
+					<div class="col-sm-8 col-sm-offset-2">
 						<label for="launchTournamentDate">Date de début du tournoi:</label>
 						<input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" required>
 					</div>
 				</div>
 				<br>
 				<div class="row">
-					<div class="col-sm-5 col-sm-offset-3">
+					<div class="col-sm-8 col-sm-offset-2">
 						<label for="tournamentPrice">Prix de l'inscription au tournoi (&euro;):</label>
 						<input type="number" name="tournamentPrice" id="tournamentPrice" class="form-control" required>
 					</div>
@@ -50,5 +47,4 @@
 			</div>
 		</form>
 		{{/if}}
-	</div>
 </template>
