@@ -150,6 +150,25 @@ Meteor.methods({
 
 		Topics.update({_id:topicId},{$push:{"posts":data}, $set:{"lastUpdatedTime":data.time, "lastUpdatedUser":Meteor.userId()}});
 		return true;
+	},
+
+	'removeThread':function(threadId){
+		var th = Threads.findOne({_id:threadId});
+
+		// Remove any subtopics
+		var topics = th["topics"];
+		for (var i=0; i<topics.length;i++){
+			Topics.remove({_id:topics[i]});
+		}
+		Threads.remove({_id:threadId});
+	},
+
+	'removeTopic':function(threadId, topicId){
+		// Remove the topic from the thread
+		Threads.update({_id:threadId},{$pull:{"topics":topicId}});
+
+		// Remove the topic
+		Topics.remove({_id:topicId});
 	}
 
 });

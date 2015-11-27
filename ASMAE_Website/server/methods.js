@@ -21,17 +21,12 @@ Meteor.methods({
 	'activateGlobalValuesDB' : function() {
 		if (!GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
-
-			Meteor.call('activateCourtDB');
+		}
+		if(GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
+			GlobalValues.insert({_id:"nextCourtNumber", value:1});
 		}
 		if (!GlobalValues.findOne({_id:"registrationsON"})) {
 			GlobalValues.insert({_id:"registrationsON", value: false});
-		}
-	},
-
-	'activateCourtDB' : function() {
-		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
-			GlobalValues.insert({_id:"nextCourtNumber", value:1});
 		}
 	},
 
@@ -41,26 +36,23 @@ Meteor.methods({
 			var data = {};
 			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
-				return false;
-			}
-			else {
-				data.tournamentDate = launchTournamentData.tournamentDate;
-				data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
+				return undefined;
 			}
 
+			data.tournamentDate = launchTournamentData.tournamentDate;
+			data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
+
 			if (typeof Years.findOne({_id:data._id}) !== 'undefined') {
-				// Tournament already exists
-				console.log("shit !");
+				console.error("Tournament already exists");
 				return undefined;
 			}
 
 			if(typeof launchTournamentData.tournamentPrice === 'undefined') {
 				console.error("launchTournament: No price for the tournament");
-				return false;
+				return undefined;
 			}
-			else{
-				data.tournamentPrice = launchTournamentData.tournamentPrice;
-			}
+
+			data.tournamentPrice = launchTournamentData.tournamentPrice;
 
 			//Insert in database
 
@@ -74,14 +66,11 @@ Meteor.methods({
 
 			GlobalValues.update({_id:"registrationsON"}, {$set: {
 				value : true
-			}}, {upsert: true}, function(err, result){
+			}}, function(err, result){
 				if(err){
 					throw new Meteor.Error("update GlobalValues registrationsON in launchTournament error: ", err);
 				}
 			});
-
-			//Activate court DB for this year's tournament
-			Meteor.call("activateCourtDB", data._id);
 
 			return Years.insert(data);
 		}
@@ -89,6 +78,16 @@ Meteor.methods({
 			console.error("You are not an administrator, you don't have the permission to do this action.");
 			return false;
 		}
+	},
+
+	'deleteCurrentYear': function(){
+			if(!Meteor.call('isAdmin')){
+				console.error("You don't have the permission to do that.");
+				return false;
+			}
+
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			Years.remove({_id: currentYear});
 	},
 
 	'setCurrentYear' : function(currentYear) {
@@ -102,13 +101,18 @@ Meteor.methods({
 	},
 
 	'stopTournamentRegistrations': function(){
-		GlobalValues.update({_id:"registrationsON"}, {$set: {
-			value : false
-		}}, function(err, result){
-			if(err){
-				throw new Meteor.Error("update GlobalValues registrationsON in stopTournamentRegistrations error: ", err);
-			}
-		});
+		if(Meteor.call('isAdmin')){
+			GlobalValues.update({_id:"registrationsON"}, {$set: {
+				value : false
+			}}, function(err, result){
+				if(err){
+					throw new Meteor.Error("update GlobalValues registrationsON in stopTournamentRegistrations error: ", err);
+				}
+			});
+		}
+		else{
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	'getAllYears': function(){
@@ -123,8 +127,7 @@ Meteor.methods({
 
 	'getNextCourtNumber' : function() {
 		if (GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
-			console.warn("No court number yet, activating CourtDB");
-			Meteor.call('activateCourtDB');
+			console.error("No court number yet !");
 			return 1;
 		}
 		return GlobalValues.findOne({_id:"nextCourtNumber"});
@@ -213,23 +216,32 @@ Meteor.methods({
 			return false;
 		}
 	},
+
 	'deleteUser': function(nid){
-		userToDelete = Meteor.users.findOne({"_id":nid});
-		addressId = userToDelete.profile.addressID;
-		if(addressId != undefined){
-			Addresses.remove({_id:addressId});
-			Meteor.users.update({_id: nid} , {$set: {"profile.addressID": undefined}});
+		if(nid === Meteor.userId() || Meteor.call('isAdmin') || Meteor.call('isStaff'))
+		{
+			userToDelete = Meteor.users.findOne({"_id":nid});
+			addressId = userToDelete.profile.addressID;
+			if(addressId != undefined){
+				Addresses.remove({_id:addressId});
+				Meteor.users.update({_id: nid} , {$set: {"profile.addressID": undefined}});
+			}
+			courtId = Courts.findOne({"ownerID":nid});
+			if(courtId != undefined){
+				Courts.remove({_id:courtId});
+				//Meteor.users.update({_id: nid} , {$set: {"profile.courtID": undefined}});
+			}
+			Meteor.users.update({_id: nid} , {$set: {"profile.isStaff": false}});
+			Meteor.users.update({_id: nid} , {$set: {"profile.isAdmin": false}});
+			Meteor.users.update({_id: nid} , {$set: {"services": undefined}});
+			Meteor.users.update({_id: nid} , {$set: {"profile.phone": undefined}});
 		}
-		courtId = Courts.findOne({"ownerID":nid});
-		if(courtId != undefined){
-			Courts.remove({_id:courtId});
-			//Meteor.users.update({_id: nid} , {$set: {"profile.courtID": undefined}});
+		else {
+			console.error("You don't have the permission to do that.");
 		}
-		Meteor.users.update({_id: nid} , {$set: {"profile.isStaff": false}});
-		Meteor.users.update({_id: nid} , {$set: {"profile.isAdmin": false}});
-		Meteor.users.update({_id: nid} , {$set: {"services": undefined}});
-		Meteor.users.update({_id: nid} , {$set: {"profile.phone": undefined}});
+
 	},
+
 	'getPairCategory' : function(type, p1, p2){
 		var category;
 		if(type==="family"){
@@ -409,7 +421,7 @@ Meteor.methods({
 			seniorsBracket:<list of pairId>
 			elitesBracket:<list of pairId>
 			listBracket:<list of pairID>
-			
+
 
 			// Staff responsables
 				Can only add a single staff for each update to a category.
@@ -1076,20 +1088,69 @@ Meteor.methods({
 
 		paymentData = {
 			userID : Meteor.userId(),
+			tournamentYear : currentYear,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
 			balance : amount
 		};
-		Payments.insert(paymentData, function(err, paymId){
-			if(err){
-				console.error('insert payment error');
-				console.error(err);
+
+		//Check if payment already exists for this player
+		var paymentAlreadyExists = Payments.findOne({'userID': Meteor.userId(), 'tournamentDate': currentYear});
+		if(paymentAlreadyExists){
+			console.error("updatePair: Payment already exists for this player");
+		}
+		else {
+
+			//Send emails if the payment method is by cash or by bank transfer
+			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
+        var user = Meteor.users.findOne({_id:paymentData.userID});
+        var data = {
+          intro:"Bonjour "+user.profile.firstName+",",
+          important:"Nous avons bien reçu votre inscription",
+          texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
+          encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
+        };
+        Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+				/*
+
+					Envoyer un mail contenant les informations pour payer par cash:
+					- addresse du QG : on peut l'hardcoder ici?
+					- montant à payer: accessible via la variable amount
+
+				*/
 			}
-		});
+			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
+        var bank = "BE33 3753 3397 1254";
+        var user = Meteor.users.findOne({_id:paymentData.userID});
+        var data = {
+          intro:"Bonjour "+user.profile.firstName+",",
+          important:"Nous avons bien reçu votre inscription",
+          texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
+          encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASAME (Place des Carabiniers 5 à 1030 Bruxelles) et d'y insérer les nom et prénom du joueur ainsi que le jour où il joue au tournoi."
+        };
+        Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+				/*
+
+					Envoyer un mail contenant les informations pour payer par virement bancaire:
+					- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
+					- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
+						peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
+						input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
+					- montant à payer: accessible via la variable amount
+
+				*/
+			}
+
+			Payments.insert(paymentData, function(err, paymId){
+				if(err){
+					console.error('insert payment error');
+					console.error(err);
+				}
+			});
+		}
 
 
-
-		if(!pairData._id){
+		if(!pairData._id){ 		// New Pair
 			return Pairs.insert(data, function(err, res){
 				if(err){
 					console.error("updatePair error");
@@ -1622,38 +1683,47 @@ Meteor.methods({
 	},
 
 	'removeExtra' : function(extraId){
-		Extras.remove({_id:extraId});
+		if(Meteor.call('isAdmin') || Meteor.call('isStaff')){
+			Extras.remove({_id:extraId});
+		}
+		else {
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	'updateExtra' : function(extraData){
-		data = {};
-		extraId = undefined;
-		if(extraData._id!==undefined){
-			extraId = extraData._id;
-		}
-		if(extraData.name!==undefined){
-			data.name = extraData.name;
-		}
-		if(extraData.price!==undefined){
-			data.price = extraData.price;
-		}
-		if(extraData.comment!==undefined){
-			data.comment = extraData.comment;
-		}
-		if(extraId===undefined){
-			extraId = Extras.insert(data);
+		if(Meteor.call('isAdmin') || Meteor.call('isStaff')){
+			data = {};
+			extraId = undefined;
+			if(extraData._id!==undefined){
+				extraId = extraData._id;
+			}
+			if(extraData.name!==undefined){
+				data.name = extraData.name;
+			}
+			if(extraData.price!==undefined){
+				data.price = extraData.price;
+			}
+			if(extraData.comment!==undefined){
+				data.comment = extraData.comment;
+			}
+			if(extraId===undefined){
+				extraId = Extras.insert(data);
+				return extraId;
+			}
+			data2 = {$set:data};
+			Extras.update({_id:extraId}, data2);
 			return extraId;
 		}
-		data2 = {$set:data};
-		Extras.update({_id:extraId}, data2);
-		return extraId;
-
+		else {
+			console.error("You don't have the permission to do that.");
+		}
 	},
 
 	'updateQuestionStatus': function(nemail,nquestion,ndate,nanswer){
 		 Questions.update({email:nemail,question:nquestion,date:ndate}, {
         	$set: {processed: true,answer:nanswer}
-      		});
+      	});
 	},
 
 	//You need to add the secrets.js file inside the server folder.
@@ -1688,7 +1758,9 @@ Meteor.methods({
 								}
 
 								// Send the request
-                if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+                var user = Meteor.users.findOne({_id:Meteor.userId()});
+                var usermail = user.emails[0].address;
+                if(Meteor.call('isStaff') || Meteor.call('isAdmin') || usermail==to){
                   Meteor.http.post(postURL, options, onError);
                   console.log("Email sent");
                 }
@@ -1774,7 +1846,7 @@ Meteor.methods({
 				}
 			}
 			return pool_in}
-		function get_type (pool_id) { 
+		function get_type (pool_id) {
 			var types = Types.find().fetch()
 			var type_in = []
 			for(i = 0; i < types.length; i++){
@@ -1803,18 +1875,18 @@ Meteor.methods({
 						if(types[i].juniors[j] === pool_id[k][0]){
 							type_in.push(['Juniors',types[i]._id, pool_id[k][1]]);
 						}
-					}		
+					}
 					for(j = 0; types[i].seniors !== undefined && j < types[i].seniors.length; j++){
 						if(types[i].seniors[j] === pool_id[k][0]){
 							type_in.push(['Seniors',types[i]._id, pool_id[k][1]]);
 						}
-					}		
+					}
 					for(j = 0; types[i].elites !== undefined && j < types[i].elites.length; j++){
 						if(types[i].elites[j] === pool_id[k][0]){
 							type_in.push(['Elites',types[i]._id, pool_id[k][1]]);
 						}
-					}	
-				}				
+					}
+				}
 			}
 			return type_in;
 		}
@@ -1824,16 +1896,16 @@ Meteor.methods({
 			for(i = 0; i < years.length; i++){
 				for(j = 0; j < type_id.length; j++){
 					if(years[i].men === type_id[j][1]){
-						year_in.push(['Homme',years[i]._id, type_id[j][0], type_id[j][2]]); 
+						year_in.push(['Homme',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 					else if(years[i].women === type_id[j][1]){
-						year_in.push(['Femme',years[i]._id, type_id[j][0], type_id[j][2]]);  
+						year_in.push(['Femme',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 					else if(years[i].mixed === type_id[j][1]){
-						year_in.push(['Mixte',years[i]._id, type_id[j][0], type_id[j][2]]); 
+						year_in.push(['Mixte',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 					else if(years[i].family === type_id[j][1]){
-						year_in.push(['Famille',years[i]._id, type_id[j][0], type_id[j][2]]); 
+						year_in.push(['Famille',years[i]._id, type_id[j][0], type_id[j][2]]);
 					}
 				}
 			}

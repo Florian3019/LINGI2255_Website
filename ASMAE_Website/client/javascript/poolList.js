@@ -806,23 +806,35 @@ Template.poolList.helpers({
     var type = Session.get('PoolList/Type');
     var category = Session.get('PoolList/Category');
 
-    if(year===undefined || type===undefined || category===undefined){
+    if(year===undefined || type===undefined || category===undefined || type==='' || category==='' || year===''){
       return;
     }
-
+    typeSearch = {};
+    typeSearch[type] = 1
     var field = category.concat("Resp");
-    var yearData = Years.findOne({_id:year});
-    var typeData = Types.findOne({_id:yearData[type]});
+
+    var yearData = Years.findOne({_id:year},typeSearch);
+    Data = {};
+    Data[field]=1;
+    var typeData = Types.findOne({_id:yearData[type]},Data);
 
 
-    var responsables = typeData[field];
+    if(typeData != undefined){
+      var responsables = typeData[field]; //TODO check le champs existe et non vide len >0
+      if(responsables != undefined && responsables.length>0){
+    		if(poolId!=""){
+    			return {_id:poolId,
+            resp:responsables[0]};
+    		}
+    		else return "";
+      }
+    }
+    if(poolId!=""){
+  			return {_id:poolId,
+          resp:-1};
+  		}
+  		else return "";
 
-    console.log(responsables[0]);
-		if(poolId!=""){
-			return {_id:poolId,
-        resp:responsables[0]};
-		}
-		else return "";
 	},
 
 	'chosenBrackets' : function(){
@@ -1316,6 +1328,9 @@ Template.responsablesTemplate.helpers({
 
 
 		var responsables = typeData[field];
+        if (typeof responsables === 'undefined') {
+            return [];
+        }
 
 		var respCol = [];
 		const chunk = 3; // Number of columns

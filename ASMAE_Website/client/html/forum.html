@@ -10,6 +10,9 @@
 <div class="forumContainer">
 {{#each getThreads}}
 	<h3 style="display:inline">{{this.name}}</h3>
+	<button type="button" class="btn btn-default thread-delete" id="delete{{this._id}}" data-threadid="{{this._id}}" aria-label="Left Align">
+	  <span class="glyphicon glyphicon-trash thread-delete" aria-hidden="true"></span>
+	</button>
   	<div class="form-group pull-right" style="display:inline">
 		<label for="topicName">Ajouter un sujet: </label>
     	<input name="topicName" id="topicName{{this._id}}" class="form-control" placeholder="Nom" style="width:25%;display:inline" onkeydown="if (event.keyCode == 13) document.getElementById('{{this._id}}').click()">
@@ -43,6 +46,11 @@
 				</td>
 				<td>
 					{{getLength this.posts}}
+				</td>
+				<td>
+					<button type="button" class="btn btn-default topic-delete" id="delete{{this._id}}" data-topicid="{{this._id}}" data-threadid="{{../../_id}}" aria-label="Left Align">
+					  <span class="glyphicon glyphicon-trash topic-delete" aria-hidden="true"></span>
+					</button>
 				</td>
 					<!-- {{>topic TOPICID=this}} -->
 			{{/with}}

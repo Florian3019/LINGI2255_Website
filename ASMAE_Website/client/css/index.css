@@ -129,7 +129,6 @@ display: block;
 	    padding-top: 0px;
 	    padding-right: 0px;
 	   	background-color: #AFAFAF;
-
 	}
 
 	/* bottom row */
@@ -143,7 +142,6 @@ display: block;
 	    display:none;
 	}
 }
-
 
 .col-wrap{
     overflow: hidden;

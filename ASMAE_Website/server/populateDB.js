@@ -61,6 +61,8 @@ Meteor.methods({
 
 		var comments = ["Attention au chien", "Pas d\'enfants", "Chaussures de salle uniquement", "Rafraichissements disponibles", "Balles fournies", "Interdiction de manger sur le terrain", "Veuillez bien fermer la porte du terrain"];
 
+		var questions = ["Y aura-t-il un barbecue cette année aussi ?", "Que faire si mon partenaire et moi n\'avons pas le même âge ?", "Comment puis-je m\'inscrire au tournoi ?", "Quel est le nombre maximal de jeux dans un set ?", "Où dois-je me présenter samedi matin ?", "Où se retrouve-t-on à midi ?", "De combien de joueurs sont constituées les pools ?", "Où puis-je trouver des informations sur les actions humanitaires d\'ASMAE ?"];
+
 
         // On renvoie un entier aléatoire entre une valeur min (incluse)
         // et une valeur max (exclue).
@@ -70,17 +72,72 @@ Meteor.methods({
             return Math.floor(Math.random() * (max - min)) + min;
         }
 
+		function insertQuestions() {
+			var users = Meteor.users.find().fetch();
+			for (var i=0;i<questions.length; i++) {
+				if (Questions.findOne({question:questions[i]})) {
+					continue;
+				}
+				var user = getRandomElement(users);
+				Questions.insert({lastname:user.profile.lastName, firstname:user.profile.firstName, email:user.emails[0].address, question:questions[i], date:new Date(), processed:false});
+			}
+		}
 
-		function getWish(gender) {
+
+		function getPlayerWish(gender, forceWish) {
 			var rand = getRandomInt(0,2);
 			var name = gender=="M" ? getRandomElement(firstnamesM) : getRandomElement(firstnamesF);
-			if (flipCoin()) {
+			if (flipCoin() || forceWish) {
 				switch (rand) {
 					case 0: return "Je veux jouer avec "+name;
 					case 1: return "Je ne veux pas jouer avec "+name;
 					default: return null;
 				}
 			}
+		}
+
+		function getCourtWish(forceWish) {
+			var rand = getRandomInt(0,2);
+			var name = getRandomElement(firstnames);
+			if (flipCoin() || forceWish) {
+				switch (rand) {
+					case 0: return "Je veux jouer sur le terrain de "+name;
+					case 1: return "Je ne veux pas jouer sur le terrain de  "+name;
+					default: return null;
+				}
+			}
+		}
+
+		function getOtherWish(forceWish) {
+			var rand = getRandomInt(0,2);
+			if (flipCoin() || forceWish) {
+				switch (rand) {
+					case 0: return "Disponible seulement le matin";
+					case 1: return "Disponible seulement l'après-midi";
+					default: return null;
+				}
+			}
+		}
+
+		function getWishes(gender) {
+			if (flipCoin()) {
+				var rand = getRandomInt(0,10);
+				if (rand > 8) {
+					return [getPlayerWish(gender, true), getCourtWish(true), getOtherWish(true)];
+				}
+				if (rand > 6) {
+					return [getPlayerWish(gender, true), getCourtWish(true), undefined];
+				}
+				else {
+					if (flipCoin()) {
+						return [getPlayerWish(gender, true), undefined, undefined];
+					}
+					else {
+						return [getCourtWish(gender, true), undefined, undefined];
+					}
+				}
+			}
+			return [undefined, undefined, undefined];
 		}
 
 		function getExtra() {
@@ -277,6 +334,7 @@ Meteor.methods({
 				var id = Courts.insert(court);
 			}
 		}
+
 		function insertAddress() {
 			var addressData = {
                 street:getRandomElement(streets),
@@ -355,11 +413,12 @@ Meteor.methods({
                     gen2 = "F";
                     break;
                 case typeKeys[2]: // Mixed
+					b = flipCoin()
 					dateMatch="saturday";
-                    firstname1 = getRandomElement(firstnamesM);
-                    firstname2 = getRandomElement(firstnamesF);
-                    gen1 = "M";
-                    gen2 = "F";
+                    firstname1 = b ? getRandomElement(firstnamesM) : getRandomElement(firstnamesF);
+                    firstname2 = b ? getRandomElement(firstnamesF) : getRandomElement(firstnamesM);
+                    gen1 = b ? "M" : "F";
+                    gen2 = b ? "F" : "M";
                     break;
                 case typeKeys[3]: // Family
 					dateMatch="family";
@@ -429,19 +488,23 @@ Meteor.methods({
 				Accounts.addEmail(userID2, email2, true);
 			}
 
-			var wish1 = getWish(gen1);
+			function getOppositeGender(gender) {
+				return gender==='M' ? 'F' : 'M'
+			}
+
+			var wishes1 = getWishes(dateMatch === 'saturday' ? getOppositeGender(gen1) : gen1);
 			var extra1 = getExtra();
 			var pairID;
 
 			Meteor.call("updateUser", {_id:userID1, profile:{addressID:addressID1}});
 			if (!alone) {
-				var wish2 = getWish(gen2);
+				var wishes2 = getWishes(dateMatch === 'saturday' ? getOppositeGender(gen2) : gen2);
 				var extra2 = getExtra();
 				Meteor.call("updateUser", {_id:userID2, profile:{addressID:addressID2}});
-				pairID = Meteor.call("updatePair", {player1: {_id:userID1, playerWish:wish1, extras:extra1}, player2: {_id:userID2, playerWish:wish2, extras:extra2}});
+				pairID = Meteor.call("updatePair", {player1: {_id:userID1, playerWish:wishes1[0], courtWish:wishes1[1], otherWish:wishes1[2], extras:extra1}, player2: {_id:userID2, playerWish:wishes2[0], courtWish:wishes2[1], otherWish:wishes2[2], extras:extra2}});
 			}
 			else {
-				pairID = Meteor.call("updatePair", {player1: {_id:userID1}, wish:wish1, extras:extra1});
+				pairID = Meteor.call("updatePair", {player1: {_id:userID1, playerWish:wishes1[0], courtWish:wishes1[1], otherWish:wishes1[2], extras:extra1}});
 			}
 			Meteor.call("addPairToTournament", pairID, tournamentYear.toString(), dateMatch);
         } // End createPair
@@ -481,6 +544,9 @@ Meteor.methods({
 		insertCourts(nCourtSaturday, true, false);
 		insertCourts(nCourtSunday, false, true);
 		insertCourts(nCourtBoth, true, true);
+
+		console.log("popDB populates questions");
+		insertQuestions();
 
 		console.log("popDB done");
 	},
