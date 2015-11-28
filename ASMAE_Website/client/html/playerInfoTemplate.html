@@ -1,5 +1,7 @@
 <!-- Takes a player id as argument ID-->
 <template name="playerInfoTemplate">
+<div class="page-header">
+</div>
 {{#with getPlayer}}
  <div class="panel panel-info">
             <div class="panel-heading">
@@ -80,7 +82,7 @@
                 <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Supprimer</button>
               {{/if}}
             </center>
-            <br />
+            <br/>
 </div>
 
 <!-- Modal -->
@@ -106,7 +108,6 @@
         </form>
       </div>
     </div>
-
   </div>
 </div>
 

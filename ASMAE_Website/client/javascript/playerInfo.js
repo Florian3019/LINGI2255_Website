@@ -7,7 +7,7 @@ Template.mySpecialFilterPlayers.events({
 Template.playersInfo.onRendered(function(){
     Session.set("playerInfo/perm","");
     Session.set("playerInfo/input","");
-})
+}),
 
 Template.playersInfo.helpers({
     userCollection: function () {
