@@ -37,4 +37,15 @@ Template.navigation.helpers({
         return false;
     }
 
+    'marginNavBar': function(){
+		if(Meteor.user())
+		{
+			return '';
+		}
+		else
+		{
+			return 'nopadding';
+		}
+	},
+
 });

@@ -11,13 +11,13 @@
 
 /** Add !important to override boostrap setting **/
 body {
-		padding-top: 64px;
+		background-color: #EFCFA0; 
 }
 
 /* Navbar on the top */
 .navbar {
     min-height: 64px !important;
-    background-color: #EFCFA0 !important;
+    background-color: #EFCFA0 !important;   
 }
 
 .navbar-nav > li > a, .navbar-brand {
@@ -29,6 +29,7 @@ body {
 
 /* Sidebar on the left */
 .sidebar {
+    padding-top: 64px;
     position: fixed;
     width: 240px;
     height: 100%;
@@ -38,7 +39,10 @@ body {
     -moz-box-shadow: 4px 0 3px -1px #888;
     -o-box-shadow: 4px 0 3px -1px #888;
     box-shadow: 4px 0 3px -1px #888;
+    z-index:900;
 }
+
+
 
 .menuItem {
 	color:black;
@@ -64,15 +68,9 @@ body {
 
 /* Content of the web site */
 .page-content {
+    padding-top: 64px;
     margin-left: 240px;
     width: auto;
-    overflow: auto;
-    z-index: 1;
-}
-
-.page-content-no-left-margin {
-    width: auto;
-    position: relative;
     overflow: auto;
     z-index: 1;
 }
@@ -84,10 +82,6 @@ body {
   	/* background-color: #ecf0f1; */
     background-color: white;
   	min-height: 652px;
-}
-#Wrapper {
-    background-color: white;
-
 }
 
 /* Footer of the web site */
@@ -106,9 +100,13 @@ body {
 }
 
 /* Options */
-.nopadding {
-   		padding: 0 !important;
+.nomargin {
    		margin: 0 !important;
+}
+
+.nopadding {
+        padding: 0 !important;
+        margin: 0 !important;
 }
 
 /* Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris */
@@ -143,17 +141,26 @@ body {
 *
 **/
 
-/* If screen width larger than 1200 px */
-@media (min-width: 981px) {
+/* If screen width smaller than 981 px 
+@media (max-width: 981px) {
 	body {
-		padding-top: 64px;
-		/*background: #FF9900; */
+		padding-top: 128px;
 	}
 }
+
+
+If screen width smaller than 767 px
+@media (max-width: 767px) {
+    body {
+        padding-top: 64px;
+        
+    }
+}  */
 
 /* If screen width smaller than */
 /* Hide navside menu */
 @media only screen and (max-width: 500px) {
+    
     .sidebar {
         display: none;
     }
