@@ -24,7 +24,7 @@ Template.scorePage.helpers({
 
       pool = Pools.findOne({_id:poolId});
       if(pool.courtId!=undefined){
-        
+
         court = Courts.findOne({"courtNumber":pool.courtId});
 
         if(court && court.addressID){
@@ -168,6 +168,11 @@ Template.scoreTable.helpers({
     );
 
     return match ? match : undefined;
+  },
+
+  'isToPrint':function(){
+    return Session.get("printSheets/Value");
+
   }
 
 });

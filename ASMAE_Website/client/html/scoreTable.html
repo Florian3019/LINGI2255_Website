@@ -100,6 +100,9 @@
             {{else}}
             <td align="center">
               <div class="input-group inputscore" display="inline">
+                {{#if isToPrint}}
+                <div></div>
+                {{else}}
                 {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
                   {{#if isAdminOrStaff}}
                     <input
@@ -129,6 +132,7 @@
                     <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../_id}}</span>
                   {{/if}}
                 {{/with}}
+                {{/if}}
               </div>
             </td>
             {{/if}}

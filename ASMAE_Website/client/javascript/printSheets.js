@@ -1,6 +1,7 @@
 Template.printSheets.events({
 
   'click #Save':function(event){
+    Session.set("printSheets/Value", true);
     var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
     var info={
       year : document.getElementById("Year").value,
@@ -175,12 +176,11 @@ Template.printSheets.events({
       Create the pdf
       */
       var pdf = new jsPDF('portrait','pt','a4');
-
-      /* Remove input */
-      var inpt = document.getElementsByTagName("input");
-      for (var j = 0; j < inpt.length; j++) {
-        inpt[j].setAttribute('type','hidden');
-      }
+        /* Remove input */
+        var inpt = document.getElementsByTagName("input");
+        for (var j = 0; j < inpt.length; j++) {
+          inpt[j].setAttribute('type','hidden');
+        }
 
       /*Add content in pdf with automatic recursive call*/
       printPage(pdf,0,poolsObject);
@@ -198,15 +198,35 @@ Template.printSheets.onRendered(function() {
 Template.printSheets.helpers({
   'getPool':function(){
     var poolId = Session.get("printSheets/poolList");
-    var arr = new Array(poolId.length);
-    for (var i = 0; i < poolId.length; i++) {
-      var tmp = {
-        id : "pool"+i.toString(),
-        pool:{_id:poolId[i]}
-      };
-      arr[i]=tmp;
-    }
-    return arr;
+    if(poolId!=undefined){
+      var arr = new Array(poolId.length);
+      for (var i = 0; i < poolId.length; i++) {
+        var tmp = {
+          id : "pool"+i.toString(),
+          pool:{_id:poolId[i]}
+        };
+        arr[i]=tmp;
+      }
+      return arr;
+  }
+  else{
+    return undefined;
+  }
   },
+
+  'getAllYears':function(){
+    var callBack = function(err, ret){
+      Session.set("printSheets/allYears", ret);
+    }
+    Meteor.call("getAllYears", callBack);
+  },
+
+  'getAllYearsSession':function(){
+    return Session.get("printSheets/allYears");
+  },
+
+  'removeInput':function(){
+
+  }
 
 });
