@@ -127,6 +127,11 @@ body {
     overflow: hidden;
 }
 
+/* Box alert info */
+.alert-info {
+    background-color: #A0522D !important;
+}
+
 /**
 * 	 __  __          _ _
 * 	|  \/  |        | (_)
