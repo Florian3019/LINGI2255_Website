@@ -43,10 +43,6 @@ Template.launchTournament.events({
             else if(result == null){
                 console.error("No result in launchTournament...");
             }
-
-            alert("Les inscriptions au tournoi sont lancées.\n Un Email va être envoyé à tous les utilisateurs.");
-
-            Meteor.call('emailtoAllUsers');
 	    });
 
     },

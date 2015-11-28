@@ -21,3 +21,11 @@
     border-bottom: 1px solid  #dddddd;
     border-left: 3px solid  #dddddd;
 }
+
+.okBlock .notDone{
+    display: none;
+}
+
+.notokBlock .okDone{
+    display: none;
+}

@@ -110,6 +110,12 @@ Meteor.methods({
 
 	'stopTournamentRegistrations': function(){
 		if(Meteor.call('isAdmin')){
+
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			Years.update({_id: currentYear}, {$set: {
+				step4done: true
+			}});
+
 			GlobalValues.update({_id:"registrationsON"}, {$set: {
 				value : false
 			}}, function(err, result){
@@ -1604,7 +1610,7 @@ Meteor.methods({
     var data  ={
       intro:"Bonjour,",
       important:"Nous avons une grande nouvelle à vous annoncer !",
-      texte:"Depuis aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
+      texte:"Dès aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
       encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
     };
     //TODO decomment when out of production
@@ -1991,12 +1997,12 @@ Meteor.methods({
 	*	Used for the steps of the tournamentProgress template.
 	*	It updates the stepXdone value of the current year (in Years) with true (where X is the step number).
 	*/
-	'updateDoneYears' : function(stepNumber){
+	'updateDoneYears' : function(stepNumber, booleanValue){
 		if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
 			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 			var stepField = "step"+stepNumber+"done";
 			var data = {};
-			data[stepField] = true;
+			data[stepField] = booleanValue;
 			return Years.update({_id: currentYear}, {$set: data});
 		}
 		else {

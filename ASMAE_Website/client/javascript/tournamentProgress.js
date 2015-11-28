@@ -13,6 +13,12 @@ Template.closeRegistrationsBlock.events({
 
 });
 
+Template.closeRegistrationsBlock.helpers({
+    'registrationsON': function(){
+        return GlobalValues.findOne({_id: "registrationsON"}).value;
+    }
+});
+
 Template.tournamentProgress.helpers({
     'stepIsDoneClass': function(stepNumber){
         var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
@@ -46,7 +52,7 @@ Template.tournamentProgress.helpers({
 
 Template.tournamentProgress.events({
     'click #doneButton2': function(){
-        Meteor.call('updateDoneYears', 2, function(err, result){
+        Meteor.call('updateDoneYears', 2, true, function(err, result){
             if(err){
                 console.error("Error while calling updateDoneYears for step 2");
             }
@@ -54,7 +60,7 @@ Template.tournamentProgress.events({
     },
 
     'click #doneButton3': function(){
-        Meteor.call('updateDoneYears', 3, function(err, result){
+        Meteor.call('updateDoneYears', 3, true, function(err, result){
             if(err){
                 console.error("Error while calling updateDoneYears for step 3");
             }
@@ -62,7 +68,7 @@ Template.tournamentProgress.events({
     },
 
     'click #doneButton5': function(){
-        Meteor.call('updateDoneYears', 5, function(err, result){
+        Meteor.call('updateDoneYears', 5, true, function(err, result){
             if(err){
                 console.error("Error while calling updateDoneYears for step 5");
             }
@@ -70,7 +76,39 @@ Template.tournamentProgress.events({
     },
 
     'click #doneButton6': function(){
-        Meteor.call('updateDoneYears', 6, function(err, result){
+        Meteor.call('updateDoneYears', 6, true, function(err, result){
+            if(err){
+                console.error("Error while calling updateDoneYears for step 6");
+            }
+        });
+    },
+
+    'click #notDoneButton2': function(){
+        Meteor.call('updateDoneYears', 2, false, function(err, result){
+            if(err){
+                console.error("Error while calling updateDoneYears for step 2");
+            }
+        });
+    },
+
+    'click #notDoneButton3': function(){
+        Meteor.call('updateDoneYears', 3, false, function(err, result){
+            if(err){
+                console.error("Error while calling updateDoneYears for step 3");
+            }
+        });
+    },
+
+    'click #notDoneButton5': function(){
+        Meteor.call('updateDoneYears', 5, false, function(err, result){
+            if(err){
+                console.error("Error while calling updateDoneYears for step 5");
+            }
+        });
+    },
+
+    'click #notDoneButton6': function(){
+        Meteor.call('updateDoneYears', 6, false, function(err, result){
             if(err){
                 console.error("Error while calling updateDoneYears for step 6");
             }
@@ -85,7 +123,27 @@ Template.tournamentProgress.events({
         });
     },
 
+    'click #sendRegistrationsEmail': function(){
+        Meteor.call('updateDoneYears', 2, true, function(err, result){
+            if(err){
+                console.error("Error while calling updateDoneYears for step 2");
+            }
+        });
+
+        Meteor.call('emailtoAllUsers', function(err, result){
+            if(err){
+                console.error("Error while calling emailtoAllUsers");
+            }
+        });
+    },
+
     'click #sendPoolsEmail':function(){
+        Meteor.call('updateDoneYears', 6, true, function(err, result){
+            if(err){
+                console.error("Error while calling updateDoneYears for step 6");
+            }
+        });
+
       var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
       var poolList = new Array();
       var alltypes = ["men","women","mixed"];

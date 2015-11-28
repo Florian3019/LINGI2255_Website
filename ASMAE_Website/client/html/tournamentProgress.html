@@ -12,15 +12,17 @@
         <h5>2. Envoyer un email d'invitation à tous les utilisateurs</h5>
         <p>Cliquez sur ce bouton pour prévenir tous les utilisateurs du site par email que les inscriptions au tournoi sont lancées</p>
         <center>
-            <button id="sendRegistrationsEmail" type="button" class="btn btn-default btn-sm">Envoyer</button>
-            <button id="doneButton2" type="button" class="btn btn-default btn-sm">Marquer comme étant fait</button>
+            <button id="sendRegistrationsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
+            <button id="doneButton2" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
+            <button id="notDoneButton2" type="button" class="btn btn-default btn-sm okDone">Non fait</button>
         </center>
     </div>
 
     <div class="{{stepIsDoneClass 3}}">
         <h5>3. Accepter les terrains</h5>
         <center>
-            <button id="doneButton3" type="button" class="btn btn-default btn-sm">Marquer comme étant fait</button>
+            <button id="doneButton3" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
+            <button id="notDoneButton3" type="button" class="btn btn-default btn-sm okDone">Non fait</button>
         </center>
     </div>
 
@@ -33,7 +35,8 @@
         <h5>5. Gérer les poules</h5>
         <p>Utilisez le menu "Gestion du tournoi" pour gérer les poules.</p>
         <center>
-            <button id="doneButton5" type="button" class="btn btn-default btn-sm">Marquer comme étant fait</button>
+            <button id="doneButton5" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
+            <button id="notDoneButton5" type="button" class="btn btn-default btn-sm okDone">Non fait</button>
         </center>
     </div>
 
@@ -41,8 +44,9 @@
         <h5>6. Envoyer un email aux joueurs et aux chefs de poules</h5>
         <p>Cliquez sur ce bouton pour envoyer aux joueurs les informations sur le tournoi et les informations nécessaires aux chefs de poules</p>
         <center>
-            <button id="sendPoolsEmail" type="button" class="btn btn-default btn-sm">Envoyer</button>
-            <button id="doneButton6" type="button" class="btn btn-default btn-sm">Marquer comme étant fait</button>
+            <button id="sendPoolsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
+            <button id="doneButton6" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
+            <button id="notDoneButton6" type="button" class="btn btn-default btn-sm okDone">Non fait</button>
         </center>
     </div>
 
@@ -105,8 +109,13 @@
 
 <template name="closeRegistrationsBlock">
     {{#if isAdmin}}
-        <p>Cliquez sur ce bouton pour fermer les inscriptions au tournoi de cette année</p>
-        <center><button id="closeRegistrationsButton" type="button" class="btn btn-default btn-sm">Fermer les inscriptions</button></center>
+
+        {{#if registrationsON}}
+            <p>Cliquez sur ce bouton pour fermer les inscriptions au tournoi de cette année</p>
+            <center><button id="closeRegistrationsButton" type="button" class="btn btn-default btn-sm">Fermer les inscriptions</button></center>
+        {{else}}
+            <p>Vous devez d'abord ouvrir les inscriptions avant de pouvoir les clôturer.</p>
+        {{/if}}
     {{else}}
         <p>Seul un administrateur peut clôturer les inscriptions.</p>
     {{/if}}
