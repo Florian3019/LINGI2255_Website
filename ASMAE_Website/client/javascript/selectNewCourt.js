@@ -1,4 +1,8 @@
 Template.selectNewCourt.events({
+    'click #newCourtCancel':function(event){
+        Session.set("PoolList/ChosenCourt","");
+    },
+
     'click .courtRow' : function(event){
 
     		var courts = event.currentTarget.lastElementChild.innerText;

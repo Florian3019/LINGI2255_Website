@@ -34,8 +34,7 @@
         <td align="center">
           {{#with getCourt this._id}}
           <h3>Terrain :</h3>
-          <button type="button" id="changeCourt" class="btn btn-default btn-lg"><span class="glyphicon" aria-hidden="true"></span>   Changer</button>
-          <div class="btn btn-sq-lg btn-primary">
+          <div class="btn btn-sq-lg btn-primary" id="changeCourt">
             <i class="fa fa-home fa-5x"></i><br/>
             <strong> Numéro : {{this.id}} </strong><br>
             {{this.address.street}} {{this.address.number}} <br>

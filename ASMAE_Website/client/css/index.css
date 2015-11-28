@@ -16,8 +16,15 @@ body {
 
 /* Navbar on the top */
 .navbar {
-   background-color: #EFCFA0 !important;
-   color:white !important;
+    min-height: 64px !important;
+    background-color: #EFCFA0 !important;
+}
+
+.navbar-nav > li > a, .navbar-brand {
+    /*padding-top:5px !important;
+    padding-bottom:0 !important;
+    color: white; */
+    height: 64px;
 }
 
 /* Sidebar on the left */
