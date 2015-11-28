@@ -1739,6 +1739,44 @@ Meteor.methods({
     }
   },
 
+  /* This function is to the remain player in a pair when the other is unregistered*/
+  'emailtoAlonePairsPlayer':function(alonePlayerId,pair){
+    var alonePlayer = Meteor.users.findOne({_id:alonePlayerId});
+
+    if(alonePlayer!=undefined){
+      if(alonePlayerId==pair.player1._id || alonePlayerId==pair.player2._id){
+        var to = alonePlayer.emails[0].address;
+        var subject= "Concernant votre paire au tournoi de tennis.";
+        var data ={
+          intro:"Bonjour "+alonePlayer.profile.firstName+",",
+          important:"Nous avons une mauvaise nouvelle pour vous.",
+          texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
+          encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !"
+        };
+
+        var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+        var options =   {
+          auth: "api:" + process.env.MAILGUN_API_KEY,
+          params: {
+            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+            "to":to,
+            "subject": subject,
+            "html": SSR.render("mailing",data),
+          }
+        }
+        var onError = function(error, result) {
+          if(error) {console.error("Error: " + error)}
+        }
+        Meteor.http.post(postURL, options, onError);
+        console.log("Email sent");
+      }else{
+        console.error("Vous n'avez pas les permissions requises");
+      }
+    }else{
+      console.error("Alone player is undefined");
+    }
+  },
+
 	/*
 		You can't modify these entries once they are added.
 		An entry is as follows :
@@ -1906,6 +1944,7 @@ Meteor.methods({
 		}
 
 		var pair = Pairs.findOne({'_id':pair_id});
+		var save = Pairs.findOne({'_id':pair_id});
         if(typeof pair.player2 === 'undefined'){
           Pairs.remove({'_id':pair_id});
           var pools = Pools.find().fetch();
@@ -1932,16 +1971,10 @@ Meteor.methods({
             Pairs.update({'_id': pair_id}, {$set: {'player1': pair.player2}});
           }
           Pairs.update({'_id': pair_id}, {$unset: {'player2': ""}});
-          var new_pair = Pairs.findOne({'_id':pair_id});
-          var new_p = Meteor.users.findOne({'_id':new_pair.player1._id});
-          var email = new_p.emails[0].address;
-          var data ={
-            intro:"Bonjour "+new_p.profile.firstName+",",
-            important:"Nous avons une mauvaise nouvelle pour vous.",
-            texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
-            encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !\n A très bientôt, \n Le staff Le Charles de Lorraine."
-          };
-          //TODO sent by staff  Meteor.call('emailFeedback',email,"Concernant votre inscription au tournoi",data);
+
+          //Send email in secure
+          var aloneId=Pairs.findOne({_id:pair_id}).player1._id;
+          Meteor.call("emailtoAlonePairsPlayer",aloneId,save);
         }
 	}
 
