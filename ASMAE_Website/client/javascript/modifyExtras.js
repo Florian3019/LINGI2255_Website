@@ -17,7 +17,7 @@ Template.modifyExtras.events({
 			Meteor.call('updateExtra',data);
 			Meteor.call("addToModificationsLog", 
             {"opType":"Ajout d'un extra", 
-            "details":name +": "+price+"€ "+ (comment!=="" ? "("+comment+")" : "") 
+            "details":name.value +": "+price.value+"€ "+ (comment.value!=="" ? "("+comment.value+")" : "") 
             });
             infoBox.setAttribute("hidden","");
             name.value = "";
