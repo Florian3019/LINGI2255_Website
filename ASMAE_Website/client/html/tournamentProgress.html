@@ -1,0 +1,109 @@
+<template name="tournamentProgress">
+    <div class="page-header">
+        <h2>Déroulement du tournoi</h2>
+    </div>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <div style="text-align: center; padding-top: 70px; padding-right:20px"><a href="#"><span class="glyphicon glyphicon-ok" style="font-size:25px; color:green"></span></a></div>
+                </td>
+                <td>
+                    {{> launchTournamentRow}}
+                </td>
+                <td>
+                    <div style="text-align: center; padding-top: 70px">
+                        <button type="button" class="btn btn-default">Fait!</button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="text-align: center; padding-top: 20px; padding-right:20px"><a href="#"><span class="glyphicon glyphicon-ok" style="font-size:25px; color:green"></span></a></div>
+                </td>
+                <td style="color:grey">
+                    <h5 style="color:grey">2. Envoyer un email</h5>
+                    {{> testRow}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="text-align: center; padding-top: 20px; padding-right:20px"><a href="#"><span class="glyphicon glyphicon-ok" style="font-size:25px"></span></a></div>
+                </td>
+                <td>
+                    <h5>3. Accepter les terrains</h5>
+                    {{> testRow}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="text-align: center; padding-top: 20px; padding-right:20px"><span class="glyphicon glyphicon-ok" style="font-size:25px"></span></div>
+                </td>
+                <td>
+                    <h5>3. Cloturer les inscriptions</h5>
+                    {{> testRow}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="text-align: center; padding-top: 20px; padding-right:20px"><span class="glyphicon glyphicon-ok" style="font-size:25px"></span></div>
+                </td>
+                <td>
+                    <h5>4. Gérer les poules</h5>
+                    {{> testRow}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="text-align: center; padding-top: 20px; padding-right:20px"><span class="glyphicon glyphicon-ok" style="font-size:25px"></span></div>
+                </td>
+                <td>
+                    <h5>5. Envoyer un mail aux leaders et players</h5>
+                    {{> testRow}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="text-align: center; padding-top: 20px; padding-right:20px"><span class="glyphicon glyphicon-ok" style="font-size:25px"></span></div>
+                </td>
+                <td>
+                    <h5>6. Lancer le tournoi</h5>
+                    {{> testRow}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</template>
+
+<template name="launchTournamentRow">
+    <h5>1. Lancer les inscriptions au tournoi</h5>
+    <form id="launchTournamentForm" role="form">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" placeholder="Date de début du tournoi" required>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <input type="number" name="tournamentPrice" id="tournamentPrice" class="form-control" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
+                </div>
+            </div>
+            <br>
+
+            <center>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default">C'est parti !</button>
+                </div>
+            </center>
+
+        </div>
+    </form>
+</template>
+
+<template name="testRow">
+    <div>
+        <p> Coucou eklkrrtlk  </p>
+    </div>
+</template>

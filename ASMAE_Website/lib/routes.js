@@ -381,3 +381,11 @@ Router.route('/faq', {
   	name: 'faq',
 	template: 'faq'
 });
+
+Router.route('/deroulement-tournoi', {
+  	name: 'tournamentProgress',
+	template: 'tournamentProgress',
+	waitOn: function(){
+		return [ Meteor.subscribe('GlobalValues') ]
+	}
+});
