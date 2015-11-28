@@ -1,10 +1,9 @@
 <template name="courtSearchTemplate">
-  <div class="row">
-    <div class="col-sm-6 col-sm-offset-3">
-      <h2>Rechercher un terrain</h2>
-      <br>
-    </div>
+
+  <div class="page-header">
+        <h2>Rechercher un terrain</h2>
   </div>
+
   {{>courtSearch}}
 </template>
 
@@ -14,16 +13,15 @@
   <div class="col-sm-3">
     {{> mySpecialFilterCourt}}
   </div>
-
-  <div class="col-sm-2">
-    <label for="saturdaySelect">Samedi </label>
+  <div class="col-sm-4">
+    <label for="saturdaySelect">Samedi   </label>
     <select id="saturdaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" selected="selected">Ignorer</option>
                   <option value="Yes" >Oui</option>
                   <option value="No">Non</option>
     </select>
   </div>
-  <div class="col-sm-2">
+  <div class="col-sm-4">
     <label for="sundaySelect">Dimanche </label>
     <select id="sundaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" selected="selected">Ignorer</option>
@@ -31,25 +29,11 @@
                   <option value="No">Non</option>
     </select>
   </div>
-  <div class="col-sm-2">
-    <label for="ownerOKSelect">OK proprio </label>
-    <select id="ownerOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
-                  <option value="Ignore" selected="selected">Ignorer</option>
-                  <option value="Yes" >Oui</option>
-                  <option value="No">Non</option>
-    </select>
-  </div>
-  <div class="col-sm-2">
-    <label for="staffOKSelect">OK staff </label>
-    <select id="staffOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
-                  <option value="Ignore" selected="selected">Ignorer</option>
-                  <option value="Yes" >Oui</option>
-                  <option value="No">Non</option>
-    </select>
-  </div>
-  <div class="col-sm-2">
+</div>
+<div class="row">
+  <div class="col-sm-3">
     <div class="form-group">
-      <label for="name" class="col-lg-4">Numéro</label>
+      <label for="name" class="col-lg-4" style="margin-top:10px; padding-left:0px;">Numéro</label>
         <div class="col-lg-8">
           <input
             id="courtNumberInput"
@@ -61,8 +45,24 @@
         </div>
     </div>    
   </div>
+  <div class="col-sm-4">
+    <label for="ownerOKSelect">OK proprio </label>
+    <select id="ownerOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
+                  <option value="Ignore" selected="selected">Ignorer</option>
+                  <option value="Yes" >Oui</option>
+                  <option value="No">Non</option>
+    </select>
+  </div>
+  <div class="col-sm-4">
+    <label for="staffOKSelect">OK staff </label>
+    <select id="staffOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
+                  <option value="Ignore" selected="selected">Ignorer</option>
+                  <option value="Yes" >Oui</option>
+                  <option value="No">Non</option>
+    </select>
+  </div>
 </div>
-
+<br>
 {{>allCourtsTable}}
 </template>
 

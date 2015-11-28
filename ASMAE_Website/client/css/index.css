@@ -17,7 +17,7 @@ body {
 /* Navbar on the top */
 .navbar {
     min-height: 64px !important;
-    background-color: #EFCFA0 !important;   
+    background-color: #EFCFA0 !important;
 }
 
 .navbar-nav > li > a, .navbar-brand {
@@ -39,10 +39,7 @@ body {
     -moz-box-shadow: 4px 0 3px -1px #888;
     -o-box-shadow: 4px 0 3px -1px #888;
     box-shadow: 4px 0 3px -1px #888;
-    z-index:900;
 }
-
-
 
 .menuItem {
 	color:black;
@@ -63,7 +60,6 @@ body {
 .nav-sidebar-header {
 	padding: 10px;
     font-size: 25px;
-
 }
 
 /* Content of the web site */
@@ -71,6 +67,7 @@ body {
     padding-top: 64px;
     margin-left: 240px;
     width: auto;
+    height: 100%;
     overflow: auto;
     z-index: 1;
 }
@@ -79,9 +76,8 @@ body {
 	padding-top: 30px;
 	padding-bottom: 30px;
   	color: inherit;
-  	/* background-color: #ecf0f1; */
     background-color: white;
-  	min-height: 652px;
+  	min-height: 710px;
 }
 
 /* Footer of the web site */
@@ -157,7 +153,7 @@ If screen width smaller than 767 px
     }
 }  */
 
-/* If screen width smaller than */
+/* If screen width smaller than 50^0px*/
 /* Hide navside menu */
 @media only screen and (max-width: 500px) {
     

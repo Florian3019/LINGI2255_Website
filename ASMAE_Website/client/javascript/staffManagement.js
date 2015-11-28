@@ -9,7 +9,7 @@ Template.staffManagement.events({
 		else{
 			var val = comment.value.trim();
 			if(val == ""){
-				document.getElementById("pop-up-message-title").innerHTML="Attention";  
+				document.getElementById("pop-up-message-title").innerHTML="Attention !";  
                 document.getElementById("message").innerHTML="Veuillez remplir le champ de réponse avant d'envoyer un mail";
                 $('#pop-up-message').modal('show');
 			}
