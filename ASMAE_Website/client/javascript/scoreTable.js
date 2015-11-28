@@ -24,7 +24,7 @@ Template.scorePage.helpers({
 
       pool = Pools.findOne({_id:poolId});
       if(pool.courtId!=undefined){
-        
+
         court = Courts.findOne({"courtNumber":pool.courtId});
 
         if(court && court.addressID){
@@ -94,46 +94,49 @@ Template.scoreTable.helpers({
     var totalMatches = 0;
     var completedMatches = 0;
 
-    // Create a match for each of these pairs, if it does not yet exist
-    for(var i=0;i<pairList.length;i++){
-      for(var j=0;j<i;j++){
-        pairId1 = pairList[i]._id;
-        pairId2 = pairList[j]._id;
+    var user = Meteor.users.findOne({_id:Meteor.userId()},{"profile":1});
+    if(user.profile.isStaff || user.profile.isAdmin){
+      // Create a match for each of these pairs, if it does not yet exist
+      for(var i=0;i<pairList.length;i++){
+        for(var j=0;j<i;j++){
+          pairId1 = pairList[i]._id;
+          pairId2 = pairList[j]._id;
 
-        var d1 = {};
-        d1[pairId1] = {$exists:true};
-        var d2 = {};
-        d2[pairId2] = {$exists:true};
+          var d1 = {};
+          d1[pairId1] = {$exists:true};
+          var d2 = {};
+          d2[pairId2] = {$exists:true};
 
 
-        var match = Matches.findOne(
-          {
-            $and: [
-              {"poolId":poolId}, // I want to find only matches belonging to this pool
-              {$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set
-            ]
+          var match = Matches.findOne(
+            {
+              $and: [
+                {"poolId":poolId}, // I want to find only matches belonging to this pool
+                {$and: [d1,d2]} // A match has to have both fields for pair1 and pair2 set
+              ]
+            }
+          );
+
+          totalMatches += 1;
+
+          if(match==undefined){
+            // Match does not exist, create a new one
+
+            data = {"poolId":poolId};
+            data.pair1 = {"pairId": pairId1, "points":-1};
+            data.pair2 = {"pairId": pairId2, "points":-1};
+            Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
           }
-        );
-
-        totalMatches += 1;
-
-        if(match==undefined){
-          // Match does not exist, create a new one
-
-          data = {"poolId":poolId};
-          data.pair1 = {"pairId": pairId1, "points":-1};
-          data.pair2 = {"pairId": pairId2, "points":-1};
-          Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
-        }
-        else{
-          if(match[pairId1]>=0 && match[pairId2]>=0) completedMatches += 1;
+          else{
+            if(match[pairId1]>=0 && match[pairId2]>=0) completedMatches += 1;
+          }
         }
       }
-    }
 
-    var completion = (totalMatches==0) ? 0 : completedMatches/totalMatches;
-    Pools.update({_id:poolId}, {$set:{"completion":completion}},{reactive:false});
-    console.log("pool completion "+completion);
+      var completion = (totalMatches==0) ? 0 : completedMatches/totalMatches;
+      Pools.update({_id:poolId}, {$set:{"completion":completion}},{reactive:false});
+      console.log("pool completion "+completion);
+    }
 
     return pairList;
   },
@@ -165,6 +168,11 @@ Template.scoreTable.helpers({
     );
 
     return match ? match : undefined;
+  },
+
+  'isToPrint':function(){
+    return Session.get("printSheets/Value");
+
   }
 
 });
@@ -195,7 +203,10 @@ Template.scorePage.events({
   },
 
   'click #changeCourt':function(event){
-    Session.set("PoolList/ChosenCourt","44");
+    var user = Meteor.users.findOne({_id:Meteor.userId()},{"profile":1});
+    if(user.profile.isStaff || user.profile.isAdmin){
+       Session.set("PoolList/ChosenCourt","44");
+    }
   },
 
   'click #getPDF':function(event){

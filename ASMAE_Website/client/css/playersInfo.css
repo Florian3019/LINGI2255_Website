@@ -5,3 +5,8 @@
 .playerInfoRow{
 	cursor: pointer;
 }
+
+/* Center page number in the navigation of the reactive talbe */
+.reactive-table-navigation input {
+	text-align: center;
+}
