@@ -1598,7 +1598,11 @@ Meteor.methods({
       texte:"Depuis aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
       encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
     };
-    Meteor.call('emailFeedback',mails.toString(),subject,data);
+    //TODO decomment when out of production
+    // for (var i in mails) {
+    //   Meteor.call('emailFeedback',mails[i],subject,data);
+    // }
+    console.log("Mails not send due to MAILGUN");
 
   },
 
@@ -1620,18 +1624,30 @@ Meteor.methods({
       var leaduser = Meteor.users.findOne({_id:pool.leader});
       var leader= leaduser.profile.firstName+" "+leaduser.profile.lastName+" ("+leaduser.profile.phone+")"; //string
 
-      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
-      var responsableList=[];
-      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
-      for (var j in allcat){
-        var cat = allcat[j];
-        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
-          var r= cat.concat("Resp")
-          var resplist=type[r];
-          if (resplist!=undefined && resplist.length>0){
-            for (var k = 0; k < resplist.length; k++) {
-              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+      var fam = Types.findOne({"all":poolId});
+      if(fam==undefined){
+        var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+        var responsableList=[];
+        var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+        for (var j in allcat){
+          var cat = allcat[j];
+          if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+            var r= cat.concat("Resp")
+            var resplist=type[r];
+            if (resplist!=undefined && resplist.length>0){
+              for (var k = 0; k < resplist.length; k++) {
+                responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+              }
             }
+          }
+        }
+      }
+      else{
+        var responsableList=[];
+        var resplist = fam["allResp"];
+        if (resplist!=undefined && resplist.length>0){
+          for (var k = 0; k < resplist.length; k++) {
+            responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
           }
         }
       }
@@ -1660,7 +1676,12 @@ Meteor.methods({
         texte:"Nous voici bientôt arrivé à notre très attendu tournoi de tennis Le Charles de Lorraine et pour que tout se déroule pour le mieux, vous trouverez les informations concernant votre poule dans l'encadré suivant.",
         encadre:encadre,
       };
-      Meteor.call('emailFeedback',mails.toString(),subject,data);
+      //TODO decomment when out of production
+      // for (var i in mails) {
+      //   Meteor.call('emailFeedback',mails[i],subject,data);
+      // }
+      console.log("Mails not send due to MAILGUN");
+
     }
     else{
       console.error("emailtoPoolPlayers/ UNDEFINED POOLID");
@@ -1672,18 +1693,30 @@ Meteor.methods({
       var pool = Pools.findOne({_id:poolId});
       leader = Meteor.users.findOne({_id:pool.leader});
 
-      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
-      var responsableList=[];
-      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
-      for (var j in allcat){
-        var cat = allcat[j];
-        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
-          var r= cat.concat("Resp")
-          var resplist=type[r];
-          if (resplist!=undefined && resplist.length>0){
-            for (var k = 0; k < resplist.length; k++) {
-              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+      var fam = Types.findOne({"all":poolId});
+      if(fam==undefined){
+        var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+        var responsableList=[];
+        var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+        for (var j in allcat){
+          var cat = allcat[j];
+          if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+            var r= cat.concat("Resp")
+            var resplist=type[r];
+            if (resplist!=undefined && resplist.length>0){
+              for (var k = 0; k < resplist.length; k++) {
+                responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+              }
             }
+          }
+        }
+      }
+      else{
+        var responsableList=[];
+        var resplist = fam["allResp"];
+        if (resplist!=undefined && resplist.length>0){
+          for (var k = 0; k < resplist.length; k++) {
+            responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
           }
         }
       }
@@ -1698,7 +1731,10 @@ Meteor.methods({
         texte:"Cette responsabilité ne vous demande que quelques instants au début à la fin de la poule. Premièrement, il vous sera demandé d'aller récupérer la feuille de poule au quartier général avant d'aller jouer. Ensuite, veillez à ce que les points de chaque match soient inscrits dans les cases correspondantes. Finalement, nous vous demanderons aussi de ramener cette feuille au quartier général. Si vous avez besoin de plus d'informations, n'hésitez pas à contacter un membre du staff ou un responsable.",
         encadre:"Les responsables de votre poules sont : "+responsables+"\n Merci d'avance pour votre implication !",
       };
-      Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
+      //TODO decomment when out of production
+      // Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
+      console.log("Mails not send due to MAILGUN");
+
 
     }
   },

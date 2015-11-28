@@ -36,8 +36,7 @@ Template.launchTournament.events({
 
             alert("Les inscriptions au tournoi sont lancées.\n Un Email va être envoyé à tous les utilisateurs.");
 
-            console.log("Emails not send due to Mailgun");
-            // Meteor.call('emailtoAllUsers', Meteor.userId());
+            Meteor.call('emailtoAllUsers');
 	    });
 
     },
@@ -73,9 +72,11 @@ Template.launchTournament.events({
     'click #playerInfoButton':function(){
       var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
       var poolList = new Array();
-      var alltypes = ["men","women","mixed"]; //TODO FAMILY
-      var currentYear = GlobalValues.findOne({_id:"currentYear"});
-      var year = Years.findOne({_id:"2015"});
+      var alltypes = ["men","women","mixed"]; 
+      var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
+      var year = Years.findOne({_id:currentYear});
+      console.log(year);
+      console.log(currentYear);
 
       if(year!=undefined){
         for(var k in alltypes){
@@ -89,26 +90,25 @@ Template.launchTournament.events({
 
         var fam = Types.findOne({_id:year["family"]});
         for (var f in fam["all"]) {
-          //poolList.push(fam["all"][f]);
+          poolList.push(fam["all"][f]);
         }
       }
 
-      log("Emails not send due to Mailgun")
-      // for (var i in poolList) {
-      //   Meteor.call("emailtoPoolPlayers", poolList[i], function(error, result){
-      //     if(error){
-      //       console.log("emailToPlayer/error", error);
-      //     }
-      //   });
-      // }
+      for (var i in poolList) {
+        Meteor.call("emailtoPoolPlayers", poolList[i], function(error, result){
+          if(error){
+            console.log("emailToPlayer/error", error);
+          }
+        });
+      }
     },
 
     'click #leaderInfoButton':function(){
       var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
       var poolList = new Array();
-      var alltypes = ["men","women","mixed"]; //TODO FAMILY
-      var currentYear = GlobalValues.findOne({_id:"currentYear"});
-      var year = Years.findOne({_id:"2015"});
+      var alltypes = ["men","women","mixed"];
+      var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
+      var year = Years.findOne({_id:currentYear});
 
       if(year!=undefined){
         for(var k in alltypes){
@@ -122,18 +122,17 @@ Template.launchTournament.events({
 
         var fam = Types.findOne({_id:year["family"]});
         for (var f in fam["all"]) {
-        //  poolList.push(fam["all"][f]);
+         poolList.push(fam["all"][f]);
         }
       }
 
-      log("Emails not send due to Mailgun")
-      // for (var i in poolList) {
-        // Meteor.call("emailtoLeader", poolList[i], function(error, result){
-        //   if(error){
-        //     console.log("emailToLeader/error", error);
-        //   }
-        // });
-      // }
+      for (var i in poolList) {
+        Meteor.call("emailtoLeader", poolList[i], function(error, result){
+          if(error){
+            console.log("emailToLeader/error", error);
+          }
+        });
+      }
     },
 
 });
