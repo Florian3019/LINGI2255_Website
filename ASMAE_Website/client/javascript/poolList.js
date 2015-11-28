@@ -702,7 +702,7 @@ Template.poolList.events({
 					}
 					else{
 						result.push(result[begin_previous+m]);
-					}	
+					}
 				}
 				begin_previous+=size_previous;
 				size_previous=size_previous/2;
@@ -1273,6 +1273,7 @@ Template.poolContainerTemplate.helpers({
 
 Template.poolContainerTemplate.events({
 	'click .scoreButton' : function(event){
+    Session.set("printSheets/Value", false);
 		Session.set("PoolList/ChosenScorePool", event.currentTarget.dataset.poolid);
 	},
 });

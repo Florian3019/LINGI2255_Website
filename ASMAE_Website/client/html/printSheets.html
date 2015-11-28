@@ -5,8 +5,10 @@
       <tr>
         <td align="center">
           <select class="form-control Year" id="Year" name = "Year">
-            <!-- <option value="" disabled="" selected="" hidden></option> -->
-            <option value="2015"> 2015 </option>
+            {{getAllYears}}
+            {{#each getAllYearsSession}}
+              <option value="{{this}}"> {{this}} </option>
+            {{/each}}
           </select>
         </td>
 
@@ -52,6 +54,5 @@
       {{>scoreTable this.pool}}
     </div>
     {{/each}}
-    {{removeInput}}
   </div>
 </template>
