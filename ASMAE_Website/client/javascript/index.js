@@ -48,7 +48,7 @@ Template.index.helpers({
 		}
 		else
 		{
-			return 'nopadding';
+			return 'nomargin';
 		}
 	},
 });
