@@ -137,7 +137,7 @@ Template.scoreTable.helpers({
       Pools.update({_id:poolId}, {$set:{"completion":completion}},{reactive:false});
       console.log("pool completion "+completion);
     }
-    
+
     return pairList;
   },
 
@@ -198,7 +198,10 @@ Template.scorePage.events({
   },
 
   'click #changeCourt':function(event){
-    Session.set("PoolList/ChosenCourt","44");
+    var user = Meteor.users.findOne({_id:Meteor.userId()},{"profile":1});
+    if(user.profile.isStaff || user.profile.isAdmin){
+       Session.set("PoolList/ChosenCourt","44");
+    }
   },
 
   'click #getPDF':function(event){
