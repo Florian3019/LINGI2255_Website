@@ -8,7 +8,13 @@ Template.launchTournament.rendered=function() {
 Template.launchTournament.helpers({
     'registrationsON': function(){
          return GlobalValues.findOne({_id: "registrationsON"}).value;
+    },
+
+    'tournamentData': function(){
+        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+        return Years.findOne({_id: currentYear});
     }
+
 });
 
 
