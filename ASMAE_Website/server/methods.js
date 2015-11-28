@@ -72,6 +72,7 @@ Meteor.methods({
 				}
 			});
 
+			console.log("Tournament launched for year "+data._id);
 			return Years.insert(data);
 		}
 		else {
@@ -1598,7 +1599,11 @@ Meteor.methods({
       texte:"Depuis aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
       encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
     };
-    Meteor.call('emailFeedback',mails.toString(),subject,data);
+    //TODO decomment when out of production
+    // for (var i in mails) {
+    //   Meteor.call('emailFeedback',mails[i],subject,data);
+    // }
+    console.log("Mails not send due to MAILGUN");
 
   },
 
@@ -1620,18 +1625,30 @@ Meteor.methods({
       var leaduser = Meteor.users.findOne({_id:pool.leader});
       var leader= leaduser.profile.firstName+" "+leaduser.profile.lastName+" ("+leaduser.profile.phone+")"; //string
 
-      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
-      var responsableList=[];
-      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
-      for (var j in allcat){
-        var cat = allcat[j];
-        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
-          var r= cat.concat("Resp")
-          var resplist=type[r];
-          if (resplist!=undefined && resplist.length>0){
-            for (var k = 0; k < resplist.length; k++) {
-              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+      var fam = Types.findOne({"all":poolId});
+      if(fam==undefined){
+        var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+        var responsableList=[];
+        var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+        for (var j in allcat){
+          var cat = allcat[j];
+          if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+            var r= cat.concat("Resp")
+            var resplist=type[r];
+            if (resplist!=undefined && resplist.length>0){
+              for (var k = 0; k < resplist.length; k++) {
+                responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+              }
             }
+          }
+        }
+      }
+      else{
+        var responsableList=[];
+        var resplist = fam["allResp"];
+        if (resplist!=undefined && resplist.length>0){
+          for (var k = 0; k < resplist.length; k++) {
+            responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
           }
         }
       }
@@ -1660,7 +1677,12 @@ Meteor.methods({
         texte:"Nous voici bientôt arrivé à notre très attendu tournoi de tennis Le Charles de Lorraine et pour que tout se déroule pour le mieux, vous trouverez les informations concernant votre poule dans l'encadré suivant.",
         encadre:encadre,
       };
-      Meteor.call('emailFeedback',mails.toString(),subject,data);
+      //TODO decomment when out of production
+      // for (var i in mails) {
+      //   Meteor.call('emailFeedback',mails[i],subject,data);
+      // }
+      console.log("Mails not send due to MAILGUN");
+
     }
     else{
       console.error("emailtoPoolPlayers/ UNDEFINED POOLID");
@@ -1672,18 +1694,30 @@ Meteor.methods({
       var pool = Pools.findOne({_id:poolId});
       leader = Meteor.users.findOne({_id:pool.leader});
 
-      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
-      var responsableList=[];
-      var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
-      for (var j in allcat){
-        var cat = allcat[j];
-        if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
-          var r= cat.concat("Resp")
-          var resplist=type[r];
-          if (resplist!=undefined && resplist.length>0){
-            for (var k = 0; k < resplist.length; k++) {
-              responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+      var fam = Types.findOne({"all":poolId});
+      if(fam==undefined){
+        var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+        var responsableList=[];
+        var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
+        for (var j in allcat){
+          var cat = allcat[j];
+          if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+            var r= cat.concat("Resp")
+            var resplist=type[r];
+            if (resplist!=undefined && resplist.length>0){
+              for (var k = 0; k < resplist.length; k++) {
+                responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
+              }
             }
+          }
+        }
+      }
+      else{
+        var responsableList=[];
+        var resplist = fam["allResp"];
+        if (resplist!=undefined && resplist.length>0){
+          for (var k = 0; k < resplist.length; k++) {
+            responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
           }
         }
       }
@@ -1698,8 +1732,49 @@ Meteor.methods({
         texte:"Cette responsabilité ne vous demande que quelques instants au début à la fin de la poule. Premièrement, il vous sera demandé d'aller récupérer la feuille de poule au quartier général avant d'aller jouer. Ensuite, veillez à ce que les points de chaque match soient inscrits dans les cases correspondantes. Finalement, nous vous demanderons aussi de ramener cette feuille au quartier général. Si vous avez besoin de plus d'informations, n'hésitez pas à contacter un membre du staff ou un responsable.",
         encadre:"Les responsables de votre poules sont : "+responsables+"\n Merci d'avance pour votre implication !",
       };
-      Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
+      //TODO decomment when out of production
+      // Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
+      console.log("Mails not send due to MAILGUN");
 
+
+    }
+  },
+
+  /* This function is to the remain player in a pair when the other is unregistered*/
+  'emailtoAlonePairsPlayer':function(alonePlayerId,pair){
+    var alonePlayer = Meteor.users.findOne({_id:alonePlayerId});
+
+    if(alonePlayer!=undefined){
+      if(alonePlayerId==pair.player1._id || alonePlayerId==pair.player2._id){
+        var to = alonePlayer.emails[0].address;
+        var subject= "Concernant votre paire au tournoi de tennis.";
+        var data ={
+          intro:"Bonjour "+alonePlayer.profile.firstName+",",
+          important:"Nous avons une mauvaise nouvelle pour vous.",
+          texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
+          encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !"
+        };
+
+        var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+        var options =   {
+          auth: "api:" + process.env.MAILGUN_API_KEY,
+          params: {
+            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+            "to":to,
+            "subject": subject,
+            "html": SSR.render("mailing",data),
+          }
+        }
+        var onError = function(error, result) {
+          if(error) {console.error("Error: " + error)}
+        }
+        Meteor.http.post(postURL, options, onError);
+        console.log("Email sent");
+      }else{
+        console.error("Vous n'avez pas les permissions requises");
+      }
+    }else{
+      console.error("Alone player is undefined");
     }
   },
 
@@ -1870,6 +1945,7 @@ Meteor.methods({
 		}
 
 		var pair = Pairs.findOne({'_id':pair_id});
+		var save = Pairs.findOne({'_id':pair_id});
         if(typeof pair.player2 === 'undefined'){
           Pairs.remove({'_id':pair_id});
           var pools = Pools.find().fetch();
@@ -1896,16 +1972,10 @@ Meteor.methods({
             Pairs.update({'_id': pair_id}, {$set: {'player1': pair.player2}});
           }
           Pairs.update({'_id': pair_id}, {$unset: {'player2': ""}});
-          var new_pair = Pairs.findOne({'_id':pair_id});
-          var new_p = Meteor.users.findOne({'_id':new_pair.player1._id});
-          var email = new_p.emails[0].address;
-          var data ={
-            intro:"Bonjour "+new_p.profile.firstName+",",
-            important:"Nous avons une mauvaise nouvelle pour vous.",
-            texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
-            encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !\n A très bientôt, \n Le staff Le Charles de Lorraine."
-          };
-          //TODO sent by staff  Meteor.call('emailFeedback',email,"Concernant votre inscription au tournoi",data);
+
+          //Send email in secure
+          var aloneId=Pairs.findOne({_id:pair_id}).player1._id;
+          Meteor.call("emailtoAlonePairsPlayer",aloneId,save);
         }
 	}
 
