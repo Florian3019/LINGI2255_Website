@@ -72,6 +72,13 @@ Meteor.methods({
 				}
 			});
 
+			//Add the stepXdone fields
+			data.step2done = false;
+			data.step3done = false;
+			data.step4done = false;
+			data.step5done = false;
+			data.step6done = false;
+
 			console.log("Tournament launched for year "+data._id);
 			return Years.insert(data);
 		}
@@ -113,6 +120,7 @@ Meteor.methods({
 		}
 		else{
 			console.error("You don't have the permission to do that.");
+			throw new Meteor.Error("stopTournamentRegistrations: ", err);
 		}
 	},
 
@@ -1977,6 +1985,38 @@ Meteor.methods({
           var aloneId=Pairs.findOne({_id:pair_id}).player1._id;
           Meteor.call("emailtoAlonePairsPlayer",aloneId,save);
         }
+	},
+
+	/*
+	*	Used for the steps of the tournamentProgress template.
+	*	It updates the stepXdone value of the current year (in Years) with true (where X is the step number).
+	*/
+	'updateDoneYears' : function(stepNumber){
+		if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			var stepField = "step"+stepNumber+"done";
+			var data = {};
+			data[stepField] = true;
+			return Years.update({_id: currentYear}, {$set: data});
+		}
+		else {
+			console.error("")
+			throw new Meteor.error("You don't have the permissions to call updateDoneYears");
+		}
+	},
+
+	//Put currentYear to ""
+	'restartTournament': function(){
+		if(!Meteor.call('isAdmin')){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to restart a tournament");
+		}
+
+		return GlobalValues.update({_id: "currentYear"}, {$set: {
+			value: ""
+		}});
+
+
 	}
 
 

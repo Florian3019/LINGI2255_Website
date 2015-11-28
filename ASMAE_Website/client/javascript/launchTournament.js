@@ -13,6 +13,10 @@ Template.launchTournament.helpers({
     'tournamentData': function(){
         var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
         return Years.findOne({_id: currentYear});
+    },
+
+    'tournamentDateFormat': function(date){
+        return date.toLocaleDateString();
     }
 
 });
@@ -47,19 +51,6 @@ Template.launchTournament.events({
 
     },
 
-    'click #closeRegistrationsButton': function(){
-        if(confirm("Confirmer la fermeture des inscriptions:"))
-        {
-                Meteor.call('stopTournamentRegistrations', function(error, result){
-                    if(error){
-                        console.error('stopTournamentRegistrations error');
-                        console.error(error);
-                    }
-                });
-        }
-
-    },
-
     'click #modifyLaunchButton': function(){
         Meteor.call('deleteCurrentYear', function(err, result){
             if(err){
@@ -73,72 +64,6 @@ Template.launchTournament.events({
                 }
             });
         });
-    },
-
-    'click #playerInfoButton':function(){
-      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
-      var poolList = new Array();
-      var alltypes = ["men","women","mixed"]; 
-      var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
-      var year = Years.findOne({_id:currentYear});
-      console.log(year);
-      console.log(currentYear);
-
-      if(year!=undefined){
-        for(var k in alltypes){
-          var type = Types.findOne({_id:year[alltypes[k]]});
-          for (var i in allcat) {
-            for (var j in type[allcat[i]]) {
-              poolList.push(type[allcat[i]][j]);
-            }
-          }
-        }
-
-        var fam = Types.findOne({_id:year["family"]});
-        for (var f in fam["all"]) {
-          poolList.push(fam["all"][f]);
-        }
-      }
-
-      for (var i in poolList) {
-        Meteor.call("emailtoPoolPlayers", poolList[i], function(error, result){
-          if(error){
-            console.log("emailToPlayer/error", error);
-          }
-        });
-      }
-    },
-
-    'click #leaderInfoButton':function(){
-      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
-      var poolList = new Array();
-      var alltypes = ["men","women","mixed"];
-      var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
-      var year = Years.findOne({_id:currentYear});
-
-      if(year!=undefined){
-        for(var k in alltypes){
-          var type = Types.findOne({_id:year[alltypes[k]]});
-          for (var i in allcat) {
-            for (var j in type[allcat[i]]) {
-              poolList.push(type[allcat[i]][j]);
-            }
-          }
-        }
-
-        var fam = Types.findOne({_id:year["family"]});
-        for (var f in fam["all"]) {
-         poolList.push(fam["all"][f]);
-        }
-      }
-
-      for (var i in poolList) {
-        Meteor.call("emailtoLeader", poolList[i], function(error, result){
-          if(error){
-            console.log("emailToLeader/error", error);
-          }
-        });
-      }
-    },
+    }
 
 });
