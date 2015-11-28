@@ -72,6 +72,7 @@ Meteor.methods({
 				}
 			});
 
+			console.log("Tournament launched for year "+data._id);
 			return Years.insert(data);
 		}
 		else {
