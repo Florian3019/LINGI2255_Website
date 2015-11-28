@@ -43,21 +43,21 @@
 		 	<!-- Add extra -->
  			<div class="row">
 				<div class="col-sm-3 col-sm-offset-2">
-			      	<div class="form-group" id="nameExtra">
+			      	<div class="form-group">
 			          	<input type="text" class="form-control" id="nameExtra" name="nameExtra" placeholder="Nom">
 			  		</div>
 			  	</div>
 				<div class="col-sm-2">
-			      	<div class="form-group" id="priceExtra">
+			      	<div class="form-group">
 			         	<input type="number" min="0" step="1" class="form-control" id="priceExtra" name="priceExtra" placeholder="Prix">
 			  		</div>
 			  	</div>
 			  	<div class="col-sm-3">
-			      <div class="form-group" id="comment">
-			         		 <input type="text" class="form-control" id="comment" name="comment" placeholder="Commentaire">
+			      <div class="form-group">
+			         		 <input type="text" class="form-control" id="commentExtra" name="comment" placeholder="Commentaire">
 			  		</div>
 			  	</div>
-			  	<button type="submit" class="btn btn-default" >
+			  	<button  id="addExtraButton" class="btn btn-default" >
 					<span class="glyphicon glyphicon-plus" style="color:green" aria-hidden="true"></span>
 				</button>
 	  		</div>
@@ -67,4 +67,16 @@
 	  			</div>
         	</div>
 	  		
+			<div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+			          <div id="infoBoxExtra" class="alert alert-info" role="alert" hidden>
+				        <h4>
+				          <span class="glyphicon glyphicon-info-sign"></span>
+				          <span class="sr-only">Info:</span>
+				          <span id="infoMsg">Veuillez remplir le nom et le prix</span>
+				        </h4>
+				      </div>
+					</div>
+			</div>	
+
 </template>
