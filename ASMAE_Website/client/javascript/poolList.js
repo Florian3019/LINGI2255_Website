@@ -673,17 +673,20 @@ Template.poolList.events({
 			var logPairs = Math.log2(listPairs.length);
 			var numMatchesFull = Math.pow(2,Math.ceil(logPairs))/2;
 			var index=getOrder(numMatchesFull);
+			var round=0;
 
 			for(var k=0;k<numMatchesFull;k++){
-				result.push(-1);
+				result.push([0,-1]);
 			}
 
 			var num = getNumberMatchesFirstRound(listPairs.length);
 
 			for(var m=0;m<num;m++){
-				result[index[m]]=courts[(start+next) % courts.length];
+				result[index[m]]=[round, courts[(start+next) % courts.length]];
 				next++;
 			}
+
+			round++;
 
 			var max=numMatchesFull;
 
@@ -696,20 +699,21 @@ Template.poolList.events({
 				var count=0;
 
 				for(var m=0;m<size_previous;m=m+2){
-					if(result[begin_previous+m]==-1){
-						result.push(courts[(start+next) % courts.length]);
+					if(result[begin_previous+m][0]==-1){
+						result.push([round,courts[(start+next) % courts.length]]);
 						next++;
 					}
 					else{
-						result.push(result[begin_previous+m]);
+						result.push([round,result[begin_previous+m][1]]);
 					}	
 				}
 				begin_previous+=size_previous;
 				size_previous=size_previous/2;
+				round++;
 			}
 
 			for(var j=0;j<result.length;j++){
-				if(result[j]!=-1){
+				if(result[j][1]!=-1){
 					final_result.push(result[j]);
 				}
 			}
@@ -776,7 +780,7 @@ Template.poolList.events({
 		var typesSaturday = ["mixed","family"];
 		var typesSunday = ["men","women"];
 		var typesTable = [typesSaturday,typesSunday];
-		var year = Years.findOne({_id:""+new Date().getFullYear()});
+		var year = Years.findOne({_id:"2014"});
 		var start = 0;
 
 		////////// Saturday and Sunday \\\\\\\\\\

@@ -30,6 +30,10 @@
 			      		<option value="{{this}}"> {{this}} </option>
 			      {{/each}}
      		 </select>
+
+         {{#if getChangeCourtsBracket}}
+            <label class="checkbox-inline" id="changeAll"><input type="checkbox" value="false" id="all">Changer dans tous les rounds</label>
+          {{/if}}
         </div>
         <div class="modal-footer">
         	<button type="button" class="btn btn-default valid" data-dismiss="modal">Valider</button>
@@ -38,4 +42,5 @@
       </div>
     </div>
   </div>
+
 </template>
