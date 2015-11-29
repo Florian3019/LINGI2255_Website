@@ -2021,7 +2021,38 @@ Meteor.methods({
 		return GlobalValues.update({_id: "currentYear"}, {$set: {
 			value: ""
 		}});
+	},
 
+
+	'checkAFTranking': function(firstName, lastName, AFTranking){
+
+		var url = "http://www.aftnet.be/Portail-AFT/Joueurs/Resultats-recherche-affilies.aspx?mode=searchname&nom="+lastName+"&prenom="+firstName;
+		var response = HTTP.get(url);
+
+		//var affiliationNumber = "4013748";
+		//var url = "http://www.aftnet.be/Portail-AFT/Joueurs/Fiche-signaletique-membre.aspx?numfed="+affiliationNumber;
+		//var response = HTTP.get(url);
+		var stringToFind = "plc_lt_zoneContent_pageplaceholder_pageplaceholder_lt_zoneSubPage_pageplaceholder_pageplaceholder_lt_zoneContent_AFT_Member_Profile_lblClassementValue";
+		var beginIndex = response.content.search(stringToFind);
+		if(beginIndex > 0)
+		{
+			var i = beginIndex + stringToFind.length + 23;
+			var result = "";
+			while(response.content.charAt(i) != '<'){
+				result += response.content.charAt(i);
+				i++;
+			}
+
+			if(result == AFTranking){	//The entered AFT ranking corresponds to the AFT ranking on aftnet.be
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {		//Player not found on aftnet.be
+			return true;
+		}
 
 	}
 
