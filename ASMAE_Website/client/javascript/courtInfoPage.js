@@ -16,7 +16,7 @@ Template.courtInfoPage.helpers({
 
     'ownerLastName': function(){
       if(this.owner.profile.lastName){
-        return this.owner.profile.lastName; 
+        return this.owner.profile.lastName;
       }
       else
         return null;
@@ -24,7 +24,7 @@ Template.courtInfoPage.helpers({
 
     'ownerFirstName': function(){
       if(this.owner.profile.firstName){
-        return this.owner.profile.firstName; 
+        return this.owner.profile.firstName;
       }
       else
         return null;
@@ -83,10 +83,10 @@ Template.courtInfoPage.events({
       Meteor.call("addToModificationsLog",
         {"opType":"Propriétaire OK pour un terrain",
         "details":
-            "Terrain "+ formatAddress(addr) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
+            "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
         });
     },
-    
+
     'click #button_ownerNotOK':function(event){
       var data = event.currentTarget.dataset;
       var courtId = data.id;
@@ -100,7 +100,7 @@ Template.courtInfoPage.events({
       Meteor.call("addToModificationsLog",
         {"opType":"Propriétaire pas OK pour un terrain",
         "details":
-            "Terrain "+ formatAddress(addr) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
+            "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
         });
     },
 
@@ -121,7 +121,7 @@ Template.courtInfoPage.events({
         });
 
     },
-    
+
     'click #button_staffNotOK':function(event){
       var data = event.currentTarget.dataset;
       var courtId = data.id;
@@ -143,7 +143,7 @@ Template.courtInfoPage.events({
       event.preventDefault();
 
       if (confirm('Etes-vous certain de vouloir supprimer définitivement ce terrain?\nToutes les données concernant ce terrain seront supprimées. Cette action est irréversible.')) {
-		 
+
         var owner = Meteor.users.findOne({"_id":this.court.ownerID},{"profile":1});
         var address = Addresses.findOne({_id:this.court.addressID});
 
@@ -152,7 +152,7 @@ Template.courtInfoPage.events({
         var poolID = Pools.findOne({courtId:this.court._id},{_id:1});
 
         if(poolID){
-          Pools.update({_id:poolID},{$unset: {courtId:""}}); 
+          Pools.update({_id:poolID},{$unset: {courtId:""}});
         }
 
         Meteor.call('deleteCourt', this.court._id, function(error, result){

@@ -1,0 +1,122 @@
+<template name="tournamentProgress">
+    <div class="page-header">
+        <h2>Déroulement du tournoi</h2>
+    </div>
+
+    <div class="{{stepIsDoneClass 1}} firstBlock">
+        <h5>1. Lancer les inscriptions au tournoi</h5>
+        {{> launchTournament}}
+    </div>
+
+    <div class="{{stepIsDoneClass 2}}">
+        <h5>2. Envoyer un email d'invitation à tous les utilisateurs</h5>
+        <p>Cliquez sur ce bouton pour prévenir tous les utilisateurs du site par email que les inscriptions au tournoi sont lancées</p>
+        <center>
+            <button id="sendRegistrationsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
+            <button id="doneButton2" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
+            <button id="notDoneButton2" type="button" class="btn btn-default btn-sm okDone">Non fait</button>
+        </center>
+    </div>
+
+    <div class="{{stepIsDoneClass 3}}">
+        <h5>3. Accepter les terrains</h5>
+        <center>
+            <button id="doneButton3" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
+            <button id="notDoneButton3" type="button" class="btn btn-default btn-sm okDone">Non fait</button>
+        </center>
+    </div>
+
+    <div class="{{stepIsDoneClass 4}}">
+        <h5>4. Clôturer les inscriptions</h5>
+        {{> closeRegistrationsBlock}}
+    </div>
+
+    <div class="{{stepIsDoneClass 5}}">
+        <h5>5. Gérer les poules</h5>
+        <p>Utilisez le menu "Gestion du tournoi" pour gérer les poules.</p>
+        <center>
+            <button id="doneButton5" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
+            <button id="notDoneButton5" type="button" class="btn btn-default btn-sm okDone">Non fait</button>
+        </center>
+    </div>
+
+    <div class="{{stepIsDoneClass 6}}">
+        <h5>6. Envoyer un email aux joueurs et aux chefs de poules</h5>
+        <p>Cliquez sur ce bouton pour envoyer aux joueurs les informations sur le tournoi et les informations nécessaires aux chefs de poules</p>
+        <center>
+            <button id="sendPoolsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
+            <button id="doneButton6" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
+            <button id="notDoneButton6" type="button" class="btn btn-default btn-sm okDone">Non fait</button>
+        </center>
+    </div>
+
+    <div class="{{stepIsDoneClass 7}}">
+        <h5>7. Terminer le tournoi</h5>
+        <center>
+            <button id="restartTournamentButton" type="button" class="btn btn-default btn-sm">Terminer</button>
+        </center>
+    </div>
+
+</template>
+
+
+<template name="launchTournament">
+
+    {{#if registrationsON}}
+
+    {{#with tournamentData}}
+    <p>
+        Date: {{tournamentDateFormat tournamentDate}}<br>
+        Prix: {{tournamentPrice}}&euro;
+    </p>
+    {{/with}}
+
+    {{#if isAdmin}}
+        <p>Si vous vous êtes trompé dans la date ou le prix du tournoi cliquez ici pour les modifier (ceci peut avoir des conséquences sur les inscriptions déjà effectuées)</p>
+        <center><button id="modifyLaunchButton" type="button" class="btn btn-default btn-sm">Modifier</button></center>
+    {{else}}
+        <p>Si la date ou le prix du tournoi est incorrect, contactez un administrateur.</p>
+    {{/if}}
+
+    {{else}}
+
+    <form id="launchTournamentForm" role="form">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" placeholder="Date de début du tournoi" required>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <input type="number" name="tournamentPrice" id="tournamentPrice" class="form-control" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
+                </div>
+            </div>
+            <br>
+
+            <center>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default">C'est parti!</button>
+                </div>
+            </center>
+
+        </div>
+    </form>
+    {{/if}}
+</template>
+
+
+<template name="closeRegistrationsBlock">
+    {{#if isAdmin}}
+
+        {{#if registrationsON}}
+            <p>Cliquez sur ce bouton pour fermer les inscriptions au tournoi de cette année</p>
+            <center><button id="closeRegistrationsButton" type="button" class="btn btn-default btn-sm">Fermer les inscriptions</button></center>
+        {{else}}
+            <p>Vous devez d'abord ouvrir les inscriptions avant de pouvoir les clôturer.</p>
+        {{/if}}
+    {{else}}
+        <p>Seul un administrateur peut clôturer les inscriptions.</p>
+    {{/if}}
+</template>

@@ -1,27 +1,24 @@
 <template name="adminAddCourt">
-	<div class="container">
+	<div class="page-header">
+        <h2>Ajouter un terrain</h2>
+  	</div>
 		<form role="form">
 			<div class="form-group">
-				<div class="row">
-          			<div class="col-sm-6 col-sm-offset-3">
-						<h2>Ajouter un terrain</h2>
-					</div>
-                </div>
                 <div class="row">
-	                <div class="col-sm-6 col-sm-offset-3">
+	                <div class="col-sm-10 col-sm-offset-1">
 	                	<h6>Entrez l'une de ces trois informations pour associer le terrain à un propriétaire:</h6>
 	                </div>
                 </div>
 				<div class="row">
-					<div class="col-sm-2 col-sm-offset-3">
+					<div class="col-sm-3 col-sm-offset-1">
 						<label for="lastName">Nom:</label>
 						<input type="text" name="lastName" id="lastName" value="{{users.lastName}}" class="form-control">
 					</div>
-					<div class="col-sm-2">
+					<div class="col-sm-3">
 						<label for="firstName">Prénom:</label>
 						<input type="text" name="firstName" id="firstName" value="{{users.firstName}}" class="form-control">
 					</div>
-					<div class="col-sm-2">
+					<div class="col-sm-4">
 						<label for="address">Email:</label>
 						<input type="text" name="address" id="address" value="{{users.address}}" class="form-control">
 					</div>
@@ -29,12 +26,12 @@
 				<br>
 				{{#if searchComplete}}
 					<div class="row">
-						<div class="col-sm-6 col-sm-offset-3">
-				        	<h6><b>Choisissez un propriétaire parmis la liste :</b></h6>
+						<div class="col-sm-10 col-sm-offset-1">
+							<legend>Choisissez un propriétaire parmis la liste</legend>
 						</div>
 					</div>
 					<div class="row">
-		        		<div class="col-sm-3 col-sm-offset-3">
+		        		<div class="col-sm-10 col-sm-offset-1">
 		  					<ul class="list-group">
 		    					{{#each player}}
 		      					<li class="list-group-item playerFound" id="{{this._id}}">{{profile.lastName}}, {{profile.firstName}}</li>
@@ -45,8 +42,8 @@
 					<br>
 					{{#with getSelectedOwner}}
 					<div class="row">
-						<div class="col-sm-6 col-sm-offset-3">
-				        	<h5><b>Addresse du terrain:</b></h5>
+						<div class="col-sm-10 col-sm-offset-1">
+							<legend>Addresse du terrain</legend>
 						</div>
 					</div>
 						<div class="row">
@@ -112,7 +109,7 @@
 
 						<div class="form-group">
 							<div class="row">
-								<div class="col-sm-2 col-sm-offset-3">
+								<div class="col-sm-6 col-sm-offset-3">
 									<label for="numberOfCourts">Nombre de terrains:</label>
 									<input type="number" min="1" name="numberOfCourts" id="numberOfCourts" class="form-control" value="{{#if court}}{{court.numberOfCourts}}{{else}}1{{/if}}">
 								</div>
@@ -151,7 +148,7 @@
 					{{/with}}
 				{{else}}
 					<div class="row">
-						<div class="col-sm-6 col-sm-offset-3">
+						<div class="col-sm-10 col-sm-offset-1">
 					          <div id="infoBox" class="alert alert-info" role="alert">
 						        <h4>
 						          <span class="glyphicon glyphicon-info-sign"></span>
@@ -164,5 +161,4 @@
 				{{/if}}
 			</div>
 		</form>
-	</div>
 </template>

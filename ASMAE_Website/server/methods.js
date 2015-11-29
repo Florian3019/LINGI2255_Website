@@ -72,6 +72,14 @@ Meteor.methods({
 				}
 			});
 
+			//Add the stepXdone fields
+			data.step2done = false;
+			data.step3done = false;
+			data.step4done = false;
+			data.step5done = false;
+			data.step6done = false;
+
+			console.log("Tournament launched for year "+data._id);
 			return Years.insert(data);
 		}
 		else {
@@ -102,6 +110,12 @@ Meteor.methods({
 
 	'stopTournamentRegistrations': function(){
 		if(Meteor.call('isAdmin')){
+
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			Years.update({_id: currentYear}, {$set: {
+				step4done: true
+			}});
+
 			GlobalValues.update({_id:"registrationsON"}, {$set: {
 				value : false
 			}}, function(err, result){
@@ -112,6 +126,7 @@ Meteor.methods({
 		}
 		else{
 			console.error("You don't have the permission to do that.");
+			throw new Meteor.Error("stopTournamentRegistrations: ", err);
 		}
 	},
 
@@ -1595,7 +1610,7 @@ Meteor.methods({
     var data  ={
       intro:"Bonjour,",
       important:"Nous avons une grande nouvelle à vous annoncer !",
-      texte:"Depuis aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
+      texte:"Dès aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
       encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
     };
     //TODO decomment when out of production
@@ -1736,6 +1751,44 @@ Meteor.methods({
       console.log("Mails not send due to MAILGUN");
 
 
+    }
+  },
+
+  /* This function is to the remain player in a pair when the other is unregistered*/
+  'emailtoAlonePairsPlayer':function(alonePlayerId,pair){
+    var alonePlayer = Meteor.users.findOne({_id:alonePlayerId});
+
+    if(alonePlayer!=undefined){
+      if(alonePlayerId==pair.player1._id || alonePlayerId==pair.player2._id){
+        var to = alonePlayer.emails[0].address;
+        var subject= "Concernant votre paire au tournoi de tennis.";
+        var data ={
+          intro:"Bonjour "+alonePlayer.profile.firstName+",",
+          important:"Nous avons une mauvaise nouvelle pour vous.",
+          texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
+          encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !"
+        };
+
+        var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+        var options =   {
+          auth: "api:" + process.env.MAILGUN_API_KEY,
+          params: {
+            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+            "to":to,
+            "subject": subject,
+            "html": SSR.render("mailing",data),
+          }
+        }
+        var onError = function(error, result) {
+          if(error) {console.error("Error: " + error)}
+        }
+        Meteor.http.post(postURL, options, onError);
+        console.log("Email sent");
+      }else{
+        console.error("Vous n'avez pas les permissions requises");
+      }
+    }else{
+      console.error("Alone player is undefined");
     }
   },
 
@@ -1906,6 +1959,7 @@ Meteor.methods({
 		}
 
 		var pair = Pairs.findOne({'_id':pair_id});
+		var save = Pairs.findOne({'_id':pair_id});
         if(typeof pair.player2 === 'undefined'){
           Pairs.remove({'_id':pair_id});
           var pools = Pools.find().fetch();
@@ -1932,17 +1986,43 @@ Meteor.methods({
             Pairs.update({'_id': pair_id}, {$set: {'player1': pair.player2}});
           }
           Pairs.update({'_id': pair_id}, {$unset: {'player2': ""}});
-          var new_pair = Pairs.findOne({'_id':pair_id});
-          var new_p = Meteor.users.findOne({'_id':new_pair.player1._id});
-          var email = new_p.emails[0].address;
-          var data ={
-            intro:"Bonjour "+new_p.profile.firstName+",",
-            important:"Nous avons une mauvaise nouvelle pour vous.",
-            texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
-            encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !\n A très bientôt, \n Le staff Le Charles de Lorraine."
-          };
-          //TODO sent by staff  Meteor.call('emailFeedback',email,"Concernant votre inscription au tournoi",data);
+
+          //Send email in secure
+          var aloneId=Pairs.findOne({_id:pair_id}).player1._id;
+          Meteor.call("emailtoAlonePairsPlayer",aloneId,save);
         }
+	},
+
+	/*
+	*	Used for the steps of the tournamentProgress template.
+	*	It updates the stepXdone value of the current year (in Years) with true (where X is the step number).
+	*/
+	'updateDoneYears' : function(stepNumber, booleanValue){
+		if(Meteor.call('isStaff') || Meteor.call('isAdmin')){
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			var stepField = "step"+stepNumber+"done";
+			var data = {};
+			data[stepField] = booleanValue;
+			return Years.update({_id: currentYear}, {$set: data});
+		}
+		else {
+			console.error("")
+			throw new Meteor.error("You don't have the permissions to call updateDoneYears");
+		}
+	},
+
+	//Put currentYear to ""
+	'restartTournament': function(){
+		if(!Meteor.call('isAdmin')){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to restart a tournament");
+		}
+
+		return GlobalValues.update({_id: "currentYear"}, {$set: {
+			value: ""
+		}});
+
+
 	}
 
 
