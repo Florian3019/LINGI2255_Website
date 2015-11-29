@@ -1277,6 +1277,7 @@ Template.poolContainerTemplate.helpers({
 
 Template.poolContainerTemplate.events({
 	'click .scoreButton' : function(event){
+    Session.set("printSheets/Value", false);
 		Session.set("PoolList/ChosenScorePool", event.currentTarget.dataset.poolid);
 	},
 });

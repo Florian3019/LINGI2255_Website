@@ -1,30 +1,32 @@
 Template.modifyExtras.events({
-	'submit form':function(){
-		event.preventDefault();
-
+	'click #addExtraButton':function(event){
 		// Add new extra
-	
-		var name = event.target.nameExtra.value;
-		var price = event.target.priceExtra.value;
-		var comment = event.target.comment.value;
 
-		if(name && price){
+		var name = document.getElementById("nameExtra");
+		var price = document.getElementById("priceExtra");
+		var comment =  document.getElementById("commentExtra");
+
+		var infoBox = document.getElementById("infoBoxExtra");
+
+		if(name.value!=="" && name.value!==undefined && price.value!=="" && price.value!==undefined){
 			var data={
-					"name": name,
-					"price": price,
-					"comment": comment
+					"name": name.value,
+					"price": price.value,
+					"comment": comment.value
 			};
-
 			Meteor.call('updateExtra',data);
 			Meteor.call("addToModificationsLog", 
             {"opType":"Ajout d'un extra", 
-            "details":name +": "+price+"€ "+ (comment!=="" ? "("+comment+")" : "") 
+            "details":name.value +": "+price.value+"€ "+ (comment.value!=="" ? "("+comment.value+")" : "") 
             });
+            infoBox.setAttribute("hidden","");
+            name.value = "";
+			price.value = "";
+			comment.value = "";
 		}
-
-		event.target.nameExtra.value = "";
-		event.target.priceExtra.value = "";
-		event.target.comment.value = "";
+		else{
+			infoBox.removeAttribute("hidden");
+		}
 }
 });
 

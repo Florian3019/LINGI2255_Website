@@ -1,0 +1,31 @@
+.firstBlock{
+    border-top: 1px solid  #dddddd;
+}
+
+.okBlock{
+    padding: 10px;
+    padding-left: 20px;
+    border-right: 1px solid  #dddddd;
+    border-bottom: 1px solid  #dddddd;
+    border-left:3px solid green;
+    color: #BDBDBD;
+}
+.okBlock h5{
+    color: #BDBDBD;
+}
+
+.notokBlock{
+    padding: 10px;
+    padding-left: 20px;
+    border-right: 1px solid  #dddddd;
+    border-bottom: 1px solid  #dddddd;
+    border-left: 3px solid  #dddddd;
+}
+
+.okBlock .notDone{
+    display: none;
+}
+
+.notokBlock .okDone{
+    display: none;
+}

@@ -1,10 +1,13 @@
 Template.selectNewCourt.events({
-    'click .courtRow' : function(event){
+    'click #newCourtCancel':function(event){
+        Session.set("PoolList/ChosenCourt","");
+    },
 
-    		var courts = event.currentTarget.lastElementChild.innerText;
-    		Session.set("selectNewCourt/courts",courts);
-    	
-            $('#chooseCourtsModal').modal('show');
+    'click .courtRow' : function(event){
+		var courts = event.currentTarget.lastElementChild.innerText;
+		Session.set("selectNewCourt/courts",courts);
+	
+        $('#chooseCourtsModal').modal('show');
      }
 });
 
@@ -25,6 +28,12 @@ Template.chooseCourtsModal.helpers({
         }
     }
   });
+
+var getStringOptions = function(){
+    return " dans "+typesTranslate[Session.get("PoolList/Type")]+">"+
+            categoriesTranslate[Session.get("PoolList/Category")]+
+            " (" + Session.get("PoolList/Year")+")";
+}
 
 Template.chooseCourtsModal.events({
     'click .valid': function(event){
@@ -59,6 +68,12 @@ Template.chooseCourtsModal.events({
 
             Meteor.call('updatePool',pool);
         }
+
+        Meteor.call("addToModificationsLog",
+        {"opType":"Changement de terrain",
+        "details":
+            "Le terrain de la poule "+poolId+" est maintenant "+courtNumber+ getStringOptions()
+        });
 
         $('#chooseCourtsModal')
         .on('hidden.bs.modal', function() {

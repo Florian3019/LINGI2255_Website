@@ -16,14 +16,14 @@
                       <p> Vous ne retrouvez pas notre e-mail de confirmation ?</p>
                       <p> Merci de vérifier s'il n'a pas été marqué comme <i> spam </i> ou <i> courrier indésirable </i>.</p>
                       <div class="modal-footer">
-                        <button id="sign-up-ok" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                        <button id="sign-up-ok" class="btn btn-default" data-dismiss="modal">Fermer</button>
                       </div>
                 </div>
             </div>
         </div>
     </div>  <!-- Pop up inscription -->
 
- <nav class="navbar navbar-default navbar-fixed-top">
+ <nav class="navbar navbar-default navbar-fixed-top {{marginNavBar}}">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -54,7 +54,8 @@
               <li><a href="{{pathFor route='contacts'}}" id="askQuestion">Poser une question</a></li>
               {{/if}}
               <li><a href="https://www.facebook.com/media/set/?set=a.10153598504984631.1073741844.9064359630&type=1&l=153e72eadf" target="_blank">Photos</a></li>
-              <li><a href="{{pathFor route='rules'}}">Règlement</a></li>
+              <li><a href="{{pathFor route='rules'}}">Réglement</a></li>
+              <li><a href="{{pathFor route='faq'}}">FAQ</a></li>
           </ul>
           <div class="nav navbar-nav navbar-right">
             {{> loginButtons}}

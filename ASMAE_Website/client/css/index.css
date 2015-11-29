@@ -11,20 +11,38 @@
 
 /** Add !important to override boostrap setting **/
 body {
-		padding-top: 64px;
+	background-color: #EFCFA0;
+}
+
+.btn {
+	text-transform: none !important;
 }
 
 /* Navbar on the top */
-/*.navbar {
-}*/
+.navbar {
+    min-height: 64px !important;
+    background-color: #EFCFA0 !important;
+}
+
+.navbar-nav > li > a, .navbar-brand {
+    /*padding-top:5px !important;
+    padding-bottom:0 !important;
+    color: white; */
+    height: 64px;
+}
 
 /* Sidebar on the left */
 .sidebar {
+    padding-top: 64px;
     position: fixed;
     width: 240px;
     height: 100%;
-    background: #afafaf;
+    background: white;
 	overflow-y:auto;
+    -webkit-box-shadow: 4px 0 3px -1px #888;
+    -moz-box-shadow: 4px 0 3px -1px #888;
+    -o-box-shadow: 4px 0 3px -1px #888;
+    box-shadow: 4px 0 3px -1px #888;
 }
 
 .menuItem {
@@ -45,24 +63,15 @@ body {
 
 .nav-sidebar-header {
 	padding: 10px;
+    font-size: 25px;
 }
 
 /* Content of the web site */
 .page-content {
+    padding-top: 64px;
     margin-left: 240px;
-	height: 100%;
     width: auto;
-    position: relative;
-    background: #ecf0f1;
-    overflow: auto;
-    z-index: 1;
-}
-
-.page-content-no-left-margin {
-	height: 100%;
-    width: auto;
-    position: relative;
-    background: #ecf0f1;
+    height: 100%;
     overflow: auto;
     z-index: 1;
 }
@@ -71,16 +80,13 @@ body {
 	padding-top: 30px;
 	padding-bottom: 30px;
   	color: inherit;
-  	background-color: #ecf0f1;
-  	min-height: 652px;
+    background-color: white;
+  	min-height: 710px;
 }
 
 /* Footer of the web site */
 .footer {
-    width: auto;
-    height: auto;
-    position: relative;
-    background: white;
+    background: #EFCFA0;
 }
 
 /* Home page disign */
@@ -94,9 +100,13 @@ body {
 }
 
 /* Options */
-.nopadding {
-   		padding: 0 !important;
+.nomargin {
    		margin: 0 !important;
+}
+
+.nopadding {
+        padding: 0 !important;
+        margin: 0 !important;
 }
 
 /* Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris */
@@ -121,7 +131,10 @@ body {
     overflow: hidden;
 }
 
-
+/* Box alert info */
+.alert-info {
+    background-color: #A0522D !important;
+}
 
 /**
 * 	 __  __          _ _
@@ -133,13 +146,31 @@ body {
 *
 **/
 
-@media (min-width: 981px) {
+/* If screen width smaller than 981 px
+@media (max-width: 981px) {
 	body {
-		padding-top: 64px;
-		/*background: #FF9900; */
+		padding-top: 128px;
 	}
 }
 
 
+If screen width smaller than 767 px
+@media (max-width: 767px) {
+    body {
+        padding-top: 64px;
 
- 
+    }
+}  */
+
+/* If screen width smaller than 50^0px*/
+/* Hide navside menu */
+@media only screen and (max-width: 500px) {
+
+    .sidebar {
+        display: none;
+    }
+
+    .page-content {
+        margin-left: 0;
+    }
+}

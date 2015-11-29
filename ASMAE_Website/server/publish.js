@@ -5,10 +5,7 @@ var isStaffOrAdmin = function(nid){
 };
 
 Meteor.publish('Courts', function(){
-    if(isStaffOrAdmin(this.userId)) {
-        return Courts.find();
-    }
-    return Courts.find({ownerID: this.userId});
+  return Courts.find();
 });
 
 Meteor.publish('Addresses', function(){
@@ -16,6 +13,9 @@ Meteor.publish('Addresses', function(){
         return Addresses.find();
       }
       var user = Meteor.users.findOne({_id:this.userId},{"profile.addressID":1});
+      if (typeof user === 'undefined') {
+          return undefined;
+      }
       return Addresses.find({$or:[{_id: user.profile.addressID}, {"isCourtAddress":true}]});
 });
 
@@ -87,6 +87,27 @@ var allowForStaffOrAdmin = {
 Pools.allow(allowForStaffOrAdmin);
 
 Types.allow(allowForStaffOrAdmin);
+
+Courts.allow({
+  'insert': function (userId,doc) {
+        /* user and doc checks ,
+        return true to allow insert */
+        if(isStaffOrAdmin(userId)) return true;
+        return userId===doc.ownerID;
+  },
+  'update': function (userId,doc) {
+        /* user and doc checks ,
+        return true to allow update */
+        if(isStaffOrAdmin(userId)) return true;
+        return userId===doc.ownerID;
+  },
+  'remove': function (userId,doc) {
+        /* user and doc checks ,
+        return true to allow remove */
+        if(isStaffOrAdmin(userId)) return true;
+        return userId===doc.ownerID;
+  }
+});
 
 Pairs.allow(allowForStaffOrAdmin);
 

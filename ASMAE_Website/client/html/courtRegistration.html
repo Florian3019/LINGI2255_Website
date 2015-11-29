@@ -1,11 +1,14 @@
 <template name="courtRegistration">
-	<div class="container">
 		<form id="courtRegistrationForm" role="form">
 
 		<a href="{{pathFor 'myCourts'}}"> <button type="button" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button></a>
 
 			<div class="form-group">
-				<legend>Informations sur le terrain:</legend>
+				<div class="row">
+      				<div class="col-sm-6 col-sm-offset-3">
+						<legend>Informations sur le terrain:</legend>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col-sm-2 col-sm-offset-3">
 						<label for="street">Rue:</label>
@@ -71,7 +74,7 @@
 
 				<div class="form-group">
 					<div class="row">
-						<div class="col-sm-2 col-sm-offset-3">
+						<div class="col-sm-6 col-sm-offset-3">
 							<label for="numberOfCourts">Nombre de terrains (à cette addresse):</label>
 							<input type="number" min="1" name="numberOfCourts" id="numberOfCourts" class="form-control" value="{{#if court}}{{court.numberOfCourts}}{{else}}1{{/if}}">
 						</div>
@@ -115,5 +118,4 @@
 				</div>
 			</div>
 		</form>
-	</div>
 </template>

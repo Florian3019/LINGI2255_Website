@@ -1,16 +1,15 @@
 <!-- Takes ID = <userID> as parameter -->
 <template name="profileEdit">
-	<div class="container">
+		<div class="page-header">
+        	<h2>Modifier un joueur</h2>
+		</div>
 		<form role="form">
 			{{#with getPlayer}}
 			<div class="form-group">
 				<div class="row">
-          			<div class="col-sm-6 col-sm-offset-3">
-						<h2>Modification du profil:</h2>
-					</div>
-				</div>
-	 			<div class="row">
-          			<div class="col-sm-6 col-sm-offset-3">
+				<div class="col-sm-10 col-sm-offset-1">
+				<div class="row">
+          			<div class="col-sm-12">
 						<div class="panel panel-info">
 	            			<div class="panel-heading">
 	               				<h3 class="panel-title"><div align="left">{{user.username}} - {{mail}}</div><div align="right"></div></h3>
@@ -19,11 +18,11 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-3 col-sm-offset-3">
+					<div class="col-sm-6">
 						<label for="text">Nom:</label>
 						<input type="text" class="form-control" id="lastname" name="lastname" value="{{user.profile.lastName}}">
 					</div>
-					<div class="col-sm-3">
+					<div class="col-sm-6">
 						<label for="text">Prénom:</label>
 						<input type="text" class="form-control" id="firstname" value="{{user.profile.firstName}}" name="firstname">
 					</div>
@@ -31,7 +30,7 @@
 
 				<br>
 				<div class="row">
-					<div class="col-sm-3 col-sm-offset-3">
+					<div class="col-sm-6">
 						<label for="text">Numéro de téléphone:</label>
 						<div class="input-group">
 							<span class="input-group-addon" id="phone-basic-addon"><span class="glyphicon glyphicon-earphone"></span></span>
@@ -41,22 +40,22 @@
 				</div>
 				<br>
 				<div class="row">
-					<div class="col-sm-6 col-sm-offset-3">
+					<div class="col-sm-12">
 	  					<label>Date de naissance:</label> <br>
 	  				</div>
-	  				<div class="col-sm-2 col-sm-offset-3">
+	  				<div class="col-sm-4">
      					<div class="form-group" id="birthDayDiv">
       						<label for="day">Jour:</label>
           					<input type="number" id="birthDay" class="form-control" min="1" value="{{getDate}}" name="jour de naissance">
   	  					</div>
     				</div>
-					<div class="col-sm-2">
+					<div class="col-sm-4">
       					<div class="form-group" id="birthMonthDiv">
       						<label for="month">Mois:</label>
           					<input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{getMonth}}" name="mois de naissance">
         				</div>
       				</div>
-					<div class="col-sm-2">
+					<div class="col-sm-4">
       					<div class="form-group" id="birthYearDiv">
       						<label for="year">Année:</label>
           					<input type="number" id="birthYear" class="form-control" min="1950" value="{{getYear}}" name="année de naissance">
@@ -64,7 +63,7 @@
 	  				</div>
   				</div>
   				<div class="row">
-					<div class="col-sm-10 col-sm-offset-3">
+					<div class="col-sm-12">
 						<div class="form-group has-feedback" id="sexDiv">
 							<label for="sex"> Genre:</label>
 							<br>
@@ -77,21 +76,21 @@
 				</div>
 
 			<div class="row">
-				<div class="col-sm-3 col-sm-offset-3">
+				<div class="col-sm-5">
 					<div class="form-group" id="streetDiv">
 						<label for="text">Rue:</label>
 						<input type="text" class="form-control" id="street" value="{{address.street}}" name="street">
 					</div>
 				</div>
 
-				<div class="col-sm-2">
+				<div class="col-sm-4">
 					<div class="form-group" id="numberDiv">
 						<label for="text">Numéro:</label>
 						<input type="number" min="0" step="1" class="form-control" id="addressnumber" value="{{address.number}}" name="addressNumber">
 					</div>
 				</div>
 
-				<div class="col-sm-1">
+				<div class="col-sm-3">
 					<div class="form-group">
 						<label for="text">Boite:</label>
 						<input type="text" class="form-control" id="box"  value="{{address.boxNumber}}" name="boxNumber">
@@ -100,20 +99,20 @@
 			</div>
 
 			<div class="row">
-				<div class="col-sm-2 col-sm-offset-3">
+				<div class="col-sm-5">
 					<div class="form-group" id="countryDiv">
 						<label for="text">Pays:</label>
 						<input type="text" class="form-control" id="country" value="{{address.country}}" name="country">
 					</div>
 
 				</div>
-				<div class="col-sm-2">
+				<div class="col-sm-4">
 					<div class="form-group" id="cityDiv">
 						<label for="text">Ville:</label>
 						<input type="text" class="form-control" id="city" value="{{address.city}}" name="city">
 					</div>
 				</div>
-				<div class="col-sm-2">
+				<div class="col-sm-3">
 					<div class="form-group" id="zipcodeDiv">
 						<label for="text">Zip code:</label>
 						<input type="number" min="0" step="1" class="form-control" id="zipcode" value="{{address.zipCode}}" name="zipcode">
@@ -121,7 +120,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-sm-10 col-sm-offset-3">
+				<div class="col-sm-12">
 					<div class="form-group" id="AFTDiv">
 						<label for="playerRank">Classement:</label>
 						<br>
@@ -150,17 +149,18 @@
 			</div>
 			<br>
 			<div class="row">
-          		<div class="col-sm-6 col-sm-offset-3">
+          		<div class="col-sm-12">
 					<button type="submit" class="btn btn-default">Enregistrer</button>
 				</div>
 				<br>
 				<br>
-				<div class="col-sm-6 col-sm-offset-3">
+				<div class="col-sm-12">
 					Pour supprimer votre compte il faut envoyer un mail à un membre du staff. Vérifiez au préalable que vous n'êtes pas inscrit au tournoi cette année.
 				</div>
 			</div>
 		</div>
+		</div>
+		</div>
 		{{/with}}
 	</form>
-</div>
 </template>

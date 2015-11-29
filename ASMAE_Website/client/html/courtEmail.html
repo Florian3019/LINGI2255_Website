@@ -1,21 +1,24 @@
 <template name="courtEmail">
-<div>
-<h4> Le mail ci-dessous sera envoyé à tous les propriétaires de terrain dont vous aurez coché la case.</h4>
+	<div class="page-header">
+        <h2>Ajouter un terrain</h2>
+  	</div>
 
-<textarea class="form-control" rows="5" id="mail" placeholder="" name="mail"></textarea>
+	<div>
+	<legend> Le mail ci-dessous sera envoyé à tous les propriétaires selectionnés ci-dessous</legend>
 
-<button type="button" id="Boutton" class="btn btn-default">Envoyer ce mail!</button>
-<br/>
-<br/>
-</div>
-<div>
-	<button type="button" id="SelectAll" class="btn btn-default">Selectionner tous les terrains ! </button>
-<button type="button" id="UnselectAll" class="btn btn-default">Déselectionner tous les terrains ! </button>
-<br/>
-<br/>
+	<textarea class="form-control" rows="5" id="mail" placeholder="" name="mail"></textarea>
+	<br>
+	<button type="button" id="Boutton" class="btn btn-default">Envoyer le mail!</button>
+	</div>
+	<br>
+	<br>
+	<legend> Selection propriétaire(s) </legend>
+	<div>
+		<button type="button" id="SelectAll" class="btn btn-default" style="margin-bottom:10px;">Selectionner tous les terrains ! </button>
+		<button type="button" id="UnselectAll" class="btn btn-default" style="margin-bottom:10px;">Déselectionner tous les terrains ! </button>
+	</div>
+		{{>courtSearch}}
 
-	{{>courtSearch}}
-
-	<button type="button" id="Boutton">Click Me!</button>
-</div>
+		<!-- <button type="button" id="Boutton">Click Me!</button> ça sert à quelque chose ? -->
+	
 </template>

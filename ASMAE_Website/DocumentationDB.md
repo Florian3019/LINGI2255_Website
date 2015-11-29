@@ -18,7 +18,14 @@ A year structure is as follows :
     mixed:<typeID>,
     men:<typeID>,
     women:<typeID>,
-    family:<typeID>
+    family:<typeID>,
+
+    //The stepXdone fields are used for the tournamentProgression template to know which steps are marked as done
+    step2done:<boolean>,
+    step3done:<boolean>,
+    step4done:<boolean>,
+    step5done:<boolean>,
+    step6done:<boolean>
 }
 
 

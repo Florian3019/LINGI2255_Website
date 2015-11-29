@@ -1,42 +1,37 @@
 <template name="modifyExtras">
-	<form role="form">
-	<div class="form-group">
-		<div class="row">
-          	<div class="col-sm-6 col-sm-offset-3">
-				<h2> Extras actuels: </h2>
-				(sauvés immédiatement)
-			</div>
-        </div>
+		<div class="page-header">
+	       	<h2>Extras pour le tournoi</h2>
+	    </div>
         <br>
 		{{#if hasExtras}}
 		<div class="row">
-			<div class="col-md-2 col-sm-offset-3">
+			<div class="col-md-3 col-sm-offset-2">
 		    	<label for="text"> Nom:</label>
 		  	</div>
 			<div class="col-md-2">
 		    	<label for="text"> Prix:</label>
 		  	</div>
-		  	<div class="col-md-2">
+		  	<div class="col-md-3">
 		    	<label for="text"> Commentaire:</label>
 		  	</div>
 	  	</div>
 	  	{{else}}
 	  	<div class="row">
-          	<div class="col-sm-6 col-sm-offset-3">
-	  			Aucun extra
+          	<div class="col-sm-8 col-sm-offset-2">
+	  			Aucun extras pour l'instant
 	  		</div>
         </div>
-	  	{{/if}}
+        {{/if}}
 		<div class="form-group">
 		    {{#each extras}}
 		      	<div class="row">
-					<div class="col-sm-2 col-sm-offset-3">
+					<div class="col-sm-3 col-sm-offset-2">
 					    <input type="text" class="form-control extra-name" id="name{{getID}}" value="{{getName}}" data-id="{{getID}}" name="{{getName}}">
 					</div>
 					<div class="col-sm-2">
 					    <input type="number" min="0" step="1" class="form-control extra-price" id="price{{getID}}" data-id="{{getID}}" name="{{getPrice}}" value="{{getPrice}}">
 					</div>
-					<div class="col-sm-2">
+					<div class="col-sm-3">
 					    <input type="text" class="form-control extra-comment" id="comment{{getID}}" name="{{getComment}}" data-id="{{getID}}" value="{{getComment}}">
 					</div>
 					<button type="button" class="btn btn-default extra-delete" id="delete{{getID}}" data-id="{{getID}}" aria-label="Left Align">
@@ -47,26 +42,41 @@
 		 	</div>
 		 	<!-- Add extra -->
  			<div class="row">
-				<div class="col-sm-2 col-sm-offset-3">
-			      	<div class="form-group" id="nameExtra">
+				<div class="col-sm-3 col-sm-offset-2">
+			      	<div class="form-group">
 			          	<input type="text" class="form-control" id="nameExtra" name="nameExtra" placeholder="Nom">
 			  		</div>
 			  	</div>
 				<div class="col-sm-2">
-			      	<div class="form-group" id="priceExtra">
+			      	<div class="form-group">
 			         	<input type="number" min="0" step="1" class="form-control" id="priceExtra" name="priceExtra" placeholder="Prix">
 			  		</div>
 			  	</div>
-			  	<div class="col-sm-2">
-			      <div class="form-group" id="comment">
-			         		 <input type="text" class="form-control" id="comment" name="comment" placeholder="Commentaire">
+			  	<div class="col-sm-3">
+			      <div class="form-group">
+			         		 <input type="text" class="form-control" id="commentExtra" name="comment" placeholder="Commentaire">
 			  		</div>
 			  	</div>
-			  	<button type="submit" class="btn btn-default" >
+			  	<button  id="addExtraButton" class="btn btn-default" >
 					<span class="glyphicon glyphicon-plus" style="color:green" aria-hidden="true"></span>
 				</button>
 	  		</div>
-		</div>
+	  		<div class="row">
+          		<div class="col-sm-8 col-sm-offset-2">
+	  				<p>(Les modifications sont instantannées)</p>
+	  			</div>
+        	</div>
+	  		
+			<div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+			          <div id="infoBoxExtra" class="alert alert-info" role="alert" hidden>
+				        <h4>
+				          <span class="glyphicon glyphicon-info-sign"></span>
+				          <span class="sr-only">Info:</span>
+				          <span id="infoMsg">Veuillez remplir le nom et le prix</span>
+				        </h4>
+				      </div>
+					</div>
+			</div>	
 
-	</form>
 </template>

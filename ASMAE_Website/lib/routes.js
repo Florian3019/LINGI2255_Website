@@ -1,6 +1,11 @@
 
 Router.configure({
-	layoutTemplate: 'index'
+	layoutTemplate: 'index',
+	waitOn: function() {
+    return [
+      Meteor.subscribe('users')
+    ]
+  }
 });
 
 function isRegistered() {
@@ -16,7 +21,7 @@ Router.onBeforeAction(function() {
         else
 			this.next();
 	}
-}, {except: ['home', 'rules', 'login']});
+}, {except: ['home', 'rules', 'login', 'faq']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -119,7 +124,14 @@ Router.route('/liste-poules', {
 	name: 'poolList',
 	template: 'poolList',
 	waitOn: function(){
-		return [ Meteor.subscribe('Years'), Meteor.subscribe('Types'), Meteor.subscribe('users'), Meteor.subscribe('Pairs'), Meteor.subscribe('Pools'), Meteor.subscribe('Matches'), Meteor.subscribe('GlobalValues')]
+		return [ 	Meteor.subscribe('Years'),
+					Meteor.subscribe('Types'),
+					Meteor.subscribe('users'),
+					Meteor.subscribe('Pairs'),
+					Meteor.subscribe('Pools'),
+					Meteor.subscribe('Matches'),
+					Meteor.subscribe('GlobalValues'),
+					Meteor.subscribe('Addresses')]
 	}
 });
 
@@ -127,7 +139,11 @@ Router.route('/table-scores', {
 	name: 'scoreTable',
 	template: 'scoreTable',
 	waitOn: function(){
-		return [ Meteor.subscribe('Matches'), Meteor.subscribe('Users'), Meteor.subscribe('Pairs'), Meteor.subscribe('GlobalValues') ]
+		return [ 	Meteor.subscribe('Matches'),
+					Meteor.subscribe('Users'),
+					Meteor.subscribe('Pairs'),
+					Meteor.subscribe('GlobalValues'),
+					Meteor.subscribe('Addresses') ]
 	}
 });
 
@@ -366,5 +382,26 @@ Router.route('/payment-confirmation', {
 	template: 'paymentConfirmation',
 	waitOn: function() {
 		return [Meteor.subscribe('Payments')];
+	}
+});
+
+Router.route('/payment-error', {
+  name: 'paymentError',
+	template: 'paymentError',
+	waitOn: function() {
+		return [Meteor.subscribe('Payments')];
+	}
+});
+
+Router.route('/faq', {
+  	name: 'faq',
+	template: 'faq'
+});
+
+Router.route('/deroulement-tournoi', {
+  	name: 'tournamentProgress',
+	template: 'tournamentProgress',
+	waitOn: function(){
+		return [ Meteor.subscribe('GlobalValues') ]
 	}
 });

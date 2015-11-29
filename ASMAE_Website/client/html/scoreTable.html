@@ -34,8 +34,7 @@
         <td align="center">
           {{#with getCourt this._id}}
           <h3>Terrain :</h3>
-          <button type="button" id="changeCourt" class="btn btn-default btn-lg"><span class="glyphicon" aria-hidden="true"></span>   Changer</button>
-          <div class="btn btn-sq-lg btn-primary">
+          <div class="btn btn-sq-lg btn-primary" id="changeCourt">
             <i class="fa fa-home fa-5x"></i><br/>
             <strong> Numéro : {{this.id}} </strong><br>
             {{this.address.street}} {{this.address.number}} <br>
@@ -101,6 +100,9 @@
             {{else}}
             <td align="center">
               <div class="input-group inputscore" display="inline">
+                {{#if isToPrint}}
+                <div></div>
+                {{else}}
                 {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
                   {{#if isAdminOrStaff}}
                     <input
@@ -130,6 +132,7 @@
                     <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../_id}}</span>
                   {{/if}}
                 {{/with}}
+                {{/if}}
               </div>
             </td>
             {{/if}}
