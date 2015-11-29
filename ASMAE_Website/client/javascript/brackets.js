@@ -21,7 +21,7 @@ var canModifyCourt = function(pair, round){
 
 // Takes 2 round data, and returns which court to use for this match.
 var getCourt = function(courts,num){
-  return (courts == undefined ) ? emptyCourt : courts[num];
+  return (courts == undefined ) ? emptyCourt : courts[num][1];
 }
 
 /*
@@ -663,11 +663,11 @@ Template.brackets.events({
   // change the court
 
   "click .changeCourtsBracket":function(event){
-    console.log(event);
-    var round = event.currentTarget.dataset.round;
-    var court = event.currentTarget.dataset.courtn;
-    console.log("change court bracket");
-    
+    var round = event.currentTarget.firstElementChild.dataset.round;
+    var court = event.currentTarget.firstElementChild.dataset.courtn;
+    Session.set("PoolList/ChosenCourt",court);
+    Session.set("PoolList/ChosenRound",round);
+    Session.set("changeCourtsBracket","true");
   },
 
 	// Do something when the user clicks on a player

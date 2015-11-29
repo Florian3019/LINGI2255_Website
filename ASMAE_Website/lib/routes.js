@@ -113,10 +113,11 @@ Router.route('/inscription-tournoi',  {
 		}
 	},
 	waitOn: function(){
-		return [
+		var res = [
 			Meteor.subscribe('GlobalValues'),
 			Meteor.subscribe('users')
-		]
+		];
+		return res;
 	}
 });
 
