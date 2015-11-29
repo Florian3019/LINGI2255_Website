@@ -780,7 +780,7 @@ Template.poolList.events({
 		var typesSaturday = ["mixed","family"];
 		var typesSunday = ["men","women"];
 		var typesTable = [typesSaturday,typesSunday];
-		var year = Years.findOne({_id:"2014"});
+		var year = Years.findOne({_id:""+new Date().getFullYear()});
 		var start = 0;
 
 		////////// Saturday and Sunday \\\\\\\\\\
