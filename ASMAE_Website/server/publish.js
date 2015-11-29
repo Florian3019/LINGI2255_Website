@@ -4,6 +4,16 @@ var isStaffOrAdmin = function(nid){
       return (user.profile.isStaff || user.profile.isAdmin);
 };
 
+Meteor.publish('users', function () {
+  var res = Meteor.users.find({});
+  return res;
+});
+
+Meteor.publish('myUser', function () {
+  var res = Meteor.users.find({_id: this.userId});
+  return res;
+});
+
 Meteor.publish('Courts', function(){
   return Courts.find();
 });
@@ -46,11 +56,6 @@ Meteor.publish('Extras', function(){
 
 Meteor.publish('GlobalValues', function(){
     var res = GlobalValues.find();
-  return res;
-});
-
-Meteor.publish('users', function () {
-  var res = Meteor.users.find({});
   return res;
 });
 

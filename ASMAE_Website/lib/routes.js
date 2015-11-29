@@ -2,10 +2,8 @@
 Router.configure({
 	layoutTemplate: 'index',
 	waitOn: function() {
-    return [
-      Meteor.subscribe('users')
-    ]
-  }
+    	return Meteor.subscribe('myUser');
+  	}
 });
 
 function isRegistered() {
