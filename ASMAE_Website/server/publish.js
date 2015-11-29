@@ -45,7 +45,8 @@ Meteor.publish('Extras', function(){
 });
 
 Meteor.publish('GlobalValues', function(){
-  return GlobalValues.find();
+    var res = GlobalValues.find();
+  return res;
 });
 
 Meteor.publish('users', function () {
