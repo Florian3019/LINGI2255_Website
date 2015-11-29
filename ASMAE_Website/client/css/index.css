@@ -11,7 +11,11 @@
 
 /** Add !important to override boostrap setting **/
 body {
-		background-color: #EFCFA0; 
+	background-color: #EFCFA0;
+}
+
+.btn {
+	text-transform: none !important;
 }
 
 /* Navbar on the top */
@@ -142,7 +146,7 @@ body {
 *
 **/
 
-/* If screen width smaller than 981 px 
+/* If screen width smaller than 981 px
 @media (max-width: 981px) {
 	body {
 		padding-top: 128px;
@@ -154,14 +158,14 @@ If screen width smaller than 767 px
 @media (max-width: 767px) {
     body {
         padding-top: 64px;
-        
+
     }
 }  */
 
 /* If screen width smaller than 50^0px*/
 /* Hide navside menu */
 @media only screen and (max-width: 500px) {
-    
+
     .sidebar {
         display: none;
     }
