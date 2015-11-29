@@ -73,7 +73,7 @@ Template.scoreTable.events({
     "details":
         playersName1[0]+" "+playersName1[1] +
         " VS " + playersName2[0]+" "+playersName2[1] +
-        " Points: "+data.points+getStringOptions()
+        " Points: "+data.pair1.points+getStringOptions()
     });
   }
 })
