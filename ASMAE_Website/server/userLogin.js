@@ -111,10 +111,11 @@ useServiceInfo = function(user){
     // Gender
     if(!user.profile.gender)
         if(services.google){
-            user.profile.gender = services.google.gender;
+
+            user.profile.gender = services.google.gender=="male" ? "M" : "F";
         }
         else if(services.facebook){
-            user.profile.gender = services.facebook.gender;
+            user.profile.gender = services.facebook.gender=="male" ? "M" : "F";
         }
 
     // Emails
