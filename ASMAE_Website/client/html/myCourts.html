@@ -5,6 +5,7 @@
         <h2>Mes terrains</h2>
     </div>
     <br>
+    {{#if court}}
 	<table class="table">
 		<thead>
       		<tr>
@@ -23,6 +24,15 @@
     		{{/each}}
     	</tbody>
 	</table>
+    {{else}}
+    <div id="infoBox" class="alert alert-info" role="alert">
+        <h4>
+            <span class="glyphicon glyphicon-info-sign"></span>
+            <span class="sr-only">Info:</span>
+            <span>Vous n'avez aucun terrain enregistrer</span>
+        </h4>
+    </div>
+    {{/if}}
 	<br/>
 	<center><a class="btn btn-default" href="{{pathFor route='courtRegistration'}}">Ajouter un terrain</a></center>
 </div>
