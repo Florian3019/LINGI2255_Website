@@ -137,6 +137,8 @@ Template.tournamentRegistration.helpers({
     		var e = document.getElementById("refreshErrorMessage");
     		if (check) { // An error occurred (mis-filled field)
     			e.style.display = 'block';
+    			var table = document.getElementById("tableAlone");
+    			table.style.display = 'none';
     			return undefined;
     		}
     		else {
@@ -174,7 +176,8 @@ Template.tournamentRegistration.helpers({
             });
     	}
 
-        aloneDependency.depend(); // Refresh when button is hit
+		aloneDependency.depend(); // Refresh when button is hit
+
         setAlonePlayers();
         var alone = Session.get("alonePlayers");
         return alone;
@@ -462,6 +465,26 @@ Template.tournamentRegistration.helpers({
 
 });
 
+var refreshAlonePlayers = function(event, document){
+	event.preventDefault();
+	aloneDependency.changed();
+
+	var table = document.getElementById("tableAlone");
+	var message = document.getElementById("emptyTableMessage");
+
+	table.style.display = 'none';
+	message.style.display = 'none';
+
+	if(!document.getElementById('alone').checked || document.getElementById("later").checked){
+		return;
+	}
+	if (isEmptyTable()) {
+		message.style.display = 'block';
+	}
+	else {
+		table.style.display = 'block';
+	}
+}
 
 
 Template.tournamentRegistration.events({
@@ -480,12 +503,15 @@ Template.tournamentRegistration.events({
 		document.getElementById("totalToPay").value = total;
 	},
 
-	"change .checkboxAloneDiv input": function (event) {
+	"change .alonePlayerChangeListener":function(event){
+        refreshAlonePlayers(event, document);
+	},
+
+	"change #alone": function (event) {
 		event.preventDefault();
 		var e = document.getElementById("emailPlayer");
 		var table = document.getElementById("tableAlone");
 		var later = document.getElementById("checkboxLater");
-		var refresh = document.getElementById("refresh");
 		var message = document.getElementById("emptyTableMessage");
 		document.getElementById("later").checked = false; // reset "later" checkbox
 		Session.set("firstTime", false);
@@ -497,7 +523,6 @@ Template.tournamentRegistration.events({
 			message.style.display = 'none';
 
 			later.style.display = 'block';
-			refresh.style.display = 'block';
 			e.setAttribute("disabled","true");
 			if (isEmptyTable()) {
 				message.style.display = 'block';
@@ -508,23 +533,20 @@ Template.tournamentRegistration.events({
 		}else{
 			later.style.display = 'none';
 			table.style.display = 'none';
-			refresh.style.display = 'none';
 			message.style.display = 'none';
 			e.removeAttribute("disabled","false");
 		}
     },
 
-    "change .checkboxLater input": function (event) {
+    "change #later": function (event) {
 		event.preventDefault();
 		aloneDependency.changed();
 		var table = document.getElementById("tableAlone");
 		var message = document.getElementById("emptyTableMessage");
 		if(event.target.checked){
 			table.style.display = 'none';
-			refresh.style.display = 'none';
 			message.style.display = 'none';
 		}else{
-			refresh.style.display = 'block';
 			if (isEmptyTable()) {
 				message.style.display = 'block';
 			}
@@ -543,23 +565,6 @@ Template.tournamentRegistration.events({
     	document.getElementById(newId).setAttribute("class", "aloneRow success");
     	Session.set('aloneSelected', newId); // Set the player's id in the session variable aloneSelected
     },
-
-	"click [data-action='refresh']" : function(event) {
-		event.preventDefault();
-		aloneDependency.changed();
-
-		var table = document.getElementById("tableAlone");
-		var message = document.getElementById("emptyTableMessage");
-
-		table.style.display = 'none';
-		message.style.display = 'none';
-		if (isEmptyTable()) {
-			message.style.display = 'block';
-		}
-		else {
-			table.style.display = 'block';
-		}
-	},
 
     "submit form":function(){
 

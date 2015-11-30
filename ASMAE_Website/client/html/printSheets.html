@@ -2,54 +2,46 @@
   <div class="page-header">
         <h2>Impression feuille de poule</h2>
   </div>
-  <table class="table">
-    <tbody>
-      <tr>
-        <td align="center">
-          <select class="form-control Year" id="Year" name = "Year">
+  <div class="row">
+    <div class="col-md-2">
+      <select class="form-control Year" id="Year" name = "Year">
             {{getAllYears}}
             {{#each getAllYearsSession}}
               <option value="{{this}}"> {{this}} </option>
             {{/each}}
           </select>
-        </td>
-
-        <td align="center">
-          <select class="form-control Type" id="Type">
+    </div>
+    <div class="col-md-3">
+      <select class="form-control Type" id="Type">
             <option value="men"> Homme </option>
             <option value="women"> Femme </option>
             <option value="mixed"> Mixte </option>
             <option value="family"> Familles </option>
           </select>
-        </td>
-
-        <td align="center">
-          <select class="form-control Category" id="Category">
-            <option value="all" >Toutes</option>
-            <option value="preminimes"> Pré Minimes </option>
-            <option value="minimes"> Minimes </option>
-            <option value="cadets"> Cadet </option>
-            <option value="scolars"> Scolaire </option>
-            <option value="juniors"> Junior </option>
-            <option value="seniors"> Séniors </option>
-            <option value="elites"> Elites </option>
-
-          </select>
-        </td>
-        <td align="center">
-          <button type="button" id="Save" class="btn btn-default btn-lg">
-            <span class="glyphicon glyphicon-download" aria-hidden="true"></span>  Sauver
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    </div>
+    <div class="col-md-3">
+      <select class="form-control Category" id="Category">
+        <option value="all" >Toutes</option>
+        <option value="preminimes"> Pré Minimes </option>
+        <option value="minimes"> Minimes </option>
+        <option value="cadets"> Cadet </option>
+        <option value="scolars"> Scolaire </option>
+        <option value="juniors"> Junior </option>
+        <option value="seniors"> Séniors </option>
+        <option value="elites"> Elites </option>
+      </select>
+    </div>
+    <div class="col-md-3 col-md-offset-1">
+      <button type="button" id="Save" class="btn btn-default btn-lg">
+        <span class="glyphicon glyphicon-download" aria-hidden="true"></span>  Sauver
+      </button>
+    </div>
+  </div>
+  <br>
   <button type="button" id="Print" class="btn btn-default btn-lg">
     <span class="glyphicon glyphicon-print"></span> Tout imprimer
   </button>
-
-
-
+  <br>
   <div id="allTab">
     {{#each getPool}}
     <div id={{this.id}} style="background:#fff">

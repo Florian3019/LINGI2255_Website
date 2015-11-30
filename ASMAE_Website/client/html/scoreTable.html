@@ -47,6 +47,7 @@
   </table>
 
   {{>scoreTable this}}
+  {{CourtInfoModal}}
 
   {{#if isAdminOrStaff}}
     <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}" data-resp="{{this.resp}}">

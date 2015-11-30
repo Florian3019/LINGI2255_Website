@@ -4,11 +4,6 @@
   </div>
   <form role="form">
     <div class="well well-lg">
-     <div class="row">
-      <div class="col-sm-8 col-sm-offset-2">
-        <legend>Formulaire d'inscription au tournoi:</legend>
-        </div>
-      </div>
     <div class="form-group">
       <div class="row">
         <div class="col-sm-3 col-sm-offset-3">
@@ -49,7 +44,7 @@
         <div class="col-sm-2 col-sm-offset-3">
      	    <div class="form-group has-feedback" id="birthDayDiv">
             <label for="day">Jour:</label>
-            <input type="number" id="birthDay" class="form-control" min="1" max="31" value="{{getDate}}" name="jour de naissance">
+            <input type="number" id="birthDay" class="form-control alonePlayerChangeListener" min="1" max="31" value="{{getDate}}" name="jour de naissance">
             <div id="birthDayError" hidden>
               <span class="help-block" id="dayError">Merci d'entrer le jour</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -63,7 +58,7 @@
         <div class="col-sm-2">
           <div class="form-group has-feedback" id="birthMonthDiv">
             <label for="month">Mois:</label>
-            <input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{getMonth}}" name="mois de naissance">
+            <input type="number" id="birthMonth" class="form-control alonePlayerChangeListener" min="1" max="12" value="{{getMonth}}" name="mois de naissance">
             <div id="birthMonthError" hidden>
               <span class="help-block" id="monthError">Merci d'entrer le mois</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -77,7 +72,7 @@
 		    <div class="col-sm-2">
           <div class="form-group has-feedback" id="birthYearDiv">
             <label for="year">Année:</label>
-            <input type="number" id="birthYear" class="form-control" min="1900" value="{{getYear}}" name="année de naissance">
+            <input type="number" id="birthYear" class="form-control alonePlayerChangeListener" min="1900" value="{{getYear}}" name="année de naissance">
             <div id="birthYearError" hidden>
               <span class="help-block" id="yearError">Merci d'entrer l'année</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -94,10 +89,10 @@
           <div class="form-group has-feedback" id="sexDiv">
 		        <label>Sexe: </label> <br>
               <label class="radio-inline">
-                <input type="radio" name="sex" id="male" value="M" {{setGender 'true'}}>Homme</label>
+                <input type="radio" name="sex" id="male" value="M" class="alonePlayerChangeListener" {{setGender 'true'}}>Homme</label>
               <br>
             <label class="radio-inline">
-            <input type="radio" name="sex" id="female" value="F" {{setGender 'false'}}>Femme</label>
+            <input type="radio" name="sex" id="female" value="F" class="alonePlayerChangeListener" {{setGender 'false'}}>Femme</label>
             <div id="sexError" hidden>
               <span class="help-block" id="sexErrorText">Merci d'entrer votre sexe</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -384,11 +379,6 @@
         <div class="form-group checkboxLater col-sm-6 col-sm-offset-3" id="checkboxLater" hidden>
           <label class="checkbox-inline"><input type="checkbox" value="" id="later">   Je veux choisir quelqu'un plus tard </label>
         </div>
-		    <div id="refresh" hidden>
-          <div class="col-sm-6 col-sm-offset-3">
-		        <button class="btn btn-default" data-action="refresh"> Actualiser </button>
-          </div>
-		    </div>
 		    <div id="refreshErrorMessage" hidden>
           <span class="refreshMessage"> Veuillez vérifier le formulaire avant de pouvoir choisir un partenaire.</span>
 		    </div>
