@@ -84,6 +84,19 @@ Template.chooseCourtsModal.events({
             var listCourts = type[Session.get("PoolList/Category")+"Courts"];
             var changeAll = document.getElementById("all").checked;
 
+            if(listCourts!= undefined){
+                console.log("No court!");
+                $('#chooseCourtsModal')
+                    .on('hidden.bs.modal', function() {
+                        Session.set("PoolList/ChosenCourt","");
+                        Session.set("selectNewCourt/saturday","Ignore");
+                        Session.set("selectNewCourt/sunday","Ignore");
+                        Session.set("selectNewCourt/staffOK","Ignore");
+                        Session.set("selectNewCourt/ownerOK","Ignore");
+                    })
+                    .modal('hide');
+            }
+
             for(var i=0;i<listCourts.length;i++){
                 if(listCourts[i][1]==court && (changeAll || (listCourts[i][0]==round))){
                     listCourts[i][1] = parseInt(courtNumber);

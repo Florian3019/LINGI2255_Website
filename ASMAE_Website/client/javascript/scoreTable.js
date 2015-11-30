@@ -36,6 +36,28 @@ Template.scorePage.helpers({
       return undefined;
     },
 
+    'getCourtFullInfo': function(poolId){
+      if(poolId==undefined) return undefined;
+      Session.set("PoolList/poolID",poolId);
+
+      pool = Pools.findOne({_id:poolId});
+      if(pool.courtId!=undefined){
+
+        court = Courts.findOne({"courtNumber":pool.courtId});
+
+        if(court && court.addressID && court.ownerID){
+          address = Addresses.findOne({_id:court.addressID});
+          owner = Meteor.users.findOne({_id:court.ownerID});
+
+          return {num:pool.courtId,
+                  court:court,
+                  owner:owner,
+                  addressCourt:address};
+        }
+      }
+      return undefined;
+    },
+
         // Returns a yearData with id year (copy of the same function in poolsSidebarCollapsableMenu.helpers)
     'getYear' : function(){
       var year = Session.get('PoolList/Year');
@@ -206,6 +228,9 @@ Template.scorePage.events({
     var user = Meteor.user();
     if(user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin)){
        Session.set("PoolList/ChosenCourt","44");
+    }
+    else{
+      $('#CourtInfoModal').modal('show');
     }
   },
 

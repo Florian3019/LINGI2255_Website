@@ -39,7 +39,12 @@
             <strong> Numéro : {{this.id}} </strong><br>
             {{this.address.street}} {{this.address.number}} <br>
             {{this.address.zipCode}} {{this.address.city}}
+
           </div>
+        {{/with}}
+
+        {{#with getCourtFullInfo this._id}}
+          {{>CourtInfoModal this}}
         {{/with}}
         </td>
       </tr>
@@ -53,6 +58,7 @@
       <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
     </button>
   {{/if}}
+
 </template>
 
 

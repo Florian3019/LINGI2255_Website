@@ -7,12 +7,82 @@
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <div class="modal-title page-header">
-            <h3>Informations sur le terrain</h3>
+            <center>
+              <h3>Informations sur le terrain</h3>
+            </center>
           </div>
         </div>
         <div class="modal-body">
 
+                 <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">
+                      <center>
+                        Terrain numéro {{this.num}}
+                      </center>
+                    </h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://www.constructiondetennis.com/wp-content/themes/tennis/images/court-de-tennis.png" class="img-circle img-responsive"> </div>
+                      <div class=" col-md-9 col-lg-9 ">
+                        <table class="table table-user-information">
+                          <tbody>
 
+                            <tr>
+                              <td>Nom propriétaire</td>
+                              <td>{{this.owner.profile.firstName}} {{this.owner.profile.lastName}}</td>
+                            </tr>
+                            <tr>
+                              <td>Téléphone</td>
+                              <td>0472/788233</td>
+                            </tr>
+                            <tr>
+                              <td>Email</td>
+                              <td>bollenthomas@hotmail.com</td>
+                            </tr>
+                            <tr>
+                              <td>Rue</td>
+                              <td>Allée des fleurs</td>
+                            </tr>
+                            <tr>
+                              <td>Numéro</td>
+                              <td>27</td>
+                            </tr>
+                            <tr>
+                              <td>Code Postal</td>
+                              <td>5000</td>
+                            </tr>
+                              <tr>
+                              <td>Ville</td>
+                              <td>Beez</td>
+                            </tr>
+                            <tr>
+                              <td>Type</td>
+                              <td id="birth">Privé</td>
+                            </tr>
+                            <tr>
+                              <td>Surface</td>
+                              <td id="land">Terre battue</td>
+                            </tr>
+                            <tr>
+                              <td>Instructions</td>
+                              <td id="rank">Au fond à droite</td>
+                            </tr>
+
+                            <tr>
+                              <td>Commentaire</td>
+                              <td id="rank">Pas d'enfants</td>
+                            </tr>
+
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                  </div>
+
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>

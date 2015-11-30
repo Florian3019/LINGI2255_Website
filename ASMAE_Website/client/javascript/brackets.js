@@ -21,7 +21,7 @@ var canModifyCourt = function(pair, round){
 
 // Takes 2 round data, and returns which court to use for this match.
 var getCourt = function(courts,num){
-  return (courts == undefined ) ? emptyCourt : courts[num][1];
+  return (courts == undefined || courts[num] == undefined) ? emptyCourt : courts[num][1];
 }
 
 /*
@@ -704,11 +704,19 @@ Template.brackets.events({
     var user = Meteor.user();
 
     if(user!==undefined && user!==null && (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin)){
+
+      if(event.currentTarget.firstElementChild==null){
+        console.log("no court to change!");
+        return;
+      }
       var round = event.currentTarget.firstElementChild.dataset.round;
       var court = event.currentTarget.firstElementChild.dataset.courtn;
       Session.set("PoolList/ChosenCourt",court);
       Session.set("PoolList/ChosenRound",round);
       Session.set("changeCourtsBracket","true");
+    }
+    else{
+      $('#CourtInfoModal').modal('show');
     }
 
   },
