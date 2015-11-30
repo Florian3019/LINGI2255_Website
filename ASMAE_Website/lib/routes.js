@@ -1,8 +1,10 @@
 
 Router.configure({
 	layoutTemplate: 'index',
+	loadingTemplate:'loading',
 	waitOn: function() {
-    	return Meteor.subscribe('myUser');
+    	return [Meteor.subscribe('GlobalValues')
+    	];
   	}
 });
 
@@ -33,7 +35,7 @@ Router.route('/', {
 	template: 'home',
 	name: 'home',
 	waitOn: function(){
-		return [ Meteor.subscribe('GlobalValues'), Meteor.subscribe('Years') ]
+		return [ Meteor.subscribe('Years') ]
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
@@ -94,11 +96,6 @@ Router.route('/mon-inscription', {
 			this.render("login");
 		}
 	},
-	waitOn: function(){
-		return [
-			Meteor.subscribe('GlobalValues'),
-		]
-	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
 	}
@@ -113,11 +110,6 @@ Router.route('/mon-inscription2', {
 		else {
 			this.render("login");
 		}
-	},
-	waitOn: function(){
-		return [
-			Meteor.subscribe('GlobalValues'),
-		]
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
@@ -136,7 +128,6 @@ Router.route('/inscription-tournoi',  {
 	},
 	waitOn: function(){
 		var res = [
-			Meteor.subscribe('GlobalValues'),
 			Meteor.subscribe('users')
 		];
 		return res;
@@ -150,13 +141,13 @@ Router.route('/liste-poules', {
 	name: 'poolList',
 	template: 'poolList',
 	waitOn: function(){
+		console.log("waiting");
 		return [ 	Meteor.subscribe('Years'),
 					Meteor.subscribe('Types'),
 					Meteor.subscribe('users'),
 					Meteor.subscribe('Pairs'),
 					Meteor.subscribe('Pools'),
 					Meteor.subscribe('Matches'),
-					Meteor.subscribe('GlobalValues'),
 					Meteor.subscribe('Addresses')]
 	},
 	onAfterAction: function(){
@@ -171,7 +162,6 @@ Router.route('/table-scores', {
 		return [ 	Meteor.subscribe('Matches'),
 					Meteor.subscribe('Users'),
 					Meteor.subscribe('Pairs'),
-					Meteor.subscribe('GlobalValues'),
 					Meteor.subscribe('Addresses') ]
 	},
 	onAfterAction: function(){
@@ -261,7 +251,7 @@ Router.route('/page-info-joueur/:_id', {
 		}
 	},
 	waitOn: function() {
-		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users'), Meteor.subscribe('GlobalValues')];
+		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users')];
 	}
 });
 
@@ -409,7 +399,7 @@ Router.route('/confirmation-pair/:_id',{
 		return data;
 	},
 	waitOn: function() {
-		return [Meteor.subscribe('Pairs'), Meteor.subscribe('users'), Meteor.subscribe('GlobalValues')];
+		return [Meteor.subscribe('Pairs'), Meteor.subscribe('users')];
 	}
 });
 
@@ -467,9 +457,6 @@ Router.route('/faq', {
 Router.route('/deroulement-tournoi', {
   	name: 'tournamentProgress',
 	template: 'tournamentProgress',
-	waitOn: function(){
-		return [ Meteor.subscribe('GlobalValues') ]
-	},
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
 	}
