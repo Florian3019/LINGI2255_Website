@@ -38,9 +38,11 @@
     </div>
   </div>
   <br>
+  {{#if hasPool}}
   <button type="button" id="Print" class="btn btn-default btn-lg">
     <span class="glyphicon glyphicon-print"></span> Tout imprimer
   </button>
+  {{/if}}
   <br>
   <div id="allTab">
     {{#each getPool}}

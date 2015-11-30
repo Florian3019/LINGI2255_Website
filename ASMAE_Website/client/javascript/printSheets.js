@@ -235,8 +235,13 @@ Template.printSheets.helpers({
     return Session.get("printSheets/allYears");
   },
 
-  'removeInput':function(){
 
+  'hasPool':function(){
+    var poolId = Session.get("printSheets/poolList");
+    if(poolId!=undefined && poolId.length>1){
+      return true;
+    }
+    return false;
   }
 
 });
