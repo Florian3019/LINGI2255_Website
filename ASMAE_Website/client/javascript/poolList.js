@@ -203,8 +203,20 @@ var mergePlayers = function(document){
 											Sidebar collapsable Menu
 *******************************************************************************************************************/
 
+Template.poolsSidebarCollapsableMenu.onRendered(function(){
+    var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+    hideSuccessBox(document);
+    Session.set('PoolList/Year', currentYear);
+    Session.set("PoolList/ChosenScorePool","");
+});
 
 Template.poolsSidebarCollapsableMenu.helpers({
+
+    'selectedYear': function(value){
+        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+        return value == currentYear ? 'selected' : '';
+    },
+
 	'getAllYears':function(){
 		var callBack = function(err, ret){
 			Session.set("PoolList/allYears", ret);
@@ -705,7 +717,7 @@ Template.poolList.events({
 					}
 					else{
 						result.push([round,result[begin_previous+m][1]]);
-					}	
+					}
 				}
 				begin_previous+=size_previous;
 				size_previous=size_previous/2;
@@ -741,8 +753,8 @@ Template.poolList.events({
 
 		var numberDays = 2;
 
-		var courtsSat = getCourtNumbers(Courts.find({dispoSamedi: true}).fetch());
-		var courtsSun = getCourtNumbers(Courts.find({dispoDimanche: true}).fetch());
+		var courtsSat = getCourtNumbers(Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true}]}).fetch());
+		var courtsSun = getCourtNumbers(Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true}]}).fetch());
 		var courtsTable = [courtsSat,courtsSun];
 
 		var poolsSat = Pools.find({$or: [{type:"mixed"},{type:"family"}]}).fetch();

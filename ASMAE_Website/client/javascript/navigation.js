@@ -20,7 +20,7 @@ Template.navigation.helpers({
 			return false;
 		}
 	},
-	'registered': function() {		
+	'registered': function() {
 		var pair = getPairFromPlayerID();;
 		if (pair) {
 			return true;
@@ -37,4 +37,10 @@ Template.navigation.helpers({
         return false;
     }
 
+});
+
+Template.navigation.events({
+	'click #tournamentNavigation': function(){
+		Session.set('showNavBar', true);
+	}
 });

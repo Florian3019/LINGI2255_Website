@@ -97,7 +97,7 @@
         <option value="" disabled="" selected="" hidden>Année</option>
         {{getAllYears}}
         {{#each getAllYearsSession}}
-          <option value="{{this}}"> {{this}} </option>
+          <option value="{{this}}" {{selectedYear this}}> {{this}} </option>
         {{/each}}
       </select>
       </div>
@@ -140,7 +140,7 @@
       <a href="#" style="text-decoration: none;display:inline;" class="menuItem"> Poules {{getPoulesCompletion this.ID this.CAT}} </a>
       </li>
       </ul>
-    </li>    
+    </li>
     <li class="BracketOption" data-category="{{this.CAT}}" data-type="{{this.ID}}">
       <ul>
       <li>
@@ -287,7 +287,7 @@
             {{PAIR.player1.otherWish}}
             {{/if}}
           </div>
-          
+
           {{#if equals PAIR.player2._id undefined}}
             {{#if SHOWOPTIONS}}
             <div class="dropdown pull-left">
@@ -369,7 +369,7 @@ Takes 2 arguments :
       </button>
       {{else}}
         <button type="button" id="becomeResponsable" class="btn btn-default btn-lg pull-right">
-          <span class="glyphicon glyphicon-star" aria-hidden="true"></span>Devenir responsable 
+          <span class="glyphicon glyphicon-star" aria-hidden="true"></span>Devenir responsable
         </button>
       {{/if}}
     {{/if}}

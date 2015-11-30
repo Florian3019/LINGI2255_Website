@@ -42,7 +42,9 @@ Template.index.helpers({
 	},
 
 	'contentPadding': function(){
-		if(Meteor.user())
+		//if(Meteor.user())
+		var showNavBar = Session.get('showNavBar');
+		if(showNavBar)
 		{
 			return '';
 		}
@@ -51,6 +53,11 @@ Template.index.helpers({
 			return 'nomargin';
 		}
 	},
+
+	'showNavBar': function(){
+		 return Session.get('showNavBar');
+	}
+
 });
 
 Template.index.events({

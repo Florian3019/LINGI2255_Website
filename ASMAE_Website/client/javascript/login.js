@@ -1,3 +1,56 @@
+ /*#################################
+              LOGIN SETTINGS
+    #################################*/
+  Accounts.ui.config({
+    requestPermissions: {
+      facebook: ['public_profile','email'], // 'user_birthday' --> requires app review from facebook
+      googe: ['profile', 'email','user_birthday']
+    },
+    /*
+      If true, forces the user to approve the
+      app's permissions, even if previously approved.
+      Currently only supported with Google.
+    */
+    forceApprovalPrompt: {
+      google:true
+    },
+    /*
+      Which fields to display in the user creation form.
+      One of 'USERNAME_AND_EMAIL', 'USERNAME_AND_OPTIONAL_EMAIL',
+      'USERNAME_ONLY', or 'EMAIL_ONLY'
+    */
+    passwordSignupFields: 'EMAIL_ONLY',
+  });
+
+  Template._loginButtonsLoggedInDropdownActions.helpers({
+    allowChangingPassword: function() {
+      // Disallow the user to change its password
+      // (which would be inexistant) if he logged in via google or facebook
+      var user = Meteor.user();
+      if(!user){
+        return false;
+      }
+      if(!user.services){
+        return false;
+      }
+      return !(user.services.google || user.services.facebook);
+    }
+  });
+
+  // On logout, go back to the home page
+  accountsUIBootstrap3.logoutCallback = function(error) {
+    if(error) console.log("Error:" + error);
+    Router.go('home');
+  }
+  accountsUIBootstrap3.setLanguage('fr');
+
+  // Additional button to allow profile editing when the user is logged in
+  Template._loginButtonsLoggedInDropdown.events({
+    'click #login-buttons-edit-profile': function(event) {
+        Router.go('profileEdit',{_id:Meteor.userId()});
+    }
+});
+
 Template.login.events({
     
     'submit form': function(event) {

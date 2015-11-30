@@ -125,7 +125,9 @@ Template.allCourtsTable.helpers({
           { key: 'instructions', label:"Instructions"},
           { key: 'ownerComment', label:"Commentaire propriétaire"},
           { key: 'staffComment', label:"Commentaire staff"},
-          { key: 'courtNumber', label:"Numéros"}
+          { key: 'courtNumber', label:"Numéros", fn:function(value, object){
+              return value.join(", ");
+          }}
       ],
              filters: ['NomDeFamille'],
              rowClass: "courtRow",
