@@ -35,7 +35,7 @@ function initializeBraintree (clientToken) {
         Session.set('paymentFormStatus', null);
 		$("#dropinModal").modal("hide");
 		if(err){
-			console.log(err);
+			console.error(err);
 	        Router.go('paymentError');
 		}
 		else {
@@ -124,7 +124,7 @@ Template.playerInfoTemplate.helpers({
 	'showEdit' : function(){
 		var callBack = function(err, res){
 			if(err){
-				console.log(err);
+				console.error(err);
 				return;
 			}
 			if(res==false){
@@ -167,7 +167,6 @@ Template.playerInfoTemplate.helpers({
 			console.error("Did not find a registration !");
 			return "Pas inscrit";	
 		}
-		console.log(pool);
 
 		var query = [];
 		for(var i=0; i<categoriesKeys.length;i++){
@@ -193,7 +192,6 @@ Template.playerInfoTemplate.helpers({
 		}
 
 		var yearQuery = [];
-		console.log(typeKeys);
 		for (var i=0; i<typeKeys.length;i++){
 			var data = {};
 			data[typeKeys[i]] = typeData._id;
@@ -329,7 +327,7 @@ Template.playerInfoTemplate.events({
 Template.myRegistration.onRendered(function () {
   Meteor.call('getClientToken', function (err, clientToken) {
     if (err) {
-      console.log('There was an error', err);
+      console.error('There was an error', err);
       return;
     }
 
