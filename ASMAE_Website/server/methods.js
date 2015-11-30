@@ -96,6 +96,8 @@ Meteor.methods({
 
 			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 			Years.remove({_id: currentYear});
+
+			Meteor.call('restartTournament'); 	//Set currentYear to ""
 	},
 
 	'setCurrentYear' : function(currentYear) {
@@ -1000,12 +1002,9 @@ Meteor.methods({
 			amount += extrasAmount["player2"];
 		}
 
-		if(userIsOwner){
-			var paymentUser = Meteor.userId();
-		}
-		else {
-			var paymentUser = ID['player1'];
-		}
+
+		var paymentUser = Meteor.userId();
+
 		paymentData = {
 			userID : paymentUser,
 			tournamentYear : currentYear,
@@ -1061,12 +1060,33 @@ Meteor.methods({
 					*/
 			}
 
-			Payments.insert(paymentData, function(err, paymId){
-				if(err){
-					console.error('insert payment error');
-					console.error(err);
-				}
-			});
+			if(userIsOwner){
+				Payments.insert(paymentData, function(err, paymId){
+					if(err){
+						console.error('insert payment error');
+						console.error(err);
+					}
+				});
+			}
+			else { 		//Only used for popDB: insert a payment for both players
+				paymentData.userID = ID['player1'];
+				Payments.insert(paymentData, function(err, paymId){
+					if(err){
+						console.error('insert payment error');
+						console.error(err);
+					}
+				});
+
+				paymentData.userID = ID['player2'];
+				Payments.insert(paymentData, function(err, paymId){
+					if(err){
+						console.error('insert payment error');
+						console.error(err);
+					}
+				});
+
+			}
+
 		}
 
 

@@ -22,7 +22,7 @@ Template.closeRegistrationsBlock.helpers({
 Template.tournamentProgress.helpers({
     'stepIsDoneClass': function(stepNumber){
         var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-        if(currentYear === ""){ //Tournament didn't launch yet
+        if(currentYear == ""){ //Tournament didn't launch yet
             return "notokBlock";
         }
         else {
