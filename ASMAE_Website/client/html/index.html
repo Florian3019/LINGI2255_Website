@@ -29,7 +29,11 @@
             {{#if isStaffMember}}
             <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem">Déroulement du tournoi</a></li>
             {{/if}}
-            <li><a href="{{pathFor route='poolList'}}" class="menuItem">Gestion du tournoi</a></li>
+            {{#if isStaffMember}}
+              <li><a href="{{pathFor route='poolList'}}" class="menuItem">Gestion du tournoi</a></li>
+            {{else}}
+              <li><a href="{{pathFor route='poolList'}}" class="menuItem">Progression du tournoi</a></li>
+            {{/if}}
             {{#if isTournamentPage}}
               {{>poolsSidebarCollapsableMenu}}
             {{/if}}
