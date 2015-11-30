@@ -41,17 +41,26 @@
     </div>
 
     <div class="{{stepIsDoneClass 6}}">
-        <h5>6. Envoyer un email aux joueurs et aux chefs de poules</h5>
-        <p>Cliquez sur ce bouton pour envoyer aux joueurs les informations sur le tournoi et les informations nécessaires aux chefs de poules</p>
+        <h5>6. Assigner les terrains</h5>
         <center>
-            <button id="sendPoolsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
+            <button id="AssignCourts6" type="button" class="btn btn-default btn-sm notDone">Assigner les terrains</button>
             <button id="doneButton6" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
             <button id="notDoneButton6" type="button" class="btn btn-default btn-sm okDone">Marquer comme non fait</button>
         </center>
     </div>
 
     <div class="{{stepIsDoneClass 7}}">
-        <h5>7. Terminer le tournoi</h5>
+        <h5>7. Envoyer un email aux joueurs et aux chefs de poules</h5>
+        <p>Cliquez sur ce bouton pour envoyer aux joueurs les informations sur le tournoi et les informations nécessaires aux chefs de poules</p>
+        <center>
+            <button id="sendPoolsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
+            <button id="doneButton7" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
+            <button id="notDoneButton7" type="button" class="btn btn-default btn-sm okDone">Marquer comme non fait</button>
+        </center>
+    </div>
+
+    <div class="{{stepIsDoneClass 8}}">
+        <h5>8. Terminer le tournoi</h5>
         <center>
             <button id="restartTournamentButton" type="button" class="btn btn-default btn-sm">Terminer</button>
         </center>
@@ -90,7 +99,7 @@
             <br>
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2">
-                    <input type="number" name="tournamentPrice" id="tournamentPrice" class="form-control" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
+                    <input type="number" name="tournamentPrice" min="0" id="tournamentPrice" class="form-control" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
                 </div>
             </div>
             <br>
