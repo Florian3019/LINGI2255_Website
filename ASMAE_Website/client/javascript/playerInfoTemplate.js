@@ -245,13 +245,14 @@ Template.playerInfoTemplate.helpers({
 
 });
 
+
 Template.playerInfoTemplate.events({
 	'click #button_edit' : function(event){
 		/*
 			Check if the button was in a popup (modal), if so, close it before going to profileEdit
 		*/
 		if(Session.get('closeModal') != undefined){
-			var modalId = '#pairModal'+Session.get('closeModal')
+			var modalId = '#'+Session.get('closeModal');
 			Session.set('closeModal', undefined)
 			$(modalId).on('hidden.bs.modal', function() {
             	Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
@@ -268,7 +269,7 @@ Template.playerInfoTemplate.events({
 		// user = Meteor.users.findOne({"_id":this.id})
 		if(Session.get('closeModal') != undefined){
 			if (confirm('Impossible de supprimer un joueur depuis ce menu.\n Voulez vous être redirigé ?')) {
-				var modalId = '#pairModal'+Session.get('closeModal')
+				var modalId = '#'+Session.get('closeModal');
 				Session.set('closeModal', undefined)
 				$(modalId).on('hidden.bs.modal', function() {
             		Router.go('playerInfoTemplate',{_id:this.id});

@@ -1,5 +1,6 @@
 <template name="poolList">
     <!-- Page Content -->
+    {{>modalItem}}
     <div id="page-content-wrapper">
       <div class="container-fluid">
         <div class="col-lg-20">
@@ -60,7 +61,7 @@
             <h4>
               <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
               <span class="sr-only">Succès:</span>
-              <span id="infoMsg">Poules sauvées !</span>
+              <span id="infoMsgSuccess">Poules sauvées !</span>
             </h4>
           </div>
           {{/if}}
@@ -78,6 +79,8 @@
       </div>
     </div>
     <!-- /#page-content-wrapper -->
+
+    {{> CourtInfoModal}}
 </template>
 
 
@@ -211,10 +214,9 @@
         {{#each getAlonePairs TYPEDATA}}
         <div id="{{this.pair._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{this.startingPoolId}}">
           {{#with getPlayer this.pair.player1._id}}
-          <ul class="list-group clickablePoolItem" data-id="{{../pair._id}}">
+          <ul class="list-group clickablePoolItem clickablePoolItemAlone" data-id="{{../pair._id}}" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}">
             <li class="list-group-item pairPlayer" style="color:{{getColor ../pair.player1}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}</li>
           </ul>
-          {{>modalItem PAIR=../pair POOL=../startingPoolId SEX=profile.gender BIRTHDATE=profile.birthDate SHOWOPTIONS=true}}
           {{/with}}
         </div>
         {{/each}}
@@ -243,8 +245,21 @@
 </template>
 
 <template name="modalItem">
+
+{{#with getModalInfo}}
+<!-- 
+  Returns an object :
+  {
+    PAIR:<pairObject>
+    SEX:<gender>
+    BIRTHDATE:<dateObject>
+    POOL<poolId>
+    SHOWOPTIONS<true|false>
+  }
+ -->
   <!-- Modal -->
-  <div id="pairModal{{PAIR._id}}" class="modal fade" data-backdrop="false" >
+  <!-- data-backdrop="false" -->
+  <div id="pairModal" class="modal fade">
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
@@ -265,7 +280,7 @@
               </center>
             {{/if}}
             {{/unless}}
-            {{>playerInfoTemplate ID=PAIR.player1._id MODAL=getModalId dontShowInscription="true"}}
+            {{>playerInfoTemplate ID=PAIR.player1._id MODAL=getModalId}}
             {{#if PAIR.player1.playerWish}}
             <h3>Souhaits sur les joueurs</h3>
             {{PAIR.player1.playerWish}}
@@ -325,6 +340,7 @@
       </div>
     </div>
   </div>
+{{/with}}
 </template>
 
 <!--
@@ -335,7 +351,7 @@ Takes 2 arguments :
 <template name="poolItem">
   {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
     <div id="{{this._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
-      <ul class="list-group clickablePoolItem" data-id="{{this._id}}">
+      <ul class="list-group clickablePoolItem clickablePoolItemFull" data-id="{{this._id}}" data-poolid="{{../POOLID}}">
         {{#with getPlayer this.player1._id}}
         <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}color:{{getColor ../player1}}{{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
@@ -345,7 +361,6 @@ Takes 2 arguments :
       </ul>
     </div>
     {{#unless equals this.player2._id undefined}}
-    {{>modalItem PAIR=this POOL=../POOLID SHOWOPTIONS=true}} <!-- Don't set SEX here, since we should not be able to change the type of the pair -->
     {{/unless}}
   {{/with}}
 </template>

@@ -548,19 +548,7 @@ Template.poolList.onRendered(function() {
 	Session.set("PoolList/Category","");
 });
 
-var showPairModal = function(event){
-	user = Meteor.user();
-	if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
-		return; // Do nothing
-	}
-	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
-}
-
 Template.poolList.events({
-	'click .clickablePoolItem':function(event){
-		showPairModal(event);
-	},
-
 	/*
 		Collects the state of the table of pools to save it into the db
 	*/
@@ -973,15 +961,13 @@ Template.poolList.helpers({
 											alonePairsContainerTemplate
 *******************************************************************************************************************/
 
-var showPairModal = function(event){
-	Session.set('closeModal',event.currentTarget.dataset.id)
-	user = Meteor.user();
+var showPairModal = function(){
+	Session.set('closeModal',"pairModal");
+	var user = Meteor.user();
 	if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
 		return; // Do nothing
 	}
-	// Move the modal out of its current position to avoid bugs
-	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
-	$("#myModal").css("z-index", "1500");
+	$('#pairModal').modal('show');
 }
 
 Template.alonePairsContainerTemplate.onRendered(function(){
@@ -992,6 +978,16 @@ Template.alonePairsContainerTemplate.onRendered(function(){
 var hasBothPlayers = function(pair){
 	return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
 }
+
+Template.alonePairsContainerTemplate.events({
+	'click .clickablePoolItemAlone':function(event){
+		var data = event.currentTarget.dataset;
+		var user = Meteor.users.findOne({_id:data.playerid},{"profile.gender":1, "profile.birthDate":1});
+		var pair = Pairs.findOne({_id:data.id});
+		Session.set("PoolList/ModalData", {"POOL":data.startingpoolid, "SEX":user.profile.gender, "SHOWOPTIONS":true, "BIRTHDATE":user.profile.birthDate, "PAIR":pair});
+		showPairModal();
+	}
+})
 
 Template.alonePairsContainerTemplate.helpers({
 	'getAlonePairs' : function(typeData){
@@ -1045,6 +1041,15 @@ Template.poolItem.helpers({
 
 	'getColor' : function(player){
 		return getColorFromPlayer(player);
+	}
+});
+
+Template.poolItem.events({
+	'click .clickablePoolItemFull':function(event){
+		var data = event.currentTarget.dataset;
+		var pair = Pairs.findOne({_id:data.id});
+		Session.set("PoolList/ModalData",{"PAIR":pair, "POOL":data.poolid, "SHOWOPTIONS":true});
+		showPairModal();
 	}
 });
 
@@ -1261,6 +1266,10 @@ Template.modalItem.helpers({
 		}
 		return toReturn;
 	},
+
+	'getModalInfo':function(){
+		return Session.get("PoolList/ModalData");
+	}
 });
 
 Template.modalItem.events({
