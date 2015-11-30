@@ -1,11 +1,7 @@
 <template name="forum">
-
-<div class="row">
-	<div class="col-sm-6 col-sm-offset-3">
-		<h2> Forum</h2>
-	</div>
+<div class="page-header">
+    <h2>Forum</h2>
 </div>
-
 
 <div class="forumContainer">
 {{#each getThreads}}
@@ -62,7 +58,7 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-6 col-sm-offset-3">
+    <div class="col-sm-8 col-sm-offset-2">
       	<div class="form-group" style="display:inline">
 	    	<input name="threadName" id="threadName" class="form-control" placeholder="Nouvelle catégorie" onkeydown="if (event.keyCode == 13) document.getElementById('addThread').click()" style="display:inline; width:70%">
 	    	<button type="button" class="btn btn-default" id="addThread" style="display:inline">
@@ -80,20 +76,31 @@
 	Args :
 	topicId
  -->
+
 <template name="topic">
-<button type="button" class="btn btn-default" id="goBack">
-	<span class="glyphicon glyphicon-arrow-left"></span> Retour
-</button>
+
+<div class="page-header">
+    <h2>Forum</h2>
+</div>
+
+<div>
+	<button type="button" class="btn btn-default" id="goBack">
+		<span class="glyphicon glyphicon-arrow-left"></span> Retour
+	</button>
+</div>
+<br>
 
 {{#with getTopic topicId}}
 
-<h3>{{../threadName}} > {{this.name}}</h3>
+<legend>{{../threadName}} > {{this.name}}</legend>
 
 {{> reactiveTable collection=this.posts settings=settings fields=fields}}
 	<div class="row">
-	    <div class="col-sm-6 col-sm-offset-3">
+	    <div class="col-sm-8 col-sm-offset-2">
 	      	<div class="form-group">
-		    	<textarea name="postText" id="postText{{this._id}}" class="form-control" placeholder="Message"></textarea>
+	      		<div class="well">
+		    		<textarea name="postText" id="postText{{this._id}}" class="form-control" placeholder="Message"></textarea>
+		    	</div>
 	    	</div>
 		</div>
 		<br>
@@ -106,7 +113,7 @@
 
 <template name="emptyPost">
 	<div class="row">
-		<div class="col-sm-6 col-sm-offset-3">
+		<div class="col-sm-8 col-sm-offset-2">
 	          <div id="infoBox" class="alert alert-info" role="alert">
 		        <h4>
 		          <span class="glyphicon glyphicon-info-sign"></span>

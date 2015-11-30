@@ -94,19 +94,6 @@ html {
   	min-height: 710px;
 }
 
-.well {
-    background: #f3f3f3 !important;
-    display: block;
-    margin-left: 2px;
-    margin-right: 2px;
-    padding-top: 0.35em;
-    padding-bottom: 0.625em;
-    padding-left: 0.75em;
-    padding-right: 0.75em;
-    border: 2px groove !important;
-    border-radius : 15px !important;
-}
-
 /* Footer of the web site */
 .footer {
     background: #f3f3f3;
@@ -154,10 +141,35 @@ html {
     overflow: hidden;
 }
 
+/* Design options content */
+
+.well {
+    background: #f3f3f3 !important;
+    display: block;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding-top: 0.35em;
+    padding-bottom: 0.625em;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    border: 2px groove !important;
+    border-radius : 15px !important;
+}
+
+.panel-heading {
+    background: #f3f3f3 !important;
+    color: #000 !important;
+}
+
+textarea { 
+    resize:vertical !important; 
+}
+
 /* Box alert info */
 .alert-info {
     background-color: #A0522D !important;
 }
+
 
 /**
 * 	 __  __          _ _
