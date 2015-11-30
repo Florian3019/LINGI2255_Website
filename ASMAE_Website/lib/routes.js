@@ -34,12 +34,18 @@ Router.route('/', {
 	name: 'home',
 	waitOn: function(){
 		return [ Meteor.subscribe('GlobalValues'), Meteor.subscribe('Years') ]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
 	}
 });
 
 Router.route('/email-terrain', {
 	template: 'courtEmail',
-	name: 'courtEmail'
+	name: 'courtEmail',
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
 });
 
 Router.route('/modifications-log', {
@@ -47,22 +53,34 @@ Router.route('/modifications-log', {
 	name: 'modificationsLog',
 	waitOn: function(){
 		return [ Meteor.subscribe('ModificationsLog'), Meteor.subscribe('users') ]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
 Router.route('/contacts', {
 	name: 'contacts',
-	template: 'contacts'
+	template: 'contacts',
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	}
 });
 
 Router.route('/reglement', {
 	name: 'rules',
-	template: 'rules'
+	template: 'rules',
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	}
 });
 
 Router.route('/email-verification', {
 	template: 'emailVerification',
-	name: 'emailVerification'
+	name: 'emailVerification',
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	}
 });
 
 Router.route('/mon-inscription', {
@@ -80,6 +98,9 @@ Router.route('/mon-inscription', {
 		return [
 			Meteor.subscribe('GlobalValues'),
 		]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
 	}
 });
 Router.route('/mon-inscription2', {
@@ -97,6 +118,9 @@ Router.route('/mon-inscription2', {
 		return [
 			Meteor.subscribe('GlobalValues'),
 		]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
 	}
 });
 Router.route('/inscription-tournoi',  {
@@ -116,6 +140,9 @@ Router.route('/inscription-tournoi',  {
 			Meteor.subscribe('users')
 		];
 		return res;
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
 	}
 });
 
@@ -131,6 +158,9 @@ Router.route('/liste-poules', {
 					Meteor.subscribe('Matches'),
 					Meteor.subscribe('GlobalValues'),
 					Meteor.subscribe('Addresses')]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
@@ -143,12 +173,18 @@ Router.route('/table-scores', {
 					Meteor.subscribe('Pairs'),
 					Meteor.subscribe('GlobalValues'),
 					Meteor.subscribe('Addresses') ]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
 Router.route('/inscription-terrain', {
 	name: 'courtRegistration',
-	template: 'courtRegistration'
+	template: 'courtRegistration',
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	}
 });
 
 Router.route('/info-terrain', {
@@ -188,14 +224,9 @@ Router.route('/mes-terrains', {
 	template: 'myCourts',
 	waitOn: function() {
 		return [Meteor.subscribe('Addresses'), Meteor.subscribe('Courts')];
-	}
-});
-
-Router.route('/lancer-inscriptions-tournoi', {
-	name: 'launchTournament',
-	template: 'launchTournament',
-	waitOn: function(){
-		return [ Meteor.subscribe('GlobalValues') ]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
 	}
 });
 
@@ -204,6 +235,9 @@ Router.route('/admin-ajout-terrain', {
 	template: 'adminAddCourt',
 	waitOn: function(){
 		return [ Meteor.subscribe('users') ]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
@@ -212,6 +246,9 @@ Router.route('/info-joueurs', {
 	template: 'playersInfo',
 	waitOn: function() {
 		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users'), Meteor.subscribe('Payments')];
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
@@ -233,6 +270,9 @@ Router.route('/gestion-staff', {
 	template: 'staffManagement',
 	waitOn: function() {
 		return Meteor.subscribe('Questions');
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 Router.route('/editer-profil/:_id', {
@@ -250,6 +290,9 @@ Router.route('/editer-profil/:_id', {
 	},
 	waitOn: function(){
 		return [Meteor.subscribe('Addresses'), Meteor.subscribe('users') ];
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
 	}
 
 });
@@ -258,6 +301,9 @@ Router.route('/brackets', {
 	template: 'brackets',
 	waitOn: function(){
 		return [Meteor.subscribe('Years'), Meteor.subscribe('Types'), Meteor.subscribe('Pairs') ];
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
@@ -309,17 +355,26 @@ Router.route('/recherche-terrain', {
 	template: 'courtSearchTemplate',
 	waitOn: function(){
 		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses'), Meteor.subscribe('users') ]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
 Router.route('/print', {
 	name: 'printSheets',
-	template: 'printSheets'
+	template: 'printSheets',
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
 });
 
 Router.route('/terrains', {
 	name: 'courtsList',
-	template: 'courtsList'
+	template: 'courtsList',
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
 });
 
 Router.route('/forum', {
@@ -327,6 +382,9 @@ Router.route('/forum', {
 	template: 'forum',
 	waitOn: function(){
 		return [ Meteor.subscribe('Topics'), Meteor.subscribe('Threads')]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
@@ -335,6 +393,9 @@ Router.route('/modifier-extras',{
 	template: 'modifyExtras',
 	waitOn: function(){
 		return [ Meteor.subscribe('Extras')]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
@@ -365,6 +426,9 @@ Router.route('/topic/:_id/:tname',{
 
 	waitOn: function(){
 		return [ Meteor.subscribe('Threads'), Meteor.subscribe('Topics') ];
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
@@ -394,7 +458,10 @@ Router.route('/payment-error', {
 
 Router.route('/faq', {
   	name: 'faq',
-	template: 'faq'
+	template: 'faq',
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	}
 });
 
 Router.route('/deroulement-tournoi', {
@@ -402,5 +469,8 @@ Router.route('/deroulement-tournoi', {
 	template: 'tournamentProgress',
 	waitOn: function(){
 		return [ Meteor.subscribe('GlobalValues') ]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });

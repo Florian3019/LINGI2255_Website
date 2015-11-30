@@ -203,8 +203,20 @@ var mergePlayers = function(document){
 											Sidebar collapsable Menu
 *******************************************************************************************************************/
 
+Template.poolsSidebarCollapsableMenu.onRendered(function(){
+    var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+    hideSuccessBox(document);
+    Session.set('PoolList/Year', currentYear);
+    Session.set("PoolList/ChosenScorePool","");
+});
 
 Template.poolsSidebarCollapsableMenu.helpers({
+
+    'selectedYear': function(value){
+        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+        return value == currentYear ? 'selected' : '';
+    },
+
 	'getAllYears':function(){
 		var callBack = function(err, ret){
 			Session.set("PoolList/allYears", ret);
@@ -705,7 +717,7 @@ Template.poolList.events({
 					}
 					else{
 						result.push([round,result[begin_previous+m][1]]);
-					}	
+					}
 				}
 				begin_previous+=size_previous;
 				size_previous=size_previous/2;
