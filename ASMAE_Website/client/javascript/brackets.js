@@ -229,7 +229,12 @@ var displayBrackets =  function(document,brackets){
 
   var myFunction = function($){
 
-    console.warn("Make sure the min-width of the .gracket_h3 element is set to width of the largest name/player. Gracket needs to build its canvas based on the width of the largest element. We do this my giving it a min width. I'd like to change that!");
+    /*
+      Written by the author of the plugin :
+      Make sure the min-width of the .gracket_h3 element is set to width of the largest name/player. 
+      Gracket needs to build its canvas based on the width of the largest element. 
+      We do this my giving it a min width. I'd like to change that!
+    */
 
     // Load script (script HAS TO BE in the public folder)
     $.getScript( "javascript/jquery.gracket.js" )
@@ -383,7 +388,7 @@ var handleBracketErrors = function(document){
         if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
       }
       var user = Meteor.user();
-      if(user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+      if(user===undefined || user===null || !(user.profile.isStaff || user.profile.isAdmin)){
         setInfo(document, "Les knock-off n'ont pas encore commencés pour cette catégorie!");
       }
       else{
@@ -400,7 +405,7 @@ var handleBracketErrors = function(document){
     if(allWinners.length==0){
       console.info("There are no matches for that year, type and category, did you create any ?");
       var user = Meteor.user();
-      if(user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+      if(user===undefined || user===null || !(user.profile.isStaff || user.profile.isAdmin)){
         setInfo(document, "Les knock-off n'ont pas encore commencés pour cette catégorie!");
       }
       else{
@@ -419,7 +424,7 @@ var handleBracketErrors = function(document){
 
 var setCompletion = function(completion){
   var user = Meteor.user();
-  if(!(user.profile.isStaff || user.profile.isAdmin)){
+  if(user===undefined || user==null || !(user.profile.isStaff || user.profile.isAdmin)){
     return;
   }
   var year = Session.get("PoolList/Year");
@@ -705,7 +710,7 @@ Template.brackets.events({
 	// Do something when the user clicks on a player
   "click .changeScoreBracket":function(event, template){
     var user = Meteor.user();
-    if(user==null || !(user.profile.isAdmin || user.profile.isStaff)){
+    if(user==null || user===undefined || !(user.profile.isAdmin || user.profile.isStaff)){
       return; // No action must be done
     }
 

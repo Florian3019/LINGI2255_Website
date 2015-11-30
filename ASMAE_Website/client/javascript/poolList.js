@@ -564,7 +564,7 @@ Template.poolList.onRendered(function() {
 
 var showPairModal = function(event){
 	user = Meteor.user();
-	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
+	if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
 		return; // Do nothing
 	}
 	$('#pairModal'+event.currentTarget.dataset.id).modal('show');
@@ -961,7 +961,7 @@ Template.poolList.helpers({
 		*/
 		var completion = (totalNumberOfPairs==0) ? 0 : totalCompletion/totalNumberOfPairs;
 		var user = Meteor.user();
-		if(user.profile.isStaff || user.profile.isAdmin){
+		if(user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin)){
 			if(totalNumberOfPairs!=0){
 				var str = "completion.pools.".concat(category);
 				updateData = {};
@@ -1033,7 +1033,8 @@ Template.poolList.helpers({
 			{
 				/*	Defines what can be moved/dragged	*/
 				moves : function(el, source, handle, sibling) {
-					if(Meteor.user().profile.isStaff===true || Meteor.user().profile.isAdmin===true){
+					var user = Meteor.user();
+					if(user!==undefined && user!==null && (user.profile.isStaff===true || user.profile.isAdmin===true)){
 						var isPairModal = (' ' + el.className + ' ').indexOf(' modal ') > -1;
 			    		if(isPairModal){
 			    			// The modal must not be draggable
@@ -1147,7 +1148,7 @@ Template.poolList.helpers({
 var showPairModal = function(event){
 	Session.set('closeModal',event.currentTarget.dataset.id)
 	user = Meteor.user();
-	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
+	if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
 		return; // Do nothing
 	}
 	// Move the modal out of its current position to avoid bugs
@@ -1242,7 +1243,9 @@ Template.poolContainerTemplate.helpers({
 	},
 
 	'displayPool':function(pairs){
-		return (Meteor.user().profile.isAdmin || Meteor.user().profile.isStaff || moreThanOnePairFunct(pairs));
+		var user = Meteor.user();
+		if(user===undefined || user===null) return false;
+		return (user.profile.isAdmin || user.profile.isStaff || moreThanOnePairFunct(pairs));
 	},
 
   'getStreet' : function(courtId){

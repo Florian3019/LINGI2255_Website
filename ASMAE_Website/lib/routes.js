@@ -21,7 +21,7 @@ Router.onBeforeAction(function() {
         else
 			this.next();
 	}
-}, {except: ['home', 'rules', 'login', 'faq']});
+}, {except: ['home', 'rules', 'login', 'faq', 'poolList']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -141,14 +141,15 @@ Router.route('/liste-poules', {
 	name: 'poolList',
 	template: 'poolList',
 	waitOn: function(){
-		console.log("waiting");
-		return [ 	Meteor.subscribe('Years'),
+		return [ 	
+					Meteor.subscribe('Years'),
 					Meteor.subscribe('Types'),
 					Meteor.subscribe('users'),
 					Meteor.subscribe('Pairs'),
 					Meteor.subscribe('Pools'),
 					Meteor.subscribe('Matches'),
-					Meteor.subscribe('Addresses')]
+					Meteor.subscribe('Addresses')
+					]
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', true);

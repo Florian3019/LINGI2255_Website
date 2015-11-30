@@ -19,8 +19,9 @@ Meteor.publish('Addresses', function(){
         return Addresses.find();
       }
       var user = Meteor.users.findOne({_id:this.userId},{"profile.addressID":1});
-      if (typeof user === 'undefined') {
+      if (user===undefined) {
           this.ready();
+          return;
       }
       return Addresses.find({$or:[{_id: user.profile.addressID}, {"isCourtAddress":true}]});
 });
