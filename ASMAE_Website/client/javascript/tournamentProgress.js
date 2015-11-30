@@ -204,7 +204,7 @@ Template.tournamentProgress.events({
         Assign courts
     */
 
-    'click #AssignCourts6':function(event){
+    'click #assignCourts':function(event){
 
         var getCourtNumbers = function(courts){
             var result = [];

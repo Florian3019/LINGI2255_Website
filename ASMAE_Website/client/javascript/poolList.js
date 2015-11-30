@@ -692,7 +692,7 @@ Template.poolList.events({
 		var data =  {};
 		data[category.concat("Resp")] = Meteor.userId();
 		Types.update({_id:yearData[type]},{$pull:data});
-	},
+	}
 });
 
 Template.poolList.helpers({
