@@ -703,7 +703,7 @@ Template.brackets.events({
 
     var user = Meteor.user();
 
-    if(user!==undefined && (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin)){
+    if(user!==undefined && user!==null && (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin)){
       var round = event.currentTarget.firstElementChild.dataset.round;
       var court = event.currentTarget.firstElementChild.dataset.courtn;
       Session.set("PoolList/ChosenCourt",court);

@@ -1244,7 +1244,7 @@ Template.poolContainerTemplate.helpers({
 
 	'displayPool':function(pairs){
 		var user = Meteor.user();
-		if(user===undefined || user===null) return false;
+		if(user===undefined || user===null) return moreThanOnePairFunct(pairs);
 		return (user.profile.isAdmin || user.profile.isStaff || moreThanOnePairFunct(pairs));
 	},
 

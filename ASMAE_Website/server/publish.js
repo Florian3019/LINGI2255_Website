@@ -20,8 +20,7 @@ Meteor.publish('Addresses', function(){
       }
       var user = Meteor.users.findOne({_id:this.userId},{"profile.addressID":1});
       if (user===undefined) {
-          this.ready();
-          return;
+          return Addresses.find({"isCourtAddress":true});
       }
       return Addresses.find({$or:[{_id: user.profile.addressID}, {"isCourtAddress":true}]});
 });

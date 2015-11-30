@@ -94,8 +94,8 @@ Template.scoreTable.helpers({
     var totalMatches = 0;
     var completedMatches = 0;
 
-    var user = Meteor.users.findOne({_id:Meteor.userId()},{"profile":1});
-    if(user.profile.isStaff || user.profile.isAdmin){
+    var user = Meteor.user();
+    if(user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin)){
       // Create a match for each of these pairs, if it does not yet exist
       for(var i=0;i<pairList.length;i++){
         for(var j=0;j<i;j++){
@@ -203,8 +203,8 @@ Template.scorePage.events({
   },
 
   'click #changeCourt':function(event){
-    var user = Meteor.users.findOne({_id:Meteor.userId()},{"profile":1});
-    if(user.profile.isStaff || user.profile.isAdmin){
+    var user = Meteor.user();
+    if(user!==undefined && user!==undefined && (user.profile.isStaff || user.profile.isAdmin)){
        Session.set("PoolList/ChosenCourt","44");
     }
   },
