@@ -148,7 +148,7 @@
           //   '</h3>'
           // ].join("");
           if(data.court!==""){
-            var c = (isFirst? '<span class="pull-right"  data-round='+data.round+' data-courtn='+data.court+' > (Terrain: ' +data.court+') </span>' : "");
+            var c = (isFirst? '<span class="pull-right"  data-round='+data.round+' data-courtn='+data.court+' > (T. ' +(data.court===undefined ? '?':data.court)+') </span>' : "");
           }
           else{
             var c = "";
