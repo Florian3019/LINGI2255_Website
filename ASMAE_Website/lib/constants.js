@@ -24,8 +24,8 @@ acceptForFamily = function(birthDate, tournamentDate){
 /*
     return the pair corresponding to the current year for the current user
 */
-getPairFromPlayerID = function() {
-    var id = Meteor.userId();
+getPairFromPlayerID = function(isForPublish) {
+    var id = isForPublish ? this.userId : Meteor.userId();
     var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
     var pair = Pairs.findOne({$or:[{"player1._id":id, year:currentYear},{"player2._id":id, year:currentYear}]});
     return pair;

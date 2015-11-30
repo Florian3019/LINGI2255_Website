@@ -162,7 +162,7 @@ Meteor.publish("PairInfo", function(){
 */
 Meteor.publish("PartnerAdress", function() {
     var id = this.userId;
-    var pair = getPairFromPlayerID();
+    var pair = getPairFromPlayerID(true);
     if (!pair) {
         console.error("Error publish PartnerAdress : no pair found in the DB for this user.");
         return undefined;
