@@ -35,7 +35,17 @@ Template.printSheets.events({
             }
           }
         }
-        Session.set("printSheets/poolList",poolList);
+        var nonemptyPool = new Array();
+        for (var i in poolList) {
+          typeSearch={};
+          typeSearch["pairs"] =1;
+          var temp = Pools.findOne({_id:poolList[i]}, typeSearch);
+          if(temp.pairs.length>0){
+            nonemptyPool.push(poolList[i]);
+          }
+        }
+
+        Session.set("printSheets/poolList",nonemptyPool);
       }
     }
   },
