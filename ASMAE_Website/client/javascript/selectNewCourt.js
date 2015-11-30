@@ -1,6 +1,10 @@
 Template.selectNewCourt.events({
     'click #newCourtCancel':function(event){
         Session.set("PoolList/ChosenCourt","");
+        Session.set("selectNewCourt/saturday","Ignore");
+        Session.set("selectNewCourt/sunday","Ignore");
+        Session.set("selectNewCourt/staffOK","Ignore");
+        Session.set("selectNewCourt/ownerOK","Ignore");
     },
 
     'click .courtRow' : function(event){

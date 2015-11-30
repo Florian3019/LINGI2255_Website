@@ -695,11 +695,17 @@ Template.brackets.events({
   // change the court
 
   "click .changeCourtsBracket":function(event){
-    var round = event.currentTarget.firstElementChild.dataset.round;
-    var court = event.currentTarget.firstElementChild.dataset.courtn;
-    Session.set("PoolList/ChosenCourt",court);
-    Session.set("PoolList/ChosenRound",round);
-    Session.set("changeCourtsBracket","true");
+
+    var user = Meteor.user();
+
+    if(user!==undefined && (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin)){
+      var round = event.currentTarget.firstElementChild.dataset.round;
+      var court = event.currentTarget.firstElementChild.dataset.courtn;
+      Session.set("PoolList/ChosenCourt",court);
+      Session.set("PoolList/ChosenRound",round);
+      Session.set("changeCourtsBracket","true");
+    }
+
   },
 
 	// Do something when the user clicks on a player
