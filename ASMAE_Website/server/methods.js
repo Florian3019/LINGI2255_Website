@@ -79,8 +79,13 @@ Meteor.methods({
 			data.step5done = false;
 			data.step6done = false;
 
+			var insertedYearID = Years.insert(data);
 			console.log("Tournament launched for year "+data._id);
-			return Years.insert(data);
+
+			//Put all the courts ownerOK and staffOK to false for this year's tournament
+			Courts.update({}, {ownerOK: false, staffOK: false});
+
+			return insertedYearID;
 		}
 		else {
 			console.error("You are not an administrator, you don't have the permission to do this action.");

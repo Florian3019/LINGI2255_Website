@@ -7,7 +7,7 @@
       <select class="form-control Year" id="Year" name = "Year">
             {{getAllYears}}
             {{#each getAllYearsSession}}
-              <option value="{{this}}"> {{this}} </option>
+              <option value="{{this}}" {{selectedYear this}}> {{this}} </option>
             {{/each}}
           </select>
     </div>

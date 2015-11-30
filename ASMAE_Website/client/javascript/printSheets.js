@@ -242,6 +242,16 @@ Template.printSheets.helpers({
       return true;
     }
     return false;
-  }
+    },
+
+    'selectedYear' : function(value){
+        var currentYear = GlobalValues.findOne({_id: "currentYear"});
+        if(typeof currentYear !== 'undefined'){
+            return value == currentYear.value ? 'selected' : '';
+        }
+        else{
+            return '';
+        }
+    }
 
 });
