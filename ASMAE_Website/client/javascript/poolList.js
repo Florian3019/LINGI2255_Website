@@ -209,7 +209,6 @@ Template.poolsSidebarCollapsableMenu.onRendered(function(){
     var currentYear = c.value;
     hideSuccessBox(document);
     Session.set('PoolList/Year', currentYear);
-    Session.set("PoolList/ChosenScorePool","");
 });
 
 Template.poolsSidebarCollapsableMenu.helpers({
@@ -543,7 +542,7 @@ Template.poolList.onRendered(function() {
 	// (usefull when he clicks on scoreboard and presses the back button)
 	Session.set("PoolList/ChosenScorePool","");
 	Session.set("PoolList/ChosenBrackets","");
-	Session.set("PoolList/Year","");
+	// Session.set("PoolList/Year","");
 	Session.set("PoolList/Type","");
 	Session.set("PoolList/Category","");
 });

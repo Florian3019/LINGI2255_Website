@@ -199,12 +199,12 @@ getColorFromPlayer = function(player){
 addressToString = function(theAddress){
     var theString = "";
     if(theAddress!=undefined &&theAddress!=null){
-        theString +=theAddress.city+" ";
         theString +=theAddress.street+" ";
-        theString += theAddress.country+" ";
-        theString += theAddress.box+" ";
-        theString += theAddress.number+" ";
+        theString += theAddress.number+", ";
+        theString += (theAddress.box!=="")?"B."+theAddress.box+", ":"";
         theString += theAddress.zipCode+" ";
+        theString +=theAddress.city+", ";
+        theString += theAddress.country+" ";
     }
     return theString;
 };

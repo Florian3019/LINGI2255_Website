@@ -20,7 +20,7 @@ html {
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
-    background-size: cover;   
+    background-size: cover;
 }
 
 .btn {
@@ -161,8 +161,8 @@ html {
     color: #000 !important;
 }
 
-textarea { 
-    resize:vertical !important; 
+textarea {
+    resize:vertical !important;
 }
 
 /* Box alert info */

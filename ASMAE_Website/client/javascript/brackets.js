@@ -761,6 +761,8 @@ Template.brackets.events({
 
   'click #start':function(event){
       Session.set('brackets/buildingTournament', true);
+      infoBox =document.getElementById("infoBox");
+      if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered and hide it
       console.log("calling startTournament");
       year = Session.get('PoolList/Year');
       type = Session.get('PoolList/Type');
@@ -795,27 +797,21 @@ Template.brackets.events({
     score1 = parseInt(score1);
     setPoints(pair1, round, score1);
 
-    // u01 = Meteor.users.findOne("_id":pair0.player1._id},{"profile":1});
-    // u02 = Meteor.users.findOne("_id":pair0.player2._id},{"profile":1});
-    // u11 = Meteor.users.findOne("_id":pair1.player1._id},{"profile":1});
-    // u12 = Meteor.users.findOne("_id":pair1.player2._id},{"profile":1});
+    u01 = Meteor.users.findOne({"_id":pair0.player1._id},{"profile":1});
+    u02 = Meteor.users.findOne({"_id":pair0.player2._id},{"profile":1});
+    u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1});
+    u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1});
 
-    // Meteor.call("addToModificationsLog",
-    // {"opType":"Modification points match knock-off",
-    // "details":
-    //     "Round: "+round+
-    //     " Paire "+u01.profile.firstName.substring(0,1) + ". " + u01.profile.lastName + " et "+u02.profile.firstName.substring(0,1) + ". " + u02.profile.lastName +
-    //     " Points: "+score0+getStringOptions()
-    // });
-
-    // Meteor.call("addToModificationsLog",
-    // {"opType":"Modification points match knock-off",
-    // "details":
-    //     "Round: "+round+
-    //     " Paire "+u11.profile.firstName.substring(0,1) + ". " + u11.profile.lastName + " et "+u12.profile.firstName.substring(0,1) + ". " + u12.profile.lastName +
-    //     " Points: "+score1+getStringOptions()
-    // });
-
+    Meteor.call("addToModificationsLog",
+    {"opType":"Modification points match knock-off",
+    "details":
+        "Round: "+round+
+        u01.profile.firstName + " " + u01.profile.lastName + " et "+u02.profile.firstName + " " + u02.profile.lastName +
+        " "+score0+ " VS "+
+        u11.profile.firstName + " " + u11.profile.lastName + " et "+u12.profile.firstName + " " + u12.profile.lastName +
+        " "+score1 +
+        getStringOptions()
+    });
 
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   },
