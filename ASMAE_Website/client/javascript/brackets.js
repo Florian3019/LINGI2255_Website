@@ -783,10 +783,10 @@ Template.brackets.events({
     score1 = parseInt(score1);
     setPoints(pair1, round, score1);
 
-    u01 = Meteor.users.findOne("_id":pair0.player1._id},{"profile":1});
-    u02 = Meteor.users.findOne("_id":pair0.player2._id},{"profile":1});
-    u11 = Meteor.users.findOne("_id":pair1.player1._id},{"profile":1});
-    u12 = Meteor.users.findOne("_id":pair1.player2._id},{"profile":1});
+    u01 = Meteor.users.findOne({"_id":pair0.player1._id},{"profile":1});
+    u02 = Meteor.users.findOne({"_id":pair0.player2._id},{"profile":1});
+    u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1});
+    u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1});
 
     Meteor.call("addToModificationsLog",
     {"opType":"Modification points match knock-off",
