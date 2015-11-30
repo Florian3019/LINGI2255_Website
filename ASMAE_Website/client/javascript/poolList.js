@@ -753,8 +753,8 @@ Template.poolList.events({
 
 		var numberDays = 2;
 
-		var courtsSat = getCourtNumbers(Courts.find({dispoSamedi: true}).fetch());
-		var courtsSun = getCourtNumbers(Courts.find({dispoDimanche: true}).fetch());
+		var courtsSat = getCourtNumbers(Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true}]}).fetch());
+		var courtsSun = getCourtNumbers(Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true}]}).fetch());
 		var courtsTable = [courtsSat,courtsSun];
 
 		var poolsSat = Pools.find({$or: [{type:"mixed"},{type:"family"}]}).fetch();
