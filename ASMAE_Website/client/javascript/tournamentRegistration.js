@@ -26,7 +26,6 @@ Template.tournamentRegistration.helpers({
         function setAlonePlayers(){
 
     		if (Session.get("firstTime")) {
-				console.log("returning undefined yey yey");
     			return undefined;
     		}
 
