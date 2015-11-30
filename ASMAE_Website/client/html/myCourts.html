@@ -5,34 +5,36 @@
         <h2>Mes terrains</h2>
     </div>
     <br>
-    {{#if court}}
-	<table class="table">
-		<thead>
-      		<tr>
-        	<th>Terrain</th>
-            <th>Surface</th>
-        	<th>Loué</th>
-      		</tr>
-    	</thead>
-    	<tbody>
-    		{{#each court}}
-    		<tr>
-    			<td><a href="{{pathFor route='courtInfoPage' _id=this._id}}">{{courtAddress addressID}}</a></td>
-                <td>{{surface}}</td>
-    			<td><span class="glyphicon {{checked}}"></span></td>
-    		</tr>
-    		{{/each}}
-    	</tbody>
-	</table>
-    {{else}}
-    <div id="infoBox" class="alert alert-info" role="alert">
-        <h4>
-            <span class="glyphicon glyphicon-info-sign"></span>
-            <span class="sr-only">Info:</span>
-            <span>Vous n'avez aucun terrain enregistrer</span>
-        </h4>
-    </div>
-    {{/if}}
+    {{#with court}}
+        {{#if this.notEmpty}}
+    	<table class="table">
+    		<thead>
+          		<tr>
+            	<th>Terrain</th>
+                <th>Surface</th>
+            	<th>Loué</th>
+          		</tr>
+        	</thead>
+        	<tbody>
+        		{{#each this.cursor}}
+        		<tr>
+        			<td><a href="{{pathFor route='courtInfoPage' _id=this._id}}">{{courtAddress addressID}}</a></td>
+                    <td>{{surface}}</td>
+        			<td><span class="glyphicon {{checked}}"></span></td>
+        		</tr>
+        		{{/each}}
+        	</tbody>
+    	</table>
+        {{else}}
+        <div id="infoBox" class="alert alert-info" role="alert">
+            <h4>
+                <span class="glyphicon glyphicon-info-sign"></span>
+                <span class="sr-only">Info:</span>
+                <span>Vous n'avez aucun terrain enregistré</span>
+            </h4>
+        </div>
+        {{/if}}
+    {{/with}}
 	<br/>
 	<center><a class="btn btn-default" href="{{pathFor route='courtRegistration'}}">Ajouter un terrain</a></center>
 </div>
