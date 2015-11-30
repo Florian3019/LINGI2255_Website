@@ -204,7 +204,7 @@ Template.scorePage.events({
 
   'click #changeCourt':function(event){
     var user = Meteor.user();
-    if(user!==undefined && user!==undefined && (user.profile.isStaff || user.profile.isAdmin)){
+    if(user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin)){
        Session.set("PoolList/ChosenCourt","44");
     }
   },
