@@ -137,6 +137,8 @@ Template.tournamentRegistration.helpers({
     		var e = document.getElementById("refreshErrorMessage");
     		if (check) { // An error occurred (mis-filled field)
     			e.style.display = 'block';
+    			var table = document.getElementById("tableAlone");
+    			table.style.display = 'none';
     			return undefined;
     		}
     		else {
@@ -472,6 +474,10 @@ var refreshAlonePlayers = function(event, document){
 
 	table.style.display = 'none';
 	message.style.display = 'none';
+
+	if(!document.getElementById('alone').checked || document.getElementById("later").checked){
+		return;
+	}
 	if (isEmptyTable()) {
 		message.style.display = 'block';
 	}
@@ -501,12 +507,11 @@ Template.tournamentRegistration.events({
         refreshAlonePlayers(event, document);
 	},
 
-	"change .checkboxAloneDiv input": function (event) {
+	"change #alone": function (event) {
 		event.preventDefault();
 		var e = document.getElementById("emailPlayer");
 		var table = document.getElementById("tableAlone");
 		var later = document.getElementById("checkboxLater");
-		var refresh = document.getElementById("refresh");
 		var message = document.getElementById("emptyTableMessage");
 		document.getElementById("later").checked = false; // reset "later" checkbox
 		Session.set("firstTime", false);
@@ -518,7 +523,6 @@ Template.tournamentRegistration.events({
 			message.style.display = 'none';
 
 			later.style.display = 'block';
-			refresh.style.display = 'block';
 			e.setAttribute("disabled","true");
 			if (isEmptyTable()) {
 				message.style.display = 'block';
@@ -529,23 +533,20 @@ Template.tournamentRegistration.events({
 		}else{
 			later.style.display = 'none';
 			table.style.display = 'none';
-			refresh.style.display = 'none';
 			message.style.display = 'none';
 			e.removeAttribute("disabled","false");
 		}
     },
 
-    "change .checkboxLater input": function (event) {
+    "change #later": function (event) {
 		event.preventDefault();
 		aloneDependency.changed();
 		var table = document.getElementById("tableAlone");
 		var message = document.getElementById("emptyTableMessage");
 		if(event.target.checked){
 			table.style.display = 'none';
-			refresh.style.display = 'none';
 			message.style.display = 'none';
 		}else{
-			refresh.style.display = 'block';
 			if (isEmptyTable()) {
 				message.style.display = 'block';
 			}
