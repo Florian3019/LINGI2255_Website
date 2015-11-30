@@ -1,5 +1,8 @@
 <template name="brackets">
 	  	<!-- Only display button if all options are selected -->
+
+
+
 	  	{{#if isAdminOrStaff}}
 			{{#with getYear}}
 				{{#with getType}}
@@ -22,14 +25,6 @@
 		{{/if}}
 	<!-- </form> -->
 
-	<div id="infoBox" class="alert alert-info" role="alert" hidden>
-	  <h4>
-		  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-		  <span class="sr-only">Info:</span>
-		  <span id="infoMsg"></span>
-	  </h4>
-	</div>
-
 	<div id="wrapper">
 	<!-- empty gracket element -->
 
@@ -39,12 +34,17 @@
 					{{#if buildingTournament}}
 						{{>buildTournament}}
 					{{else}}
+						<div class="page-header">
+							<h2> Knock-offs {{translateType ..}} > {{translateCategory this}} </h2>
+						</div>
 						{{>gracketTemplate ALLWINNERS=getAllWinners}}
 					{{/if}}
 				{{/with}}
 			{{/with}}
 		{{/with}}
 	</div>
+
+
 
 	<!-- basic styles -->
 	<style type="text/css">

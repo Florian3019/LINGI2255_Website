@@ -257,7 +257,20 @@ var setInfo = function(document, msg){
   if(g!=undefined) g.setAttribute("hidden","");
 };
 
+var hideInfo = function(document){
+    infoBox = document.getElementById("infoBox");
+    if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // hide any previous info message
+}
+
 Template.brackets.helpers({
+  'translateType':function(type){
+    return typesTranslate[type];
+  },
+
+  'translateCategory':function(category){
+    return categoriesTranslate[category];
+  },
+
   'getGracketWidth':function(){
     return 350*Session.get('brackets/rounds');
   },
@@ -384,8 +397,9 @@ var handleBracketErrors = function(document){
         + ". Si vous en avez créé, cliquez sur redémarrer le knock-off pour mettre à jour");
       return;
     }
-    infoBox = document.getElementById("infoBox");
-    if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // hide any previous info message
+    
+    hideInfo(document);
+
     return allWinners;
 }
 
@@ -504,7 +518,12 @@ var getTournamentFirstRound = function(pairs){
 
 var makeBrackets = function(document){
   allWinners = handleBracketErrors(document); // Table of winner pair Id
-  if(allWinners==undefined) return;
+  if(allWinners==undefined){
+    resetBrackets(document);
+    setInfo(document, "Les knock-off n'ont pas encore commencés !");
+    return;
+  }
+  hideInfo(document);
   /********************************************
     First round creation
   ********************************************/
