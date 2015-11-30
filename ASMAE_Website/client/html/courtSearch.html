@@ -16,17 +16,17 @@
   <div class="col-sm-4">
     <label for="saturdaySelect">Samedi</label>
     <select id="saturdaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
-                  <option value="Ignore" selected="selected">Ignorer</option>
-                  <option value="Yes" >Oui</option>
-                  <option value="No">Non</option>
+                  <option value="Ignore" {{setSelect Saturday "Ignore" }}>Ignorer</option>
+                  <option value="Yes" {{setSelect Saturday "Yes" }}>Oui</option>
+                  <option value="No" {{setSelect Saturday "No"}}>Non</option>
     </select>
   </div>
   <div class="col-sm-4">
     <label for="sundaySelect">Dimanche </label>
     <select id="sundaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
-                  <option value="Ignore" selected="selected">Ignorer</option>
-                  <option value="Yes">Oui</option>
-                  <option value="No">Non</option>
+                  <option value="Ignore" {{setSelect Sunday "Ignore"}}>Ignorer</option>
+                  <option value="Yes" {{setSelect Sunday "Yes" }}>Oui</option>
+                  <option value="No" {{setSelect Sunday "No" }}>Non</option>
     </select>
   </div>
 </div>
@@ -48,22 +48,23 @@
   <div class="col-sm-4">
     <label for="ownerOKSelect">OK proprio </label>
     <select id="ownerOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
-                  <option value="Ignore" selected="selected">Ignorer</option>
-                  <option value="Yes" >Oui</option>
-                  <option value="No">Non</option>
+                  <option value="Ignore" {{setSelect OwnerOk "Ignore"}}>Ignorer</option>
+                  <option value="Yes" {{setSelect OwnerOk "Yes"}}>Oui</option>
+                  <option value="No" {{setSelect OwnerOk "No"}}>Non</option>
     </select>
   </div>
   <div class="col-sm-4">
     <label for="staffOKSelect">OK staff </label>
     <select id="staffOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
-                  <option value="Ignore" selected="selected">Ignorer</option>
-                  <option value="Yes" >Oui</option>
-                  <option value="No">Non</option>
+                  <option value="Ignore" {{setSelect StaffOk "Ignore"}}>Ignorer</option>
+                  <option value="Yes" {{setSelect StaffOk "Yes"}}>Oui</option>
+                  <option value="No" {{setSelect StaffOk "No"}}>Non</option>
     </select>
   </div>
 </div>
 <br>
 {{>allCourtsTable}}
+
 </template>
 
 <template name="allCourtsTable">

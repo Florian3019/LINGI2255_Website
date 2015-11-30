@@ -6,10 +6,10 @@ Template.mySpecialFilterCourt.events({
 });
 
 Template.allCourtsTable.onRendered(function(){
-    Session.set("courtSearch/saturday","");
-    Session.set("courtSearch/sunday","");
-    Session.set("courtSearch/staffOK","");
-    Session.set("courtSearch/ownerOK","");
+    Session.set("courtSearch/saturday",Session.get("selectNewCourt/saturday"));
+    Session.set("courtSearch/sunday",Session.get("selectNewCourt/sunday"));
+    Session.set("courtSearch/staffOK",Session.get("selectNewCourt/staffOK"));
+    Session.set("courtSearch/ownerOK",Session.get("selectNewCourt/ownerOK"));
     Session.set("courtSearch/input","");
     Session.set("courtSearch/courtNumber","");
 })
@@ -161,3 +161,28 @@ Template.courtSearch.events({
       Session.set("courtSearch/courtNumber",event.currentTarget.value);
     }
 });
+
+Template.courtSearch.helpers({
+    'setSelect':function(value,pos){
+
+        if(pos==="Ignore"){
+          if(value!=null) return "";
+          else{
+            return "selected";
+          } 
+        }
+        else if(pos==="Yes"){
+          if(value!=null && value==true){
+            return "selected";
+          } 
+          else return "";
+        }
+        else{
+          if(value!=null && value==true || value==null) return "";
+          else{
+            return "selected";
+          }
+        }
+    }
+});
+

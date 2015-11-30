@@ -11,6 +11,37 @@ Template.selectNewCourt.events({
      }
 });
 
+Template.selectNewCourt.helpers({
+    'isSaturday':function(){
+        if(Session.get("PoolList/Type")==="men" || Session.get("PoolList/Type")==="women"){
+            Session.set("selectNewCourt/saturday","Yes");
+            return true;
+        }
+        else{
+            Session.set("selectNewCourt/saturday","No");
+            return false;
+        }
+    },
+    'isSunday':function(){
+        if(Session.get("PoolList/Type")==="mixed" || Session.get("PoolList/Type")==="family"){
+            Session.set("selectNewCourt/sunday","Yes");
+            return true;
+        }
+        else{
+            Session.set("selectNewCourt/sunday","No");
+            return false;
+        }
+    },
+    'isStaffOk':function(){
+        Session.set("selectNewCourt/staffOK","Yes");
+        return true;
+    },
+    'isOwnerOk':function(){
+        Session.set("selectNewCourt/ownerOK","Yes");
+        return true;
+    }
+});
+
 Template.chooseCourtsModal.helpers({
     'CourtsNumber': function(){
 
@@ -78,6 +109,10 @@ Template.chooseCourtsModal.events({
         $('#chooseCourtsModal')
         .on('hidden.bs.modal', function() {
             Session.set("PoolList/ChosenCourt","");
+            Session.set("selectNewCourt/saturday","Ignore");
+            Session.set("selectNewCourt/sunday","Ignore");
+            Session.set("selectNewCourt/staffOK","Ignore");
+            Session.set("selectNewCourt/ownerOK","Ignore");
         })
         .modal('hide');
     }
