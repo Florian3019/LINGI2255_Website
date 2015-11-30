@@ -3,13 +3,6 @@
     <div id="page-content-wrapper">
       <div class="container-fluid">
         <div class="col-lg-20">
-          <div id="infoBox" class="alert alert-info" role="alert" hidden>
-            <h4>
-              <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-              <span class="sr-only">Info:</span>
-              <span id="infoMsg"></span>
-            </h4>
-          </div>
           {{#if getChosenCourt}}
             {{>selectNewCourt}}
               {{else}}
@@ -17,7 +10,7 @@
                 {{>scorePage getChosenScorePool}}
               {{else}}
                 {{#if chosenBrackets}}
-              {{>brackets}}
+                  {{>brackets}}
                 {{else}}
               {{#with getYear}} <!-- Returns a yearData -->
                 {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
@@ -82,6 +75,14 @@
           {{/if}}
           {{/if}}
           {{/if}}
+
+          <div id="infoBox" class="alert alert-info" role="alert" hidden>
+            <h4>
+              <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+              <span class="sr-only">Info:</span>
+              <span id="infoMsg"></span>
+            </h4>
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 var isStaffOrAdmin = function(nid){
+    if(nid===undefined) return false;
       var user = Meteor.users.findOne(nid);
       if(user===undefined) return false;
       return (user.profile.isStaff || user.profile.isAdmin);
@@ -6,11 +7,6 @@ var isStaffOrAdmin = function(nid){
 
 Meteor.publish('users', function () {
   var res = Meteor.users.find({});
-  return res;
-});
-
-Meteor.publish('myUser', function () {
-  var res = Meteor.users.find({_id: this.userId});
   return res;
 });
 
@@ -24,7 +20,7 @@ Meteor.publish('Addresses', function(){
       }
       var user = Meteor.users.findOne({_id:this.userId},{"profile.addressID":1});
       if (typeof user === 'undefined') {
-          return undefined;
+          this.ready();
       }
       return Addresses.find({$or:[{_id: user.profile.addressID}, {"isCourtAddress":true}]});
 });
@@ -40,14 +36,14 @@ Meteor.publish('Threads', function(){
     if(isStaffOrAdmin(this.userId)){
           return Threads.find();
     }
-    return;
+    this.ready();
 });
 
 Meteor.publish('Topics', function(){
     if(isStaffOrAdmin(this.userId)){
           return Topics.find();
     }
-    return;
+    this.ready();
 });
 
 Meteor.publish('Extras', function(){
@@ -151,7 +147,7 @@ Meteor.publish("PairInfo", function(){
     pair = Pairs.find({$or:[{"player1._id":id},{"player2._id":id}]});
     if (!pair) {
         console.error("Error publish PairInfo : no pair found in the DB for this user.");
-        return undefined;
+        this.ready();
     }
     return pair;
 });
@@ -162,10 +158,10 @@ Meteor.publish("PairInfo", function(){
 */
 Meteor.publish("PartnerAdress", function() {
     var id = this.userId;
-    var pair = getPairFromPlayerID();
+    var pair = getPairFromPlayerID(true);
     if (!pair) {
         console.error("Error publish PartnerAdress : no pair found in the DB for this user.");
-        return undefined;
+        this.ready();
     }
     var user1, user2;
   if(pair.player1 && pair.player1._id == id){

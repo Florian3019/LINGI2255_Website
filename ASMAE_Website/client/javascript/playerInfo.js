@@ -50,18 +50,24 @@ Template.playersInfo.helpers({
     settings : function(){
         return {
             fields:[
-                { key: 'profile.lastName', label: 'Nom'},
-                { key: 'profile.firstName', label: 'Prénom'},
+                { key: 'profile.lastName', label: 'Nom', fn:function(value, object){
+                    if(value===undefined) return "/";
+                    else return value;
+                }},
+                { key: 'profile.firstName', label: 'Prénom', fn:function(value, object){
+                    if(value===undefined) return "/";
+                    else return value;
+                }},
                 { key: 'emails', label: 'Email', hidden:true , fn: function(value, object){
                     return value[0].address;
                 }},
                 { key: 'profile.gender', label:"Sexe"},
                 { key: 'profile.phone', label: "Numéro"},
-                { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "undefined" : value.toLocaleDateString()}},
+                { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "" : value.toLocaleDateString()}},
                 { key: 'profile.AFT', label: "AFT"},
                 { key: 'profile.addressID', label: "Adresse",hidden:true , fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
-                    if(addr==undefined) return "Pas défini";
+                    if(addr==undefined) return "";
                     var ret = ""
                     if(addr.street != undefined) {
                         ret = ret+addr.street + ", ";
@@ -91,7 +97,6 @@ Template.playersInfo.helpers({
                             return "Pas inscrit";
                         }
                         else{
-
                             return paymentTranslate[payment.status] + " ("+payment.balance+"€ )";
                         }
                     }

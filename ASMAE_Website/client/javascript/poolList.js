@@ -204,7 +204,9 @@ var mergePlayers = function(document){
 *******************************************************************************************************************/
 
 Template.poolsSidebarCollapsableMenu.onRendered(function(){
-    var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+    var c = GlobalValues.findOne({_id:"currentYear"});
+    if(c===undefined) return;
+    var currentYear = c.value;
     hideSuccessBox(document);
     Session.set('PoolList/Year', currentYear);
     Session.set("PoolList/ChosenScorePool","");
@@ -212,9 +214,11 @@ Template.poolsSidebarCollapsableMenu.onRendered(function(){
 
 Template.poolsSidebarCollapsableMenu.helpers({
 
-    'selectedYear': function(value){
-        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-        return value == currentYear ? 'selected' : '';
+    'selectedYear': function(optionYear){
+        var c = GlobalValues.findOne({_id:"currentYear"});
+
+        var currentYear = c===undefined? undefined : c.value;
+        return optionYear == currentYear ? 'selected' : '';
     },
 
 	'getAllYears':function(){

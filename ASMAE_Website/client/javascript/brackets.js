@@ -257,7 +257,20 @@ var setInfo = function(document, msg){
   if(g!=undefined) g.setAttribute("hidden","");
 };
 
+var hideInfo = function(document){
+    infoBox = document.getElementById("infoBox");
+    if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // hide any previous info message
+}
+
 Template.brackets.helpers({
+  'translateType':function(type){
+    return typesTranslate[type];
+  },
+
+  'translateCategory':function(category){
+    return categoriesTranslate[category];
+  },
+
   'getGracketWidth':function(){
     return 350*Session.get('brackets/rounds');
   },
@@ -346,6 +359,7 @@ var handleBracketErrors = function(document){
     typeData = Types.findOne({_id:typeId},{reactive:false});
     if(typeData==undefined){
       console.error("handleBracketErrors : id search on the Types DB failed");
+      setInfo(document, "Oups... Une erreur s'est produite");
       hideStuff([bracketOptions,pdfButton]);
       return;
     }
@@ -368,6 +382,13 @@ var handleBracketErrors = function(document){
         if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
         if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
       }
+      var user = Meteor.user();
+      if(user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+        setInfo(document, "Les knock-off n'ont pas encore commencés pour cette catégorie!");
+      }
+      else{
+        setInfo(document, "Les knock-off n'ont pas encore commencés. Cliquez sur démarrer ce knock-off pour en créer un.");
+      }
       return;
     }
     if(bracketOptions!==undefined){
@@ -378,14 +399,21 @@ var handleBracketErrors = function(document){
 
     if(allWinners.length==0){
       console.info("There are no matches for that year, type and category, did you create any ?");
-      setInfo(document, "Pas de matchs pour l'année "+year
-        + " type " + typesTranslate[type]
-        + " de la catégorie " + categoriesTranslate[category]
-        + ". Si vous en avez créé, cliquez sur redémarrer le knock-off pour mettre à jour");
+      var user = Meteor.user();
+      if(user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+        setInfo(document, "Les knock-off n'ont pas encore commencés pour cette catégorie!");
+      }
+      else{
+        setInfo(document, "Pas de matchs pour l'année "+year
+          + " type " + typesTranslate[type]
+          + " de la catégorie " + categoriesTranslate[category]
+          + ". Si vous en avez créé, cliquez sur redémarrer le knock-off pour mettre à jour");
+      }
       return;
     }
-    infoBox = document.getElementById("infoBox");
-    if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // hide any previous info message
+    
+    hideInfo(document);
+
     return allWinners;
 }
 
@@ -504,7 +532,11 @@ var getTournamentFirstRound = function(pairs){
 
 var makeBrackets = function(document){
   allWinners = handleBracketErrors(document); // Table of winner pair Id
-  if(allWinners==undefined) return;
+  if(allWinners==undefined){
+    resetBrackets(document);
+    return;
+  }
+  // hideInfo(document);
   /********************************************
     First round creation
   ********************************************/

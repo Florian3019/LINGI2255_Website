@@ -1,5 +1,4 @@
 Template.myCourts.helpers({
-
     'court': function(){
     	return Courts.find({ownerID: Meteor.userId()});
   	},

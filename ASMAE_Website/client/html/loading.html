@@ -1,0 +1,34 @@
+<template name="loading">
+
+<!-- https://gist.github.com/tjoskar/2163985#file-index-html-L3 -->
+   
+<style type='text/css'>
+    @-webkit-keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to { 
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+#loading {
+    border: 1px solid #6699ff;
+    border-right: 0;
+    border-bottom: 0;
+    -webkit-border-radius: 100px;
+    height: 50px;
+    width: 50px;
+    margin: 50px;
+    -webkit-transition: all 0.5s ease-in;
+    -webkit-animation-name:             rotate; 
+    -webkit-animation-duration:         1.0s; 
+    -webkit-animation-iteration-count:  infinite;
+    -webkit-animation-timing-function: linear;
+}
+</style>
+<center>
+  <div id="loading"></div>
+  Chargement...
+ </center>
+</template>

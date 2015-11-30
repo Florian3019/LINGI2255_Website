@@ -11,7 +11,16 @@
 
 /** Add !important to override boostrap setting **/
 body {
-	background-color: #EFCFA0;
+	background-color: #f3f3f3;
+}
+
+
+html {
+    background: #f3f3f3;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;   
 }
 
 .btn {
@@ -21,7 +30,7 @@ body {
 /* Navbar on the top */
 .navbar {
     min-height: 64px !important;
-    background-color: #EFCFA0 !important;
+    background-color: #f3f3f3 !important;
 }
 
 .navbar-nav > li > a, .navbar-brand {
@@ -71,9 +80,10 @@ body {
     padding-top: 64px;
     margin-left: 240px;
     width: auto;
-    height: 100%;
+    /*height: 100%;*/
     overflow: auto;
     z-index: 1;
+
 }
 
 .content {
@@ -84,9 +94,22 @@ body {
   	min-height: 710px;
 }
 
+.well {
+    background: #f3f3f3 !important;
+    display: block;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding-top: 0.35em;
+    padding-bottom: 0.625em;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    border: 2px groove !important;
+    border-radius : 15px !important;
+}
+
 /* Footer of the web site */
 .footer {
-    background: #EFCFA0;
+    background: #f3f3f3;
 }
 
 /* Home page disign */
