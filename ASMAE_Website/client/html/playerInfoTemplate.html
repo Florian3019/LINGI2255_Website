@@ -1,4 +1,5 @@
 <!-- Takes a player id as argument ID-->
+<!-- Takes dontShowInscription (boolean) -->
 <template name="playerInfoTemplate">
 <div class="page-header">
         <h2>Infos joueur</h2>
@@ -51,12 +52,14 @@
                       </tr>
                   
                       {{#with getPayment id}}
-                        <tr>
-                          <td> Inscription : </td>
-                          <td> {{getInscription ../id}} </td>
-                        </tr>
+                        {{#unless ../../dontShowInscription}}
+                          <tr>
+                            <td> Inscription </td>
+                            <td> {{getInscription ../id}} </td>
+                          </tr>
+                        {{/unless}}
                         <!-- We get here only if the player is registered in the tournament -->
-                        {{#each playerExtras}}
+                        {{#each playerExtras ../id}}
                         <tr>
                             <td>{{extraName}}</td>
                             <td>{{extraQuantity}}</td>
@@ -65,7 +68,7 @@
 
                         <tr>
                          <td>Méthode de paiement</td>
-                         <td id="paiement">{{paymentMethod}}</td>
+                         <td id="paiement">{{paymentMethod this}}</td>
                         </tr>
                         <tr>
                             <td>Montant</td>

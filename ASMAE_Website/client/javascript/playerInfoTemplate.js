@@ -35,7 +35,7 @@ function initializeBraintree (clientToken) {
         Session.set('paymentFormStatus', null);
 		$("#dropinModal").modal("hide");
 		if(err){
-			console.log(err);
+			console.error(err);
 	        Router.go('paymentError');
 		}
 		else {
@@ -46,13 +46,14 @@ function initializeBraintree (clientToken) {
   });
 }
 
-function getExtras(){
-	var id = Meteor.userId();
-	var pair = getPairFromPlayerID();;
-	if(pair.player1 && id === pair.player1._id){
+function getExtras(userId){
+	var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+	var pair = Pairs.findOne({$or:[{"player1._id":userId},{"player2._id":userId}], "year":currentYear},{"_id":1});
+	if(pair.player1!==undefined && userId === pair.player1._id){
 		return pair.player1.extras;
 	}
 	else {
+		if(pair.player2==undefined) return undefined;
 		return pair.player2.extras;
 	}
 }
@@ -123,7 +124,7 @@ Template.playerInfoTemplate.helpers({
 	'showEdit' : function(){
 		var callBack = function(err, res){
 			if(err){
-				console.log(err);
+				console.error(err);
 				return;
 			}
 			if(res==false){
@@ -144,16 +145,8 @@ Template.playerInfoTemplate.helpers({
     	return Session.get('paymentFormStatus') ? '' : 'hide';
  	},
 
-	'paymentMethod' : function(){
-		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		var payment = Payments.findOne({"userID": Meteor.userId(), "tournamentYear": currentYear});
-		if(payment){
-			return paymentTypesTranslate[payment.paymentMethod];
-		}
-		else {
-			console.error("No payment in database for this user!");
-		}
-
+	'paymentMethod' : function(payment){
+		return paymentTypesTranslate[payment.paymentMethod];
 	},
 
 	'getPayment' : function(userId){
@@ -199,9 +192,9 @@ Template.playerInfoTemplate.helpers({
 		}
 
 		var yearQuery = [];
-		for (var i=0; typeKeys.length;i++){
+		for (var i=0; i<typeKeys.length;i++){
 			var data = {};
-			data[yearQuery[i]] = typeData._id;
+			data[typeKeys[i]] = typeData._id;
 			yearQuery.push(data);
 		}
 
@@ -234,9 +227,9 @@ Template.playerInfoTemplate.helpers({
 		}
 	},
 
-	'playerExtras' : function(){
-		var extras = getExtras();
-		if(extras)
+	'playerExtras' : function(userId){
+		var extras = getExtras(userId);
+		if(extras!==undefined)
 		{
 			var extrasArray = [];
 			for(extra in extras){
@@ -334,7 +327,7 @@ Template.playerInfoTemplate.events({
 Template.myRegistration.onRendered(function () {
   Meteor.call('getClientToken', function (err, clientToken) {
     if (err) {
-      console.log('There was an error', err);
+      console.error('There was an error', err);
       return;
     }
 

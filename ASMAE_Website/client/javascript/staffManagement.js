@@ -1,6 +1,6 @@
 var ison = false;
 Template.staffManagement.events({
-	'click .btn-md':function(){
+	'click #questionButton':function(){
 		if(this.processed) {
 			document.getElementById("pop-up-message-title").innerHTML="Votre response";  
 			document.getElementById("message").innerHTML=this.answer;
@@ -27,34 +27,22 @@ Template.staffManagement.events({
 
 });
 Template.staffManagement.helpers({
-
-	'hasQuestions':function(){
-		return Questions.find().count()>0;
+	questionsCollection: function () {
+	    return Questions.find();
 	},
 
-	'showStaff' : function(){
-		return Questions.find();
-	},
-	'isProcessed' : function(){
-		if(this.processed)
-			return "Oui";
-		else
-			return "Non";
-	},
-	'showIt' : function(){
-		if(this.processed){
-			return "display:none";
-		}
-		else
-			return "display:block";
-
-	},
-	'dontShowIt' : function(){
-		if(this.processed){
-			return "display:block";
-		}
-		else
-			return "display:none";
+	settings : function(){
+      return {
+        fields:[
+        	{ key: 'lastname', label: "Nom"},
+        	{ key: 'firstname', label: "Prénom"},
+        	{ key: 'email', label:"Email"},
+            { key: 'question', label: "Surface"},
+            { key: 'date', label:"Date", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "" : value.toLocaleDateString()}},
+            { key: 'processed', label:"Déja traité", tmpl: Template.processedLabel},
+            { key: 'processed', label:"Répondre", tmpl: Template.answerLabel}
+      		],
+      		noDataTmpl:Template.emptyQuestions
+      	}	
 	}
-
 });
