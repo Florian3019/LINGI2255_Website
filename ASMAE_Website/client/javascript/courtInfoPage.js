@@ -112,7 +112,7 @@ Template.courtInfoPage.events({
 
       var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
       var court = Courts.findOne({_id:courtId}, {"addressID":1});
-      var address = Addresses.findOne({_id:court.addressID});
+      var addr = Addresses.findOne({_id:court.addressID});
 
       Meteor.call("addToModificationsLog",
         {"opType":"Staff OK pour un terrain",
@@ -130,7 +130,7 @@ Template.courtInfoPage.events({
 
       var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
       var court = Courts.findOne({_id:courtId}, {"addressID":1});
-      var address = Addresses.findOne({_id:court.addressID});
+      var addr = Addresses.findOne({_id:court.addressID});
 
       Meteor.call("addToModificationsLog",
         {"opType":"Staff pas OK pour un terrain",

@@ -29,7 +29,7 @@
                         <td>Date de naissance</td>
                         <td id="birth">{{birth}}</td>
                       </tr>
-                     <tr>
+                      <tr>
                         <td>Sexe</td>
                         <td id="sex">{{gender}}</td>
                       </tr>
@@ -38,35 +38,50 @@
                         <td id="address">{{address}}</td>
                       </tr>
                       <tr>
-                      <td>Ville</td>
-                      <td id="city">{{city}}</td>
-                    </tr>
-                    <tr>
-                    <td>Pays</td>
-                    <td id="land">{{land}}</td>
-                  </tr>
-                   <tr>
-                    <td>Classement</td>
-                    <td id="rank">{{rank}}</td>
-                  </tr>
-                  {{#if isCurrentUser id}}
+                        <td>Ville</td>
+                        <td id="city">{{city}}</td>
+                      </tr>
+                      <tr>
+                        <td>Pays</td>
+                        <td id="land">{{land}}</td>
+                      </tr>
+                      <tr>
+                        <td>Classement</td>
+                        <td id="rank">{{rank}}</td>
+                      </tr>
+                  
+                      {{#with getPayment id}}
+                        <tr>
+                          <td> Inscription : </td>
+                          <td> {{getInscription ../id}} </td>
+                        </tr>
+                        <!-- We get here only if the player is registered in the tournament -->
+                        {{#each playerExtras}}
+                        <tr>
+                            <td>{{extraName}}</td>
+                            <td>{{extraQuantity}}</td>
+                        </tr>
+                        {{/each}}
 
-                  {{#each playerExtras}}
-                  <tr>
-                      <td>{{extraName}}</td>
-                      <td>{{extraQuantity}}</td>
-                  </tr>
-                  {{/each}}
-
-                  <tr>
-                   <td>Méthode de paiement</td>
-                   <td id="paiement">{{paymentMethod}}</td>
-                  </tr>
-                  <tr>
-                      <td>Montant</td>
-                      <td>{{paymentBalance}}&euro; ({{#if notPaid id}}<a href="" data-toggle="modal" data-target="#dropinModal">Payer en ligne</a>{{else}}En ordre{{/if}})</td>
-                  </tr>
-                  {{/if}}
+                        <tr>
+                         <td>Méthode de paiement</td>
+                         <td id="paiement">{{paymentMethod}}</td>
+                        </tr>
+                        <tr>
+                            <td>Montant</td>
+                            <td>{{this.balance}}&euro; 
+                              ({{#if notPaid ../id}}
+                                {{#if isCurrentUser ../id}}
+                                  <a href="" data-toggle="modal" data-target="#dropinModal">Payer en ligne</a>
+                                {{else}}
+                                  Pas en ordre
+                                {{/if}}
+                              {{else}}
+                                En ordre
+                              {{/if}})
+                            </td>
+                        </tr>
+                      {{/with}}
 
                     </tbody>
                   </table>
@@ -76,12 +91,11 @@
             </div>
 
             <center>
-              {{#if isCurrentUser id}}
+              
               <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
-              {{else}}
-                <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
+              {{#unless isCurrentUser id}}
                 <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Supprimer</button>
-              {{/if}}
+              {{/unless}}
             </center>
             <br/>
 </div>

@@ -156,26 +156,78 @@ Template.playerInfoTemplate.helpers({
 
 	},
 
-	'paymentBalance' : function(){
+	'getPayment' : function(userId){
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		var payment = Payments.findOne({"userID": Meteor.userId(), "tournamentYear": currentYear});
-		if(payment)
-		{
-			return payment.balance;
+		var payment = Payments.findOne({"userID": userId, "tournamentYear": currentYear});
+		return payment;
+	},
+
+	'getInscription': function(userId){
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+		var pair = Pairs.findOne({$or:[{"player1._id":userId},{"player2._id":userId}], "year":currentYear},{"_id":1});
+		if(pair===undefined){
+			console.error("Did not find a registration !");
+			return "Pas inscrit";	
 		}
+		var pool = Pools.findOne({"pairs":pair._id},{"_id":1});
+		if(pool===undefined){
+			console.error("Did not find a registration !");
+			return "Pas inscrit";	
+		}
+
+		var query = [];
+		for(var i=0; i<categoriesKeys.length;i++){
+			var data = {};
+			data[categoriesKeys[i]] = pool._id;
+			query.push(data);
+		}
+
+		var typeData = Types.findOne({$or:query});
+		if(typeData===undefined){
+			console.error("Did not find a registration !");
+			return "Pas inscrit";	
+		}
+
+		// Determine the player's category
+		var playerCategory = undefined;
+		for(var i=0; i<categoriesKeys.length;i++){
+			var cat = typeData[categoriesKeys[i]]; // List of pool ids
+			if(cat!==undefined && cat.indexOf(pool._id)>-1){
+				playerCategory = categoriesTranslate[categoriesKeys[i]];
+				break;
+			}
+		}
+
+		var yearQuery = [];
+		for (var i=0; typeKeys.length;i++){
+			var data = {};
+			data[yearQuery[i]] = typeData._id;
+			yearQuery.push(data);
+		}
+
+		// Determine the player's type
+		var playerType = undefined
+		var y = Years.findOne({$or:yearQuery});
+		if(y===undefined){
+			console.error("Did not find a registration !");
+			return "Pas inscrit";	
+		}
+		for (var i=0; typeKeys.length;i++){
+			if(y[typeKeys[i]].indexOf(typeData._id)>-1){
+				playerType = typesTranslate[typeKeys[i]];
+				break;
+			}
+		}
+
+		return playerType + " > " + playerCategory;
 	},
 
 	'notPaid' : function(passedID){
-		if(Meteor.userId() === passedID){
-			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-			var payment = Payments.findOne({"userID": Meteor.userId(), "tournamentYear": currentYear});
-			if(payment)
-			{
-				return (payment.status !== "paid");
-			}
-			else{
-				return false;
-			}
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+		var payment = Payments.findOne({"userID": passedID, "tournamentYear": currentYear});
+		if(payment)
+		{
+			return (payment.status !== "paid");
 		}
 		else{
 			return false;
