@@ -411,7 +411,7 @@ var addLeaderChangeToLog = function(oldUserId, newUserId){
 	if(hasOldUser) var oldUser = Meteor.users.findOne({_id:oldUserId},{"profile.lastName":1, "profile.firstName":1});
 	Meteor.call("addToModificationsLog",{
 		"opType":"Changement chef de poule", 
-		"details":(hasOldUser?oldUser.profile.firstName + " "+oldUser.profile.lastName +" a été remplacé ":"")+user.profile.firstName + " "+user.profile.lastName+getStringOptions()},
+		"details":(hasOldUser?oldUser.profile.firstName + " "+oldUser.profile.lastName +" a été remplacé par ":"")+user.profile.firstName + " "+user.profile.lastName+getStringOptions()},
 		function(err, logId){
 			Meteor.call("addToUserLog",user._id, logId);
 			if(hasOldUser) Meteor.call("addToUserLog",oldUser._id, logId);

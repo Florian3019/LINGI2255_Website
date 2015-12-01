@@ -1,46 +1,10 @@
 Template.adminAddCourt.helpers({
-    'availableThisDay': function(available){
-        if(available === null){
-            return 'checked';
-        }
-        else
-        {
-            if(available){
-                return 'checked';
-            }
-            else{
-                return '';
-            }
-        }
-    },
-
-    'getSelectedOwner':function(){
-        return Session.get("adminAddCourt/selected");
-    },
-
-    'selectedSurface': function(value, surfaceName){
-        return value === surfaceName ? 'selected' : '';
-    },
-
     'searchComplete':function(){
         return Session.get("adminAddCourt/searchComplete");
     },
 
-    'isPrivate': function(value){
-        if(value === "privé"){
-            return 'checked';
-        }
-        else{
-            return '';
-        }
-    },
-    'isClub': function(value){
-        if(value === "club"){
-            return 'checked';
-        }
-        else{
-            return '';
-        }
+    'getSelectedOwner':function(){
+        return Session.get("adminAddCourt/selected");
     },
     'player': function(){
         Session.set("adminAddCourt/selected", "");
@@ -129,7 +93,8 @@ Template.adminAddCourt.events({
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked"),
             staffOK : true, // Default to true
-            ownerOK : true // Default to true
+            ownerOK : true, // Default to true
+            isOutdoor: $('[name=isOutdoor]').is(":checked")
         };
 
         Meteor.call('updateAddress', address, function(err, res){

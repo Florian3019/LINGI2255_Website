@@ -265,7 +265,10 @@ Template.playerInfoTemplate.helpers({
           { key: 'details', label: "Détails"}
       ],
       rowsPerPage:LAST_N_LOGS,
-      noDataTmpl:Template.emptyLog
+      noDataTmpl:Template.emptyLog,
+      showFilter:false,
+      showNavigationRowsPerPage:false,
+      showNavigation:'auto'
       }
     }
 

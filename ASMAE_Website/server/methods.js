@@ -523,7 +523,8 @@ Meteor.methods({
 			dispoDimanche:<boolean>,
 			ownerOK:<boolean>,
 			staffOK:<boolean>,
-			numberOfCourts: <integer>
+			numberOfCourts: <integer>,
+			isOutdoor:<boolean>
 		},
 		log:[<logId>, ...]
 	*/
@@ -578,6 +579,10 @@ Meteor.methods({
 
 		if(courtData.staffOK !== null && typeof courtData.staffOK !== 'undefined'){
 			data.staffOK = courtData.staffOK;
+		}
+
+		if(courtData.isOutdoor!==undefined){
+			data.isOutdoor = courtData.isOutdoor;
 		}
 
 

@@ -63,7 +63,10 @@ Template.courtInfoPage.helpers({
           { key: 'details', label: "Détails"}
       ],
       rowsPerPage:LAST_N_LOGS,
-      noDataTmpl:Template.emptyLog
+      noDataTmpl:Template.emptyLog,
+      showFilter:false,
+      showNavigationRowsPerPage:false,
+      showNavigation:'auto'
       }
     }
 
@@ -111,7 +114,6 @@ Template.courtInfoPage.events({
 
       var opType = "Staff "+((!staffOK)?"":"pas ")+"OK pour un terrain";
       addToLog(opType, ownerId, courtId);
-
     },
 
     'click #deleteCourt': function(event){
