@@ -1076,20 +1076,24 @@ Meteor.methods({
 			}
 			else { 		//Only used for popDB: insert a payment for both players
 				paymentData.userID = ID['player1'];
-				Payments.insert(paymentData, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
-					}
-				});
+				if(typeof paymentData.userID !== 'undefined'){
+					Payments.insert(paymentData, function(err, paymId){
+						if(err){
+							console.error('insert payment error');
+							console.error(err);
+						}
+					});
+				}
 
 				paymentData.userID = ID['player2'];
-				Payments.insert(paymentData, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
-					}
-				});
+				if(typeof paymentData.userID !== 'undefined'){
+					Payments.insert(paymentData, function(err, paymId){
+						if(err){
+							console.error('insert payment error');
+							console.error(err);
+						}
+					});
+				}
 
 			}
 

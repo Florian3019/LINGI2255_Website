@@ -33,6 +33,7 @@ Template.playersInfo.helpers({
 
             if(input!==undefined){
                 var searchString = playerToString(this);
+                searchString += paymentToString();
 
                 for(var i=0; i<inputArray.length;i++){
                     if(searchString.indexOf(inputArray[i])==-1){
