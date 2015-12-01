@@ -251,7 +251,7 @@ Template.tournamentProgress.events({
             var begin_previous=0;
             var size_previous=result.length;
 
-            while(result.length<(2*max-1)){ // to change
+            while(result.length<(2*max-1)){
 
                 var inter_result=[];
                 var count=0;
@@ -277,24 +277,6 @@ Template.tournamentProgress.events({
             }
 
             return next;
-        }
-
-        /*
-            Return the number of matches to play for this round
-        */
-
-        var getNumberMatchesFirstRound = function(nbrPairs){
-
-            var logPairs = Math.log2(nbrPairs);
-
-            var numMatchesFull = Math.floor(logPairs);
-
-            if(logPairs!=numMatchesFull){
-                return nbrPairs - Math.pow(2,numMatchesFull);// the nbr of pairs is not a multiple of 2
-            }
-            else{
-                return nbrPairs/2; // the nbr of pairs is a multiple of 2
-            }
         }
 
         var numberDays = 2;

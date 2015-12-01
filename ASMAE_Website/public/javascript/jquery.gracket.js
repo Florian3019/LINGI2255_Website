@@ -147,18 +147,18 @@
           //     '</font>',
           //   '</h3>'
           // ].join("");
-          if(data.court!==""){
-            var c = (isFirst? '<span class="pull-right"  data-round='+data.round+' data-courtn='+data.court+' > (T. ' +(data.court===undefined ? '?':data.court)+') </span>' : "");
+          if(data.courtShown!=="" && data.courtHidden!==""){
+            var c = (isFirst? '<span class="pull-right"  data-round='+data.round+' data-courtn='+data.courtHidden+' > (T. ' +(data.courtShown===undefined ? '?':data.courtShown)+') </span>' : "");
           }
           else{
             var c = "";
           }
           
           if(isNaN(data.score) || data.score===""){
-            s = '<h3 class="changeCourtsBracket"> '+ data.score + c + ' </h3>';
+            s = '<h3 class="changeCourtsBracket" data-clickable=' + data.clickable +'> '+ data.score + c + ' </h3>';
           }
           else{
-            s = '<h3 class="changeCourtsBracket"> Score: ' + data.score + c + '</h3>';
+            s = '<h3 class="changeCourtsBracket" data-clickable=' + data.clickable +'>  Score: ' + data.score + c + '</h3>';
           }
           var html = [
             s,

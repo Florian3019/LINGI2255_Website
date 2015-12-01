@@ -20,7 +20,11 @@ var canModifyCourt = function(pair, round){
 }
 
 // Takes 2 round data, and returns which court to use for this match.
-var getCourt = function(courts,num){
+var getCourtShown = function(courts,num){
+  return (courts == undefined || courts[num] == undefined || isNaN(courts[num][1])) ? emptyCourt : courts[num][1];
+}
+
+var getCourtHidden = function(courts,num){
   return (courts == undefined || courts[num] == undefined) ? emptyCourt : courts[num][1];
 }
 
@@ -29,15 +33,28 @@ var getCourt = function(courts,num){
   This function must edit roundData1.data.court and roundData2.data.court
   and reflect the changes made in the database
 */
-var setCourt = function(roundData1, roundData2, round,courts, num){
+var setCourt = function(roundData1, roundData2,courts, num){
   pair1 = roundData1.pair; // Pair object
   pair2 = roundData2.pair; // Pair object
 
   automaticCourt = emptyCourt;
 
-  automaticCourt = getCourt(courts,num);
-  roundData1.data.court = automaticCourt;
-  roundData2.data.court = automaticCourt;
+  automaticCourtShown = getCourtShown(courts,num);
+  automaticCourtHidden = getCourtHidden(courts,num);
+  roundData1.data.courtShown = automaticCourtShown;
+  roundData2.data.courtShown = automaticCourtShown;
+  roundData1.data.courtHidden = automaticCourtHidden;
+  roundData2.data.courtHidden = automaticCourtHidden;
+}
+
+var setRound = function(roundData1, roundData2,courts, num){
+  pair1 = roundData1.pair; // Pair object
+  pair2 = roundData2.pair; // Pair object
+
+  round = courts[num][0];
+
+  roundData1.data.round = round;
+  roundData2.data.round = round;
 }
 
 var getPoints = function(pair, round){
@@ -600,7 +617,8 @@ var makeBrackets = function(document){
       b = newRound[i+1];
 
       if(a.pair!=="placeHolder" && b.pair!=="placeHolder"){
-        setCourt(a, b, round,courts,nextMatchNum); // Define which court to use for that match
+        setCourt(a, b,courts,nextMatchNum); // Define which court to use for that match
+        setRound(a, b,courts,nextMatchNum); 
         nextMatchNum++;
       }
       else if(a.pair==="placeHolder" && b.score!==emptyScore && b.pair!=="placeHolder"){
