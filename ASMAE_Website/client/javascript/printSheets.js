@@ -54,7 +54,8 @@ Template.printSheets.events({
           var r= cat.concat("Resp")
           var resplist=type[r];
           if (resplist!=undefined && resplist.length>0){
-            responsable = Meteor.users.findOne({_id:resplist[0]});
+            responsable = {user:Meteor.users.findOne({_id:resplist[0]}),
+                          cat:cat};
           }
         }
       }
@@ -98,10 +99,10 @@ Template.printSheets.events({
       pdf.addImage(logo, 'JPEG', margins.left, 40, 500, 114);
 
       pdf.setFontSize(15);
-      if (resp!=undefined) {
-        respText = "Responsable de poule : " + resp.profile.firstName+" "+resp.profile.lastName;
-        if(resp.emails) respText += "\n"+resp.emails[0].address;
-        if(resp.profile.phone) respText += "    "+ resp.profile.phone;
+      if (resp != undefined && resp.user!=undefined) {
+        respText = "Responsable de poule : " + resp.user.profile.firstName+" "+resp.user.profile.lastName;
+        if(resp.user.emails) respText += "\n"+resp.user.emails[0].address;
+        if(resp.user.profile.phone) respText += "    "+ resp.user.profile.phone;
         pdf.text(respText, margins.left, 180);
       }else{
         pdf.text("Pas de responsable Staff",margins.left,180);
@@ -117,7 +118,17 @@ Template.printSheets.events({
         pdf.setFontSize(15);
         var addr = "Terrain n°"+pool.courtId+"\n"+courtAddress.street +" "+ courtAddress.number +"\n"+courtAddress.zipCode+" "+ courtAddress.city;
         pdf.text(addr,margins.left+350,200);
+      }else{
+        pdf.text("Pas de terrain\n assigné",margins.left+350,200);
       }
+      if(resp!= undefined && resp.cat != undefined){
+      var infotext  = infoPools.year+" "+infoPools.type+" "+resp.cat;
+    }
+    else{
+      var infotext  = infoPools.year+"-"+infoPools.type;
+
+    }
+      pdf.text(infotext,margins.left+350,170);
     }
 
     function printPage(pdf,i,pools){

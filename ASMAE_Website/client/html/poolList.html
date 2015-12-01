@@ -250,7 +250,7 @@
 <template name="modalItem">
 
 {{#with getModalInfo}}
-<!-- 
+<!--
   Returns an object :
   {
     PAIR:<pairObject>
@@ -394,7 +394,6 @@ Takes 2 arguments :
           {{#with getPlayer this}}
             <address>
               <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
-                <i class="fa fa-user fa-5x"></i><br/>
                 <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
                 {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
                 {{getEmail this}}<br>
