@@ -409,10 +409,10 @@ var collapseMenus = function(document, event){
 var addLeaderChangeToLog = function(oldUserId, newUserId){
 	var hasOldUser = oldUserId!==undefined;
 	var user = Meteor.users.findOne({_id:newUserId},{"profile.lastName":1, "profile.firstName":1});
-	
+
 	if(hasOldUser) var oldUser = Meteor.users.findOne({_id:oldUserId},{"profile.lastName":1, "profile.firstName":1});
 	Meteor.call("addToModificationsLog",{
-		"opType":"Changement chef de poule", 
+		"opType":"Changement chef de poule",
 		"details":(hasOldUser?oldUser.profile.firstName + " "+oldUser.profile.lastName +" a été remplacé par ":"")+user.profile.firstName + " "+user.profile.lastName+getStringOptions()},
 		function(err, logId){
 			Meteor.call("addToUserLog",user._id, logId);
@@ -860,6 +860,9 @@ Template.poolList.helpers({
     var year = Session.get('PoolList/Year');
     var type = Session.get('PoolList/Type');
     var category = Session.get('PoolList/Category');
+    Session.set("printPDF/Year",year);
+    Session.set("printPDF/Type",type);
+    Session.set("printPDF/Cat",category);
 
     if(year===undefined || type===undefined || category===undefined || type==='' || category==='' || year===''){
       return;
@@ -874,11 +877,14 @@ Template.poolList.helpers({
     var typeData = Types.findOne({_id:yearData[type]},Data);
 
     if(typeData != undefined){
-      var responsables = typeData[field]; //TODO check le champs existe et non vide len >0
+      var responsables = typeData[field];
       if(responsables != undefined && responsables.length>0){
     		if(poolId!=""){
     			return {_id:poolId,
-            resp:responsables[0]};
+            resp:responsables[0],
+            info:{year:year,
+                  type:type,
+                  cat:category}};
     		}
     		else return "";
       }

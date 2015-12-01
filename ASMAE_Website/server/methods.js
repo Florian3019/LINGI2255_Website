@@ -2155,7 +2155,62 @@ Meteor.methods({
 			return true;
 		}
 
-	}
+	},
+
+  'getPoolListToPrint':function(info){
+    this.unblock();
+
+    var hasBothPlayers = function(pair){
+      return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
+    };
+    var moreThanOnePairFunct = function(pairs){
+      for(var i=0;i<pairs.length;i++){
+        pair = Pairs.findOne({"_id":pairs[i]});
+        if(hasBothPlayers(pair)) return true;
+      }
+      return false;
+    };
+
+    var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+    var year = Years.findOne({_id:info.year});
+    if(year==undefined){
+      return undefined;
+    }
+    else{
+      var type = Types.findOne({_id:year[info.type]});
+      if(type==undefined){
+        return undefined
+      }
+      else{
+        if(info.type=="family"){
+          var poolList = type["all"]
+        }
+        else{
+          if(info.cat!="all"){
+            var poolList = type[info.cat];
+          }
+          else{
+            var poolList = new Array();
+            for (var i in allcat) {
+              for (var j in type[allcat[i]]) {
+                poolList.push(type[allcat[i]][j]);
+              }
+            }
+          }
+        }
+        var nonemptyPool = new Array();
+        for (var i in poolList) {
+          var temp = Pools.findOne({_id:poolList[i]}, {"pairs":1});
+          if(moreThanOnePairFunct(temp.pairs)){
+            if (nonemptyPool.indexOf(poolList[i])==-1) {
+              nonemptyPool.push(poolList[i]);
+            }
+          }
+        }
+        return nonemptyPool;
+      }
+    }
+  },
 
 
 });

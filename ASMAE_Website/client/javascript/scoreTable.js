@@ -307,6 +307,13 @@ Template.scorePage.events({
         var addr = "Terrain n°"+pool.courtId+"\n"+courtAddress.street +" "+ courtAddress.number +"\n"+courtAddress.zipCode+" "+ courtAddress.city;
         pdf.text(addr,margins.left+350,200);
     }
+    infoPool = event.currentTarget.dataset.info;
+
+    if(infoPool!=undefined){
+      // infotext = info.year+" "+info.type+" "+info.cat;
+      infotext= Session.get("printPDF/Year")+" "+Session.get("printPDF/Type")+" "+Session.get("printPDF/Cat");
+      pdf.text(infotext,margins.left+400,180);
+    }
 
     /*
       Score Tab
