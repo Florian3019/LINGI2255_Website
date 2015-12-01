@@ -128,7 +128,7 @@ Template.printSheets.events({
       var infotext  = infoPools.year+"-"+infoPools.type;
 
     }
-      pdf.text(infotext,margins.left+350,170);
+      pdf.text(infotext,margins.left+400,180);
     }
 
     function printPage(pdf,i,pools){
