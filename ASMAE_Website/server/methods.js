@@ -78,6 +78,7 @@ Meteor.methods({
 			data.step4done = false;
 			data.step5done = false;
 			data.step6done = false;
+			data.setp7done = false;
 
 			var insertedYearID = Years.insert(data);
 			console.log("Tournament launched for year "+data._id);
