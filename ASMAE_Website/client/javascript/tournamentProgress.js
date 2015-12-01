@@ -154,9 +154,9 @@ Template.tournamentProgress.events({
     },
 
     'click #sendPoolsEmail':function(){
-        Meteor.call('updateDoneYears', 6, true, function(err, result){
+        Meteor.call('updateDoneYears', 7, true, function(err, result){
             if(err){
-                console.error("Error while calling updateDoneYears for step 6");
+                console.error("Error while calling updateDoneYears for step 7");
             }
         });
 
@@ -352,6 +352,12 @@ Template.tournamentProgress.events({
             }
         }
 
-    },
+        Meteor.call('updateDoneYears', 6, true, function(err, result){
+            if(err){
+                console.error("Error while calling updateDoneYears for step 6");
+            }
+        });
+
+    }
 
 });

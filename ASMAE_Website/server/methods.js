@@ -78,6 +78,7 @@ Meteor.methods({
 			data.step4done = false;
 			data.step5done = false;
 			data.step6done = false;
+			data.setp7done = false;
 
 			var insertedYearID = Years.insert(data);
 			console.log("Tournament launched for year "+data._id);
@@ -523,7 +524,8 @@ Meteor.methods({
 			ownerOK:<boolean>,
 			staffOK:<boolean>,
 			numberOfCourts: <integer>
-		}
+		},
+		log:[<logId>, ...]
 	*/
 	'updateCourt' : function(courtData){
 		var courtId = courtData._id;
@@ -689,7 +691,8 @@ Meteor.methods({
 				facebook{
 					<facebook stuff>
 				}
-			}
+			},
+			log:[<logId>, ...]
 		}
 		If the _id is not already in the DB, this will add that _id and all other fields of userData to the DB (creating a new user).
 		Missing fields will not be included (except for admin and staff which default to false).
@@ -1075,20 +1078,24 @@ Meteor.methods({
 			}
 			else { 		//Only used for popDB: insert a payment for both players
 				paymentData.userID = ID['player1'];
-				Payments.insert(paymentData, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
-					}
-				});
+				if(typeof paymentData.userID !== 'undefined'){
+					Payments.insert(paymentData, function(err, paymId){
+						if(err){
+							console.error('insert payment error');
+							console.error(err);
+						}
+					});
+				}
 
 				paymentData.userID = ID['player2'];
-				Payments.insert(paymentData, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
-					}
-				});
+				if(typeof paymentData.userID !== 'undefined'){
+					Payments.insert(paymentData, function(err, paymId){
+						if(err){
+							console.error('insert payment error');
+							console.error(err);
+						}
+					});
+				}
 
 			}
 
@@ -1817,6 +1824,14 @@ Meteor.methods({
     }
   },
 
+  	'addToUserLog':function(userId, logId){
+  		Meteor.users.update({_id:userId}, {$addToSet:{"log":logId}});
+  	},
+
+  	'addToCourtLog':function(courtId, logId){
+  		Courts.update({_id:courtId}, {$addToSet:{"log":logId}});
+  	},
+
 	/*
 		You can't modify these entries once they are added.
 		An entry is as follows :
@@ -1826,6 +1841,7 @@ Meteor.methods({
 			details : <all usefull informations about the operation> // short String describing the operation (optional)
 			createdAt : <date> // automatically generated
 		}
+		Returns the log id
 	*/
 	'addToModificationsLog':function(logData){
 		if(logData==undefined){
@@ -1848,7 +1864,7 @@ Meteor.methods({
 		data.opType = logData.opType;
 		if(logData.details!=undefined) data.details = logData.details;
 
-		ModificationsLog.insert(data);
+		return ModificationsLog.insert(data);
 	},
 
 	'getYear':function(player){

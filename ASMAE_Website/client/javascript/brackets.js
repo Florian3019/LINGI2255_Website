@@ -820,6 +820,17 @@ Template.brackets.events({
     u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1});
     u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1});
 
+    var callback = function(err, logId){
+      if(err){
+        console.log(err);
+        return;
+      }
+        Meteor.users.update({"_id":pair0.player1._id},{$addToSet:{"log":logId}});
+        Meteor.users.update({"_id":pair0.player2._id},{$addToSet:{"log":logId}});
+        Meteor.users.update({"_id":pair1.player1._id},{$addToSet:{"log":logId}});
+        Meteor.users.update({"_id":pair1.player2._id},{$addToSet:{"log":logId}});
+    }
+
     Meteor.call("addToModificationsLog",
     {"opType":"Modification points match knock-off",
     "details":
@@ -829,7 +840,7 @@ Template.brackets.events({
         u11.profile.firstName + " " + u11.profile.lastName + " et "+u12.profile.firstName + " " + u12.profile.lastName +
         " "+score1 +
         getStringOptions()
-    });
+    }, callback);
 
     Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   },

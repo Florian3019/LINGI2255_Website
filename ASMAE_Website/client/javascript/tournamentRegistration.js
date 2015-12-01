@@ -921,56 +921,75 @@ Template.tournamentRegistration.events({
         	return false; // Cancel form submission if errors occured
         }
 
-        /*
-			Update the db !
-        */
+		/*
+			Check the AFT ranking online
+		*/
+		Meteor.call('checkAFTranking', firstname, lastname, AFT, function(err, result){
+			if(err){
+				console.error("Error while checking AFT ranking");
+				console.error(err);
+			}
+			if(result == true){ //OK
+				/*
+					Update the db !
+		        */
 
-        Meteor.call('updateAddress', addressData, function(err, res){
-        	if(err){
-        		console.error("tournamentRegistration : updateAddress error");
-        		console.error(err);
-        	}
-        	curUserData.profile.addressID = res; // Set the addressID
-        	Meteor.call('updateUser', curUserData);
-        });
-
-
-        var callback = function(err, pairID){
-        	if(err){
-        		console.log("error callback updatePair");
-        		console.log(err);
-        		return;
-        	}
-
-        	if(sendEmail){
-	        	body=body+Router.routes['confirmPair'].url({_id: pairID});
-		    		var data = {
-		    			intro:"",
-						message:body};
-					Meteor.call('emailFeedback',to,"Demande d'inscription au Charles de Lorraine",Blaze.toHTMLWithData(Template.mail,data));
-	        }
-
-        	if(remove){
-        		console.log("removing pair "+ remove);
-        		Meteor.call('removePair',remove);
-        	}
-			Meteor.call('addPairToTournament', pairID, currentYear, dateMatch);
-        }
-
-        body="Bonjour, \n " + event.target.firstname.value + " " +event.target.lastname.value + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
-        to=event.target.emailPlayer.value; //address of the other player
+		        Meteor.call('updateAddress', addressData, function(err, res){
+		        	if(err){
+		        		console.error("tournamentRegistration : updateAddress error");
+		        		console.error(err);
+		        	}
+		        	curUserData.profile.addressID = res; // Set the addressID
+		        	Meteor.call('updateUser', curUserData);
+		        });
 
 
-		//For the payment
-		//Remark: we pass the paymentMethod to pairData but it won't be linked with the Pair in the database)
-		//		  This is because a player can have multiple Pairs (multiple tournaments).
-		pairData.paymentMethod = $('[name=paymentMethod]:checked').val();
+		        var callback = function(err, pairID){
+		        	if(err){
+		        		console.log("error callback updatePair");
+		        		console.log(err);
+		        		return;
+		        	}
 
-		pairData.year = currentYear;
-        Meteor.call('updatePair', pairData, callback);
-        Session.set('aloneSelected',null); // To avoid bugs if trying to register again
+		        	if(sendEmail){
+			        	body=body+Router.routes['confirmPair'].url({_id: pairID});
+				    		var data = {
+				    			intro:"",
+								message:body};
+							Meteor.call('emailFeedback',to,"Demande d'inscription au Charles de Lorraine",Blaze.toHTMLWithData(Template.mail,data));
+			        }
 
-    	Router.go('myRegistration');
+		        	if(remove){
+		        		console.log("removing pair "+ remove);
+		        		Meteor.call('removePair',remove);
+		        	}
+					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch);
+		        }
+
+		        body="Bonjour, \n " + firstname + " " + lastname + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
+		        to=email; //address of the other player
+
+
+				//For the payment
+				//Remark: we pass the paymentMethod to pairData but it won't be linked with the Pair in the database)
+				//		  This is because a player can have multiple Pairs (multiple tournaments).
+				pairData.paymentMethod = $('[name=paymentMethod]:checked').val();
+
+				pairData.year = currentYear;
+		        Meteor.call('updatePair', pairData, callback);
+		        Session.set('aloneSelected',null); // To avoid bugs if trying to register again
+
+		    	Router.go('myRegistration');
+			}
+			else {	//The players cheats on the AFT ranking
+
+				var e = document.getElementById("AFTcheat");
+				e.style.display = 'block';
+				document.getElementById("AFTcheat").className = "form-group has-error has-feedback";
+
+			}
+		});
+
     }
 
 

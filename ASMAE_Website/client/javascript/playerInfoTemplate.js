@@ -104,7 +104,8 @@ Template.playerInfoTemplate.helpers({
 			'land': function(){
 				if(addr) return addr.country;
 			},
-			'rank': user.profile.AFT
+			'rank': user.profile.AFT,
+			'log':user.log
 		};
 	  return data;
 	},
@@ -160,12 +161,12 @@ Template.playerInfoTemplate.helpers({
 		var pair = Pairs.findOne({$or:[{"player1._id":userId},{"player2._id":userId}], "year":currentYear},{"_id":1});
 		if(pair===undefined){
 			console.error("Did not find a registration !");
-			return "Pas inscrit";	
+			return "Pas inscrit";
 		}
 		var pool = Pools.findOne({"pairs":pair._id},{"_id":1});
 		if(pool===undefined){
 			console.error("Did not find a registration !");
-			return "Pas inscrit";	
+			return "Pas inscrit";
 		}
 
 		var query = [];
@@ -178,7 +179,7 @@ Template.playerInfoTemplate.helpers({
 		var typeData = Types.findOne({$or:query});
 		if(typeData===undefined){
 			console.error("Did not find a registration !");
-			return "Pas inscrit";	
+			return "Pas inscrit";
 		}
 
 		// Determine the player's category
@@ -203,10 +204,11 @@ Template.playerInfoTemplate.helpers({
 		var y = Years.findOne({$or:yearQuery});
 		if(y===undefined){
 			console.error("Did not find a registration !");
-			return "Pas inscrit";	
+			return "Pas inscrit";
 		}
 		for (var i=0; typeKeys.length;i++){
-			if(y[typeKeys[i]].indexOf(typeData._id)>-1){
+			var t = y[typeKeys[i]];
+			if(t!==undefined && t.indexOf(typeData._id)>-1){
 				playerType = typesTranslate[typeKeys[i]];
 				break;
 			}
@@ -241,7 +243,31 @@ Template.playerInfoTemplate.helpers({
 			}
 			return extrasArray;
 		}
-	}
+	},
+
+    getPlayerModLog: function (logTable) {
+        var toReturn = [];
+        for(var i=0;logTable!==undefined && i<logTable.length;i++){
+          toReturn.push(ModificationsLog.findOne({_id:logTable[i]}));
+        }
+        return toReturn;
+    },
+
+    settings : function(){
+      return {
+        fields:[
+          { key: 'userId', label: 'Utilisateur', fn: function(value, object){
+            user= Meteor.users.findOne({_id:value},{"profile":1});
+            return user.profile.firstName + " " + user.profile.lastName;
+          }},
+          { key: 'createdAt', label: 'Temps' , sortOrder: 0, sortDirection: 'descending', fn: function(value, object){return getSortableDate(value);}},
+          { key: 'opType', label: "Opération"},
+          { key: 'details', label: "Détails"}
+      ],
+      rowsPerPage:5,
+      noDataTmpl:Template.emptyLog
+      }
+    }
 
 });
 

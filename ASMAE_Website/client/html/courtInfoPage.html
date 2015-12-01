@@ -15,8 +15,18 @@
                   <br/>
                   <img alt="User Pic" src="http://www.constructiondetennis.com/wp-content/themes/tennis/images/court-de-tennis.png" class="img-circle img-responsive">
                   <br/>
-                  <p>OK propriétaire : <span class="glyphicon {{checked court.ownerOK}}"></span></p>
-                  <p>OK staff : <span class="glyphicon {{checked court.staffOK}}"></span></p>
+                  <p>
+                    OK propriétaire : <span class="glyphicon {{checked court.ownerOK}}"></span>
+                    {{#if isAdminOrStaffOrOwner court.ownerID}}
+                      <button type="button" id="button_ownerOK" class="btn btn-default" data-id="{{court._id}}" data-ownerid="{{court.ownerID}}" data-ownerok="{{court.ownerOK}}"><span class="glyphicon glyphicon-transfer" aria-hidden="true"></span></button>
+                    {{/if}}
+                  </p>
+                  <p>
+                    OK staff : <span class="glyphicon {{checked court.staffOK}}"></span>
+                    {{#if isAdminOrStaff}}
+                      <button type="button" id="button_staffOK" class="btn btn-default" data-id="{{court._id}}" data-ownerid="{{court.ownerID}}" data-staffok="{{court.staffOK}}"><span class="glyphicon glyphicon-transfer" aria-hidden="true"></span></button>
+                    {{/if}}
+                  </p>
                 </div>
                 <div class=" col-md-9 col-lg-9 ">
                   <table class="table table-user-information">
@@ -98,24 +108,15 @@
             </div>
 
             <center>
-            {{#if isAdminOrStaffOrOwner court.ownerID}}
-              {{#if court.ownerOK}}
-                <button type="button" id="button_ownerNotOK" class="btn btn-default" data-id="{{court._id}}" data-ownerid="{{court.ownerID}}">KO propriétaire</button>
-              {{else}}
-                <button type="button" id="button_ownerOK" class="btn btn-default" data-id="{{court._id}}" data-ownerid="{{court.ownerID}}">OK propriétaire</button>
-              {{/if}}
-            {{/if}}
-            {{#if isAdminOrStaff}}
-              {{#if court.staffOK}}
-                <button type="button" id="button_staffNotOK" class="btn btn-default" data-id="{{court._id}}" data-ownerid="{{court.ownerID}}">KO staff</button>
-              {{else}}
-                <button type="button" id="button_staffOK" class="btn btn-default" data-id="{{court._id}}" data-ownerid="{{court.ownerID}}">OK staff</button>
-              {{/if}}
-            {{/if}}
               <a class="btn btn-default" href="{{pathFor route='modifyCourt' _id=court._id }}" >Modifier</a>
               <button type="button" id="deleteCourt" class="btn btn-default" >Supprimer</button>
             </center>
             <br />
+            
+            {{#with getCourtModLog court.log}}
+              <h3> Modifications récentes </h3>
+              {{>reactiveTable collection=this settings=settings fields=fields}}
+            {{/with}}
 
 </div>
 
