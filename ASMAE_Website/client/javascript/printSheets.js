@@ -21,7 +21,6 @@ Template.printSheets.events({
           Session.set("printSheets/isWorkingPool",false);
         }
         Session.set("printSheets/poolList",result);
-        console.log("we get results !");
       }
     });
 

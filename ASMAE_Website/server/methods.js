@@ -2114,6 +2114,17 @@ Meteor.methods({
   'getPoolListToPrint':function(info){
     this.unblock();
 
+    var hasBothPlayers = function(pair){
+      return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
+    };
+    var moreThanOnePairFunct = function(pairs){
+      for(var i=0;i<pairs.length;i++){
+        pair = Pairs.findOne({"_id":pairs[i]});
+        if(hasBothPlayers(pair)) return true;
+      }
+      return false;
+    };
+
     var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
     var year = Years.findOne({_id:info.year});
     if(year==undefined){
@@ -2144,8 +2155,10 @@ Meteor.methods({
         var nonemptyPool = new Array();
         for (var i in poolList) {
           var temp = Pools.findOne({_id:poolList[i]}, {"pairs":1});
-          if(temp.pairs.length>0){
-            nonemptyPool.push(poolList[i]);
+          if(moreThanOnePairFunct(temp.pairs)){
+            if (nonemptyPool.indexOf(poolList[i])==-1) {
+              nonemptyPool.push(poolList[i]);
+            }
           }
         }
         return nonemptyPool;
