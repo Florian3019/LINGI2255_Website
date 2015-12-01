@@ -729,7 +729,7 @@ Template.brackets.events({
       }
       var round = event.currentTarget.firstElementChild.dataset.round;
       var court = event.currentTarget.firstElementChild.dataset.courtn;
-      Session.set("PoolList/ChosenCourt",court);
+      Session.set("PoolList/ChosenCourt",parseInt(court));
       Session.set("PoolList/ChosenRound",round);
       Session.set("changeCourtsBracket","true");
     }

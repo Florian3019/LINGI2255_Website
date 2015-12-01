@@ -289,6 +289,7 @@ Template.poolsSidebarCollapsableMenu.events({
         Session.set("selectNewCourt/sunday","Ignore");
         Session.set("selectNewCourt/staffOK","Ignore");
         Session.set("selectNewCourt/ownerOK","Ignore");
+        Session.set("changeCourtsBracket","false");
 
 		// Hide previous error message, if any
 		mergeErrorBox = document.getElementById("mergeErrorBox");
@@ -314,6 +315,7 @@ Template.poolsSidebarCollapsableMenu.events({
         Session.set("selectNewCourt/sunday","Ignore");
         Session.set("selectNewCourt/staffOK","Ignore");
         Session.set("selectNewCourt/ownerOK","Ignore");
+        Session.set("changeCourtsBracket","false");
 
 		var info = {"type":type, "category":category, "isPool":false};
 		updateArrow(document, info);
