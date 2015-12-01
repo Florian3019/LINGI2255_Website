@@ -141,7 +141,7 @@ Router.route('/liste-poules', {
 	name: 'poolList',
 	template: 'poolList',
 	waitOn: function(){
-		return [ 	
+		return [
 					Meteor.subscribe('Years'),
 					Meteor.subscribe('Types'),
 					Meteor.subscribe('users'),
@@ -356,6 +356,9 @@ Router.route('/print', {
 	name: 'printSheets',
 	template: 'printSheets',
 	onAfterAction: function(){
+    Session.set("printSheets/poolList","");
+    Session.set("printSheets/isWorkingPrint",false);
+    Session.set("printSheets/isWorkingPool",false);
 		Session.set('showNavBar', true);
 	}
 });

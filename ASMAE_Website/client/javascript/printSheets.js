@@ -2,55 +2,33 @@ Template.printSheets.events({
 
   'click #Save':function(event){
     Session.set("printSheets/Value", true);
-    var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+    Session.set("printSheets/isWorkingPool",true);
+
+
     var info={
       year : document.getElementById("Year").value,
       type : document.getElementById("Type").value,
       cat : document.getElementById("Category").value,
     };
     Session.set("printSheets/info",info);
-    var year = Years.findOne({_id:info.year});
-    if(year==undefined){
-      return undefined;
-    }
-    else{
-      var type = Types.findOne({_id:year[info.type]});
-      if(type==undefined){
-        return undefined
-      }
-      else{
-        if(info.type=="family"){
-          var poolList = type["all"]
-        }
-        else{
-          if(info.cat!="all"){
-            var poolList = type[info.cat];
-          }
-          else{
-            var poolList = new Array();
-            for (var i in allcat) {
-              for (var j in type[allcat[i]]) {
-                poolList.push(type[allcat[i]][j]);
-              }
-            }
-          }
-        }
-        var nonemptyPool = new Array();
-        for (var i in poolList) {
-          typeSearch={};
-          typeSearch["pairs"] =1;
-          var temp = Pools.findOne({_id:poolList[i]}, typeSearch);
-          if(temp.pairs.length>0){
-            nonemptyPool.push(poolList[i]);
-          }
-        }
 
-        Session.set("printSheets/poolList",nonemptyPool);
+    Meteor.call("getPoolListToPrint", info, function(error, result){
+      if(error){
+        console.log("error", error);
       }
-    }
+      if(result){
+        if(result.length==Session.get("printSheets/poolList").length){
+          Session.set("printSheets/isWorkingPool",false);
+        }
+        Session.set("printSheets/poolList",result);
+        console.log("we get results !");
+      }
+    });
+
   },
 
   'click #Print':function(event){
+    Session.set("printSheets/isWorkingPrint",true);
     var pools = Session.get("printSheets/poolList");
     var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
     var infoPools = Session.get("printSheets/info");
@@ -169,8 +147,8 @@ Template.printSheets.events({
             var filename = info.year+"_"+info.type+"_"+info.cat+".pdf";
           }
           pdf.output('save', filename);
+          Session.set("printSheets/isWorkingPrint",false);
           Session.set("printSheets/poolList","");
-          console.log("set to null");
         }
         else{
           pdf.addPage();
@@ -239,6 +217,7 @@ Template.printSheets.helpers({
   'hasPool':function(){
     var poolId = Session.get("printSheets/poolList");
     if(poolId!=undefined && poolId.length>1){
+      Session.set("printSheets/isWorkingPool",false);
       return true;
     }
     return false;
@@ -252,6 +231,14 @@ Template.printSheets.helpers({
         else{
             return '';
         }
+    },
+
+    'isWorkingPool' : function(){
+      return Session.get("printSheets/isWorkingPool");
+    },
+
+    'isWorkingPrint' : function(){
+      return Session.get("printSheets/isWorkingPrint");
     }
 
 });
