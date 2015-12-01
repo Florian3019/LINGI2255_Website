@@ -342,11 +342,13 @@ Meteor.methods({
 
 		if(dateMatch == "sunday"){
 			if(gender1 && gender2 && gender1 != gender2){
-				console.error("Sunday is men or women only ! no mix allowed !");
+				console.error("Sunday is men or women only ! no mixed allowed !");
 				return false;
 			}
 			if(!gender1 && !gender2){
-				console.warn("No information on the gender available !");
+				var id1 = p1 ? p1._id : undefined;
+				var id2 = p2 ? p2._id : undefined;
+				console.warn("No information on the gender available for players "+id1+", "+id2);
 				return false;
 			}
 			if(gender1){
@@ -908,7 +910,7 @@ Meteor.methods({
 		}
 		@return : the pair id if successful, otherwise returns false
 	*/
-	'updatePair' : function(pairData){
+	'updatePair' : function(pairData, silentMail){
 		if(typeof pairData === undefined){
 			console.error("updatePair : pairData is undefined");
 			return;
@@ -995,7 +997,10 @@ Meteor.methods({
 			check2 = setPlayerData("player2");
 		}
 
-		if(check1 == false || check2 == false) return false; // an error occurred
+		if(check1 == false || check2 == false) {
+			console.error("Update pair : an error occurred");
+			return false;
+		}
 		if(typeof check1 === "undefined" && typeof check2 === "undefined"){
 			console.warn("Warning : No data about any player was provided to updatePair. Ignore if intended.");
 		}
@@ -1035,14 +1040,16 @@ Meteor.methods({
 
 			//Send emails if the payment method is by cash or by bank transfer
 			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
-        	var user = Meteor.users.findOne({_id:paymentData.userID});
-        	var data = {
-          		intro:"Bonjour "+user.profile.firstName+",",
-          		important:"Nous avons bien reçu votre inscription",
-          		texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
-          		encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
-        	};
-        	Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+        		var user = Meteor.users.findOne({_id:paymentData.userID});
+        		var dataEmail = {
+					intro:"Bonjour "+user.profile.firstName+",",
+					important:"Nous avons bien reçu votre inscription",
+					texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
+					encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
+				};
+				if (!silentMail) {
+					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
+				}
 				/*
 
 					Envoyer un mail contenant les informations pour payer par cash:
@@ -1054,13 +1061,15 @@ Meteor.methods({
 			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
         		var bank = "BE33 3753 3397 1254";
         		var user = Meteor.users.findOne({_id:paymentData.userID});
-        		var data = {
+        		var dataEmail = {
           			intro:"Bonjour "+user.profile.firstName+",",
           			important:"Nous avons bien reçu votre inscription",
           			texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
           			encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) et d'y insérer les nom et prénom du joueur ainsi que le jour où il joue au tournoi."
         		};
-        		Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",data);
+				if (!silentMail) {
+					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
+				}
 					/*
 
 						Envoyer un mail contenant les informations pour payer par virement bancaire:
@@ -1630,7 +1639,7 @@ Meteor.methods({
                 var usermail = user.emails[0].address;
                 if(Meteor.call('isStaff') || Meteor.call('isAdmin') || usermail==to){
                   Meteor.http.post(postURL, options, onError);
-                  console.log("Email sent");
+                  //console.log("Email sent"); // Commenting this to avoir popDB to last too long
                 }
                 else{
                   console.error("Forbidden permissions to send mail");
