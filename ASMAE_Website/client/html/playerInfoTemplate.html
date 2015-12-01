@@ -95,6 +95,11 @@
               {{/unless}}
             </center>
             <br/>
+
+            {{#with getPlayerModLog this.log}}
+              <h3> Modifications récentes </h3>
+              {{>reactiveTable collection=this settings=settings fields=fields}}
+            {{/with}}
 </div>
 
 <!-- Modal -->

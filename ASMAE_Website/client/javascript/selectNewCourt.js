@@ -1,10 +1,6 @@
 Template.selectNewCourt.events({
     'click #newCourtCancel':function(event){
-        Session.set("PoolList/ChosenCourt","");
-        Session.set("selectNewCourt/saturday","Ignore");
-        Session.set("selectNewCourt/sunday","Ignore");
-        Session.set("selectNewCourt/staffOK","Ignore");
-        Session.set("selectNewCourt/ownerOK","Ignore");
+        restoreSession();
     },
 
     'click .courtRow' : function(event){
@@ -70,66 +66,84 @@ var getStringOptions = function(){
             " (" + Session.get("PoolList/Year")+")";
 }
 
+var restoreSession = function(){
+    Session.set("PoolList/ChosenCourt","");
+    Session.set("selectNewCourt/saturday","Ignore");
+    Session.set("selectNewCourt/sunday","Ignore");
+    Session.set("selectNewCourt/staffOK","Ignore");
+    Session.set("selectNewCourt/ownerOK","Ignore");
+    Session.set("changeCourtsBracket","false");
+};
+
+
 Template.chooseCourtsModal.events({
     'click .valid': function(event){
+
+        var newCourtNumber = parseInt(document.getElementById("selectCourt").value);
+        var oldCourtNumber = Session.get("PoolList/ChosenCourt"); // old court
 
         if(Session.get("changeCourtsBracket")==="true"){
 
             var round = Session.get("PoolList/ChosenRound");
-            var courtNumber = document.getElementById("selectCourt").value; // new court
-            var court = Session.get("PoolList/ChosenCourt"); // old court
+            var newCourt = Courts.find({"courtNumber":newCourtNumber});
             var year = Years.findOne({_id:Session.get("PoolList/Year")});
             var typeID = year[Session.get("PoolList/Type")];
             var type = Types.findOne({_id:typeID});
             var listCourts = type[Session.get("PoolList/Category")+"Courts"];
             var changeAll = document.getElementById("all").checked;
 
-            if(listCourts!= undefined){
+            if(listCourts== undefined){
                 console.log("No court!");
                 $('#chooseCourtsModal')
                     .on('hidden.bs.modal', function() {
-                        Session.set("PoolList/ChosenCourt","");
-                        Session.set("selectNewCourt/saturday","Ignore");
-                        Session.set("selectNewCourt/sunday","Ignore");
-                        Session.set("selectNewCourt/staffOK","Ignore");
-                        Session.set("selectNewCourt/ownerOK","Ignore");
+                        restoreSession();
                     })
                     .modal('hide');
             }
 
+            changed=false;
+
             for(var i=0;i<listCourts.length;i++){
-                if(listCourts[i][1]==court && (changeAll || (listCourts[i][0]==round))){
-                    listCourts[i][1] = parseInt(courtNumber);
+                if((listCourts[i][1]==oldCourtNumber || listCourts[i][1]===oldCourtNumber) && (changeAll || (listCourts[i][0]==round))){
+                    listCourts[i][1] = newCourtNumber;
+                    changed=true;
                 }
             }
 
             Meteor.call("updateType",type);
-            
-            Session.set("changeCourtsBracket","false");
         }
         else{
-
-            var courtNumber = document.getElementById("selectCourt").value
             var poolId = Session.get("PoolList/poolID"); 
             var pool = Pools.findOne({_id:poolId});
-            pool.courtId = parseInt(courtNumber);
+            pool.courtId = newCourtNumber;
 
             Meteor.call('updatePool',pool);
         }
 
+        var newCourtData = Courts.findOne({"courtNumber":newCourtNumber});
+        var oldCourtData = Courts.findOne({"courtNumber":oldCourtNumber});
+
+        var newCourtAddress = Addresses.findOne({_id:newCourtData.addressID});
+        var oldCourtAddress = Addresses.findOne({_id:oldCourtData.addressID});
+
         Meteor.call("addToModificationsLog",
         {"opType":"Changement de terrain",
         "details":
-            "Le terrain de la poule "+poolId+" est maintenant "+courtNumber+ getStringOptions()
-        });
+            "Le terrain N°"+ oldCourtNumber + " " + formatAddress(oldCourtAddress) + " de la poule "+poolId+" est maintenant le terrain N°"+newCourtNumber+ " "+ formatAddress(newCourtAddress)+ getStringOptions()
+        },
+            function(err, logId){
+                if(err){
+                    console.log(err);
+                    return;
+                }
+                Meteor.call('addToCourtLog', newCourtData._id, logId);
+                Meteor.call('addToCourtLog', oldCourtData._id, logId);
+            }
+        );
 
         $('#chooseCourtsModal')
         .on('hidden.bs.modal', function() {
-            Session.set("PoolList/ChosenCourt","");
-            Session.set("selectNewCourt/saturday","Ignore");
-            Session.set("selectNewCourt/sunday","Ignore");
-            Session.set("selectNewCourt/staffOK","Ignore");
-            Session.set("selectNewCourt/ownerOK","Ignore");
+            restoreSession();
         })
         .modal('hide');
     }

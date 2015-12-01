@@ -28,12 +28,21 @@ Template.courtEmail.events({
 
 	     // And stick the checked ones onto an array...
 		//print des adresses mails correspondant aux checkbox checkées.
-		var em = Meteor.users.findOne({_id:Courts.findOne({_id : checkboxes[i].id}).ownerID}).emails[0].address;
+		var courtId = checkboxes[i].id;
+		var ownerId = Courts.findOne({_id : courtId}).ownerID;
+		var em = Meteor.users.findOne({_id:ownerId}).emails[0].address;
 		//Print du texte à envoyer
 	     	if(mail.value!=""){
 	     		Meteor.call('emailFeedback',em,"Charles De Lorraine : mail relatif à votre terrain",mail.value);
 			checkboxesChecked.push(checkboxes[i]);
-	     		Meteor.call("addToModificationsLog", {"opType":"Envoi de mails aux courtsowners","details": "Mail envoyé : "+mail.value+"\n à : "+em});
+	     		Meteor.call("addToModificationsLog", {"opType":"Envoi de mails aux courtsowners","details": "Mail envoyé : "+mail.value+"\n à : "+em}, function(err, logId){
+	     			if(err){
+	     				console.log(err);
+	     				return;
+	     			}
+	     			Courts.update({_id:courtId},{$addToSet:{"log":logId}});
+	     			Meteor.users.update({_id:ownerId},{$addToSet:{"log":logId}});
+	     		});
 	     	}
 	  }
 	  // Return the array if it is non-empty, or null

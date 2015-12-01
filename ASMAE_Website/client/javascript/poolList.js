@@ -96,6 +96,14 @@ var splitPairs = function(pairDiv){
 		"details":
 			player1.profile.firstName + " "+ player1.profile.lastName +
 			 " et " + player2.profile.firstName +" " + player2.profile.lastName + getStringOptions()
+		},
+		function(err, logId){
+			if(err){
+				console.log(err);
+				return;
+			}
+			Meteor.call('addToUserLog', player1._id, logId);
+			Meteor.call('addToUserLog', player2._id, logId);
 		});
 }
 
@@ -196,7 +204,16 @@ var mergePlayers = function(document){
 		"details":
 			player1.profile.firstName + " "+ player1.profile.lastName +
 			 " et " + player2.profile.firstName +" " + player2.profile.lastName +getStringOptions()
-		});
+		},
+		function(err, logId){
+			if(err){
+				console.log(err);
+				return;
+			}
+			Meteor.call('addToUserLog', player1._id, logId);
+			Meteor.call('addToUserLog', player2._id, logId);
+		}
+	);
 }
 
 /******************************************************************************************************************
@@ -267,6 +284,12 @@ Template.poolsSidebarCollapsableMenu.events({
 		Session.set('PoolList/Type', type);
 		Session.set("PoolList/ChosenScorePool","");
 		Session.set("PoolList/ChosenBrackets","");
+		Session.set("PoolList/ChosenCourt","");
+        Session.set("selectNewCourt/saturday","Ignore");
+        Session.set("selectNewCourt/sunday","Ignore");
+        Session.set("selectNewCourt/staffOK","Ignore");
+        Session.set("selectNewCourt/ownerOK","Ignore");
+        Session.set("changeCourtsBracket","false");
 
 		// Hide previous error message, if any
 		mergeErrorBox = document.getElementById("mergeErrorBox");
@@ -287,6 +310,12 @@ Template.poolsSidebarCollapsableMenu.events({
 		Session.set('PoolList/Type', type);
 		Session.set("PoolList/ChosenBrackets","true");
 		Session.set("PoolList/ChosenScorePool","");
+		Session.set("PoolList/ChosenCourt","");
+        Session.set("selectNewCourt/saturday","Ignore");
+        Session.set("selectNewCourt/sunday","Ignore");
+        Session.set("selectNewCourt/staffOK","Ignore");
+        Session.set("selectNewCourt/ownerOK","Ignore");
+        Session.set("changeCourtsBracket","false");
 
 		var info = {"type":type, "category":category, "isPool":false};
 		updateArrow(document, info);
@@ -373,6 +402,25 @@ var collapseMenus = function(document, event){
 											poolList
 *******************************************************************************************************************/
 
+/*
+	Adds the change of a leader to the modification log
+	if oldUserId is undefined, the log is adapted
+*/
+var addLeaderChangeToLog = function(oldUserId, newUserId){
+	var hasOldUser = oldUserId!==undefined;
+	var user = Meteor.users.findOne({_id:newUserId},{"profile.lastName":1, "profile.firstName":1});
+	
+	if(hasOldUser) var oldUser = Meteor.users.findOne({_id:oldUserId},{"profile.lastName":1, "profile.firstName":1});
+	Meteor.call("addToModificationsLog",{
+		"opType":"Changement chef de poule", 
+		"details":(hasOldUser?oldUser.profile.firstName + " "+oldUser.profile.lastName +" a été remplacé ":"")+user.profile.firstName + " "+user.profile.lastName+getStringOptions()},
+		function(err, logId){
+			Meteor.call("addToUserLog",user._id, logId);
+			if(hasOldUser) Meteor.call("addToUserLog",oldUser._id, logId);
+		}
+	);
+}
+
 var findNewPoolLeader = function(poolId, removedPairId){
 	pair = Pairs.findOne({_id:removedPairId});
 	prevPool = Pools.findOne({_id:poolId}, {pairs:1, leader:1});
@@ -385,6 +433,7 @@ var findNewPoolLeader = function(poolId, removedPairId){
 			p = Pairs.findOne({_id:prevPool.pairs[j]});
 			if(p.player1 && p.player2 && p.player1._id && p.player2._id){
 				Pools.update({_id:poolId}, {$set:{leader:p.player1._id}});
+				addLeaderChangeToLog(prevPool.leader,p.player1._id);
 				leaderFound = true;
 				break;
 			}
@@ -451,6 +500,7 @@ var movePairs = function(document){
 			if(newPool.leader==undefined){
 				pair = Pairs.findOne({_id:pairId},{"player1":1});
 				Pools.update({_id:newPoolId}, {$set:{leader:pair.player1._id}}); // Set player1 of the pair as new leader
+				addLeaderChangeToLog(undefined, pair.player1._id);
 			}
 
 			// Add that pair to the new pool
@@ -469,7 +519,16 @@ var movePairs = function(document){
 				"details":
 					player1.profile.firstName + " "+ player1.profile.lastName +
 			 		" et " + player2.profile.firstName +" " + player2.profile.lastName + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
-				});
+				},
+				function(err, logId){
+					if(err){
+						console.log(err);
+						return;
+					}
+					Meteor.call('addToUserLog', player1._id, logId);
+					Meteor.call('addToUserLog', player2._id, logId);
+				}
+			);
 		}
 	}
 
@@ -1299,7 +1358,12 @@ Template.modalItem.events({
 		var target = event.currentTarget;
 		var poolId = target.dataset.poolid;
 		var playerId = target.dataset.player;
-		Pools.update({_id:poolId},{$set:{"leader":playerId}});
+		var p = Pools.findOne({_id:poolId},{"leader":1});
+		var previousLeader = p.leader; // Only used for the log
+		if(previousLeader!==playerId){
+			Pools.update({_id:poolId},{$set:{"leader":playerId}});
+			addLeaderChangeToLog(previousLeader, playerId);
+		}
 	}
 });
 

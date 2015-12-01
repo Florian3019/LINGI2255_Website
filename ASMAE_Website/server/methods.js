@@ -526,7 +526,8 @@ Meteor.methods({
 			ownerOK:<boolean>,
 			staffOK:<boolean>,
 			numberOfCourts: <integer>
-		}
+		},
+		log:[<logId>, ...]
 	*/
 	'updateCourt' : function(courtData){
 		var courtId = courtData._id;
@@ -692,7 +693,8 @@ Meteor.methods({
 				facebook{
 					<facebook stuff>
 				}
-			}
+			},
+			log:[<logId>, ...]
 		}
 		If the _id is not already in the DB, this will add that _id and all other fields of userData to the DB (creating a new user).
 		Missing fields will not be included (except for admin and staff which default to false).
@@ -1831,6 +1833,14 @@ Meteor.methods({
     }
   },
 
+  	'addToUserLog':function(userId, logId){
+  		Meteor.users.update({_id:userId}, {$push:{"log":{$each:[logId],$slice: -LAST_N_LOGS}}});
+  	},
+
+  	'addToCourtLog':function(courtId, logId){
+  		Courts.update({_id:courtId}, {$push:{"log":{$each:[logId],$slice: -LAST_N_LOGS}}});
+  	},
+
 	/*
 		You can't modify these entries once they are added.
 		An entry is as follows :
@@ -1840,6 +1850,7 @@ Meteor.methods({
 			details : <all usefull informations about the operation> // short String describing the operation (optional)
 			createdAt : <date> // automatically generated
 		}
+		Returns the log id
 	*/
 	'addToModificationsLog':function(logData){
 		if(logData==undefined){
@@ -1862,7 +1873,7 @@ Meteor.methods({
 		data.opType = logData.opType;
 		if(logData.details!=undefined) data.details = logData.details;
 
-		ModificationsLog.insert(data);
+		return ModificationsLog.insert(data);
 	},
 
 	'getYear':function(player){

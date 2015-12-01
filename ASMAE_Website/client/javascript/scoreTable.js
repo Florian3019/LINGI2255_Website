@@ -71,10 +71,21 @@ Template.scoreTable.events({
     Meteor.call("addToModificationsLog",
     {"opType":"Modification points match poule",
     "details":
-        playersName1[0]+" "+playersName1[1] +
-        " VS " + playersName2[0]+" "+playersName2[1] +
+        playersName1.name[0]+" "+playersName1.name[1] +
+        " VS " + playersName2.name[0]+" "+playersName2.name[1] +
         " Points: "+data.pair1.points+getStringOptions()
-    });
+    },
+      function(err, logId){
+        if(err){
+          console.log(err);
+          return;
+        }
+        Meteor.users.update({_id:playersName1.ids[0]},{$addToSet:{"log":logId}});
+        Meteor.users.update({_id:playersName1.ids[1]},{$addToSet:{"log":logId}});
+        Meteor.users.update({_id:playersName2.ids[0]},{$addToSet:{"log":logId}});
+        Meteor.users.update({_id:playersName2.ids[1]},{$addToSet:{"log":logId}});
+      }
+    );
   }
 })
 
@@ -189,7 +200,7 @@ var getPairPlayers = function(pairId){
   u1 = Meteor.users.findOne({_id:p.player1._id},info);
   u2 = Meteor.users.findOne({_id:p.player2._id},info);
 
-  return [u1.profile.firstName + " "+u1.profile.lastName, u2.profile.firstName + " "+u2.profile.lastName];
+  return {"names":[u1.profile.firstName + " "+u1.profile.lastName, u2.profile.firstName + " "+u2.profile.lastName],"ids":[u1._id, u2._id]};
 }
 
 Template.scorePage.events({
@@ -205,7 +216,9 @@ Template.scorePage.events({
   'click #changeCourt':function(event){
     var user = Meteor.user();
     if(user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin)){
-       Session.set("PoolList/ChosenCourt","44");
+        var poolID = Session.get("PoolList/poolID");
+        var pool = Pools.findOne({_id:poolId});
+       Session.set("PoolList/ChosenCourt",pool.courtId);
     }
     else{
 
