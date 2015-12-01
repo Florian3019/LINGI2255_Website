@@ -1005,6 +1005,12 @@ Template.poolList.helpers({
 	  		}
 	  		else if(target.id==="mergeplayers" && target.getElementsByClassName("pairs").length==2){
 	  			mergePlayers(document);
+
+	  			var pairsToMove = document.getElementById("mergeplayers").getElementsByClassName("pairs");
+	  			// Empty any player that still might be here
+	  			while(pairsToMove.length!=0){
+	  				$("#"+pairsToMove[0].id).detach().appendTo("#alonepairs");
+	  			}
 	  		}
 	    	el.className += ' ex-moved';
 	  	}).on('over', function (el, container) {
