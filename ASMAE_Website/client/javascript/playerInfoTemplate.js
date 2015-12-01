@@ -274,8 +274,28 @@ Template.playerInfoTemplate.helpers({
 
 });
 
-
 Template.playerInfoTemplate.events({
+
+	'click #unsubscribeLink' : function(event) {
+		event.preventDefault();
+
+		swal({
+			title: "Êtes-vous sûr ?",
+			text: "Vous êtes sur le point de supprimer votre inscription",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#DD6B55",
+			confirmButtonText: "Supprimer mon inscription",
+			closeOnConfirm: false },
+			function(){
+				var pair = getPairFromPlayerID();
+				console.log(pair);
+				Meteor.call('unsubscribePairFromTournament', pair._id);
+				swal("Inscription supprimée", "", "success");
+				Router.go('home');
+			});
+	},
+
 	'click #button_edit' : function(event){
 		/*
 			Check if the button was in a popup (modal), if so, close it before going to profileEdit

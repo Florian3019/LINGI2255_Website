@@ -2005,47 +2005,93 @@ Meteor.methods({
 		return ret;
 	},
 
-	'unsubscribeTournament': function(pair_id){
-		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')))
+	'unsubscribePairFromTournament': function(pair_id){
+		if (typeof pair_id === 'undefined') {
+			console.error("Error unsubscribe : pair_id is undefined");
+			return false;
+		}
+		var pair = Pairs.findOne({_id:pair_id});
+		if (typeof pair === 'undefined') {
+			console.error("Error unsubscribe : pair does not exist");
+			return false;
+		}
+
+		var userID = Meteor.userId();
+		console.log(userID);
+
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1 && userID!==pair.player2))
 		{
-			console.error("You don't have the permission do to that");
+			console.error("You don't have the permission to do that");
 			throw new Meteor.error("unsubscribeTournament: no permissions");
 			return false;
 		}
 
-		var pair = Pairs.findOne({'_id':pair_id});
-		var save = Pairs.findOne({'_id':pair_id});
-        if(typeof pair.player2 === 'undefined'){
-          Pairs.remove({'_id':pair_id});
-          var pools = Pools.find().fetch();
-          var pool_id;
-          for(i = 0; i < pools.length; i++){
-              var poolPairs = pools[i].pairs;
-              for(k = 0; k < poolPairs.length; k++){
-                  if(pair_id == pools[i].pairs[k]){
-                      pool_id = pools[i]._id;
-                      var array = [];
-                      for(l = 0; l < pair_id.length; l++){
-                          if(k != l){
-                              array.push(pools[i].pairs[l]);
-                          }
-                      }
-                      break;
-                      Pools.update({'_id': pool_id}, {$set: {'pairs': array}});
-                  }
-              }
-          }
-        }
-        else {
-          if(pair.player1._id == Meteor.userId()){
-            Pairs.update({'_id': pair_id}, {$set: {'player1': pair.player2}});
-          }
-          Pairs.update({'_id': pair_id}, {$unset: {'player2': ""}});
+		var userPlayer = pair.player1._id===userID ? "player1" : "player2";
+		var partnerPlayer = userPlayer==="player1" ? "player2" : "player1";
 
-          //Send email in secure
-          var aloneId=Pairs.findOne({_id:pair_id}).player1._id;
-          Meteor.call("emailtoAlonePairsPlayer",aloneId,save);
-        }
+		var pool = Pools.findOne({pairs:pair_id}); // Find the right pool
+		if (typeof pool === 'undefined') {
+			console.error("Error unsubscribe : no pool found for this pair");
+			return false;
+		}
+
+		console.log(pair);
+		console.log(userPlayer);
+		console.log(partnerPlayer);
+
+		var user;
+		if (userPlayer==="player1") {
+			user = Meteor.users.findOne({_id:pair.player1._id});
+		}
+		else {
+			user = Meteor.users.findOne({_id:pair.player2._id});
+		}
+
+
+		console.log(user);
+		// No other player
+		if (typeof pair.partnerPlayer === 'undefined') {
+			// Remove the pair from the pool and from the Pairs table
+			var pairs = pool.pairs;
+			var newPairs = [];
+			for (var i=0; i<pairs.length; i++) {
+				if (pairs[i]!==pair_id) {
+					newPairs.push(pairs[i]);
+				}
+			}
+			pool.pairs = newPairs;
+
+			Meteor.call('updatePool', pool);
+			Pairs.remove({_id:pair_id});
+
+			var dataEmail= {
+				intro:"Bonjour "+user.profile.firstName+" "+user.profile.lastName,
+				important:"Votre inscription au tournoi a été supprimée",
+				texte:"Vous avez retiré votre inscription au tournoi Le Charles de Lorraine"
+			};
+
+			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
+		}
+		else {
+			// Remove only the current player, leaving the other player alone in the pair
+			pair.userPlayer = undefined;
+			// Put the partner in player1 position --> partner can now be matched with another player
+			pair.player1 = pairs.partnerPlayer;
+			Meteor.call("updatePair", pair);
+			// The pair stays in the right pool
+
+			var partner = Meteor.users.findOne({_id:pair.player1._id});
+
+			var dataEmail= {
+				intro:"Bonjour "+user.player.firstName+" "+user.player.lastName,
+				important:"Votre inscription au tournoi a été supprimée",
+				texte:"Vous avez retiré votre inscription au tournoi Le Charles de Lorraine, votre partenaire a été notifié(e) de votre désinscription."
+			};
+
+			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
+
+			//TODO ALEX : send mail to partner. his address : partner.emails[0]
+		}
 	},
 
 	/*
