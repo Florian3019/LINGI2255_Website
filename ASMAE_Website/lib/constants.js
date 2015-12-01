@@ -317,3 +317,21 @@ getOrder = function(size){
 
   return result;
 };
+
+/*
+    Return the number of matches to play for the first round
+*/
+
+getNumberMatchesFirstRound = function(nbrPairs){
+
+    var logPairs = Math.log2(nbrPairs);
+
+    var numMatchesFull = Math.floor(logPairs);
+
+    if(logPairs!=numMatchesFull){
+        return nbrPairs - Math.pow(2,numMatchesFull);// the nbr of pairs is not a multiple of 2
+    }
+    else{
+        return nbrPairs/2; // the nbr of pairs is a multiple of 2
+    }
+}

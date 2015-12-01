@@ -84,7 +84,7 @@ Template.chooseCourtsModal.events({
             var listCourts = type[Session.get("PoolList/Category")+"Courts"];
             var changeAll = document.getElementById("all").checked;
 
-            if(listCourts!= undefined){
+            if(listCourts== undefined){
                 console.log("No court!");
                 $('#chooseCourtsModal')
                     .on('hidden.bs.modal', function() {
@@ -98,7 +98,7 @@ Template.chooseCourtsModal.events({
             }
 
             for(var i=0;i<listCourts.length;i++){
-                if(listCourts[i][1]==court && (changeAll || (listCourts[i][0]==round))){
+                if((listCourts[i][1]==court || listCourts[i][1]===court) && (changeAll || (listCourts[i][0]==round))){
                     listCourts[i][1] = parseInt(courtNumber);
                 }
             }
