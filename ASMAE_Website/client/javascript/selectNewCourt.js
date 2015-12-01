@@ -117,11 +117,26 @@ Template.chooseCourtsModal.events({
             Meteor.call('updatePool',pool);
         }
 
+        var newCourtData = Courts.findOne({"courtNumber":courtNumber});
+        var oldCourtData = Courts.findOne({"courtNumber":court});
+
+        var newCourtAddress = Addresses.findOne({_id:newCourtData.addressID});
+        var oldCourtAddress = Addresses.findOne({_id:oldCourtAddress.addressID});
+
         Meteor.call("addToModificationsLog",
         {"opType":"Changement de terrain",
         "details":
-            "Le terrain de la poule "+poolId+" est maintenant "+courtNumber+ getStringOptions()
-        });
+            "Le terrain N°"+ court + " " + formatAddress(oldCourtAddress) + " de la poule "+poolId+" est maintenant le terrain N°"+courtNumber+ " "+ formatAddress(newCourtAddress)+ getStringOptions()
+        },
+            function(err, logId){
+                if(err){
+                    console.log(err);
+                    return;
+                }
+                Meteor.call('addToCourtLog', newCourtData._id, logId);
+                Meteor.call('addToCourtLog', oldCourtData._id, logId);
+            }
+        );
 
         $('#chooseCourtsModal')
         .on('hidden.bs.modal', function() {

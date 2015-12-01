@@ -6,3 +6,15 @@
 {{> reactiveTable collection=modificationsLog settings=settings fields=fields}}
 
 </template>
+
+<template name="emptyLog">
+	<div class="col-sm-6 col-sm-offset-3">
+	  <div id="infoBox" class="alert alert-info" role="alert">
+	    <h4>
+	      <span class="glyphicon glyphicon-info-sign"></span>
+	      <span class="sr-only">Info:</span>
+	      <span id="infoMsg">Aucun historique de modifications</span>
+	    </h4>
+	  </div>
+	</div>
+</template>

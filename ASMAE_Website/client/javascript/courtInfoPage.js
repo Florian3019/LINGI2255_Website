@@ -41,102 +41,78 @@ Template.courtInfoPage.helpers({
     'isAdminOrStaffOrOwner':function(ownerId){
       var profile = Meteor.user().profile;
       return profile.isAdmin || profile.isStaff || ownerId===Meteor.userId();
+    },
+
+    getCourtModLog: function (logTable) {
+        var toReturn = [];
+        for(var i=0;logTable!==undefined && i<logTable.length;i++){
+          toReturn.push(ModificationsLog.findOne({_id:logTable[i]}));
+        }
+        console.log(toReturn);
+        return toReturn;
+    },
+
+    settings : function(){
+      return {
+        fields:[
+          { key: 'userId', label: 'Utilisateur', fn: function(value, object){
+            user= Meteor.users.findOne({_id:value},{"profile":1});
+            return user.profile.firstName + " " + user.profile.lastName;
+          }},
+          { key: 'createdAt', label: 'Temps' , sortOrder: 0, sortDirection: 'descending', fn: function(value, object){return getSortableDate(value);}},
+          { key: 'opType', label: "Opération"},
+          { key: 'details', label: "Détails"}
+      ],
+      rowsPerPage:5,
+      noDataTmpl:Template.emptyLog
+      }
     }
 
 });
 
-var formatAddress = function(addr){
-  if(addr==undefined) return "Pas défini";
-  var ret = ""
-  if(addr.street != undefined) {
-      ret = ret+addr.street + ", ";
-  }
-  if(addr.number != undefined) {
-      ret = ret+addr.number + ", ";
-  }
-  if(addr.box != undefined) {
-          ret = ret+addr.box + ", ";
-  }
-  if(addr.city != undefined) {
-      ret = ret+addr.city + ", ";
-  }
-  if(addr.zipCode != undefined) {
-      ret = ret+addr.zipCode + ", ";
-  }
-  if(addr.country != undefined) {
-      ret = ret+addr.country;
-  }
-  return ret
-};
+var addToLog = function(opType, ownerId, courtId){
+    var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
+    var court = Courts.findOne({_id:courtId}, {"addressID":1});
+    var address = Addresses.findOne({_id:court.addressID});
+    console.log(opType);
+    Meteor.call("addToModificationsLog",
+      {"opType":opType,
+      "details":
+          "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
+      },
+      function(err, logId){
+        if(err){
+          console.log(err);
+          return;
+        }
+        Meteor.call('addToUserLog', ownerId._id, logId);
+        Meteor.call('addToCourtLog', courtId, logId);
+      }
+    );
+}
 
 Template.courtInfoPage.events({
     'click #button_ownerOK':function(event){
       var data = event.currentTarget.dataset;
       var courtId = data.id;
       var ownerId = data.ownerid;
-      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, ownerOK:true},function(err, status){if(err) console.err(err);});
+      var ownerOK = data.ownerok;
+      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, "ownerOK":!ownerOK},function(err, status){if(err) console.err(err);});
 
-      var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
-      var court = Courts.findOne({_id:courtId}, {"addressID":1});
-      var address = Addresses.findOne({_id:court.addressID});
-
-      Meteor.call("addToModificationsLog",
-        {"opType":"Propriétaire OK pour un terrain",
-        "details":
-            "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
-        });
-    },
-
-    'click #button_ownerNotOK':function(event){
-      var data = event.currentTarget.dataset;
-      var courtId = data.id;
-      var ownerId = data.ownerid;
-      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, ownerOK:false},function(err, status){if(err) console.err(err);});
-
-      var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
-      var court = Courts.findOne({_id:courtId}, {"addressID":1});
-      var address = Addresses.findOne({_id:court.addressID});
-
-      Meteor.call("addToModificationsLog",
-        {"opType":"Propriétaire pas OK pour un terrain",
-        "details":
-            "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
-        });
+      var opType = "Propriétaire "+((!ownerOK)?"":"pas ")+"OK pour un terrain";
+      addToLog(opType, ownerId, courtId);
     },
 
     'click #button_staffOK':function(event){
       var data = event.currentTarget.dataset;
       var courtId = data.id;
       var ownerId = data.ownerid;
-      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, staffOK:true},function(err, status){if(err) console.err(err);});
+      var staffOK = data.staffok;
+      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, "staffOK":!staffOK},function(err, status){if(err) console.err(err);});
 
-      var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
-      var court = Courts.findOne({_id:courtId}, {"addressID":1});
-      var addr = Addresses.findOne({_id:court.addressID});
+      var opType = "Staff "+((!staffOK)?"":"pas ")+"OK pour un terrain";
+      addToLog(opType, ownerId, courtId);
 
-      Meteor.call("addToModificationsLog",
-        {"opType":"Staff OK pour un terrain",
-        "details":
-            "Terrain "+ formatAddress(addr) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
-        });
-
-    },
-
-    'click #button_staffNotOK':function(event){
-      var data = event.currentTarget.dataset;
-      var courtId = data.id;
-      var ownerId = data.ownerid;
-      Meteor.call("updateCourt", {_id:courtId, ownerID:ownerId, staffOK:false},function(err, status){if(err) console.err(err);});
-
-      var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
-      var court = Courts.findOne({_id:courtId}, {"addressID":1});
-      var addr = Addresses.findOne({_id:court.addressID});
-
-      Meteor.call("addToModificationsLog",
-        {"opType":"Staff pas OK pour un terrain",
-        "details":
-            "Terrain "+ formatAddress(addr) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
-        });
     },
 
     'click #deleteCourt': function(event){

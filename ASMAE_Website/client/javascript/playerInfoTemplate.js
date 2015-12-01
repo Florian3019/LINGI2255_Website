@@ -104,7 +104,8 @@ Template.playerInfoTemplate.helpers({
 			'land': function(){
 				if(addr) return addr.country;
 			},
-			'rank': user.profile.AFT
+			'rank': user.profile.AFT,
+			'log':user.log
 		};
 	  return data;
 	},
@@ -241,7 +242,31 @@ Template.playerInfoTemplate.helpers({
 			}
 			return extrasArray;
 		}
-	}
+	},
+
+    getPlayerModLog: function (logTable) {
+        var toReturn = [];
+        for(var i=0;logTable!==undefined && i<logTable.length;i++){
+          toReturn.push(ModificationsLog.findOne({_id:logTable[i]}));
+        }
+        return toReturn;
+    },
+
+    settings : function(){
+      return {
+        fields:[
+          { key: 'userId', label: 'Utilisateur', fn: function(value, object){
+            user= Meteor.users.findOne({_id:value},{"profile":1});
+            return user.profile.firstName + " " + user.profile.lastName;
+          }},
+          { key: 'createdAt', label: 'Temps' , sortOrder: 0, sortDirection: 'descending', fn: function(value, object){return getSortableDate(value);}},
+          { key: 'opType', label: "Opération"},
+          { key: 'details', label: "Détails"}
+      ],
+      rowsPerPage:5,
+      noDataTmpl:Template.emptyLog
+      }
+    }
 
 });
 

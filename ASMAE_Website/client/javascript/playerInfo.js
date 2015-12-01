@@ -137,21 +137,30 @@ Template.changePermissions.events({
     'click .myPermissionSelects':function(event){
         var target = event.currentTarget;
         var value = event.currentTarget.value;
+        var userId = target.id;
         if(value==="Normal"){
-            Meteor.call('turnNormal',target.id);
+            Meteor.call('turnNormal',userId);
         }
         else if(value==="Staff"){
-            Meteor.call('turnStaff',target.id);
+            Meteor.call('turnStaff',userId);
         }
         else if(value==="Admin"){
-            Meteor.call('turnAdmin',target.id);
+            Meteor.call('turnAdmin',userId);
         }
 
         Meteor.call("addToModificationsLog",
         {"opType":"Changement de permission",
         "details":
             this.profile.firstName + " " + this.profile.lastName + " est passé en mode "+value
-        });
+        },
+        function(err, logId){
+            if(err){
+                console.log(err);
+                return;
+            }
+            Meteor.call('addToUserLog', userId, logId);
+        }
+        );
 
     }
 });

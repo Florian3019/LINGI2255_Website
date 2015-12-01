@@ -24,6 +24,39 @@ acceptForFamily = function(birthDate, tournamentDate){
     return age<=MAX_FAMILY_AGE || age>=MIN_FAMILY_AGE;
 }
 
+getSortableDate = function(date){
+    var month = date.getMonth();
+    var day = date.getDate();
+    var h = date.getHours();
+    var m = date.getMinutes();
+    var s = date.getSeconds();
+    return date.getFullYear()+"/"+((month<10)?"0":"")+month+"/"+((day<10)?"0":"")+day+" "+((h<10)?"0":"")+h+":"+((m<10)?"0":"")+m+":"+((s<10)?"0":"")+s; 
+}
+
+formatAddress = function(addr){
+  if(addr==undefined) return "Pas défini";
+  var ret = ""
+  if(addr.street != undefined) {
+      ret = ret+addr.street + ", ";
+  }
+  if(addr.number != undefined) {
+      ret = ret+addr.number + ", ";
+  }
+  if(addr.box != undefined) {
+          ret = ret+addr.box + ", ";
+  }
+  if(addr.city != undefined) {
+      ret = ret+addr.city + ", ";
+  }
+  if(addr.zipCode != undefined) {
+      ret = ret+addr.zipCode + ", ";
+  }
+  if(addr.country != undefined) {
+      ret = ret+addr.country;
+  }
+  return ret
+};
+
 /*
     return the pair corresponding to the current year for the current user
 */

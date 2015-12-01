@@ -96,6 +96,14 @@ var splitPairs = function(pairDiv){
 		"details":
 			player1.profile.firstName + " "+ player1.profile.lastName +
 			 " et " + player2.profile.firstName +" " + player2.profile.lastName + getStringOptions()
+		},
+		function(err, logId){
+			if(err){
+				console.log(err);
+				return;
+			}
+			Meteor.call('addToUserLog', player1._id, logId);
+			Meteor.call('addToUserLog', player2._id, logId);
 		});
 }
 
@@ -196,7 +204,16 @@ var mergePlayers = function(document){
 		"details":
 			player1.profile.firstName + " "+ player1.profile.lastName +
 			 " et " + player2.profile.firstName +" " + player2.profile.lastName +getStringOptions()
-		});
+		},
+		function(err, logId){
+			if(err){
+				console.log(err);
+				return;
+			}
+			Meteor.call('addToUserLog', player1._id, logId);
+			Meteor.call('addToUserLog', player2._id, logId);
+		}
+	);
 }
 
 /******************************************************************************************************************
@@ -469,7 +486,16 @@ var movePairs = function(document){
 				"details":
 					player1.profile.firstName + " "+ player1.profile.lastName +
 			 		" et " + player2.profile.firstName +" " + player2.profile.lastName + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
-				});
+				},
+				function(err, logId){
+					if(err){
+						console.log(err);
+						return;
+					}
+					Meteor.call('addToUserLog', player1._id, logId);
+					Meteor.call('addToUserLog', player2._id, logId);
+				}
+			);
 		}
 	}
 
