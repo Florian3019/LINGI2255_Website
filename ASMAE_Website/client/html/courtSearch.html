@@ -104,6 +104,14 @@
   {{/if}}
 </template>
 
+<template name="isOutdoorLabel">
+  {{#if this.isOutdoor}}
+    <span class="glyphicon glyphicon-ok lendOk"></span>
+  {{else}}
+    <span class="glyphicon glyphicon-remove lendNot"></span>
+  {{/if}}
+</template>
+
 <template name="mySpecialFilterCourt">
   <input class="form-control courtFilter" type="text" placeholder="Rechercher"/>
 </template>

@@ -71,6 +71,13 @@ Template.allCourtsTable.helpers({
 
             var searchString = courtToString(this);
 
+            if(this.isOutdoor===true){
+              searchString+=" extérieur";
+            }
+            else{
+              searchString+=" intérieur";
+            }
+
             for(var i=0; i<inputArray.length;i++){
                 if(searchString.indexOf(inputArray[i])==-1){
                     return false;
@@ -121,6 +128,7 @@ Template.allCourtsTable.helpers({
           { key: 'dispoDimanche', label:"Dimanche", tmpl:Template.dispoSundayLabel},
           { key: 'ownerOK', label:"OK Proprio", tmpl:Template.ownerOKLabel},
           { key: 'staffOK', label:"OK Staff", tmpl:Template.staffOKLabel},
+          { key: 'isOutdoor', label:'Extérieur', tmpl:Template.isOutdoorLabel},
           { key: 'courtType', label:"Type"},
           { key: 'instructions', label:"Instructions"},
           { key: 'ownerComment', label:"Commentaire propriétaire"},
