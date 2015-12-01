@@ -1825,11 +1825,11 @@ Meteor.methods({
   },
 
   	'addToUserLog':function(userId, logId){
-  		Meteor.users.update({_id:userId}, {$addToSet:{"log":logId}});
+  		Meteor.users.update({_id:userId}, {$push:{"log":{$each:[logId],$slice: -LAST_N_LOGS}}});
   	},
 
   	'addToCourtLog':function(courtId, logId){
-  		Courts.update({_id:courtId}, {$addToSet:{"log":logId}});
+  		Courts.update({_id:courtId}, {$push:{"log":{$each:[logId],$slice: -LAST_N_LOGS}}});
   	},
 
 	/*

@@ -48,7 +48,6 @@ Template.courtInfoPage.helpers({
         for(var i=0;logTable!==undefined && i<logTable.length;i++){
           toReturn.push(ModificationsLog.findOne({_id:logTable[i]}));
         }
-        console.log(toReturn);
         return toReturn;
     },
 
@@ -63,7 +62,7 @@ Template.courtInfoPage.helpers({
           { key: 'opType', label: "Opération"},
           { key: 'details', label: "Détails"}
       ],
-      rowsPerPage:5,
+      rowsPerPage:LAST_N_LOGS,
       noDataTmpl:Template.emptyLog
       }
     }
