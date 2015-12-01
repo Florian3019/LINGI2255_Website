@@ -390,6 +390,25 @@ var collapseMenus = function(document, event){
 											poolList
 *******************************************************************************************************************/
 
+/*
+	Adds the change of a leader to the modification log
+	if oldUserId is undefined, the log is adapted
+*/
+var addLeaderChangeToLog = function(oldUserId, newUserId){
+	var hasOldUser = oldUserId!==undefined;
+	var user = Meteor.users.findOne({_id:newUserId},{"profile.lastName":1, "profile.firstName":1});
+	
+	if(hasOldUser) var oldUser = Meteor.users.findOne({_id:oldUserId},{"profile.lastName":1, "profile.firstName":1});
+	Meteor.call("addToModificationsLog",{
+		"opType":"Changement chef de poule", 
+		"details":(hasOldUser?oldUser.profile.firstName + " "+oldUser.profile.lastName +" a été remplacé ":"")+user.profile.firstName + " "+user.profile.lastName+getStringOptions()},
+		function(err, logId){
+			Meteor.call("addToUserLog",user._id, logId);
+			if(hasOldUser) Meteor.call("addToUserLog",oldUser._id, logId);
+		}
+	);
+}
+
 var findNewPoolLeader = function(poolId, removedPairId){
 	pair = Pairs.findOne({_id:removedPairId});
 	prevPool = Pools.findOne({_id:poolId}, {pairs:1, leader:1});
@@ -402,6 +421,7 @@ var findNewPoolLeader = function(poolId, removedPairId){
 			p = Pairs.findOne({_id:prevPool.pairs[j]});
 			if(p.player1 && p.player2 && p.player1._id && p.player2._id){
 				Pools.update({_id:poolId}, {$set:{leader:p.player1._id}});
+				addLeaderChangeToLog(prevPool.leader,p.player1._id);
 				leaderFound = true;
 				break;
 			}
@@ -468,6 +488,7 @@ var movePairs = function(document){
 			if(newPool.leader==undefined){
 				pair = Pairs.findOne({_id:pairId},{"player1":1});
 				Pools.update({_id:newPoolId}, {$set:{leader:pair.player1._id}}); // Set player1 of the pair as new leader
+				addLeaderChangeToLog(undefined, pair.player1._id);
 			}
 
 			// Add that pair to the new pool
@@ -1325,7 +1346,12 @@ Template.modalItem.events({
 		var target = event.currentTarget;
 		var poolId = target.dataset.poolid;
 		var playerId = target.dataset.player;
-		Pools.update({_id:poolId},{$set:{"leader":playerId}});
+		var p = Pools.findOne({_id:poolId},{"leader":1});
+		var previousLeader = p.leader; // Only used for the log
+		if(previousLeader!==playerId){
+			Pools.update({_id:poolId},{$set:{"leader":playerId}});
+			addLeaderChangeToLog(previousLeader, playerId);
+		}
 	}
 });
 

@@ -264,7 +264,7 @@ Template.playerInfoTemplate.helpers({
           { key: 'opType', label: "Opération"},
           { key: 'details', label: "Détails"}
       ],
-      rowsPerPage:5,
+      rowsPerPage:LAST_N_LOGS,
       noDataTmpl:Template.emptyLog
       }
     }
