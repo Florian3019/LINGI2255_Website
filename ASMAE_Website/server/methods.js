@@ -231,7 +231,7 @@ Meteor.methods({
 	'turnNormal': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
-	        	$set: {"profile.isAdmin":false,"profile.isStaff":true}
+	        	$set: {"profile.isAdmin":false,"profile.isStaff":false}
 	      	});
 		}
 		else {
