@@ -724,13 +724,15 @@ Template.brackets.events({
       Session.set("changeCourtsBracket","true");
     }
     else{
-      var courtNum = event.currentTarget.firstElementChild.dataset.courtn;
-      var court = Courts.findOne({"courtNumber":parseInt(courtNum)});
-      var address = Addresses.findOne({_id:court.addressID});
-      var owner = Meteor.users.findOne({_id:court.ownerID});
+      if( event.currentTarget.firstElementChild!=undefined){
+        var courtNum = event.currentTarget.firstElementChild.dataset.courtn;
+        var court = Courts.findOne({"courtNumber":parseInt(courtNum)});
+        var address = Addresses.findOne({_id:court.addressID});
+        var owner = Meteor.users.findOne({_id:court.ownerID});
 
-      Session.set("PoolList/ModalCourtData", {"NUM":courtNum, "OWNER":owner, "ADDRESS":address, "COURT":court});
-      $('#CourtInfoModal').modal('show');
+        Session.set("PoolList/ModalCourtData", {"NUM":courtNum, "OWNER":owner, "ADDRESS":address, "COURT":court});
+        $('#CourtInfoModal').modal('show');
+      }
     }
 
   },
