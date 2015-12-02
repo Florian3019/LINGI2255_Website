@@ -409,11 +409,11 @@ var collapseMenus = function(document, event){
 var addLeaderChangeToLog = function(oldUserId, newUserId){
 	var hasOldUser = oldUserId!==undefined;
 	var user = Meteor.users.findOne({_id:newUserId},{"profile.lastName":1, "profile.firstName":1});
-	
+
 	if(hasOldUser) var oldUser = Meteor.users.findOne({_id:oldUserId},{"profile.lastName":1, "profile.firstName":1});
 	Meteor.call("addToModificationsLog",{
-		"opType":"Changement chef de poule", 
-		"details":(hasOldUser?oldUser.profile.firstName + " "+oldUser.profile.lastName +" a été remplacé ":"")+user.profile.firstName + " "+user.profile.lastName+getStringOptions()},
+		"opType":"Changement chef de poule",
+		"details":(hasOldUser?oldUser.profile.firstName + " "+oldUser.profile.lastName +" a été remplacé par ":"")+user.profile.firstName + " "+user.profile.lastName+getStringOptions()},
 		function(err, logId){
 			Meteor.call("addToUserLog",user._id, logId);
 			if(hasOldUser) Meteor.call("addToUserLog",oldUser._id, logId);
@@ -457,12 +457,11 @@ var movePairs = function(document){
 		Move the pairs to their new pool
 	***********************************************************************/
 
+	var category = Session.get('PoolList/Category');
+	var type = Session.get('PoolList/Type');
+	var year = Session.get('PoolList/Year');
 	// Get the pairs and their pools
 	for(var i=0, len=cells.length; i<len; i++){
-		var category = Session.get('PoolList/Category');
-		var type = Session.get('PoolList/Type');
-		var year = Session.get('PoolList/Year');
-
 		c = cells[i];
 
 		var pairId = c.id;
@@ -607,6 +606,10 @@ Template.poolList.onRendered(function() {
 });
 
 Template.poolList.events({
+	'click #equilibrate':function(event){
+		equilibrate(document);
+	},
+
 	/*
 		Collects the state of the table of pools to save it into the db
 	*/
@@ -634,21 +637,45 @@ Template.poolList.events({
 		var year = Session.get('PoolList/Year');
 
 
-		pool = Pools.findOne({"_id":poolId}, {"pairs":1});
-		pairsToRemove = pool.pairs;
+		var pool = Pools.findOne({"_id":poolId}, {"pairs":1});
+		var pairsToRemove = pool.pairs;
+
+		// We need another pool to put these pairs into
+		var yearData = Years.findOne({"_id":year});
+		var typeData = Types.findOne({"_id":yearData[type]});
+		var poolList = typeData[category];
+
+		var receivingPool = undefined; // Pool that will receive the single players
+		for(var i=0; i<poolList.length;i++){
+			if(poolList[i]!==poolId){
+				receivingPool = poolList[i];
+				break;
+			}
+		}
+
+		if(poolList.length!=1){
+			// Move the pairs that might have been dragged visually into this pool
+			var poolContainer = document.getElementById("a"+poolId);
+			var pairs = poolContainer.getElementsByClassName("pairs");
+			while(pairs.length!=0){
+				// Move the pairs
+				 // Can always take the 0 index, since the pairs array is dynamic
+				var pairId = pairs[0].id;
+				var startingpoolid = pairs[0].dataset.startingpoolid;
+
+				if(hasBothPlayers(Pairs.findOne({_id:pairId}))){
+					$("#"+pairId).detach().appendTo("#a"+startingpoolid);
+				}
+			}
+		}
 
 		if(pairsToRemove.length!=0){
-			// We need another pool to put these pairs into
-			yearData = Years.findOne({"_id":year});
-			typeData = Types.findOne({"_id":yearData[type]});
-			poolList = typeData[category];
-
 			if(poolList.length==1 && pairsToRemove.length != 0){
 				console.error("Can't remove the last pool, there are still single players linked to it");
 				return;
 			}
 
-			receivingPool = poolList[0]; // Pool that will receive the single players
+			// Move the pairs to the receivingPool
 			Pools.update({"_id":receivingPool}, {$addToSet:{"pairs":{$each:pairsToRemove}}});
 		}
 
@@ -675,33 +702,7 @@ Template.poolList.events({
 			return;
 		}
 
-		/*
-			Get the year data corresponding to the year selected
-		*/
-		var yearData = Years.findOne({_id:year},{type:1});
-
-		/*
-			Get the type data corresponding to the type selected
-		*/
-		typeId = yearData[type];
-		if(!typeId){
-			console.error("That type doesn't exist in the db");
-			return;
-		}
-
-		/*	Create the new pool	*/
-		var newPoolId = Pools.insert({"pairs":[],"type":type});
-
-		var data = {$push:{}}
-		data.$push[category] = newPoolId;
-		/*	Add that pool to the list of pools of the corresponding type	*/
-		Types.update({_id:typeId},data);
-
-		Meteor.call("addToModificationsLog",
-		{"opType":"Ajouter poule",
-		"details":
-			"Poule ajoutée : "+newPoolId+getStringOptions()
-		});
+		addNewPool({"year":year, "type":type,"category":category});
 	},
 
 	'click #becomeResponsable':function(){
@@ -859,6 +860,9 @@ Template.poolList.helpers({
     var year = Session.get('PoolList/Year');
     var type = Session.get('PoolList/Type');
     var category = Session.get('PoolList/Category');
+    Session.set("printPDF/Year",year);
+    Session.set("printPDF/Type",type);
+    Session.set("printPDF/Cat",category);
 
     if(year===undefined || type===undefined || category===undefined || type==='' || category==='' || year===''){
       return;
@@ -873,11 +877,14 @@ Template.poolList.helpers({
     var typeData = Types.findOne({_id:yearData[type]},Data);
 
     if(typeData != undefined){
-      var responsables = typeData[field]; //TODO check le champs existe et non vide len >0
+      var responsables = typeData[field];
       if(responsables != undefined && responsables.length>0){
     		if(poolId!=""){
     			return {_id:poolId,
-            resp:responsables[0]};
+            resp:responsables[0],
+            info:{year:year,
+                  type:type,
+                  cat:category}};
     		}
     		else return "";
       }
@@ -1004,6 +1011,12 @@ Template.poolList.helpers({
 	  		}
 	  		else if(target.id==="mergeplayers" && target.getElementsByClassName("pairs").length==2){
 	  			mergePlayers(document);
+
+	  			var pairsToMove = document.getElementById("mergeplayers").getElementsByClassName("pairs");
+	  			// Empty any player that still might be here
+	  			while(pairsToMove.length!=0){
+	  				$("#"+pairsToMove[0].id).detach().appendTo("#alonepairs");
+	  			}
 	  		}
 	    	el.className += ' ex-moved';
 	  	}).on('over', function (el, container) {
@@ -1031,21 +1044,23 @@ var showPairModal = function(){
 Template.alonePairsContainerTemplate.onRendered(function(){
 	// Add the container of this template as a container that can receive draggable objects
   	drake.containers.push(document.querySelector('#alonepairs'));
+
+	var el = this.firstNode.lastElementChild.getElementsByClassName("clickablePoolItemAlone");
+
+	for(var i=0; i<el.length;i++){
+		el[i].onclick = function(){
+			var data = this.dataset;
+			var user = Meteor.users.findOne({_id:data.playerid},{"profile.gender":1, "profile.birthDate":1});
+			var pair = Pairs.findOne({_id:data.id});
+			Session.set("PoolList/ModalData", {"POOL":data.startingpoolid, "SEX":user.profile.gender, "SHOWOPTIONS":true, "BIRTHDATE":user.profile.birthDate, "PAIR":pair});
+			showPairModal();
+		}
+	}
 });
 
 var hasBothPlayers = function(pair){
 	return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
 }
-
-Template.alonePairsContainerTemplate.events({
-	'click .clickablePoolItemAlone':function(event){
-		var data = event.currentTarget.dataset;
-		var user = Meteor.users.findOne({_id:data.playerid},{"profile.gender":1, "profile.birthDate":1});
-		var pair = Pairs.findOne({_id:data.id});
-		Session.set("PoolList/ModalData", {"POOL":data.startingpoolid, "SEX":user.profile.gender, "SHOWOPTIONS":true, "BIRTHDATE":user.profile.birthDate, "PAIR":pair});
-		showPairModal();
-	}
-})
 
 Template.alonePairsContainerTemplate.helpers({
 	'getAlonePairs' : function(typeData){
@@ -1102,9 +1117,12 @@ Template.poolItem.helpers({
 	}
 });
 
-Template.poolItem.events({
-	'click .clickablePoolItemFull':function(event){
-		var data = event.currentTarget.dataset;
+Template.poolItem.onRendered(function(){
+	var htmlEl = this.firstNode.nextElementSibling;
+	if(htmlEl==null) return;
+	var el = htmlEl.getElementsByClassName("clickablePoolItemFull")[0];
+	el.onclick = function(){
+		var data = this.dataset;
 		var pair = Pairs.findOne({_id:data.id});
 		Session.set("PoolList/ModalData",{"PAIR":pair, "POOL":data.poolid, "SHOWOPTIONS":true});
 		showPairModal();
@@ -1434,3 +1452,89 @@ Template.responsablesTemplate.helpers({
 		return respCol;
 	},
 });
+
+
+/******************************************************************************************************************
+											split pools in half
+*******************************************************************************************************************/
+
+/*
+	Creates a new pool for the current category and returns its id
+*/
+var addNewPool = function(obj){
+	var year = obj.year;
+	var type = obj.type;
+	var category = obj.category;
+
+	/*
+		Get the year data corresponding to the year selected
+	*/
+	var yearData = Years.findOne({_id:year},{type:1});
+
+	/*
+		Get the type data corresponding to the type selected
+	*/
+	typeId = yearData[type];
+	if(!typeId){
+		console.error("That type doesn't exist in the db");
+		return;
+	}
+
+	/*	Create the new pool	*/
+	var newPoolId = Pools.insert({"pairs":[],"type":type});
+
+	var data = {$push:{}}
+	data.$push[category] = newPoolId;
+	/*	Add that pool to the list of pools of the corresponding type	*/
+	Types.update({_id:typeId},data);
+
+	Meteor.call("addToModificationsLog",
+	{"opType":"Ajouter poule",
+	"details":
+		"Poule ajoutée : "+newPoolId+getStringOptions()
+	});
+	return newPoolId;
+}
+
+/*
+	Visually cuts the pools in half
+*/
+var equilibrate = function(document){
+	var table = document.getElementById("poolTable");
+	var poolContainersRow = table.rows; // Table of rows
+
+	var totalPairs = 0;
+	var poolContainers = [];
+	for(var i=0;i<poolContainersRow.length;i++){
+		var row = poolContainersRow[i].getElementsByTagName('td');
+		for(var j=0; j<row.length;j++){
+			var pairs = row[j].getElementsByClassName("pairs");
+			totalPairs += pairs.length;
+			poolContainers.push({"pairs":pairs,"containerId":row[j].getElementsByClassName("poolContainer")[0].id});
+		}
+	}
+
+	var optimalSize = totalPairs/poolContainers.length; // Goal of pairs/pool
+
+	// For each poolContainer
+	for(var i=0;i<poolContainers.length;i++){
+		// This is the amount of pairs to remove from this container
+		var cont = poolContainers[i];
+		var amountToRemove = cont.pairs.length-optimalSize;
+		for(var j=0; j<amountToRemove;j++){
+			var pairToMove = cont.pairs[0];
+			/*
+				Now we must find somewhere to put these pairs
+				Start to fill the next container
+			*/
+			for(var k=i+1;k<poolContainers.length;k++){
+				var container = poolContainers[k];
+				if(container.pairs.length < optimalSize){
+					// Move the pair overhere !
+					$('#'+pairToMove.id).detach().appendTo('#'+poolContainers[k].containerId);
+					break;// We found a pool for this pair
+				}
+			}
+		}
+	}
+}

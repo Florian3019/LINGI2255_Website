@@ -1,5 +1,5 @@
-Template.courtRegistration.helpers({
-    'availableThisDay': function(available){
+Template.courtForm.helpers({
+    'checked': function(available){
         if(available === null){
             return 'checked';
         }
@@ -59,7 +59,8 @@ Template.courtRegistration.events({
             dispoSamedi : $('[name=dispoSamedi]').is(":checked"),
             dispoDimanche : $('[name=dispoDimanche]').is(":checked"),
             staffOK : false, // Default to false
-            ownerOK : true // Default to true
+            ownerOK : true, // Default to true
+            isOutdoor: $('[name=isOutdoor]').is(":checked")
         };
         if(this.court){ //Used for the update of an existing court
             courtData._id = this.court._id;

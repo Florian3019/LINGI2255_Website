@@ -72,6 +72,10 @@
                         <td>{{court.courtType}}</td>
                       </tr>
                       <tr>
+                        <td>Extérieur</td>
+                        <td><span class="glyphicon {{checked court.isOutdoor}}"></span></td>
+                      </tr>
+                      <tr>
                         <td>Nombre de terrains</td>
                         <td>{{court.numberOfCourts}}</td>
                       </tr>
@@ -112,12 +116,11 @@
               <button type="button" id="deleteCourt" class="btn btn-default" >Supprimer</button>
             </center>
             <br />
-            
-            {{#with getCourtModLog court.log}}
-              <h3> Modifications récentes </h3>
-              {{>reactiveTable collection=this settings=settings fields=fields}}
-            {{/with}}
-
 </div>
+
+{{#with getCourtModLog court.log}}
+  <h4> Modifications récentes </h4>
+  {{>reactiveTable collection=this settings=settings fields=fields}}
+{{/with}}
 
 </template>

@@ -46,11 +46,16 @@
                         <td>Classement</td>
                         <td id="rank">{{rank}}</td>
                       </tr>
-                  
+
                       {{#with getPayment id}}
                         <tr>
                           <td> Inscription </td>
-                          <td> {{getInscription ../id}} </td>
+                          <td>
+                              {{getInscription ../id}}
+                              {{#if isCurrentUser ../id}}
+                                ( <a href="#" id="unsubscribeLink">Supprimer mon inscription</a> )
+                              {{/if}}
+                          </td>
                         </tr>
                         <!-- We get here only if the player is registered in the tournament -->
                         {{#each playerExtras ../id}}
@@ -66,7 +71,7 @@
                         </tr>
                         <tr>
                             <td>Montant</td>
-                            <td>{{this.balance}}&euro; 
+                            <td>{{this.balance}}&euro;
                               ({{#if notPaid ../id}}
                                 {{#if isCurrentUser ../id}}
                                   <a href="" data-toggle="modal" data-target="#dropinModal">Payer en ligne</a>
@@ -88,21 +93,21 @@
             </div>
 
             <center>
-              
+
               <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
               {{#unless isCurrentUser id}}
                 <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Supprimer</button>
               {{/unless}}
             </center>
             <br/>
-
-            {{#with getPlayerModLog this.log}}
-              <h3> Modifications récentes </h3>
-              {{>reactiveTable collection=this settings=settings fields=fields}}
-            {{/with}}
 </div>
 
-<!-- Modal -->
+{{#with getPlayerModLog this.log}}
+  <h4> Modifications récentes </h4>
+  {{>reactiveTable collection=this settings=settings fields=fields}}
+{{/with}}
+
+<!-- Modal payment -->
 <div class="modal" id="dropinModal">
   <div class="modal-dialog">
 
