@@ -558,7 +558,7 @@ Meteor.methods({
 			var addr = Addresses.findOne({_id:data.addressID});
 			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
 			if(googleAnswer!==undefined && googleAnswer.length>0){
-          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};  
+          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};
     		}
 		}
 		if(courtData.surface){
@@ -2093,15 +2093,39 @@ Meteor.methods({
 			var partner = Meteor.users.findOne({_id:pair.player1._id});
 
 			var dataEmail= {
-				intro:"Bonjour "+user.player.firstName+" "+user.player.lastName,
+				intro:"Bonjour "+user.profile.firstName+" "+user.profile.lastName,
 				important:"Votre inscription au tournoi a été supprimée",
 				texte:"Vous avez retiré votre inscription au tournoi Le Charles de Lorraine, votre partenaire a été notifié(e) de votre désinscription."
 			};
 
 			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
 
-			//TODO ALEX : send mail to partner. his address : partner.emails[0]
-		}
+
+
+      this.unblock();
+
+      var dataEmailPartner={
+        intro:"Bonjour "+partner.profile.firstName+",",
+        important:"Nous avons une mauvaise nouvelle pour vous.",
+        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jour. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours aller choisir un nouveau partneaire sur notre site !"
+      };
+      var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+      var options =   {
+        auth: "api:" + process.env.MAILGUN_API_KEY,
+          params: {
+            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+            "to":partner.emails[0].address,
+            "subject": "Concernant votre inscription au tournoi",
+            "html": SSR.render("mailing",dataEmailPartner),
+          }
+        }
+        var onError = function(error, result) {
+          if(error) {console.error("Error: " + error)}
+        }
+
+        // Send the request
+          Meteor.http.post(postURL, options, onError);
+        }
 	},
 
 	/*
