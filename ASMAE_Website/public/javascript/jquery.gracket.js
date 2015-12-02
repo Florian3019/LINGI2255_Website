@@ -171,8 +171,6 @@
             '</ul>'
           ].join("");
 
-          console.log(node.teamClass);
-
           return team = $("<div />", {
             "html" : html,
             "data-clickable": data.clickable,

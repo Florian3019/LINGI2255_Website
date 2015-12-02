@@ -1162,7 +1162,7 @@ Template.poolContainerTemplate.helpers({
         return "Pas de terrain assigné";
       }
       else{
-        var court = Courts.findOne({"courtNumber":pool.courtId});
+        var court = Courts.findOne({"courtNumber":courtId});
         if(court.addressID==undefined){
           return "";
         }
@@ -1180,7 +1180,7 @@ Template.poolContainerTemplate.helpers({
         return "";
       }
       else{
-        var court = Courts.findOne({"courtNumber":pool.courtId});
+        var court = Courts.findOne({"courtNumber":courtId});
         if(court.addressID==undefined){
           return "";
         }

@@ -212,7 +212,13 @@ var changeCourtKnockOff = function(listDouble,newCourtNumber,oldCourtNumber,beha
                 }
             }
         }
-        Meteor.call("updateType",type);
+
+        callback = function(err, retVal){
+            restoreSession();
+         };
+
+        Meteor.call("updateType",type,callback);
+
     }
 }
 
@@ -254,17 +260,15 @@ Template.chooseCourtsModal.events({
             Session.set("selectNewCourt/listDoublePools",listDoublePools);
             Session.set("selectNewCourt/listDoubleKnockOff",listDoubleKnockOff);
 
-            if(listDoublePools.length!=0 || listDoubleKnockOff.length!=0){
+            if((!ok && listDoublePools.length!=0) || (ok && listDoubleKnockOff.length!=0)){
                 $('#AlertModal').modal('show');
             }
             else{
                 if(Session.get("changeCourtsBracket")==="true"){
                     changeCourtKnockOff(listDoubleKnockOff,newCourtNumber,oldCourtNumber,"keepBoth");
-                    restoreSession();
                 }
                 else{
                     changeCourtPool(listDoublePools,newCourtNumber,oldCourtNumber,"keepBoth");
-                    restoreSession();
                 }
             }
         })
