@@ -46,3 +46,5 @@ udondan:jszip
 bootswatch:paper
 rajit:bootstrap3-datepicker
 kevohagan:sweetalert
+dburles:google-maps
+aldeed:geocoder

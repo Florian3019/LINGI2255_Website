@@ -309,6 +309,7 @@ Template.AlertModal.events({
         else{
             var listDouble = Session.get("selectNewCourt/listDoublePools");
             changeCourtPool(listDouble,newCourtNumber,oldCourtNumber,behavior);
+            restoreSession();
         }
 
         $('#AlertModal')

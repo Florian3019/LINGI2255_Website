@@ -510,7 +510,7 @@ Meteor.methods({
 
 	/*
 		@param courtData is structured as a court, if _id is missing,
-		a new court will be created and linked to the owner. OwnerID must be provided.
+		a new court will be created. ownerID must be provided.
 		A court structure is as follows :
 		{
 			_id:<courtId>,
@@ -526,9 +526,13 @@ Meteor.methods({
 			ownerOK:<boolean>,
 			staffOK:<boolean>,
 			numberOfCourts: <integer>,
-			isOutdoor:<boolean>
+			isOutdoor:<boolean>,
+			log:[<logId>, ...],
+			coords:{ // automatically set when addressID is provided
+				lat:<latitude>,
+				lng:<longitude>
+			}
 		},
-		log:[<logId>, ...]
 	*/
 	'updateCourt' : function(courtData){
 		var courtId = courtData._id;
@@ -550,6 +554,12 @@ Meteor.methods({
 		// Fill in court info
 		if(courtData.addressID){
 			data.addressID = courtData.addressID;
+			// Fetch the address and find its lat/long
+			var addr = Addresses.findOne({_id:data.addressID});
+			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
+			if(googleAnswer!==undefined && googleAnswer.length>0){
+          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};  
+    		}
 		}
 		if(courtData.surface){
 			data.surface = courtData.surface;
