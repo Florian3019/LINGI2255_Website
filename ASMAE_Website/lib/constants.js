@@ -26,6 +26,15 @@ acceptForFamily = function(birthDate, tournamentDate){
     return age<=MAX_FAMILY_AGE || age>=MIN_FAMILY_AGE;
 }
 
+/*
+    Returns the distance (in terms of lat/lng) between the coordinates and the HQ
+*/
+getDistanceFromHQ = function(coords){
+    var latDist = coords.lat-HQCoords.lat;
+    var lngDist = coords.lng-HQCoords.lng;
+    return Math.sqrt(Math.pow(latDist,2) + Math.pow(lngDist,2)); // Pythagore
+}
+
 getSortableDate = function(date){
     var month = date.getMonth();
     var day = date.getDate();
