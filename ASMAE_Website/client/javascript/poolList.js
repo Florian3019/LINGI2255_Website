@@ -766,7 +766,7 @@ Template.poolList.helpers({
 	'getType' : function(yearData){
 		var type = Session.get('PoolList/Type');
 		if(type==="" || type===undefined){
-			setInfo(document, "Veuillez choisir parmis les types homme, femme, mixte ou familles");
+			setInfo(document, "Veuillez choisir parmi les types homme, femme, mixte ou familles");
 			return;
 		}
 		var t = Types.findOne({_id:yearData[type]});

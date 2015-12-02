@@ -218,7 +218,12 @@ Template.scorePage.events({
     if(user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin)){
         var poolID = Session.get("PoolList/poolID");
         var pool = Pools.findOne({_id:poolId});
-       Session.set("PoolList/ChosenCourt",pool.courtId);
+        if(pool.courtId==undefined){
+          Session.set("PoolList/ChosenCourt",-1);
+        }
+        else{
+          Session.set("PoolList/ChosenCourt",pool.courtId);
+        }
     }
     else{
 

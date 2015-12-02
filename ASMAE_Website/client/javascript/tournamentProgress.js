@@ -234,13 +234,13 @@ Template.tournamentProgress.events({
             var round=0;
 
             for(var k=0;k<numMatchesFull;k++){
-                result.push([0,-1]);
+                result.push(-1);
             }
 
             var num = getNumberMatchesFirstRound(listPairs.length);
 
             for(var m=0;m<num;m++){
-                result[index[m]]=[round, courts[(start+next) % courts.length]];
+                result[index[m]]=courts[(start+next) % courts.length];
                 next++;
             }
 
@@ -257,12 +257,12 @@ Template.tournamentProgress.events({
                 var count=0;
 
                 for(var m=0;m<size_previous;m=m+2){
-                    if(result[begin_previous+m][0]==-1){
-                        result.push([round,courts[(start+next) % courts.length]]);
+                    if(result[begin_previous+m]==-1){
+                        result.push(courts[(start+next) % courts.length]);
                         next++;
                     }
                     else{
-                        result.push([round,result[begin_previous+m][1]]);
+                        result.push(result[begin_previous+m]);
                     }
                 }
                 begin_previous+=size_previous;
@@ -271,7 +271,7 @@ Template.tournamentProgress.events({
             }
 
             for(var j=0;j<result.length;j++){
-                if(result[j][1]!=-1){
+                if(result[j]!=-1){
                     final_result.push(result[j]);
                 }
             }
