@@ -382,17 +382,6 @@ Router.route('/forum', {
 	}
 });
 
-Router.route('/modifier-extras',{
-	name: "modifyExtras",
-	template: 'modifyExtras',
-	waitOn: function(){
-		return [ Meteor.subscribe('Extras')]
-	},
-	onAfterAction: function(){
-		Session.set('showNavBar', true);
-	}
-});
-
 Router.route('/confirmation-pair/:_id',{
 	name: 'confirmPair',
 	template: 'confirmPair',
@@ -461,6 +450,9 @@ Router.route('/faq', {
 Router.route('/deroulement-tournoi', {
   	name: 'tournamentProgress',
 	template: 'tournamentProgress',
+	waitOn: function() {
+		return [Meteor.subscribe('Years'), Meteor.subscribe('Extras')];
+	},
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
 	}

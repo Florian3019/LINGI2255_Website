@@ -558,7 +558,7 @@ Meteor.methods({
 			var addr = Addresses.findOne({_id:data.addressID});
 			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
 			if(googleAnswer!==undefined && googleAnswer.length>0){
-          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};  
+          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};
     		}
 		}
 		if(courtData.surface){
@@ -2057,6 +2057,10 @@ Meteor.methods({
 			user = Meteor.users.findOne({_id:pair.player2._id});
 		}
 
+		// Remove payment
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
+
 
 		console.log(user);
 		// No other player
@@ -2221,6 +2225,22 @@ Meteor.methods({
       }
     }
   },
+
+	// For staff members: mark that a player has paid the tournament
+	'markAsPaid': function(paymentID){
+		if(!(Meteor.call('isAdmin') || Meteor.call('isStaff'))){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to restart a tournament");
+		}
+		Payments.update({_id: paymentID}, {$set: {
+			status: "paid"
+		}}, function(err, res){
+			if(err){
+				console.log(err);
+			}
+		});
+		return true;
+	}
 
 
 });
