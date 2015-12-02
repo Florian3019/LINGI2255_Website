@@ -33,6 +33,40 @@ Meteor.methods({
 
 		var cities = [{city:"Bruxelles", zip:1000}, {city:"Laeken", zip:1020}, {city:"Schaerbeek", zip:1030}, {city:"Etterbeek", zip:1040}, {city:"Ixelles", zip:1050}, {city:"Saint-Gilles", zip:1060}, {city:"Anderlecht", zip:1070}, {city:"Uccle", zip:1180}, {city:"Wavre", zip:1300}, {city:"Bierges", zip:1301}, {city:"Incourt", zip:1315}, {city:"Nodebais", zip:1320}, {city:"Bonlez", zip:1325}, {city:"Rixensart", zip:1330}, {city:"Genval", zip:1332}, {city:"Ottignies-Louvain-la-Neuve", zip:1340}, {city:"Limelette", zip:1342}, {city:"Louvain-la-Neuve", zip:1348}, {city:"Hélécine", zip:1357}, {city:"Perwez", zip:1367}, {city:"Ramilies", zip:1367}, {city:"Jodoigne", zip:1370}, {city:"Lasne", zip:1380}, {city:"Grez-Doiceau", zip:1390}, {city:"Nivelles", zip:1400}, {city:"Waterloo", zip:1410}, {city:"Braine-l\'Alleud", zip:1420}, {city:"Rebecq", zip:1430}, {city:"Corbais", zip:1435}, {city:"Chastre", zip:1450}, {city:"Ittre", zip:1460}, {city:"Baisy-Thy", zip:1470}, {city:"Tubize", zip:1480}, {city:"Court-Saint-Etienne", zip:1490}];
 
+		var courtAddresses = [
+			{street:"Bvd de Lauzelle", nbr:30, city:"LLN", zip:1348, lat:50.675963, lon:4.614891},
+			{street:"Rue de Mèves", nbr:25, city:"Chaumont-Gistoux", zip:1325, lon:4.639929, lat:50.677426},
+			{street:"Avenue de Chèremont", nbr:38, city:"Wavre", zip:1300, lon:4.624136, lat:50.709889},
+			{street:"Rue du Bois du Buis", nbr:13, city:"Walhain", zip:1360, lon:4.733484, lat:50.612556},
+			{street:"Chemin de l\'Herbe", nbr:50, city:"Chaumont-Gistoux", zip:1325, lon:4.685590, lat:50.700329},
+			{street:"Rue des Piles", nbr:27, city:"Waterloo", zip:1410, lon:4.364240, lat:50.704083},
+			{street:"Avenue des Croix du Feu", nbr:40, city:"Waterloo", zip:1410, lat:50.727455, lon:4.385354},
+			{street:"Avenue des Primev§res", nbr:4, city:"Rixensart", zip:1332, lat:50.726151, lon:4.497964},
+			{street:"Allée du Bois de Bercuit", nbr:125, city:"Grez-Doiceau", zip:1390, lat:50.725064, lon:4.675634},
+			{street:"Rue du Baty", nbr:32, city:"Jodoigne", zip:1370, lat:50.727237, lon:4.823434},
+			{street:"Rue Brehen", nbr:2, city:"Orp-Jauche", zip:1350, lat:50.709413, lon:4.948404},
+			{street:"Rue de la Station", nbr:20, city:"Ramilies", zip:1367, lat:50.638593, lon:4.907033},
+			{street:"Rue Gabrielle Chatelain", nbr:25, city:"Namur", zip:5020, lat:50.504274, lon:4.866178},
+			{street:"Rue Antoine Quintens", nbr:47, city:"Gembloux", zip:5032, lat:50.541381, lon:4.675634},
+			{street:"Rue Bois des Pauvres", nbr:2, city:"Chastre", zip:1450, lat:50.607990, lon:4.614179},
+			{street:"Drève des Deux Bois", nbr:1, city:"Court-Saint-Etienne", zip:1490, lat:50.620844, lon:4.539850},
+			{street:"Chemin du Moulin", nbr:14, city:"Lasne", zip:1380, lat:50.696367, lon:4.483373},
+			{street:"La Grande Buissière", nbr:29, city:"Lasne", zip:1380, lat:50.697889, lon:4.461915},
+			{street:"Rue Colonel Montegnie", nbr:112, city:"Rixensart", zip:1332, lat:50.721804, lon:4.480970},
+			{street:"Avenue du Gris Moulin", nbr:64, city:"La Hulpe", zip:1310, lat:50.732779, lon:4.473588},
+			{street:"Hagaard", nbr:75, city:"Overijse", zip:3090, lat:50.761997, lon:4.525430},
+			{street:"Willem Matstraat", nbr:14, city:"Hoeilaart", zip:1560, lat:50.764060, lon:4.479940},
+			{street:"Avenue Mongolfier", nbr:100, city:"Woluwe-Saint-Pierre", zip:1150, lat:50.836534, lon:4.443033},
+			{street:"Rue Leon Cuissez", nbr:29, city:"Ixelles", zip:1050, lat:50.823415, lon:4.379690},
+			{street:"Avenue du Pesage", nbr:61, city:"Ixelles", zip:1050, lat:50.808448, lon:4.387243},
+			{street:"Rue du Bassinia", nbr:25, city:"Louvain-la-Neuve", zip:1348, lat:50.663943, lon:4.607935},
+			{street:"Rue Charles Quint", nbr:136, city:"Bruxelles", zip:1000, lat:50.849217, lon:4.388959},
+			{street:"Avenue du Vert Chasseur", nbr:46, city:"Uccle", zip:1180, lat:50.800745, lon:4.369218},
+			{street:"Avenue Blücher", nbr:57, city:"Uccle", zip:1180, lat:50.782298, lon:4.366472},
+			{street:"Avenue Astrid", nbr:79, city:"Rhode-Saint-Genèse", zip:1640, lat:50.740167, lon:4.384153},
+			{street:"Drève des Pins", nbr:29, city:"Braine-l\'Alleud", zip:1420, lat:50.723760, lon:4.338491}
+		];
+
 
 		var AFTs = ["NC", "C30.5", "C30.4", "C30.3", "C30.2", "C30.1", "C30", "C15.5", "C15.4", "C15.3", "C15.2", "C15.1", "C15"];
 
@@ -335,7 +369,8 @@ Meteor.methods({
 					numberOfCourts : courtArray.length,
 					ownerComment : getComment(),
 					ownerID : owner._id,
-					surface : getRandomElement(surfaceTypes)
+					surface : getRandomElement(surfaceTypes),
+					isOutdoor : flipCoin()
 				};
 
 				var id = Courts.insert(court);
