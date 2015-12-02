@@ -6,6 +6,7 @@ paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
+HQCoords = {"lat":50.854227, "lng":4.353841}; // Latitude and longitude of the head quarters
 paymentTranslate = {"paid":"Payé", "pending":"En attente"};
 
 if(Meteor.isClient){
@@ -235,7 +236,7 @@ addressToString = function(theAddress){
     if(theAddress!=undefined &&theAddress!=null){
         theString +=theAddress.street+" ";
         theString += theAddress.number+", ";
-        theString += (theAddress.box!=="")?"B."+theAddress.box+", ":"";
+        theString += (theAddress.box!=="" && theAddress.box!==undefined)?"B."+theAddress.box+", ":"";
         theString += theAddress.zipCode+" ";
         theString +=theAddress.city+", ";
         theString += theAddress.country+" ";
