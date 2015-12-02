@@ -20,12 +20,8 @@ var canModifyCourt = function(pair, round){
 }
 
 // Takes 2 round data, and returns which court to use for this match.
-var getCourtShown = function(courts,num){
-  return (courts == undefined || courts[num] == undefined || isNaN(courts[num][1])) ? emptyCourt : courts[num][1];
-}
-
-var getCourtHidden = function(courts,num){
-  return (courts == undefined || courts[num] == undefined) ? emptyCourt : courts[num][1];
+var getCourt = function(courts,num){
+  return (courts == undefined) ? emptyCourt : courts[num];
 }
 
 /*
@@ -39,22 +35,11 @@ var setCourt = function(roundData1, roundData2,courts, num){
 
   automaticCourt = emptyCourt;
 
-  automaticCourtShown = getCourtShown(courts,num);
-  automaticCourtHidden = getCourtHidden(courts,num);
-  roundData1.data.courtShown = automaticCourtShown;
-  roundData2.data.courtShown = automaticCourtShown;
-  roundData1.data.courtHidden = automaticCourtHidden;
-  roundData2.data.courtHidden = automaticCourtHidden;
-}
-
-var setRound = function(roundData1, roundData2,courts, num){
-  pair1 = roundData1.pair; // Pair object
-  pair2 = roundData2.pair; // Pair object
-
-  round = courts[num][0];
-
-  roundData1.data.round = round;
-  roundData2.data.round = round;
+  automaticCourt = getCourt(courts,num);
+  roundData1.data.court = automaticCourt;
+  roundData2.data.court = automaticCourt;
+  roundData1.data.pos = num;
+  roundData2.data.pos = num;
 }
 
 var getPoints = function(pair, round){
@@ -463,7 +448,7 @@ var hasPoints = function(pairData){
   return score === parseInt(score, 10); // Test if points is an integer
 }
 
-var getCourts = function(){
+var getCourts = function(field){
   year = Session.get("PoolList/Year");
   type = Session.get("PoolList/Type");
   category = Session.get("PoolList/Category");
@@ -618,7 +603,6 @@ var makeBrackets = function(document){
 
       if(a.pair!=="placeHolder" && b.pair!=="placeHolder"){
         setCourt(a, b,courts,nextMatchNum); // Define which court to use for that match
-        setRound(a, b,courts,nextMatchNum); 
         nextMatchNum++;
       }
       else if(a.pair==="placeHolder" && b.score!==emptyScore && b.pair!=="placeHolder"){
@@ -724,23 +708,31 @@ Template.brackets.events({
     if(user!==undefined && user!==null && (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin)){
 
       if(event.currentTarget.firstElementChild==null){
-        console.log("no court to change!");
         return;
       }
-      var round = event.currentTarget.firstElementChild.dataset.round;
+      var pos = event.currentTarget.firstElementChild.dataset.pos;
       var court = event.currentTarget.firstElementChild.dataset.courtn;
-      Session.set("PoolList/ChosenCourt",parseInt(court));
-      Session.set("PoolList/ChosenRound",round);
+
+      if(isNaN(court)){
+        Session.set("PoolList/ChosenCourt",-1);
+      }
+      else{
+        Session.set("PoolList/ChosenCourt",parseInt(court));
+      }
+      
+      Session.set("PoolList/ChosenPos",pos);
       Session.set("changeCourtsBracket","true");
     }
     else{
-      var courtNum = event.currentTarget.firstElementChild.dataset.courtn;
-      var court = Courts.findOne({"courtNumber":parseInt(courtNum)});
-      var address = Addresses.findOne({_id:court.addressID});
-      var owner = Meteor.users.findOne({_id:court.ownerID});
+      if( event.currentTarget.firstElementChild!=undefined){
+        var courtNum = event.currentTarget.firstElementChild.dataset.courtn;
+        var court = Courts.findOne({"courtNumber":parseInt(courtNum)});
+        var address = Addresses.findOne({_id:court.addressID});
+        var owner = Meteor.users.findOne({_id:court.ownerID});
 
-      Session.set("PoolList/ModalCourtData", {"NUM":courtNum, "OWNER":owner, "ADDRESS":address, "COURT":court});
-      $('#CourtInfoModal').modal('show');
+        Session.set("PoolList/ModalCourtData", {"NUM":courtNum, "OWNER":owner, "ADDRESS":address, "COURT":court});
+        $('#CourtInfoModal').modal('show');
+      }
     }
 
   },

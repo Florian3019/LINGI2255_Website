@@ -56,7 +56,8 @@
 		.g_round:last-child { margin-right: 20px; }
 		.g_winner { background: #444; }
 		.g_winner .g_team { background: none; }
-		.g_current { {{#if isAdminOrStaff}} cursor: pointer;{{/if}} background: #A0B43C!important; }
+		.g_current { {{#if isStaffOrAdmin}} cursor: pointer; {{/if}} background: #A0B43C!important; }
+		.g_canClick { cursor: pointer; }
 		.g_round_label { top: -5px; width: 200px; font-weight: normal; color: #FFF; text-align: center; font-size: 20px; }
 	</style>
 
