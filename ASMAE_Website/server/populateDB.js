@@ -64,7 +64,28 @@ Meteor.methods({
 			{street:"Avenue du Vert Chasseur", nbr:46, city:"Uccle", zip:1180, lat:50.800745, lon:4.369218},
 			{street:"Avenue Blücher", nbr:57, city:"Uccle", zip:1180, lat:50.782298, lon:4.366472},
 			{street:"Avenue Astrid", nbr:79, city:"Rhode-Saint-Genèse", zip:1640, lat:50.740167, lon:4.384153},
-			{street:"Drève des Pins", nbr:29, city:"Braine-l\'Alleud", zip:1420, lat:50.723760, lon:4.338491}
+			{street:"Drève des Pins", nbr:29, city:"Braine-l\'Alleud", zip:1420, lat:50.723760, lon:4.338491},
+			{street:"Place de la Paix", nbr:1, city:"Evere", zip:1140, lat:50.876929, lon:4.400386},
+			{street:"Rue Frédéric Pelletier", nbr:73, city:"Schaerbeek", zip:1030, lat:50.845655, lon:4.401320},
+			{street:"Rue de la Probité", nbr:29, city:"Ixelles", zip:1050, lat:50.812754, lon:4.394315},
+			{street:"Rue Emile Wauters", nbr:79, city:"Bruxelles", zip:1020, lat:50.889161, lon:4.343058},
+			{street:"Rue de Ganshoren", nbr:4, city:"Koekelberg", zip:1081, lat:50.859622, lon:4.329169},
+			{street:"Fazantenlaan", nbr:12, city:"Vilvoorde", zip:1800, lat:50.910549, lon:4.378282},
+			{street:"Avenue des Tarins", nbr:21, city:"Kraainem", zip:1950, lat:50.856567, lon:4.468299},
+			{street:"Avenue des Genêts", nbr:20, city:"Wezembeek-Oppem", zip:3080, lat:50.830286, lon:4.498885},
+			{street:"Avenue Minerve", nbr:30, city:"Waterloo", zip:1410, lat:50.706444, lon:4.420193},
+			{street:"Rue Bois Paris", nbr:3, city:"Lasne", zip:1380, lat:50.684801, lon:4.467621},
+			{street:"Avenue de l\'Europe", nbr:34, city:"Rixensart", zip:1330, lat:50.702337, lon:4.533052},
+			{street:"Rue de la Mazerine", nbr:12, city:"La Hulpe", zip:1310, lat:50.731447, lon:4.493852},
+			{street:"Kalvarieberg", nbr:27, city:"Overijse", zip:3090, lat:50.776333, lon:4.544764},
+			{street:"Drève de Stadt", nbr:52, city:"Wavre", zip:1300, lat:50.728445, lon:4.610389},
+			{street:"Avenue de la Seigneurerie", nbr:6, city:"Chaumont-Gistoux", zip:1325, lat:50.691117, lon:4.640105},
+			{street:"Tienne de Chenois", nbr:2, city:"Chaumont-Gistoux", zip:1325, lat:50.696390, lon:4.668078},
+			{street:"Rue de la Hocaille", nbr:11, city:"Grez-Doiceau", zip:1390, lat:50.752946, lon:4.677273},
+			{street:"Rue de la Bruyère", nbr:23, city:"Braine-l\'Alleud", zip:1428, lat:50.651234, lon:4.376408},
+			{street"Rue Mon Plaisir", nbr:1, city:"Ittre", zip:1460; lat:50.636392, lon:4.219828},
+			{street:"Fazantenlaat", nbr:10, city:"Beersel", zip:1653, lat:50.721929, lon:4.292184},
+			{street:"Avenue du Vossegat", nbr:25, city:"Uccle", zip:1180, lat:50.802935, lon:4.331082}
 		];
 
 
@@ -322,7 +343,7 @@ Meteor.methods({
 				return false;
 			}
 			function getCourtArray() {
-				var rand = getRandomInt(1,11);
+				var rand = getRandomInt(5,11);
 				var array = [];
 				var globalValueDocument = Meteor.call('getNextCourtNumber');
 				nextCourtNumber = globalValueDocument.value;
@@ -357,8 +378,9 @@ Meteor.methods({
 				var ownerOK = tournamentYear.toString() === "2015";
 				var staffOK = ownerOK ? flipCoin() : false;
 
+				var courtAddress = getRandomElement(courtAddresses)
 				court = {
-					addressID : insertAddress(true),
+					addressID : insertAddress(true, courtAddress),
 					courtNumber : courtArray,
 					courtType : flipCoin() ? "club" : "privé",
 					dispoSamedi : saturdayAvailable,
@@ -370,24 +392,42 @@ Meteor.methods({
 					ownerComment : getComment(),
 					ownerID : owner._id,
 					surface : getRandomElement(surfaceTypes),
-					isOutdoor : flipCoin()
+					isOutdoor : flipCoin(),
+					coords: {
+						lat:courtAddress.lat,
+						lng:courtAddress.lon
+					}
 				};
 
 				var id = Courts.insert(court);
 			}
 		}
 
-		function insertAddress(isCourt) {
-			var c = getRandomElement(cities);
-			var addressData = {
-                street:getRandomElement(streets),
-                number:getRandomInt(1,200),
-                box:getRandomInt(1,10).toString(),
-                city:c.city,
-                zipCode:c.zip,
-                country:"Belgique",
-                isCourtAddress:isCourt
-            };
+		function insertAddress(isCourt, courtAddress) {
+			var addressData;
+			if (isCourt) {
+				addressData = {
+					street:courtAddress.street,
+					number:courtAddress.nbr,
+					box:getRandomInt(1,10).toString(),
+					city:courtAddress.city,
+					zipCode:courtAddress.zip,
+					country:"Belgique",
+					isCourtAddress:true
+				};
+			}
+			else {
+				var c = getRandomElement(cities);
+				addressData = {
+	                street:getRandomElement(streets),
+	                number:getRandomInt(1,200),
+	                box:getRandomInt(1,10).toString(),
+	                city:c.city,
+	                zipCode:c.zip,
+	                country:"Belgique",
+	                isCourtAddress:false
+	            };
+			}
 			var addressID = Addresses.insert(addressData);
 			if (typeof addressID1 === undefined) {
 				console.log("Error popDB inserting address : "+addressData);

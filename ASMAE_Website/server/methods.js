@@ -558,7 +558,7 @@ Meteor.methods({
 			var addr = Addresses.findOne({_id:data.addressID});
 			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
 			if(googleAnswer!==undefined && googleAnswer.length>0){
-          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};  
+          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};
     		}
 		}
 		if(courtData.surface){
@@ -2029,7 +2029,7 @@ Meteor.methods({
 		var userID = Meteor.userId();
 		console.log(userID);
 
-		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1 && userID!==pair.player2))
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1._id && userID!==pair.player2._id))
 		{
 			console.error("You don't have the permission to do that");
 			throw new Meteor.error("unsubscribeTournament: no permissions");
