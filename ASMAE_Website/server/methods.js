@@ -12,7 +12,12 @@ Meteor.methods({
 	'getOnePairId' : function(){
 		return Pairs.find().fetch()[Pairs.find().count()-1]._id;
 	},
-
+	'getOnePoolId' : function(){
+		return Pools.find().fetch()[Pools.find().count()-1]._id;
+	},
+	'getPreviousPoolId' : function(){
+		return Pools.find().fetch()[Pools.find().count()-2]._id;
+	},
 	//TODO: remove this when going to production !!!
 	'turnAdminInsecure' : function(nid){
 		Meteor.users.update({_id:nid}, {

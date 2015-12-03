@@ -165,7 +165,7 @@
         {{/unless}}
       {{/if}}
       {{#if moreThanOnePair POOL.pairs}}
-      <button type="button" class="btn btn-default btn-lg scoreButton" data-poolId="{{POOL._id}}">
+      <button type="button" id="clickOnIt{{POOL._id}}" class="btn btn-default btn-lg scoreButton" data-poolId="{{POOL._id}}">
         <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> <br>
         {{getStreet POOL.courtId}} <br>
         {{getTown POOL.courtId}} <br>
