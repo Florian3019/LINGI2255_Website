@@ -34,6 +34,61 @@ Meteor.methods({
 
 		var cities = [{city:"Bruxelles", zip:1000}, {city:"Laeken", zip:1020}, {city:"Schaerbeek", zip:1030}, {city:"Etterbeek", zip:1040}, {city:"Ixelles", zip:1050}, {city:"Saint-Gilles", zip:1060}, {city:"Anderlecht", zip:1070}, {city:"Uccle", zip:1180}, {city:"Wavre", zip:1300}, {city:"Bierges", zip:1301}, {city:"Incourt", zip:1315}, {city:"Nodebais", zip:1320}, {city:"Bonlez", zip:1325}, {city:"Rixensart", zip:1330}, {city:"Genval", zip:1332}, {city:"Ottignies-Louvain-la-Neuve", zip:1340}, {city:"Limelette", zip:1342}, {city:"Louvain-la-Neuve", zip:1348}, {city:"Hélécine", zip:1357}, {city:"Perwez", zip:1367}, {city:"Ramilies", zip:1367}, {city:"Jodoigne", zip:1370}, {city:"Lasne", zip:1380}, {city:"Grez-Doiceau", zip:1390}, {city:"Nivelles", zip:1400}, {city:"Waterloo", zip:1410}, {city:"Braine-l\'Alleud", zip:1420}, {city:"Rebecq", zip:1430}, {city:"Corbais", zip:1435}, {city:"Chastre", zip:1450}, {city:"Ittre", zip:1460}, {city:"Baisy-Thy", zip:1470}, {city:"Tubize", zip:1480}, {city:"Court-Saint-Etienne", zip:1490}];
 
+		var courtAddresses = [
+			{street:"Bvd de Lauzelle", nbr:30, city:"LLN", zip:1348, lat:50.675963, lon:4.614891},
+			{street:"Rue de Mèves", nbr:25, city:"Chaumont-Gistoux", zip:1325, lon:4.639929, lat:50.677426},
+			{street:"Avenue de Chèremont", nbr:38, city:"Wavre", zip:1300, lon:4.624136, lat:50.709889},
+			{street:"Rue du Bois du Buis", nbr:13, city:"Walhain", zip:1360, lon:4.733484, lat:50.612556},
+			{street:"Chemin de l\'Herbe", nbr:50, city:"Chaumont-Gistoux", zip:1325, lon:4.685590, lat:50.700329},
+			{street:"Rue des Piles", nbr:27, city:"Waterloo", zip:1410, lon:4.364240, lat:50.704083},
+			{street:"Avenue des Croix du Feu", nbr:40, city:"Waterloo", zip:1410, lat:50.727455, lon:4.385354},
+			{street:"Avenue des Primev§res", nbr:4, city:"Rixensart", zip:1332, lat:50.726151, lon:4.497964},
+			{street:"Allée du Bois de Bercuit", nbr:125, city:"Grez-Doiceau", zip:1390, lat:50.725064, lon:4.675634},
+			{street:"Rue du Baty", nbr:32, city:"Jodoigne", zip:1370, lat:50.727237, lon:4.823434},
+			{street:"Rue Brehen", nbr:2, city:"Orp-Jauche", zip:1350, lat:50.709413, lon:4.948404},
+			{street:"Rue de la Station", nbr:20, city:"Ramilies", zip:1367, lat:50.638593, lon:4.907033},
+			{street:"Rue Gabrielle Chatelain", nbr:25, city:"Namur", zip:5020, lat:50.504274, lon:4.866178},
+			{street:"Rue Antoine Quintens", nbr:47, city:"Gembloux", zip:5032, lat:50.541381, lon:4.675634},
+			{street:"Rue Bois des Pauvres", nbr:2, city:"Chastre", zip:1450, lat:50.607990, lon:4.614179},
+			{street:"Drève des Deux Bois", nbr:1, city:"Court-Saint-Etienne", zip:1490, lat:50.620844, lon:4.539850},
+			{street:"Chemin du Moulin", nbr:14, city:"Lasne", zip:1380, lat:50.696367, lon:4.483373},
+			{street:"La Grande Buissière", nbr:29, city:"Lasne", zip:1380, lat:50.697889, lon:4.461915},
+			{street:"Rue Colonel Montegnie", nbr:112, city:"Rixensart", zip:1332, lat:50.721804, lon:4.480970},
+			{street:"Avenue du Gris Moulin", nbr:64, city:"La Hulpe", zip:1310, lat:50.732779, lon:4.473588},
+			{street:"Hagaard", nbr:75, city:"Overijse", zip:3090, lat:50.761997, lon:4.525430},
+			{street:"Willem Matstraat", nbr:14, city:"Hoeilaart", zip:1560, lat:50.764060, lon:4.479940},
+			{street:"Avenue Mongolfier", nbr:100, city:"Woluwe-Saint-Pierre", zip:1150, lat:50.836534, lon:4.443033},
+			{street:"Rue Leon Cuissez", nbr:29, city:"Ixelles", zip:1050, lat:50.823415, lon:4.379690},
+			{street:"Avenue du Pesage", nbr:61, city:"Ixelles", zip:1050, lat:50.808448, lon:4.387243},
+			{street:"Rue du Bassinia", nbr:25, city:"Louvain-la-Neuve", zip:1348, lat:50.663943, lon:4.607935},
+			{street:"Rue Charles Quint", nbr:136, city:"Bruxelles", zip:1000, lat:50.849217, lon:4.388959},
+			{street:"Avenue du Vert Chasseur", nbr:46, city:"Uccle", zip:1180, lat:50.800745, lon:4.369218},
+			{street:"Avenue Blücher", nbr:57, city:"Uccle", zip:1180, lat:50.782298, lon:4.366472},
+			{street:"Avenue Astrid", nbr:79, city:"Rhode-Saint-Genèse", zip:1640, lat:50.740167, lon:4.384153},
+			{street:"Drève des Pins", nbr:29, city:"Braine-l\'Alleud", zip:1420, lat:50.723760, lon:4.338491},
+			{street:"Place de la Paix", nbr:1, city:"Evere", zip:1140, lat:50.876929, lon:4.400386},
+			{street:"Rue Frédéric Pelletier", nbr:73, city:"Schaerbeek", zip:1030, lat:50.845655, lon:4.401320},
+			{street:"Rue de la Probité", nbr:29, city:"Ixelles", zip:1050, lat:50.812754, lon:4.394315},
+			{street:"Rue Emile Wauters", nbr:79, city:"Bruxelles", zip:1020, lat:50.889161, lon:4.343058},
+			{street:"Rue de Ganshoren", nbr:4, city:"Koekelberg", zip:1081, lat:50.859622, lon:4.329169},
+			{street:"Fazantenlaan", nbr:12, city:"Vilvoorde", zip:1800, lat:50.910549, lon:4.378282},
+			{street:"Avenue des Tarins", nbr:21, city:"Kraainem", zip:1950, lat:50.856567, lon:4.468299},
+			{street:"Avenue des Genêts", nbr:20, city:"Wezembeek-Oppem", zip:3080, lat:50.830286, lon:4.498885},
+			{street:"Avenue Minerve", nbr:30, city:"Waterloo", zip:1410, lat:50.706444, lon:4.420193},
+			{street:"Rue Bois Paris", nbr:3, city:"Lasne", zip:1380, lat:50.684801, lon:4.467621},
+			{street:"Avenue de l\'Europe", nbr:34, city:"Rixensart", zip:1330, lat:50.702337, lon:4.533052},
+			{street:"Rue de la Mazerine", nbr:12, city:"La Hulpe", zip:1310, lat:50.731447, lon:4.493852},
+			{street:"Kalvarieberg", nbr:27, city:"Overijse", zip:3090, lat:50.776333, lon:4.544764},
+			{street:"Drève de Stadt", nbr:52, city:"Wavre", zip:1300, lat:50.728445, lon:4.610389},
+			{street:"Avenue de la Seigneurerie", nbr:6, city:"Chaumont-Gistoux", zip:1325, lat:50.691117, lon:4.640105},
+			{street:"Tienne de Chenois", nbr:2, city:"Chaumont-Gistoux", zip:1325, lat:50.696390, lon:4.668078},
+			{street:"Rue de la Hocaille", nbr:11, city:"Grez-Doiceau", zip:1390, lat:50.752946, lon:4.677273},
+			{street:"Rue de la Bruyère", nbr:23, city:"Braine-l\'Alleud", zip:1428, lat:50.651234, lon:4.376408},
+			{street:"Rue Mon Plaisir", nbr:1, city:"Ittre", zip:1460, lat:50.636392, lon:4.219828},
+			{street:"Fazantenlaat", nbr:10, city:"Beersel", zip:1653, lat:50.721929, lon:4.292184},
+			{street:"Avenue du Vossegat", nbr:25, city:"Uccle", zip:1180, lat:50.802935, lon:4.331082}
+		];
+
 
 		var AFTs = ["NC", "C30.5", "C30.4", "C30.3", "C30.2", "C30.1", "C30", "C15.5", "C15.4", "C15.3", "C15.2", "C15.1", "C15"];
 
@@ -289,7 +344,7 @@ Meteor.methods({
 				return false;
 			}
 			function getCourtArray() {
-				var rand = getRandomInt(1,11);
+				var rand = getRandomInt(5,11);
 				var array = [];
 				var globalValueDocument = Meteor.call('getNextCourtNumber');
 				nextCourtNumber = globalValueDocument.value;
@@ -324,8 +379,20 @@ Meteor.methods({
 				var ownerOK = tournamentYear.toString() === "2015";
 				var staffOK = ownerOK ? flipCoin() : false;
 
+				if (courtAddresses.length < 1) {
+					console.log("Not enough addresses");
+					return undefined;
+				}
+				var courtAddress = getRandomElement(courtAddresses);
+				var index = courtAddresses.indexOf(courtAddress);
+				courtAddresses.splice(index,1)
+
+				var coords = {
+					lat:courtAddress.lat,
+					lng:courtAddress.lon
+				};
 				court = {
-					addressID : insertAddress(true),
+					addressID : insertAddress(true, courtAddress),
 					courtNumber : courtArray,
 					courtType : flipCoin() ? "club" : "privé",
 					dispoSamedi : saturdayAvailable,
@@ -336,24 +403,41 @@ Meteor.methods({
 					numberOfCourts : courtArray.length,
 					ownerComment : getComment(),
 					ownerID : owner._id,
-					surface : getRandomElement(surfaceTypes)
+					surface : getRandomElement(surfaceTypes),
+					isOutdoor : flipCoin(),
+					coords : coords,
+					HQDist : getDistanceFromHQ(coords)
 				};
 
 				var id = Courts.insert(court);
 			}
 		}
 
-		function insertAddress(isCourt) {
-			var c = getRandomElement(cities);
-			var addressData = {
-                street:getRandomElement(streets),
-                number:getRandomInt(1,200),
-                box:getRandomInt(1,10).toString(),
-                city:c.city,
-                zipCode:c.zip,
-                country:"Belgique",
-                isCourtAddress:isCourt
-            };
+		function insertAddress(isCourt, courtAddress) {
+			var addressData;
+			if (isCourt) {
+				addressData = {
+					street:courtAddress.street,
+					number:courtAddress.nbr,
+					box:getRandomInt(1,10).toString(),
+					city:courtAddress.city,
+					zipCode:courtAddress.zip,
+					country:"Belgique",
+					isCourtAddress:true
+				};
+			}
+			else {
+				var c = getRandomElement(cities);
+				addressData = {
+	                street:getRandomElement(streets),
+	                number:getRandomInt(1,200),
+	                box:getRandomInt(1,10).toString(),
+	                city:c.city,
+	                zipCode:c.zip,
+	                country:"Belgique",
+	                isCourtAddress:false
+	            };
+			}
 			var addressID = Addresses.insert(addressData);
 			if (typeof addressID1 === undefined) {
 				console.log("Error popDB inserting address : "+addressData);
