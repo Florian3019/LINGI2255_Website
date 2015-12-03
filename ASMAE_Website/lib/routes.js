@@ -50,6 +50,17 @@ Router.route('/email-terrain', {
 	}
 });
 
+Router.route('/carte-terrains', {
+	template: 'courtMap',
+	name: 'courtMap',
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	},
+	waitOn: function(){
+		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses')  ]
+	},
+});
+
 Router.route('/modifications-log', {
 	template: 'modificationsLog',
 	name: 'modificationsLog',
