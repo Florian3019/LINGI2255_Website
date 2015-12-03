@@ -78,7 +78,7 @@ Template.index.events({
 
 		var nCourtSaturday2015 = 40;
 		var nCourtSunday2015 = 40;
-		var nCourtBoth2015 = 30;
+		var nCourtBoth2015 = 60;
 
 		/*
 		 * 2014 data
@@ -94,9 +94,9 @@ Template.index.events({
 		var nAloneFamily2014 = 10;
 		var nAlones2014 = [nAloneMen2014,nAloneWomen2014,nAloneMixed2014,nAloneFamily2014];
 
-		var nCourtSaturday2014 = 40;
-		var nCourtSunday2014 = 40;
-		var nCourtBoth2014 = 30;
+		var nCourtSaturday2014 = 20;
+		var nCourtSunday2014 = 20;
+		var nCourtBoth2014 = 10;
 
 		var nUnregistered = 200;
 		var nStaff = 10;

@@ -83,7 +83,7 @@ Meteor.methods({
 			{street:"Tienne de Chenois", nbr:2, city:"Chaumont-Gistoux", zip:1325, lat:50.696390, lon:4.668078},
 			{street:"Rue de la Hocaille", nbr:11, city:"Grez-Doiceau", zip:1390, lat:50.752946, lon:4.677273},
 			{street:"Rue de la Bruyère", nbr:23, city:"Braine-l\'Alleud", zip:1428, lat:50.651234, lon:4.376408},
-			{street"Rue Mon Plaisir", nbr:1, city:"Ittre", zip:1460; lat:50.636392, lon:4.219828},
+			{street:"Rue Mon Plaisir", nbr:1, city:"Ittre", zip:1460, lat:50.636392, lon:4.219828},
 			{street:"Fazantenlaat", nbr:10, city:"Beersel", zip:1653, lat:50.721929, lon:4.292184},
 			{street:"Avenue du Vossegat", nbr:25, city:"Uccle", zip:1180, lat:50.802935, lon:4.331082}
 		];
@@ -378,7 +378,18 @@ Meteor.methods({
 				var ownerOK = tournamentYear.toString() === "2015";
 				var staffOK = ownerOK ? flipCoin() : false;
 
-				var courtAddress = getRandomElement(courtAddresses)
+				if (courtAddresses.length < 1) {
+					console.log("Not enough addresses");
+					return undefined;
+				}
+				var courtAddress = getRandomElement(courtAddresses);
+				var index = courtAddresses.indexOf(courtAddress);
+				courtAddresses.splice(index,1)
+
+				var coords = {
+					lat:courtAddress.lat,
+					lng:courtAddress.lon
+				};
 				court = {
 					addressID : insertAddress(true, courtAddress),
 					courtNumber : courtArray,
@@ -393,10 +404,8 @@ Meteor.methods({
 					ownerID : owner._id,
 					surface : getRandomElement(surfaceTypes),
 					isOutdoor : flipCoin(),
-					coords: {
-						lat:courtAddress.lat,
-						lng:courtAddress.lon
-					}
+					coords : coords,
+					HQDist : getDistanceFromHQ(coords)
 				};
 
 				var id = Courts.insert(court);
