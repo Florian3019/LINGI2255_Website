@@ -457,3 +457,14 @@ Router.route('/deroulement-tournoi', {
 		Session.set('showNavBar', true);
 	}
 });
+
+Router.route('/paiements-des-joueurs', {
+  	name: 'playerPayments',
+	template: 'playerPayments',
+	waitOn: function() {
+		return [Meteor.subscribe('Years'), Meteor.subscribe('Payments')];
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
+});

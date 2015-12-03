@@ -19,14 +19,17 @@ Meteor.methods({
 	},
 
 	'activateGlobalValuesDB' : function() {
-		if (!GlobalValues.findOne({_id:"currentYear"})) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
 		}
 		if(GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
 			GlobalValues.insert({_id:"nextCourtNumber", value:1});
 		}
-		if (!GlobalValues.findOne({_id:"registrationsON"})) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"registrationsON"})) {
 			GlobalValues.insert({_id:"registrationsON", value: false});
+		}
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextBankTransferNumber"})) {
+			GlobalValues.insert({_id:"nextBankTransferNumber", value: 1000});
 		}
 	},
 
@@ -1041,10 +1044,31 @@ Meteor.methods({
 			balance : amount
 		};
 
+		// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
+		if(pairData.paymentMethod === paymentTypes[1]){
+			paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
+
+			var newValue = paymentData.bankTransferNumber + 1;
+			GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
+				value: newValue
+			}});
+		}
+
 		//Check if payment already exists for this player
 		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear});
 		if(paymentAlreadyExists){
-			console.error("updatePair: Payment already exists for this player");
+			if(pairData._id){
+				Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
+					if(err){
+						console.error('insert payment error');
+						console.error(err);
+					}
+				});
+			}
+			else {
+				console.error("Payment already exists and should not be updated");
+			}
+
 		}
 		else {
 
@@ -1075,7 +1099,7 @@ Meteor.methods({
           			intro:"Bonjour "+user.profile.firstName+",",
           			important:"Nous avons bien reçu votre inscription",
           			texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
-          			encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) et d'y insérer les nom et prénom du joueur ainsi que le jour où il joue au tournoi."
+          			encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) avec comme communication le numéro d'identification suivant: " +paymentData.bankTransferNumber
         		};
 				if (!silentMail) {
 					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
@@ -1083,11 +1107,7 @@ Meteor.methods({
 					/*
 
 						Envoyer un mail contenant les informations pour payer par virement bancaire:
-						- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
-						- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
-							peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
-							input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
-						- montant à payer: accessible via la variable amount
+						- compte bancaire: hardcoded pour le moment. Je mettrai peut-être un formulaire pour l'admin.
 
 					*/
 			}
