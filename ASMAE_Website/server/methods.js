@@ -9,6 +9,9 @@
 */
 
 Meteor.methods({
+	'getOnePairId' : function(){
+		return Pairs.find().fetch()[Pairs.find().count()-1]._id;
+	},
 
 	//TODO: remove this when going to production !!!
 	'turnAdminInsecure' : function(nid){

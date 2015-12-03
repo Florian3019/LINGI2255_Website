@@ -132,7 +132,7 @@
       <ul>
       <li>
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_pool" style="display:none"></span>
-      <a href="#" style="text-decoration: none;display:inline;" class="menuItem"> Poules {{getPoulesCompletion this.ID this.CAT}} </a>
+      <a href="#" id="Poules" style="text-decoration: none;display:inline;" class="menuItem"> Poules {{getPoulesCompletion this.ID this.CAT}} </a>
       </li>
       </ul>
     </li>
@@ -350,8 +350,8 @@ Takes 2 arguments :
 -->
 <template name="poolItem">
   {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
-    <div id="{{this._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
-      <ul class="list-group clickablePoolItem clickablePoolItemFull" data-id="{{this._id}}" data-poolid="{{../POOLID}}">
+    <div  class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
+      <ul id="{{this._id}}" class="list-group clickablePoolItem clickablePoolItemFull" data-id="{{this._id}}" data-poolid="{{../POOLID}}">
         {{#with getPlayer this.player1._id}}
         <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}color:{{getColor ../player1}}{{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
