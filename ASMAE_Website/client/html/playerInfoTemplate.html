@@ -76,7 +76,13 @@
                                 {{#if isCurrentUser ../id}}
                                   <a href="" data-toggle="modal" data-target="#dropinModal">Payer en ligne</a>
                                 {{else}}
-                                  Pas en ordre
+
+                                    {{#if isAdminOrStaff}}
+                                    <a href="" id="markAsPaid">Marquer comme payé</a>
+                                    {{else}}
+                                    Pas en ordre
+                                    {{/if}}
+
                                 {{/if}}
                               {{else}}
                                 En ordre

@@ -80,6 +80,12 @@
         Prix: {{tournamentPrice}}&euro;
     </p>
     {{/with}}
+    <h6>Extras:</h6>
+    <ul>
+        {{#each extras}}
+            <li>{{name}} : {{price}}&euro;</li>
+        {{/each}}
+    </ul>
 
     {{#if isAdmin}}
         <p>Si vous vous êtes trompé dans la date ou le prix du tournoi cliquez ici pour les modifier (ceci peut avoir des conséquences sur les inscriptions déjà effectuées)</p>
@@ -89,6 +95,8 @@
     {{/if}}
 
     {{else}}
+
+    {{#if isAdmin}}
 
     <form id="launchTournamentForm" role="form">
         <div class="form-group">
@@ -103,6 +111,14 @@
                     <input type="number" name="tournamentPrice" min="0" id="tournamentPrice" class="form-control" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <h5>Extras</h5>
+                </div>
+            </div>
+            {{> modifyExtras}}
+
             <br>
 
             <center>
@@ -113,6 +129,10 @@
 
         </div>
     </form>
+    {{else}}
+        <p> Seul un administrateur peut lancer les inscriptions au tournoi </p>
+    {{/if}}
+
     {{/if}}
 </template>
 
