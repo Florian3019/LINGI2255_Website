@@ -141,7 +141,7 @@ Router.route('/liste-poules', {
 	name: 'poolList',
 	template: 'poolList',
 	waitOn: function(){
-		return [ 	
+		return [
 					Meteor.subscribe('Years'),
 					Meteor.subscribe('Types'),
 					Meteor.subscribe('users'),
@@ -356,6 +356,9 @@ Router.route('/print', {
 	name: 'printSheets',
 	template: 'printSheets',
 	onAfterAction: function(){
+    Session.set("printSheets/poolList","");
+    Session.set("printSheets/isWorkingPrint",false);
+    Session.set("printSheets/isWorkingPool",false);
 		Session.set('showNavBar', true);
 	}
 });
@@ -373,17 +376,6 @@ Router.route('/forum', {
 	template: 'forum',
 	waitOn: function(){
 		return [ Meteor.subscribe('Topics'), Meteor.subscribe('Threads')]
-	},
-	onAfterAction: function(){
-		Session.set('showNavBar', true);
-	}
-});
-
-Router.route('/modifier-extras',{
-	name: "modifyExtras",
-	template: 'modifyExtras',
-	waitOn: function(){
-		return [ Meteor.subscribe('Extras')]
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
@@ -458,6 +450,9 @@ Router.route('/faq', {
 Router.route('/deroulement-tournoi', {
   	name: 'tournamentProgress',
 	template: 'tournamentProgress',
+	waitOn: function() {
+		return [Meteor.subscribe('Years'), Meteor.subscribe('Extras')];
+	},
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
 	}

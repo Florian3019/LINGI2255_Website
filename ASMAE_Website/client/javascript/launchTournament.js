@@ -17,7 +17,11 @@ Template.launchTournament.helpers({
 
     'tournamentDateFormat': function(date){
         return date.toLocaleDateString();
-    }
+    },
+
+    'extras': function(){
+        return Extras.find();
+    },
 
 });
 

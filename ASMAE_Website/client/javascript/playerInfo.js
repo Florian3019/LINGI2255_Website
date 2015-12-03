@@ -138,29 +138,34 @@ Template.changePermissions.events({
         var target = event.currentTarget;
         var value = event.currentTarget.value;
         var userId = target.id;
-        if(value==="Normal"){
-            Meteor.call('turnNormal',userId);
-        }
-        else if(value==="Staff"){
-            Meteor.call('turnStaff',userId);
-        }
-        else if(value==="Admin"){
-            Meteor.call('turnAdmin',userId);
-        }
-
-        Meteor.call("addToModificationsLog",
-        {"opType":"Changement de permission",
-        "details":
-            this.profile.firstName + " " + this.profile.lastName + " est passé en mode "+value
-        },
-        function(err, logId){
-            if(err){
-                console.log(err);
-                return;
+        var user = this;
+        var prof = this.profile;
+        var nothingChanged = (value === "Normal" && !prof.isAdmin && !prof.isStaff) || (value==="Staff" && prof.isStaff && !prof.isAdmin) || (value==="Admin" && prof.isAdmin);
+        if(!nothingChanged){
+            if(value==="Normal"){
+                Meteor.call('turnNormal',userId);
             }
-            Meteor.call('addToUserLog', userId, logId);
+            else if(value==="Staff"){
+                Meteor.call('turnStaff',userId);
+            }
+            else if(value==="Admin"){
+                Meteor.call('turnAdmin',userId);
+            }
+
+            Meteor.call("addToModificationsLog",
+                {"opType":"Changement de permission",
+                "details":
+                    this.profile.firstName + " " + this.profile.lastName + " est passé en mode "+value
+                },
+                function(err, logId){
+                    if(err){
+                        console.log(err);
+                        return;
+                    }
+                    Meteor.call('addToUserLog', userId, logId);
+                }
+            );
         }
-        );
 
     }
 });

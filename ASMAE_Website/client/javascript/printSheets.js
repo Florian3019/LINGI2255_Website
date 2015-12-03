@@ -2,55 +2,32 @@ Template.printSheets.events({
 
   'click #Save':function(event){
     Session.set("printSheets/Value", true);
-    var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+    Session.set("printSheets/isWorkingPool",true);
+
+
     var info={
       year : document.getElementById("Year").value,
       type : document.getElementById("Type").value,
       cat : document.getElementById("Category").value,
     };
     Session.set("printSheets/info",info);
-    var year = Years.findOne({_id:info.year});
-    if(year==undefined){
-      return undefined;
-    }
-    else{
-      var type = Types.findOne({_id:year[info.type]});
-      if(type==undefined){
-        return undefined
-      }
-      else{
-        if(info.type=="family"){
-          var poolList = type["all"]
-        }
-        else{
-          if(info.cat!="all"){
-            var poolList = type[info.cat];
-          }
-          else{
-            var poolList = new Array();
-            for (var i in allcat) {
-              for (var j in type[allcat[i]]) {
-                poolList.push(type[allcat[i]][j]);
-              }
-            }
-          }
-        }
-        var nonemptyPool = new Array();
-        for (var i in poolList) {
-          typeSearch={};
-          typeSearch["pairs"] =1;
-          var temp = Pools.findOne({_id:poolList[i]}, typeSearch);
-          if(temp.pairs.length>0){
-            nonemptyPool.push(poolList[i]);
-          }
-        }
 
-        Session.set("printSheets/poolList",nonemptyPool);
+    Meteor.call("getPoolListToPrint", info, function(error, result){
+      if(error){
+        console.log("error", error);
       }
-    }
+      if(result){
+        if(result.length==Session.get("printSheets/poolList").length){
+          Session.set("printSheets/isWorkingPool",false);
+        }
+        Session.set("printSheets/poolList",result);
+      }
+    });
+
   },
 
   'click #Print':function(event){
+    Session.set("printSheets/isWorkingPrint",true);
     var pools = Session.get("printSheets/poolList");
     var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
     var infoPools = Session.get("printSheets/info");
@@ -76,7 +53,8 @@ Template.printSheets.events({
           var r= cat.concat("Resp")
           var resplist=type[r];
           if (resplist!=undefined && resplist.length>0){
-            responsable = Meteor.users.findOne({_id:resplist[0]});
+            responsable = {user:Meteor.users.findOne({_id:resplist[0]}),
+                          cat:cat};
           }
         }
       }
@@ -120,10 +98,10 @@ Template.printSheets.events({
       pdf.addImage(logo, 'JPEG', margins.left, 40, 500, 114);
 
       pdf.setFontSize(15);
-      if (resp!=undefined) {
-        respText = "Responsable de poule : " + resp.profile.firstName+" "+resp.profile.lastName;
-        if(resp.emails) respText += "\n"+resp.emails[0].address;
-        if(resp.profile.phone) respText += "    "+ resp.profile.phone;
+      if (resp != undefined && resp.user!=undefined) {
+        respText = "Responsable de poule : " + resp.user.profile.firstName+" "+resp.user.profile.lastName;
+        if(resp.user.emails) respText += "\n"+resp.user.emails[0].address;
+        if(resp.user.profile.phone) respText += "    "+ resp.user.profile.phone;
         pdf.text(respText, margins.left, 180);
       }else{
         pdf.text("Pas de responsable Staff",margins.left,180);
@@ -139,7 +117,17 @@ Template.printSheets.events({
         pdf.setFontSize(15);
         var addr = "Terrain n°"+pool.courtId+"\n"+courtAddress.street +" "+ courtAddress.number +"\n"+courtAddress.zipCode+" "+ courtAddress.city;
         pdf.text(addr,margins.left+350,200);
+      }else{
+        pdf.text("Pas de terrain\n assigné",margins.left+350,200);
       }
+      if(resp!= undefined && resp.cat != undefined){
+      var infotext  = infoPools.year+" "+infoPools.type+" "+resp.cat;
+    }
+    else{
+      var infotext  = infoPools.year+"-"+infoPools.type;
+
+    }
+      pdf.text(infotext,margins.left+400,180);
     }
 
     function printPage(pdf,i,pools){
@@ -169,8 +157,8 @@ Template.printSheets.events({
             var filename = info.year+"_"+info.type+"_"+info.cat+".pdf";
           }
           pdf.output('save', filename);
+          Session.set("printSheets/isWorkingPrint",false);
           Session.set("printSheets/poolList","");
-          console.log("set to null");
         }
         else{
           pdf.addPage();
@@ -239,6 +227,7 @@ Template.printSheets.helpers({
   'hasPool':function(){
     var poolId = Session.get("printSheets/poolList");
     if(poolId!=undefined && poolId.length>1){
+      Session.set("printSheets/isWorkingPool",false);
       return true;
     }
     return false;
@@ -252,6 +241,14 @@ Template.printSheets.helpers({
         else{
             return '';
         }
+    },
+
+    'isWorkingPool' : function(){
+      return Session.get("printSheets/isWorkingPool");
+    },
+
+    'isWorkingPrint' : function(){
+      return Session.get("printSheets/isWorkingPrint");
     }
 
 });

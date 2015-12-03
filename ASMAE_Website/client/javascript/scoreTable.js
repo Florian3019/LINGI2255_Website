@@ -218,7 +218,12 @@ Template.scorePage.events({
     if(user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin)){
         var poolID = Session.get("PoolList/poolID");
         var pool = Pools.findOne({_id:poolId});
-       Session.set("PoolList/ChosenCourt",pool.courtId);
+        if(pool.courtId==undefined){
+          Session.set("PoolList/ChosenCourt",-1);
+        }
+        else{
+          Session.set("PoolList/ChosenCourt",pool.courtId);
+        }
     }
     else{
 
@@ -306,6 +311,13 @@ Template.scorePage.events({
         pdf.setFontSize(15);
         var addr = "Terrain n°"+pool.courtId+"\n"+courtAddress.street +" "+ courtAddress.number +"\n"+courtAddress.zipCode+" "+ courtAddress.city;
         pdf.text(addr,margins.left+350,200);
+    }
+    infoPool = event.currentTarget.dataset.info;
+
+    if(infoPool!=undefined){
+      // infotext = info.year+" "+info.type+" "+info.cat;
+      infotext= Session.get("printPDF/Year")+" "+Session.get("printPDF/Type")+" "+Session.get("printPDF/Cat");
+      pdf.text(infotext,margins.left+400,180);
     }
 
     /*

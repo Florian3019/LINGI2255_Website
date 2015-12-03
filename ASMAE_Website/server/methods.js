@@ -234,7 +234,7 @@ Meteor.methods({
 	'turnNormal': function(nid){
 		if(Meteor.call('isAdmin')){
 			Meteor.users.update({_id:nid}, {
-	        	$set: {"profile.isAdmin":false,"profile.isStaff":true}
+	        	$set: {"profile.isAdmin":false,"profile.isStaff":false}
 	      	});
 		}
 		else {
@@ -513,7 +513,7 @@ Meteor.methods({
 
 	/*
 		@param courtData is structured as a court, if _id is missing,
-		a new court will be created and linked to the owner. OwnerID must be provided.
+		a new court will be created. ownerID must be provided.
 		A court structure is as follows :
 		{
 			_id:<courtId>,
@@ -529,9 +529,13 @@ Meteor.methods({
 			ownerOK:<boolean>,
 			staffOK:<boolean>,
 			numberOfCourts: <integer>,
-			isOutdoor:<boolean>
+			isOutdoor:<boolean>,
+			log:[<logId>, ...],
+			coords:{ // automatically set when addressID is provided
+				lat:<latitude>,
+				lng:<longitude>
+			}
 		},
-		log:[<logId>, ...]
 	*/
 	'updateCourt' : function(courtData){
 		var courtId = courtData._id;
@@ -553,6 +557,12 @@ Meteor.methods({
 		// Fill in court info
 		if(courtData.addressID){
 			data.addressID = courtData.addressID;
+			// Fetch the address and find its lat/long
+			var addr = Addresses.findOne({_id:data.addressID});
+			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
+			if(googleAnswer!==undefined && googleAnswer.length>0){
+          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};
+    		}
 		}
 		if(courtData.surface){
 			data.surface = courtData.surface;
@@ -2008,46 +2018,120 @@ Meteor.methods({
 		return ret;
 	},
 
-	'unsubscribeTournament': function(pair_id){
-		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')))
+	'unsubscribePairFromTournament': function(pair_id){
+		if (typeof pair_id === 'undefined') {
+			console.error("Error unsubscribe : pair_id is undefined");
+			return false;
+		}
+		var pair = Pairs.findOne({_id:pair_id});
+		if (typeof pair === 'undefined') {
+			console.error("Error unsubscribe : pair does not exist");
+			return false;
+		}
+
+		var userID = Meteor.userId();
+		console.log(userID);
+
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1 && userID!==pair.player2))
 		{
-			console.error("You don't have the permission do to that");
+			console.error("You don't have the permission to do that");
 			throw new Meteor.error("unsubscribeTournament: no permissions");
 			return false;
 		}
 
-		var pair = Pairs.findOne({'_id':pair_id});
-		var save = Pairs.findOne({'_id':pair_id});
-        if(typeof pair.player2 === 'undefined'){
-          Pairs.remove({'_id':pair_id});
-          var pools = Pools.find().fetch();
-          var pool_id;
-          for(i = 0; i < pools.length; i++){
-              var poolPairs = pools[i].pairs;
-              for(k = 0; k < poolPairs.length; k++){
-                  if(pair_id == pools[i].pairs[k]){
-                      pool_id = pools[i]._id;
-                      var array = [];
-                      for(l = 0; l < pair_id.length; l++){
-                          if(k != l){
-                              array.push(pools[i].pairs[l]);
-                          }
-                      }
-                      break;
-                      Pools.update({'_id': pool_id}, {$set: {'pairs': array}});
-                  }
-              }
+		var userPlayer = pair.player1._id===userID ? "player1" : "player2";
+		var partnerPlayer = userPlayer==="player1" ? "player2" : "player1";
+
+		var pool = Pools.findOne({pairs:pair_id}); // Find the right pool
+		if (typeof pool === 'undefined') {
+			console.error("Error unsubscribe : no pool found for this pair");
+			return false;
+		}
+
+		console.log(pair);
+		console.log(userPlayer);
+		console.log(partnerPlayer);
+
+		var user;
+		if (userPlayer==="player1") {
+			user = Meteor.users.findOne({_id:pair.player1._id});
+		}
+		else {
+			user = Meteor.users.findOne({_id:pair.player2._id});
+		}
+
+		// Remove payment
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
+
+
+		console.log(user);
+		// No other player
+		if (typeof pair.partnerPlayer === 'undefined') {
+			// Remove the pair from the pool and from the Pairs table
+			var pairs = pool.pairs;
+			var newPairs = [];
+			for (var i=0; i<pairs.length; i++) {
+				if (pairs[i]!==pair_id) {
+					newPairs.push(pairs[i]);
+				}
+			}
+			pool.pairs = newPairs;
+
+			Meteor.call('updatePool', pool);
+			Pairs.remove({_id:pair_id});
+
+			var dataEmail= {
+				intro:"Bonjour "+user.profile.firstName+" "+user.profile.lastName,
+				important:"Votre inscription au tournoi a été supprimée",
+				texte:"Vous avez retiré votre inscription au tournoi Le Charles de Lorraine"
+			};
+
+			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
+		}
+		else {
+			// Remove only the current player, leaving the other player alone in the pair
+			pair.userPlayer = undefined;
+			// Put the partner in player1 position --> partner can now be matched with another player
+			pair.player1 = pairs.partnerPlayer;
+			Meteor.call("updatePair", pair);
+			// The pair stays in the right pool
+
+			var partner = Meteor.users.findOne({_id:pair.player1._id});
+
+			var dataEmail= {
+				intro:"Bonjour "+user.profile.firstName+" "+user.profile.lastName,
+				important:"Votre inscription au tournoi a été supprimée",
+				texte:"Vous avez retiré votre inscription au tournoi Le Charles de Lorraine, votre partenaire a été notifié(e) de votre désinscription."
+			};
+
+			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
+
+
+
+      this.unblock();
+
+      var dataEmailPartner={
+        intro:"Bonjour "+partner.profile.firstName+",",
+        important:"Nous avons une mauvaise nouvelle pour vous.",
+        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jour. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours aller choisir un nouveau partneaire sur notre site !"
+      };
+      var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+      var options =   {
+        auth: "api:" + process.env.MAILGUN_API_KEY,
+          params: {
+            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+            "to":partner.emails[0].address,
+            "subject": "Concernant votre inscription au tournoi",
+            "html": SSR.render("mailing",dataEmailPartner),
           }
         }
-        else {
-          if(pair.player1._id == Meteor.userId()){
-            Pairs.update({'_id': pair_id}, {$set: {'player1': pair.player2}});
-          }
-          Pairs.update({'_id': pair_id}, {$unset: {'player2': ""}});
+        var onError = function(error, result) {
+          if(error) {console.error("Error: " + error)}
+        }
 
-          //Send email in secure
-          var aloneId=Pairs.findOne({_id:pair_id}).player1._id;
-          Meteor.call("emailtoAlonePairsPlayer",aloneId,save);
+        // Send the request
+          Meteor.http.post(postURL, options, onError);
         }
 	},
 
@@ -2112,6 +2196,77 @@ Meteor.methods({
 			return true;
 		}
 
+	},
+
+  'getPoolListToPrint':function(info){
+    this.unblock();
+
+    var hasBothPlayers = function(pair){
+      return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
+    };
+    var moreThanOnePairFunct = function(pairs){
+      for(var i=0;i<pairs.length;i++){
+        pair = Pairs.findOne({"_id":pairs[i]});
+        if(hasBothPlayers(pair)) return true;
+      }
+      return false;
+    };
+
+    var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+    var year = Years.findOne({_id:info.year});
+    if(year==undefined){
+      return undefined;
+    }
+    else{
+      var type = Types.findOne({_id:year[info.type]});
+      if(type==undefined){
+        return undefined
+      }
+      else{
+        if(info.type=="family"){
+          var poolList = type["all"]
+        }
+        else{
+          if(info.cat!="all"){
+            var poolList = type[info.cat];
+          }
+          else{
+            var poolList = new Array();
+            for (var i in allcat) {
+              for (var j in type[allcat[i]]) {
+                poolList.push(type[allcat[i]][j]);
+              }
+            }
+          }
+        }
+        var nonemptyPool = new Array();
+        for (var i in poolList) {
+          var temp = Pools.findOne({_id:poolList[i]}, {"pairs":1});
+          if(moreThanOnePairFunct(temp.pairs)){
+            if (nonemptyPool.indexOf(poolList[i])==-1) {
+              nonemptyPool.push(poolList[i]);
+            }
+          }
+        }
+        return nonemptyPool;
+      }
+    }
+  },
+
+	// For staff members: mark that a player has paid the tournament
+	'markAsPaid': function(paymentID){
+		if(!(Meteor.call('isAdmin') || Meteor.call('isStaff'))){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to restart a tournament");
+		}
+		Payments.update({_id: paymentID}, {$set: {
+			status: "paid"
+		}}, function(err, res){
+			if(err){
+				console.log(err);
+			}
+		});
+		return true;
 	}
 
 

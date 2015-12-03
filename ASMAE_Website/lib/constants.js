@@ -6,6 +6,7 @@ paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 
+HQCoords = {"lat":50.854227, "lng":4.353841}; // Latitude and longitude of the head quarters
 paymentTranslate = {"paid":"Payé", "pending":"En attente"};
 
 if(Meteor.isClient){
@@ -23,6 +24,15 @@ LAST_N_LOGS = 3; // Amount of logs to keep for each user/courts. All logs are st
 acceptForFamily = function(birthDate, tournamentDate){
     age = getAge(birthDate, tournamentDate);
     return age<=MAX_FAMILY_AGE || age>=MIN_FAMILY_AGE;
+}
+
+/*
+    Returns the distance (in terms of lat/lng) between the coordinates and the HQ
+*/
+getDistanceFromHQ = function(coords){
+    var latDist = coords.lat-HQCoords.lat;
+    var lngDist = coords.lng-HQCoords.lng;
+    return Math.sqrt(Math.pow(latDist,2) + Math.pow(lngDist,2)); // Pythagore
 }
 
 getSortableDate = function(date){
@@ -235,7 +245,7 @@ addressToString = function(theAddress){
     if(theAddress!=undefined &&theAddress!=null){
         theString +=theAddress.street+" ";
         theString += theAddress.number+", ";
-        theString += (theAddress.box!=="")?"B."+theAddress.box+", ":"";
+        theString += (theAddress.box!=="" && theAddress.box!==undefined)?"B."+theAddress.box+", ":"";
         theString += theAddress.zipCode+" ";
         theString +=theAddress.city+", ";
         theString += theAddress.country+" ";

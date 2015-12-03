@@ -1,0 +1,40 @@
+<template name="AlertModal">
+
+	<div id="AlertModal" class="modal fade" data-backdrop="false" >
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-title page-header">
+            <center>
+              <h3>Attention ce terrain est déjà utilisé pendant {{UsedWhen}}!</h3>
+            </center>
+          </div>
+        </div>
+        <div class="modal-body">
+        	<center>
+              <h4>Que voulez-vous faire?</h4>
+          </center>
+
+          <label class="radio-inline"><input type="radio" name="double" value="keepBoth" id="keepBoth" class="alonePlayerChangeListener" checked>Utiliser ce terrain aux deux endroits</label>
+
+          <br>
+
+          <label class="radio-inline"><input type="radio" name="double" value="delete" id="delete" class="alonePlayerChangeListener">N'utiliser ce terrain qu'ici</label>
+          <br>
+
+          {{#if canSwap}}
+
+          <label class="radio-inline"><input type="radio" name="double" value="swap" id="swap" class="alonePlayerChangeListener">Échanger les terrains</label>
+          {{/if}}
+        </div>
+        <div class="modal-footer">
+        	<button type="button" class="btn btn-default valid" data-dismiss="modal">Valider</button>
+          <button type="button" class="btn btn-default cancel" data-dismiss="modal">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>

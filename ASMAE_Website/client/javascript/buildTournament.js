@@ -138,24 +138,9 @@ Template.buildTournament.events({
 		}
 
 		courts = [];
-		var logPairs = Math.log2(winners.length);
-		var numMatchesFull = Math.pow(2,Math.ceil(logPairs))/2;
-		var init = getNumberMatchesFirstRound(winners.length);
-		console.log(init);
-		var round=0;
-		var count=0;
-		var first=true;
-		var filled = numMatchesFull/2;
 
 		for(var i=0;i<(winners.length-1);i++){
-			if((count==init+1 && first) || count==filled+1){
-				round++;
-				filled=filled/2;
-				count=0;
-				first=false;
-			}
-			courts.push([round,"?"+i]);
-			count++;
+			courts.push("?");
 		}
 
 		type = Session.get("PoolList/Type");
