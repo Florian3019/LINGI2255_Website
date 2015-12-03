@@ -9,7 +9,15 @@
 */
 
 Meteor.methods({
-
+	'getOnePairId' : function(){
+		return Pairs.find().fetch()[Pairs.find().count()-1]._id;
+	},
+	'getOnePoolId' : function(){
+		return Pools.find().fetch()[Pools.find().count()-1]._id;
+	},
+	'getPreviousPoolId' : function(){
+		return Pools.find().fetch()[Pools.find().count()-2]._id;
+	},
 	//TODO: remove this when going to production !!!
 	'turnAdminInsecure' : function(nid){
 		Meteor.users.update({_id:nid}, {
@@ -2029,7 +2037,7 @@ Meteor.methods({
 		var userID = Meteor.userId();
 		console.log(userID);
 
-		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1 && userID!==pair.player2))
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1._id && userID!==pair.player2._id))
 		{
 			console.error("You don't have the permission to do that");
 			throw new Meteor.error("unsubscribeTournament: no permissions");

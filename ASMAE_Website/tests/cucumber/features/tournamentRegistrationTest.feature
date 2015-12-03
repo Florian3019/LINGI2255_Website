@@ -7,7 +7,7 @@ Feature: Register to the tournament
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @watch
+    @ignore
     Scenario: Authenticated user can register to the tournament
         Given I am logged in
         And The tournament inscriptions were launched

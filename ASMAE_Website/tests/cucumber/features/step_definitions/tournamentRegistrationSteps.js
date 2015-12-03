@@ -15,8 +15,6 @@ module.exports = function () {
     });
     this.When(/^I navigate to the tournament registration page$/, function () {
         
-        browser.waitForExist('a#Droop.dropdown-togglebis');
-        browser.click('a#Droop.dropdown-togglebis');
         browser.waitForExist('a#Registr');
         browser.click('a#Registr');
     });
@@ -41,7 +39,7 @@ module.exports = function () {
     	client.setValue('#country','Belgique');
     	client.click('#Virement');
     	client.setValue('textarea#playerWish.form-control','Avoir une grande piscine et plein d argent');
-    	client.setValue('input#emailPlayer.form-control','serge@serge.com');
+    	client.setValue('#emailPlayer','serge@serge.com');
     	client.click('button#submit.btn.btn-default');
     });
 
