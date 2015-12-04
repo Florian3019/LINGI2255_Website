@@ -20,6 +20,7 @@ Template.closeRegistrationsBlock.helpers({
 });
 
 Template.tournamentProgress.helpers({
+
     'stepIsDoneClass': function(stepNumber){
         var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
         if(currentYear == ""){ //Tournament didn't launch yet
@@ -384,7 +385,7 @@ var assignCourts = function(rain){
                     else{
                         start=(start+next) % courtsTable[g].length;
                     }
-                }   
+                }
             }
 
             Meteor.call('updateType',typeDoc);

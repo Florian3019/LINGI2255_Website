@@ -9,7 +9,15 @@
 */
 
 Meteor.methods({
-
+	'getOnePairId' : function(){
+		return Pairs.find().fetch()[Pairs.find().count()-1]._id;
+	},
+	'getOnePoolId' : function(){
+		return Pools.find().fetch()[Pools.find().count()-1]._id;
+	},
+	'getPreviousPoolId' : function(){
+		return Pools.find().fetch()[Pools.find().count()-2]._id;
+	},
 	//TODO: remove this when going to production !!!
 	'turnAdminInsecure' : function(nid){
 		Meteor.users.update({_id:nid}, {
@@ -19,14 +27,17 @@ Meteor.methods({
 	},
 
 	'activateGlobalValuesDB' : function() {
-		if (!GlobalValues.findOne({_id:"currentYear"})) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
 		}
 		if(GlobalValues && !GlobalValues.findOne({_id:"nextCourtNumber"})) {
 			GlobalValues.insert({_id:"nextCourtNumber", value:1});
 		}
-		if (!GlobalValues.findOne({_id:"registrationsON"})) {
+		if (GlobalValues && !GlobalValues.findOne({_id:"registrationsON"})) {
 			GlobalValues.insert({_id:"registrationsON", value: false});
+		}
+		if (GlobalValues && !GlobalValues.findOne({_id:"nextBankTransferNumber"})) {
+			GlobalValues.insert({_id:"nextBankTransferNumber", value: 1000});
 		}
 	},
 
@@ -559,8 +570,10 @@ Meteor.methods({
 			var addr = Addresses.findOne({_id:data.addressID});
 			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
 			if(googleAnswer!==undefined && googleAnswer.length>0){
+
           		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude}; 
           		data.HQDist = getDistanceFromHQ(data.coords); 
+
     		}
 
 		}
@@ -1049,10 +1062,31 @@ Meteor.methods({
 			balance : amount
 		};
 
+		// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
+		if(pairData.paymentMethod === paymentTypes[1]){
+			paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
+
+			var newValue = paymentData.bankTransferNumber + 1;
+			GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
+				value: newValue
+			}});
+		}
+
 		//Check if payment already exists for this player
 		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear});
 		if(paymentAlreadyExists){
-			console.error("updatePair: Payment already exists for this player");
+			if(pairData._id){
+				Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
+					if(err){
+						console.error('insert payment error');
+						console.error(err);
+					}
+				});
+			}
+			else {
+				console.error("Payment already exists and should not be updated");
+			}
+
 		}
 		else {
 
@@ -1083,7 +1117,7 @@ Meteor.methods({
           			intro:"Bonjour "+user.profile.firstName+",",
           			important:"Nous avons bien reçu votre inscription",
           			texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
-          			encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) et d'y insérer les nom et prénom du joueur ainsi que le jour où il joue au tournoi."
+          			encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) avec comme communication le numéro d'identification suivant: " +paymentData.bankTransferNumber
         		};
 				if (!silentMail) {
 					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
@@ -1091,11 +1125,7 @@ Meteor.methods({
 					/*
 
 						Envoyer un mail contenant les informations pour payer par virement bancaire:
-						- compte bancaire: hardcoder pour le moment. Je mettrai peut-être un formulaire pour l'admin.
-						- communication: ce serait pratique d'avoir une communication structurée comme ça le staff
-							peut facilement vérifier valider qu'il a payé en rentrant cette communication dans un
-							input sur le site web. Si j'ai le temps plus tard je ferai ça ;)
-						- montant à payer: accessible via la variable amount
+						- compte bancaire: hardcoded pour le moment. Je mettrai peut-être un formulaire pour l'admin.
 
 					*/
 			}
@@ -2037,7 +2067,7 @@ Meteor.methods({
 		var userID = Meteor.userId();
 		console.log(userID);
 
-		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1 && userID!==pair.player2))
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1._id && userID!==pair.player2._id))
 		{
 			console.error("You don't have the permission to do that");
 			throw new Meteor.error("unsubscribeTournament: no permissions");
@@ -2064,6 +2094,10 @@ Meteor.methods({
 		else {
 			user = Meteor.users.findOne({_id:pair.player2._id});
 		}
+
+		// Remove payment
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
 
 
 		console.log(user);
@@ -2101,15 +2135,39 @@ Meteor.methods({
 			var partner = Meteor.users.findOne({_id:pair.player1._id});
 
 			var dataEmail= {
-				intro:"Bonjour "+user.player.firstName+" "+user.player.lastName,
+				intro:"Bonjour "+user.profile.firstName+" "+user.profile.lastName,
 				important:"Votre inscription au tournoi a été supprimée",
 				texte:"Vous avez retiré votre inscription au tournoi Le Charles de Lorraine, votre partenaire a été notifié(e) de votre désinscription."
 			};
 
 			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
 
-			//TODO ALEX : send mail to partner. his address : partner.emails[0]
-		}
+
+
+      this.unblock();
+
+      var dataEmailPartner={
+        intro:"Bonjour "+partner.profile.firstName+",",
+        important:"Nous avons une mauvaise nouvelle pour vous.",
+        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jour. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours aller choisir un nouveau partneaire sur notre site !"
+      };
+      var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+      var options =   {
+        auth: "api:" + process.env.MAILGUN_API_KEY,
+          params: {
+            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+            "to":partner.emails[0].address,
+            "subject": "Concernant votre inscription au tournoi",
+            "html": SSR.render("mailing",dataEmailPartner),
+          }
+        }
+        var onError = function(error, result) {
+          if(error) {console.error("Error: " + error)}
+        }
+
+        // Send the request
+          Meteor.http.post(postURL, options, onError);
+        }
 	},
 
 	/*
@@ -2229,6 +2287,22 @@ Meteor.methods({
       }
     }
   },
+
+	// For staff members: mark that a player has paid the tournament
+	'markAsPaid': function(paymentID){
+		if(!(Meteor.call('isAdmin') || Meteor.call('isStaff'))){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to restart a tournament");
+		}
+		Payments.update({_id: paymentID}, {$set: {
+			status: "paid"
+		}}, function(err, res){
+			if(err){
+				console.log(err);
+			}
+		});
+		return true;
+	}
 
 
 });

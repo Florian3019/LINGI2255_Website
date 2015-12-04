@@ -1,6 +1,6 @@
 Template.myCourts.helpers({
     'court': function(){
-      var x = Courts.find({ownerID: Meteor.userId()});
+        var x = Courts.find({ownerID: Meteor.userId()});
     	return {"cursor":x, "notEmpty":x.count()>0};
   	},
 

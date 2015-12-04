@@ -368,6 +368,15 @@ Template.playerInfoTemplate.events({
 			}
 		}
 
+	},
+
+	'click #markAsPaid': function(event){
+		Meteor.call('markAsPaid', this._id, function(err, result){
+			if(err){
+				console.log("Error while calling method markAsPaid");
+				console.log(err);
+			}
+		});
 	}
 
 });

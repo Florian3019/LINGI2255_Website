@@ -10,7 +10,8 @@ Meteor.methods({
 
 		console.log("activateDB sets your email to verified");
 		var user = Meteor.users.findOne({_id:Meteor.userId()});
-		Accounts.addEmail(Meteor.userId(), user.emails[0].address, true);
+		var a = "test@test.com";
+		//Accounts.addEmail(Meteor.userId(), a, true);
 	},
 
     /*
@@ -32,6 +33,61 @@ Meteor.methods({
 		//var cities = [ "Les Abymes", "Anse-Bertrand", "Baie-Mahault", "Baillif", "Basse-Terre", "Bouillante", "Capesterre-Belle-Eau", "Capesterre-de-Marie-Galante", "Gourbeyre", "La Désirade", "Deshaies", "Grand-Bourg", "Le Gosier", "Goyave", "Lamentin", "Morne-à-l'Eau", "Le Moule", "Petit-Bourg", "Petit-Canal", "Pointe-à-Pitre", "Pointe-Noire", "Port-Louis", "Saint-Claude", "Saint-François", "Saint-Louis", "Sainte-Anne", "Sainte-Rose", "Terre-de-Bas", "Terre-de-Haut", "Trois-Rivières", "Vieux-Fort", "Vieux-Habitants", "L'Ajoupa-Bouillon", "Les Anses-d'Arlet", "Basse-Pointe", "Le Carbet", "Case-Pilote", "Le Diamant", "Ducos", "Fonds-Saint-Denis", "Fort-de-France", "Le François", "Grand'Rivière", "Gros-Morne", "Le Lamentin", "Le Lorrain", "Macouba", "Le Marigot", "Le Marin", "Le Morne-Rouge", "Le Prêcheur", "Rivière-Pilote", "Rivière-Salée", "Le Robert", "Saint-Esprit", "Saint-Joseph", "Saint-Pierre", "Sainte-Anne", "Sainte-Luce", "Sainte-Marie", "Schœlcher", "La Trinité", "Les Trois-Îlets", "Le Vauclin", "Le Morne-Vert", "Bellefontaine", "Régina", "Cayenne", "Iracoubo", "Kourou", "Macouria", "Mana", "Matoury", "Saint-Georges", "Remire-Montjoly", "Roura", "Saint-Laurent-du-Maroni", "Sinnamary", "Montsinéry-Tonnegrande", "Ouanary", "Saül", "Maripasoula", "Camopi", "Grand-Santi", "Saint-Élie", "Apatou", "Awala-Yalimapo", "Papaichton", "Les Avirons", "Bras-Panon", "Entre-Deux", "L'Étang-Salé", "Petite-Île", "La Plaine-des-Palmistes", "Le Port", "La Possession", "Saint-André", "Saint-Benoît", "Saint-Denis", "Saint-Joseph", "Saint-Leu", "Saint-Louis", "Saint-Paul", "Saint-Pierre", "Saint-Philippe", "Sainte-Marie", "Sainte-Rose", "Sainte-Suzanne", "Salazie", "Le Tampon", "Les Trois-Bassins", "Cilaos", "Acoua", "Bandraboua", "Bandrele", "Bouéni", "Chiconi", "Chirongui", "Dembeni", "Dzaoudzi", "Kani-Kéli", "Koungou", "Mamoudzou", "Mtsamboro", "M'Tsangamouji", "Ouangani", "Pamandzi", "Sada", "Tsingoni", "Avon", "Bailly-Romainvilliers", "Boissettes", "Boissise-la-Bertrand", "Boissise-le-Roi", "Brie-Comte-Robert", "Brou-sur-Chantereine", "Bussy-Saint-Georges", "Bussy-Saint-Martin", "Carnetin", "Cesson", "Chalifert", "Champs-sur-Marne", "Chanteloup-en-Brie", "Chelles", "Chessy", "Claye-Souilly", "Collégien", "Combs-la-Ville", "Conches-sur-Gondoire", "Condé-Sainte-Libiaire", "Couilly-Pont-aux-Dames", "Coupvray", "Courtry", "Coutevroult", "Crécy-la-Chapelle", "Crégy-lès-Meaux", "Croissy-Beaubourg", "Dammarie-les-Lys", "Dammartin-en-Goële", "Dampmart", "Émerainville", "Esbly", "Ferrières-en-Brie", "Fontainebleau", "Gouvernes", "Gretz-Armainvilliers", "Guermantes", "Héricy", "Isles-lès-Villenoy", "Jossigny", "Lagny-sur-Marne", "Lésigny", "Lieusaint", "Livry-sur-Seine", "Lognes", "Longperrier", "Magny-le-Hongre", "Meaux", "Le Mée-sur-Seine", "Melun", "Mitry-Mory", "Moissy-Cramayel", "Montévrain", "Montry", "Nandy", "Nanteuil-lès-Meaux", "Noisiel", "Ozoir-la-Ferrière", "Poincy", "Pomponne", "Pontault-Combault", "Pringy", "Quincy-Voisins", "La Rochette", "Roissy-en-Brie", "Rubelles", "Saint-Fargeau-Ponthierry", "Saint-Germain-sur-Morin", "Saint-Thibault-des-Vignes", "Samoreau", "Savigny-le-Temple", "Seine-Port", "Serris", "Servon", "Thorigny-sur-Marne", "Torcy", "Tournan-en-Brie", "Trilport", "Vaires-sur-Marne", "Vaux-le-Pénil", "Vert-Saint-Denis", "Villenoy", "Villeparisis", "Villiers-sur-Morin", "Voulangis", "Vulaines-sur-Seine", "Achères", "Andrésy", "Aubergenville", "Auffreville-Brasseuil", "Aulnay-sur-Mauldre", "Bazoches-sur-Guyonne", "Bois-d'Arcy", "Bougival", "Buc", "Buchelay", "Carrières-sous-Poissy", "Carrières-sur-Seine", "La Celle-Saint-Cloud", "Chambourcy", "Chanteloup-les-Vignes", "Chapet", "Chevreuse", "Les Clayes-sous-Bois", "Coignières", "Conflans-Sainte-Honorine", "Élancourt", "Épône", "L'Étang-la-Ville", "Évecquemont", "La Falaise", "Flins-sur-Seine", "Follainville-Dennemont", "Fontenay-le-Fleury", "Fourqueux", "Gaillon-sur-Montcient", "Gargenville", "Guyancourt", "Hardricourt", "Houilles", "Issou", "Jouars-Pontchartrain", "Jouy-en-Josas", "Juziers", "Limay", "Les Loges-en-Josas", "Louveciennes", "Magnanville", "Magny-les-Hameaux", "Mantes-la-Jolie", "Mantes-la-Ville", "Mareil-Marly", "Maurecourt", "Maurepas", "Médan", "Le Mesnil-le-Roi", "Le Mesnil-Saint-Denis", "Meulan-en-Yvelines", "Mézières-sur-Seine", "Mézy-sur-Seine", "Montesson", "Montigny-le-Bretonneux", "Les Mureaux", "Neauphle-le-Château", "Neauphle-le-Vieux", "Nézel", "Orgeval", "Plaisir", "Poissy", "Porcheville", "Le Port-Marly", "Rambouillet", "Saint-Cyr-l'École", "Saint-Rémy-lès-Chevreuse", "Saint-Rémy-l'Honoré", "Sartrouville", "Tessancourt-sur-Aubette", "Trappes", "Le Tremblay-sur-Mauldre", "Triel-sur-Seine", "Vaux-sur-Seine", "Verneuil-sur-Seine", "Vernouillet", "La Verrière", "Vert", "Villennes-sur-Seine", "Villepreux", "Villiers-Saint-Frédéric", "Voisins-le-Bretonneux", "Arpajon", "Athis-Mons", "Ballainvilliers", "Bièvres", "Bondoufle", "Boussy-Saint-Antoine", "Brétigny-sur-Orge", "Breuillet", "Breux-Jouy", "Brunoy", "Bruyères-le-Châtel", "Bures-sur-Yvette", "Champlan", "Chilly-Mazarin", "Corbeil-Essonnes", "Le Coudray-Montceaux", "Courcouronnes", "Crosne", "Draveil", "Écharcon", "Égly", "Épinay-sous-Sénart", "Épinay-sur-Orge", "Étiolles", "Évry", "Fleury-Mérogis", "Fontenay-le-Vicomte", "Forges-les-Bains", "Gif-sur-Yvette", "Gometz-le-Châtel", "Grigny", "Igny", "Juvisy-sur-Orge", "Leuville-sur-Orge", "Limours", "Linas", "Lisses", "Longjumeau", "Longpont-sur-Orge", "Marcoussis", "Massy", "Mennecy", "Montgeron", "Montlhéry", "Morangis", "Morsang-sur-Orge", "Morsang-sur-Seine", "La Norville", "Nozay", "Ollainville", "Ormoy", "Orsay", "Palaiseau", "Paray-Vieille-Poste", "Le Plessis-Pâté", "Quincy-sous-Sénart", "Ris-Orangis", "Saclay", "Saint-Aubin", "Sainte-Geneviève-des-Bois", "Saint-Germain-lès-Arpajon", "Saint-Germain-lès-Corbeil", "Saint-Michel-sur-Orge", "Saint-Pierre-du-Perray", "Saintry-sur-Seine", "Saint-Yon", "Saulx-les-Chartreux", "Savigny-sur-Orge", "Soisy-sur-Seine", "Tigery", "Varennes-Jarcy", "Vauhallan", "Verrières-le-Buisson", "Vigneux-sur-Seine", "Villabé", "Villebon-sur-Yvette", "La Ville-du-Bois", "Villejust", "Villemoisson-sur-Orge", "Villiers-le-Bâcle", "Villiers-sur-Orge", "Viry-Châtillon", "Wissous", "Yerres", "Les Ulis", "Gennevilliers", "Villeneuve-la-Garenne", "Aulnay-sous-Bois", "Le Blanc-Mesnil", "Bobigny", "Bondy", "Le Bourget", "Clichy-sous-Bois", "Coubron", "La Courneuve", "Drancy", "Dugny", "Épinay-sur-Seine", "Gagny", "Gournay-sur-Marne", "L'Île-Saint-Denis", "Livry-Gargan", "Montfermeil", "Neuilly-sur-Marne", "Noisy-le-Grand", "Noisy-le-Sec", "Les Pavillons-sous-Bois", "Pierrefitte-sur-Seine", "Romainville", "Rosny-sous-Bois", "Sevran", "Stains", "Tremblay-en-France", "Vaujours", "Villepinte", "Villetaneuse", "Ablon-sur-Seine", "Alfortville", "Boissy-Saint-Léger", "Bonneuil-sur-Marne", "Champigny-sur-Marne", "Chennevières-sur-Marne", "Chevilly-LaRue", "Choisy-le-Roi", "Créteil", "Fresnes", "Limeil-Brévannes", "Mandres-les-Roses", "Marolles-en-Brie", "Noiseau", "Orly", "Ormesson-sur-Marne", "Périgny", "Le Plessis-Trévise", "La Queue-en-Brie", "Rungis", "Santeny", "Sucy-en-Brie", "Thiais", "Valenton", "Villecresnes", "Villeneuve-le-Roi", "Villeneuve-Saint-Georges", "Villiers-sur-Marne", "Vitry-sur-Seine", "Andilly", "Argenteuil", "Arnouville", "Auvers-sur-Oise", "Beauchamp", "Beaumont-sur-Oise", "Bernes-sur-Oise", "Bessancourt", "Bezons", "Boisemont", "Bonneuil-en-France", "Bouffémont", "Butry-sur-Oise", "Cergy", "Champagne-sur-Oise", "Cormeilles-en-Parisis", "Courdimanche", "Deuil-la-Barre", "Domont", "Eaubonne", "Écouen", "Épiais-lès-Louvres", "Éragny", "Ermont", "Ézanville", "Franconville", "Frépillon", "La Frette-sur-Seine", "Garges-lès-Gonesse", "Gonesse", "Goussainville", "Groslay", "Herblay", "L'Isle-Adam", "Jouy-le-Moutier", "Margency", "Menucourt", "Mériel", "Méry-sur-Oise", "Montigny-lès-Cormeilles", "Montlignon", "Montmagny", "Montmorency", "Mours", "Nesles-la-Vallée", "Neuville-sur-Oise", "Osny", "Parmain", "Persan", "Pierrelaye", "Piscop", "Le Plessis-Bouchard", "Pontoise", "Puiseux-Pontoise", "Roissy-en-France", "Ronquerolles", "Saint-Brice-sous-Forêt", "Saint-Gratien", "Saint-Leu-la-Forêt", "Saint-Ouen-l'Aumône", "Saint-Prix", "Sannois", "Sarcelles", "Soisy-sous-Montmorency", "Taverny", "Le Thillay", "Valmondois", "Vaudherland", "Vauréal", "Villiers-Adam", "Villiers-le-Bel", "Paris", "Chatou", "Le Chesnay", "Croissy-sur-Seine", "Maisons-Laffitte", "Marly-le-Roi", "Le Pecq", "Rocquencourt", "Saint-Germain-en-Laye", "Vélizy-Villacoublay", "Versailles", "Le Vésinet", "Viroflay", "Antony", "Asnières-sur-Seine", "Bagneux", "Bois-Colombes", "Boulogne-Billancourt", "Bourg-la-Reine", "Châtenay-Malabry", "Châtillon", "Chaville", "Clamart", "Clichy", "Colombes", "Courbevoie", "Fontenay-aux-Roses", "Garches", "La Garenne-Colombes", "Issy-les-Moulineaux", "Levallois-Perret", "Malakoff", "Marnes-la-Coquette", "Meudon", "Montrouge", "Nanterre", "Neuilly-sur-Seine", "Le Plessis-Robinson", "Puteaux", "Rueil-Malmaison", "Saint-Cloud", "Sceaux", "Sèvres", "Suresnes", "Vanves", "Vaucresson", "Ville-d'Avray", "Aubervilliers", "Bagnolet", "Les Lilas", "Montreuil", "Neuilly-Plaisance", "Pantin", "Le Pré-Saint-Gervais", "Le Raincy", "Saint-Denis", "Saint-Ouen", "Villemomble", "Arcueil", "Bry-sur-Marne", "Cachan", "Charenton-le-Pont", "Fontenay-sous-Bois", "Gentilly", "L'Haÿ-les-Roses", "Ivry-sur-Seine", "Joinville-le-Pont", "Le Kremlin-Bicêtre", "Maisons-Alfort", "Nogent-sur-Marne", "Le Perreux-sur-Marne", "Saint-Mandé", "Saint-Maur-des-Fossés", "Saint-Maurice", "Villejuif", "Vincennes", "Enghien-les-Bains", "Annet-sur-Marne", "Bagneaux-sur-Loing", "Barbizon", "Bois-le-Roi", "Cannes-Écluse", "La Celle-sur-Morin", "Cély", "Chailly-en-Bière", "Chamigny", "Champagne-sur-Seine", "Chartrettes", "Chevry-Cossigny", "Coulommiers", "Darvault", "Écuelles", "Faremoutiers", "Férolles-Attilly", "La Ferté-sous-Jouarre", "Fleury-en-Bière", "Fontaine-le-Port", "Jouarre", "Mareuil-lès-Meaux", "Montereau-Fault-Yonne", "Moret-sur-Loing", "Mouroux", "Moussy-le-Neuf", "Nangis", "Nemours", "Chauconin-Neufmontiers", "Othis", "Perthes", "Le Pin", "Pommeuse", "Pontcarré", "Provins", "Réau", "Reuil-en-Brie", "Rouilly", "Saint-Brice", "Saint-Germain-Laval", "Saint-Germain-sur-École", "Saint-Mammès", "Saint-Martin-en-Bière", "Saint-Pierre-lès-Nemours", "Saint-Sauveur-sur-École", "Samois-sur-Seine", "Thomery", "Varennes-sur-Seine", "Veneux-les-Sablons", "Vernou-la-Celle-sur-Seine", "Villevaudé", "Villiers-en-Bière", "Voisenon", "Aigremont", "Les Alluets-le-Roi", "Auffargis", "Bailly", "Bazemont", "Bennecourt", "Beynes", "Boissy-Mauvoisin", "Bonnières-sur-Seine", "Bouafle", "Breuil-Bois-Robert", "BRueil-en-Vexin", "Cernay-la-Ville", "Châteaufort", "Chavenay", "Choisel", "Crespières", "Dampierre-en-Yvelines", "Davron", "Drocourt", "Ecquevilly", "Émancé", "Les Essarts-le-Roi", "Favrieux", "Feucherolles", "Fontenay-Mauvoisin", "Fontenay-Saint-Père", "Freneuse", "Gazeran", "Guernes", "Guerville", "Guitrancourt", "Houdan", "Jambville", "Jouy-Mauvoisin", "Lévis-Saint-Nom", "Limetz-Villez", "Mareil-le-Guyon", "Maule", "Ménerville", "Méré", "Méricourt", "Les Mesnuls", "Milon-la-Chapelle", "Montfort-l'Amaury", "Morainvilliers", "Mousseaux-sur-Seine", "Noisy-le-Roi", "Oinville-sur-Montcient", "Perdreauville", "Le Perray-en-Yvelines", "Raizeux", "Rennemoulin", "Rolleboise", "Rosny-sur-Seine", "Saint-Forget", "Saint-Germain-de-la-Grange", "Saint-Hilarion", "Saint-Lambert", "Saint-Martin-la-Garenne", "Saint-Nom-la-Bretèche", "Saulx-Marchais", "Senlisse", "Soindres", "Thiverval-Grignon", "Toussus-le-Noble", "Vicq", "Auvernaux", "Auvers-Saint-Georges", "Avrainville", "Ballancourt-sur-Essonne", "Baulne", "Boissy-sous-Saint-Yon", "Boullay-les-Troux", "Bouray-sur-Juine", "Boutigny-sur-Essonne", "Brières-les-Scellés", "Briis-sous-Forges", "Cerny", "Chamarande", "Champcueil", "Cheptainville", "Chevannes", "Courdimanche-sur-Essonne", "Courson-Monteloup", "D'Huison-Longueville", "Dourdan", "Étampes", "Étréchy", "La Ferté-Alais", "Fontenay-lès-Briis", "Gometz-la-Ville", "Guibeville", "Guigneville-sur-Essonne", "Itteville", "Janville-sur-Juine", "Janvry", "Lardy", "Leudeville", "Marolles-en-Hurepoix", "Mauchamps", "Les Molières", "Morigny-Champigny", "Nainville-les-Roches", "Pecqueuse", "Roinville", "Saint-Chéron", "Saint-Jean-de-Beauregard", "Saint-Maurice-Montcouronne", "Saint-Sulpice-de-Favières", "Saint-Vrain", "Sermaise", "Soisy-sur-École", "Torfou", "Vaugrigneuse", "Vayres-sur-Essonne", "Vert-le-Grand", "Vert-le-Petit", "Ableiges", "Aincourt", "Asnières-sur-Oise", "Attainville", "Baillet-en-France", "Béthemont-la-Forêt", "Boissy-l'Aillerie", "Bouqueval", "Bruyères-sur-Oise", "Chaumontel", "Chauvry", "Chennevières-lès-Louvres", "Condécourt", "Courcelles-sur-Viosne", "Ennery", "Fontenay-en-Parisis", "Fosses", "Frémainville", "Frouville", "Génicourt", "Hédouville", "Hérouville", "Labbeville", "Livilliers", "Longuesse", "Louvres", "Luzarches", "Maffliers", "Marly-la-Ville", "Le Mesnil-Aubry", "Moisselles", "Montgeroult", "Montsoult", "Nerville-la-Forêt", "Nointel", "Le Plessis-Gassot", "Presles", "Puiseux-en-France", "Sagy", "Saint-Cyr-en-Arthies", "Saint-Witz", "Seraincourt", "Seugy", "Survilliers", "Vallangoujard", "Vémars", "Vétheuil", "Viarmes", "Vienne-en-Arthies", "Villeron", "Achères-la-Forêt", "Amillis", "Amponville", "Andrezel", "Arbonne-la-Forêt", "Argentières", "Armentières-en-Brie", "Arville", "Aubepierre-Ozouer-le-Repos", "Aufferville", "Augers-en-Brie", "Aulnoy", "Baby", "Balloy", "Bannost-Villegagnon", "Barbey", "Barcy", "Bassevelle", "Bazoches-lès-Bray", "Beauchery-Saint-Martin", "Beaumont-du-Gâtinais", "Beautheil", "Beauvoir", "Bellot", "Bernay-Vilbert", "Beton-Bazoches", "Bezalles", "Blandy", "Blennes", "Boisdon", "Boissy-aux-Cailles", "Boissy-le-Châtel", "Boitron", "Bombon", "Bougligny", "Boulancourt", "Bouleurs", "Bourron-Marlotte", "Boutigny", "Bransles", "Bray-sur-Seine", "Bréau", "La Brosse-Montceaux", "Burcy", "Bussières", "Buthiers", "Cerneux", "Cessoy-en-Montois", "Chailly-en-Brie", "Chaintreaux", "Chalautre-la-Grande", "Chalautre-la-Petite", "Chalmaison", "Chambry", "Champcenest", "Champdeuil", "Champeaux", "Changis-sur-Marne", "La Chapelle-Gauthier", "La Chapelle-Iger", "La Chapelle-la-Reine", "La Chapelle-Rablais", "La Chapelle-Saint-Sulpice", "Les Chapelles-Bourbon", "La Chapelle-Moutils", "Charmentray", "Charny", "Chartronges", "Châteaubleau", "Château-Landon", "Le Châtelet-en-Brie", "Châtenay-sur-Seine", "Châtenoy", "Châtillon-la-Borde", "Châtres", "Chauffry", "Chaumes-en-Brie", "Chenoise", "Chenou", "Chevrainvilliers", "Chevru", "Chevry-en-Sereine", "Choisy-en-Brie", "Citry", "Clos-Fontaine", "Cocherel", "Compans", "Congis-sur-Thérouanne", "Coubert", "Coulombs-en-Valois", "Coulommes", "Courcelles-en-Bassée", "Courchamp", "Courpalay", "Courquetaine", "Courtacon", "Courtomer", "Coutençon", "CrèvecSur-en-Brie", "Crisenoy", "La Croix-en-Brie", "Crouy-sur-Ourcq", "Cucharmoy", "Cuisy", "Dagny", "Dammartin-sur-Tigeaux", "Dhuisy", "Diant", "Donnemarie-Dontilly", "Dormelles", "Doue", "Douy-la-Ramée", "Échouboulains", "Les Écrennes", "Égligny", "Égreville", "Épisy", "Esmans", "Étrépilly", "Everly", "Évry-Grégy-sur-Yerre", "Favières", "Faÿ-lès-Nemours", "Féricy", "La Ferté-Gaucher", "Flagy", "Fontaine-Fourches", "Fontains", "Fontenailles", "Fontenay-Trésigny", "Forfry", "Forges", "Fouju", "Fresnes-sur-Marne", "Frétoy", "Fromont", "Fublaines", "Garentreville", "Gastins", "La Genevraye", "Germigny-l'Évêque", "Germigny-sous-Coulombs", "Gesvres-le-Chapitre", "Giremoutiers", "Gironville", "Gouaix", "La Grande-Paroisse", "Grandpuits-Bailly-Carrois", "Gravon", "Gressy", "Grez-sur-Loing", "Grisy-Suisnes", "Grisy-sur-Seine", "Guérard", "Guercheville", "Guignes", "Gurcy-le-Châtel", "Hautefeuille", "La Haute-Maison", "Hermé", "Hondevilliers", "La Houssaye-en-Brie", "Ichy", "Isles-les-Meldeuses", "Iverny", "Jablines", "Jaignes", "Jaulnes", "Jouy-le-Châtel", "Jouy-sur-Morin", "Juilly", "Jutigny", "Larchant", "Laval-en-Brie", "Léchelle", "Lescherolles", "Lesches", "Leudon-en-Brie", "Limoges-Fourches", "Lissy", "Liverdy-en-Brie", "Lizines", "Lizy-sur-Ourcq", "Longueville", "Lorrez-le-Bocage-Préaux", "Louan-Villegruis-Fontaine", "Luisetaines" ];
 
 		var cities = [{city:"Bruxelles", zip:1000}, {city:"Laeken", zip:1020}, {city:"Schaerbeek", zip:1030}, {city:"Etterbeek", zip:1040}, {city:"Ixelles", zip:1050}, {city:"Saint-Gilles", zip:1060}, {city:"Anderlecht", zip:1070}, {city:"Uccle", zip:1180}, {city:"Wavre", zip:1300}, {city:"Bierges", zip:1301}, {city:"Incourt", zip:1315}, {city:"Nodebais", zip:1320}, {city:"Bonlez", zip:1325}, {city:"Rixensart", zip:1330}, {city:"Genval", zip:1332}, {city:"Ottignies-Louvain-la-Neuve", zip:1340}, {city:"Limelette", zip:1342}, {city:"Louvain-la-Neuve", zip:1348}, {city:"Hélécine", zip:1357}, {city:"Perwez", zip:1367}, {city:"Ramilies", zip:1367}, {city:"Jodoigne", zip:1370}, {city:"Lasne", zip:1380}, {city:"Grez-Doiceau", zip:1390}, {city:"Nivelles", zip:1400}, {city:"Waterloo", zip:1410}, {city:"Braine-l\'Alleud", zip:1420}, {city:"Rebecq", zip:1430}, {city:"Corbais", zip:1435}, {city:"Chastre", zip:1450}, {city:"Ittre", zip:1460}, {city:"Baisy-Thy", zip:1470}, {city:"Tubize", zip:1480}, {city:"Court-Saint-Etienne", zip:1490}];
+
+		var courtAddresses = [
+			{street:"Bvd de Lauzelle", nbr:30, city:"LLN", zip:1348, lat:50.675963, lon:4.614891},
+			{street:"Rue de Mèves", nbr:25, city:"Chaumont-Gistoux", zip:1325, lon:4.639929, lat:50.677426},
+			{street:"Avenue de Chèremont", nbr:38, city:"Wavre", zip:1300, lon:4.624136, lat:50.709889},
+			{street:"Rue du Bois du Buis", nbr:13, city:"Walhain", zip:1360, lon:4.733484, lat:50.612556},
+			{street:"Chemin de l\'Herbe", nbr:50, city:"Chaumont-Gistoux", zip:1325, lon:4.685590, lat:50.700329},
+			{street:"Rue des Piles", nbr:27, city:"Waterloo", zip:1410, lon:4.364240, lat:50.704083},
+			{street:"Avenue des Croix du Feu", nbr:40, city:"Waterloo", zip:1410, lat:50.727455, lon:4.385354},
+			{street:"Avenue des Primevères", nbr:4, city:"Rixensart", zip:1332, lat:50.726151, lon:4.497964},
+			{street:"Allée du Bois de Bercuit", nbr:125, city:"Grez-Doiceau", zip:1390, lat:50.725064, lon:4.675634},
+			{street:"Rue du Baty", nbr:32, city:"Jodoigne", zip:1370, lat:50.727237, lon:4.823434},
+			{street:"Rue Brehen", nbr:2, city:"Orp-Jauche", zip:1350, lat:50.709413, lon:4.948404},
+			{street:"Rue de la Station", nbr:20, city:"Ramilies", zip:1367, lat:50.638593, lon:4.907033},
+			{street:"Rue Gabrielle Chatelain", nbr:25, city:"Namur", zip:5020, lat:50.504274, lon:4.866178},
+			{street:"Rue Antoine Quintens", nbr:47, city:"Gembloux", zip:5032, lat:50.541381, lon:4.675634},
+			{street:"Rue Bois des Pauvres", nbr:2, city:"Chastre", zip:1450, lat:50.607990, lon:4.614179},
+			{street:"Drève des Deux Bois", nbr:1, city:"Court-Saint-Etienne", zip:1490, lat:50.620844, lon:4.539850},
+			{street:"Chemin du Moulin", nbr:14, city:"Lasne", zip:1380, lat:50.696367, lon:4.483373},
+			{street:"La Grande Buissière", nbr:29, city:"Lasne", zip:1380, lat:50.697889, lon:4.461915},
+			{street:"Rue Colonel Montegnie", nbr:112, city:"Rixensart", zip:1332, lat:50.721804, lon:4.480970},
+			{street:"Avenue du Gris Moulin", nbr:64, city:"La Hulpe", zip:1310, lat:50.732779, lon:4.473588},
+			{street:"Hagaard", nbr:75, city:"Overijse", zip:3090, lat:50.761997, lon:4.525430},
+			{street:"Willem Matstraat", nbr:14, city:"Hoeilaart", zip:1560, lat:50.764060, lon:4.479940},
+			{street:"Avenue Mongolfier", nbr:100, city:"Woluwe-Saint-Pierre", zip:1150, lat:50.836534, lon:4.443033},
+			{street:"Rue Leon Cuissez", nbr:29, city:"Ixelles", zip:1050, lat:50.823415, lon:4.379690},
+			{street:"Avenue du Pesage", nbr:61, city:"Ixelles", zip:1050, lat:50.808448, lon:4.387243},
+			{street:"Rue du Bassinia", nbr:25, city:"Louvain-la-Neuve", zip:1348, lat:50.663943, lon:4.607935},
+			{street:"Rue Charles Quint", nbr:136, city:"Bruxelles", zip:1000, lat:50.849217, lon:4.388959},
+			{street:"Avenue du Vert Chasseur", nbr:46, city:"Uccle", zip:1180, lat:50.800745, lon:4.369218},
+			{street:"Avenue Blücher", nbr:57, city:"Uccle", zip:1180, lat:50.782298, lon:4.366472},
+			{street:"Avenue Astrid", nbr:79, city:"Rhode-Saint-Genèse", zip:1640, lat:50.740167, lon:4.384153},
+			{street:"Drève des Pins", nbr:29, city:"Braine-l\'Alleud", zip:1420, lat:50.723760, lon:4.338491},
+			{street:"Place de la Paix", nbr:1, city:"Evere", zip:1140, lat:50.876929, lon:4.400386},
+			{street:"Rue Frédéric Pelletier", nbr:73, city:"Schaerbeek", zip:1030, lat:50.845655, lon:4.401320},
+			{street:"Rue de la Probité", nbr:29, city:"Ixelles", zip:1050, lat:50.812754, lon:4.394315},
+			{street:"Rue Emile Wauters", nbr:79, city:"Bruxelles", zip:1020, lat:50.889161, lon:4.343058},
+			{street:"Rue de Ganshoren", nbr:4, city:"Koekelberg", zip:1081, lat:50.859622, lon:4.329169},
+			{street:"Fazantenlaan", nbr:12, city:"Vilvoorde", zip:1800, lat:50.910549, lon:4.378282},
+			{street:"Avenue des Tarins", nbr:21, city:"Kraainem", zip:1950, lat:50.856567, lon:4.468299},
+			{street:"Avenue des Genêts", nbr:20, city:"Wezembeek-Oppem", zip:3080, lat:50.830286, lon:4.498885},
+			{street:"Avenue Minerve", nbr:30, city:"Waterloo", zip:1410, lat:50.706444, lon:4.420193},
+			{street:"Rue Bois Paris", nbr:3, city:"Lasne", zip:1380, lat:50.684801, lon:4.467621},
+			{street:"Avenue de l\'Europe", nbr:34, city:"Rixensart", zip:1330, lat:50.702337, lon:4.533052},
+			{street:"Rue de la Mazerine", nbr:12, city:"La Hulpe", zip:1310, lat:50.731447, lon:4.493852},
+			{street:"Kalvarieberg", nbr:27, city:"Overijse", zip:3090, lat:50.776333, lon:4.544764},
+			{street:"Drève de Stadt", nbr:52, city:"Wavre", zip:1300, lat:50.728445, lon:4.610389},
+			{street:"Avenue de la Seigneurerie", nbr:6, city:"Chaumont-Gistoux", zip:1325, lat:50.691117, lon:4.640105},
+			{street:"Tienne de Chenois", nbr:2, city:"Chaumont-Gistoux", zip:1325, lat:50.696390, lon:4.668078},
+			{street:"Rue de la Hocaille", nbr:11, city:"Grez-Doiceau", zip:1390, lat:50.752946, lon:4.677273},
+			{street:"Rue de la Bruyère", nbr:23, city:"Braine-l\'Alleud", zip:1428, lat:50.651234, lon:4.376408},
+			{street:"Rue Mon Plaisir", nbr:1, city:"Ittre", zip:1460, lat:50.636392, lon:4.219828},
+			{street:"Fazantenlaat", nbr:10, city:"Beersel", zip:1653, lat:50.721929, lon:4.292184},
+			{street:"Avenue du Vossegat", nbr:25, city:"Uccle", zip:1180, lat:50.802935, lon:4.331082}
+		];
 
 
 		var AFTs = ["NC", "C30.5", "C30.4", "C30.3", "C30.2", "C30.1", "C30", "C15.5", "C15.4", "C15.3", "C15.2", "C15.1", "C15"];
@@ -288,7 +344,7 @@ Meteor.methods({
 				return false;
 			}
 			function getCourtArray() {
-				var rand = getRandomInt(1,11);
+				var rand = getRandomInt(5,11);
 				var array = [];
 				var globalValueDocument = Meteor.call('getNextCourtNumber');
 				nextCourtNumber = globalValueDocument.value;
@@ -323,8 +379,20 @@ Meteor.methods({
 				var ownerOK = tournamentYear.toString() === "2015";
 				var staffOK = ownerOK ? flipCoin() : false;
 
+				if (courtAddresses.length < 1) {
+					console.log("Not enough addresses");
+					return undefined;
+				}
+				var courtAddress = getRandomElement(courtAddresses);
+				var index = courtAddresses.indexOf(courtAddress);
+				courtAddresses.splice(index,1)
+
+				var coords = {
+					lat:courtAddress.lat,
+					lng:courtAddress.lon
+				};
 				court = {
-					addressID : insertAddress(true),
+					addressID : insertAddress(true, courtAddress),
 					courtNumber : courtArray,
 					courtType : flipCoin() ? "club" : "privé",
 					dispoSamedi : saturdayAvailable,
@@ -335,24 +403,41 @@ Meteor.methods({
 					numberOfCourts : courtArray.length,
 					ownerComment : getComment(),
 					ownerID : owner._id,
-					surface : getRandomElement(surfaceTypes)
+					surface : getRandomElement(surfaceTypes),
+					isOutdoor : flipCoin(),
+					coords : coords,
+					HQDist : getDistanceFromHQ(coords)
 				};
 
 				var id = Courts.insert(court);
 			}
 		}
 
-		function insertAddress(isCourt) {
-			var c = getRandomElement(cities);
-			var addressData = {
-                street:getRandomElement(streets),
-                number:getRandomInt(1,200),
-                box:getRandomInt(1,10).toString(),
-                city:c.city,
-                zipCode:c.zip,
-                country:"Belgique",
-                isCourtAddress:isCourt
-            };
+		function insertAddress(isCourt, courtAddress) {
+			var addressData;
+			if (isCourt) {
+				addressData = {
+					street:courtAddress.street,
+					number:courtAddress.nbr,
+					box:getRandomInt(1,10).toString(),
+					city:courtAddress.city,
+					zipCode:courtAddress.zip,
+					country:"Belgique",
+					isCourtAddress:true
+				};
+			}
+			else {
+				var c = getRandomElement(cities);
+				addressData = {
+	                street:getRandomElement(streets),
+	                number:getRandomInt(1,200),
+	                box:getRandomInt(1,10).toString(),
+	                city:c.city,
+	                zipCode:c.zip,
+	                country:"Belgique",
+	                isCourtAddress:false
+	            };
+			}
 			var addressID = Addresses.insert(addressData);
 			if (typeof addressID1 === undefined) {
 				console.log("Error popDB inserting address : "+addressData);

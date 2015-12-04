@@ -50,6 +50,17 @@ Router.route('/email-terrain', {
 	}
 });
 
+Router.route('/carte-terrains', {
+	template: 'courtMap',
+	name: 'courtMap',
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	},
+	waitOn: function(){
+		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses')  ]
+	},
+});
+
 Router.route('/modifications-log', {
 	template: 'modificationsLog',
 	name: 'modificationsLog',
@@ -382,17 +393,6 @@ Router.route('/forum', {
 	}
 });
 
-Router.route('/modifier-extras',{
-	name: "modifyExtras",
-	template: 'modifyExtras',
-	waitOn: function(){
-		return [ Meteor.subscribe('Extras')]
-	},
-	onAfterAction: function(){
-		Session.set('showNavBar', true);
-	}
-});
-
 Router.route('/confirmation-pair/:_id',{
 	name: 'confirmPair',
 	template: 'confirmPair',
@@ -461,6 +461,20 @@ Router.route('/faq', {
 Router.route('/deroulement-tournoi', {
   	name: 'tournamentProgress',
 	template: 'tournamentProgress',
+	waitOn: function() {
+		return [Meteor.subscribe('Years'), Meteor.subscribe('Extras')];
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
+});
+
+Router.route('/paiements-des-joueurs', {
+  	name: 'playerPayments',
+	template: 'playerPayments',
+	waitOn: function() {
+		return [Meteor.subscribe('Years'), Meteor.subscribe('Payments')];
+	},
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
 	}

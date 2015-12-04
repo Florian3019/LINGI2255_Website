@@ -97,7 +97,7 @@ Template.playersInfo.helpers({
                             return "Pas inscrit";
                         }
                         else{
-                            return paymentTranslate[payment.status] + " ("+payment.balance+"€ )";
+                            return paymentTranslate[payment.status] + " ("+payment.balance+"€)";
                         }
                     }
                 },
