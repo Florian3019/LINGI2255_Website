@@ -1,4 +1,4 @@
-Feature: Manage the pools
+Feature: Manage the pools and see the infos of a pair
 
     As an admin
     I want to manage the pools
@@ -10,5 +10,5 @@ Feature: Manage the pools
     Scenario: Authenticated user can register to the tournament
         Given I am logged in
         And The database has been populated
-        When I click on a poolManagement
-        Then I should see the page of the points encoding
+        When I click on a special Pair
+        Then I should see correct informations on the pair

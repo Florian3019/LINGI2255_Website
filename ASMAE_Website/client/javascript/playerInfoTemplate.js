@@ -1,3 +1,8 @@
+/*
+	This file defines how the player information summary page behaves. 
+	It also uses braintree to display payment informations
+*/
+
 Session.set('paymentFormStatus', null);
 
 // Create data object for payment

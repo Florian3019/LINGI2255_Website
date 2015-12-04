@@ -1,3 +1,6 @@
+/*
+  This file defines helpers for the page that shows a map displaying all the courts that are registered.
+*/
 function makeInfoWindowEvent(map, infowindow, contentString, marker) {
   google.maps.event.addListener(marker, 'click', function() {
     console.log(marker);
@@ -19,6 +22,7 @@ Template.courtMap.onCreated(function(){
       position: HQCoords,
       animation: google.maps.Animation.DROP,
       map: map.instance,
+      icon:'HQ.png'
     });
 
     map.instance.addListener('click', function() {
@@ -33,26 +37,32 @@ Template.courtMap.onCreated(function(){
     var courts = Courts.find().fetch(); 
 
     for(var i=0; i<courts.length;i++){
-      var court = courts[i];
-      if(court.coords!==undefined){
-        var marker = new google.maps.Marker({
-          position: court.coords,
-          animation: google.maps.Animation.DROP,
-          map: map.instance,
-        });
+      
+        (function () {
+          var court = courts[i];
+          if(court.coords!==undefined){
+            var marker = new google.maps.Marker({
+              position: court.coords,
+              animation: google.maps.Animation.DROP,
+              map: map.instance,
+            });
 
-        marker.addListener('click', function() {
-          var addr = Addresses.findOne(court.addressID);
-          infowindow.setContent(formatAddress(addr));
-          infowindow.open(map.instance, this);
-        });
-      }
+        
+            google.maps.event.addListener(marker, 'click', function() {
+                var addr = Addresses.findOne(court.addressID);
+                infowindow.setContent(formatAddress(addr));
+                infowindow.open(map.instance, this);
+                map.instance.setCenter(new google.maps.LatLng(court.coords.lat,court.coords.lng));
+            });
+          }
+        })();
+
     }
   });
 });
 
 Template.courtMap.onRendered(function(){
-   GoogleMaps.load({key:"AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs"});
+   GoogleMaps.load({key:Google_API_KEY_BROWSER});
 });
 
 Template.courtMap.helpers({

@@ -1,3 +1,6 @@
+/*
+  This file allows displays a table with different filters to search through the registered courts.
+*/
 Template.mySpecialFilterCourt.events({
     'keyup .courtFilter':function(event){
         privInput = event.currentTarget.value;
@@ -134,7 +137,7 @@ Template.allCourtsTable.helpers({
           { key: 'ownerComment', label:"Commentaire propriétaire"},
           { key: 'staffComment', label:"Commentaire staff"},
           { key: 'courtNumber', label:"Numéros", fn:function(value, object){
-              
+              if(value==null) return "";
               return value.join(", ");
           }}
       ],

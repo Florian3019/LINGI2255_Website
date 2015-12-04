@@ -1,4 +1,6 @@
-
+/*
+	This file allows the user to modify its profile
+*/
 Template.profileEdit.helpers({
 	mail : function(){
 		return this.user.emails[0].address;

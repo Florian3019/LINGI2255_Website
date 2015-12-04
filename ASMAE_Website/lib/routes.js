@@ -1,3 +1,7 @@
+/*
+	This file defines routes for the website, what should be loaded for each route and 
+	special actions to be made when the user moves to or from a page
+*/
 
 Router.configure({
 	layoutTemplate: 'index',
@@ -59,6 +63,14 @@ Router.route('/carte-terrains', {
 	waitOn: function(){
 		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses')  ]
 	},
+});
+
+Router.route('/staff-faq', {
+	template: 'staffFaq',
+	name: 'staffFaq',
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
 });
 
 Router.route('/modifications-log', {

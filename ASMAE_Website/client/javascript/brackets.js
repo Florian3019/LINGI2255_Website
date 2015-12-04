@@ -1,5 +1,22 @@
+/*
+  This file defines how the brackets are created. It uses the plugin in public/jquery.gracket.js to display it on the page.
+  As this is directly modifying the html, meteor is not really used to that and this poses various page update challenges.
 
-// Do Session.set('brackets/update',Session.get('brackets/update') when you want to update the brackets (and only then).
+  The main frame is the following:
+  0. Check for any errors and display them to the user if need be.
+  1. Fetch the best players from each pool : this is done in server/bracketTournament.js
+  2. From that list, ask the user if he is ok with it : this is done in client/buildTournament.js
+  3. When he's ok with it, that list needs to be converted in something that can be displayed, and by adding the placeholders
+     if the number of pairs is not a power of 2.
+     The order in which the pairs play against each other is determined in the function getOrder().
+     The conversion to display data is done by makeBrackets()
+  4. Once the display data has been generated, the display of the knock-offs is done by calling displayBrackets(), which in turns calls
+     the plugin jquery.gracket.js, which inserts the html into the page.
+
+
+  Do Session.set('brackets/update',!Session.get('brackets/update')) when you want to update the brackets (and only then).
+*/
+
 
 const react = {reactive: false};
 const emptyCourt = "?";

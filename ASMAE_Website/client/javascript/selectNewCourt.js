@@ -1,3 +1,7 @@
+/*
+    This file defines how the selection of a new court is made,
+    when choosing one from the knock-offs or from the pool management
+*/
 Template.selectNewCourt.events({
     'click #newCourtCancel':function(event){
         restoreSession();
@@ -118,7 +122,7 @@ var changeCourtPool = function(listDouble,newCourtNumber,oldCourtNumber,behavior
             }
             if(behavior==="delete"){
                 var oldCourtData = Courts.findOne({"courtNumber":listDouble[i].courtId});
-                addToLog("Changement de terrain","Le terrain de la poule "+listDouble[i]._id+" a été supprimé"+ getStringOptions(),newCourtData,oldCourtData);
+                addToLog("Suppression de terrain","Le terrain de la poule "+listDouble[i]._id+" a été supprimé"+ getStringOptions(),newCourtData,oldCourtData);
                 Pools.update({_id:listDouble[i]._id},{$unset: {"courtId":""}});
             }
         }
@@ -128,24 +132,25 @@ var changeCourtPool = function(listDouble,newCourtNumber,oldCourtNumber,behavior
     var oldCourtData = Courts.findOne({"courtNumber":pool.courtId});
     var newCourtAddress = Addresses.findOne({_id:newCourtData.addressID});
 
-    if(oldCourtData==undefined){
-        var details = "Le terrain N°"+ newCourtNumber + " " + formatAddress(oldCourtAddress) + "a été assigné à la poule "+pool._id+ getStringOptions();
+    if(pool.courtId==undefined){
+        var details = "Le terrain N°"+ newCourtNumber + " " + formatAddress(newCourtData) + "a été assigné à la poule "+pool._id+ getStringOptions();
         addToLog("Assignation de terrain",details,newCourtData,oldCourtData);
 
         pool.courtId = newCourtNumber;
         Meteor.call('updatePool',pool);
         return;
     }
-
-    var oldCourtAddress = Addresses.findOne({_id:oldCourtData.addressID});
-    var details = "Le terrain N°"+ pool.courtId + " " + formatAddress(oldCourtAddress) + " de la poule "+pool._id+" est maintenant le terrain N°"+newCourtNumber+ " "+ formatAddress(newCourtAddress)+ getStringOptions();
-    addToLog("Changement de terrain",details,newCourtData,oldCourtData);
+    else{
+        var oldCourtAddress = Addresses.findOne({_id:oldCourtData.addressID});
+        var details = "Le terrain N°"+ pool.courtId + " " + formatAddress(oldCourtAddress) + " de la poule "+pool._id+" est maintenant le terrain N°"+newCourtNumber+ " "+ formatAddress(newCourtAddress)+ getStringOptions();
+        addToLog("Changement de terrain",details,newCourtData,oldCourtData);
+    }
 
     pool.courtId = newCourtNumber;
     Meteor.call('updatePool',pool);
 }
 
-var changeCourtKnockOff = function(listDouble,newCourtNumber,oldCourtNumber,behavior){
+var changeCourtKnockOff = function(listDouble,newCourtNumber,oldCourtNumber,behavior,closeModal){
 
     var pos = Session.get("PoolList/ChosenPos");
     var year = Years.findOne({_id:Session.get("PoolList/Year")});
@@ -214,10 +219,33 @@ var changeCourtKnockOff = function(listDouble,newCourtNumber,oldCourtNumber,beha
         }
 
         callback = function(err, retVal){
-            restoreSession();
+
+                if(closeModal==true){
+                    $('#AlertModal')
+                    .on('hidden.bs.modal', function() {
+                        restoreSession();
+                    })
+                    .modal('hide');
+                }
+                else{
+                    restoreSession();
+                }
          };
 
         Meteor.call("updateType",type,callback);
+
+    }
+    else{
+        if(closeModal==true){
+            $('#AlertModal')
+            .on('hidden.bs.modal', function() {
+                restoreSession();
+            })
+            .modal('hide');
+        }
+        else{
+            restoreSession();
+        }
 
     }
 }
@@ -265,10 +293,11 @@ Template.chooseCourtsModal.events({
             }
             else{
                 if(Session.get("changeCourtsBracket")==="true"){
-                    changeCourtKnockOff(listDoubleKnockOff,newCourtNumber,oldCourtNumber,"keepBoth");
+                    changeCourtKnockOff(listDoubleKnockOff,newCourtNumber,oldCourtNumber,"keepBoth",false);
                 }
                 else{
                     changeCourtPool(listDoublePools,newCourtNumber,oldCourtNumber,"keepBoth");
+                    restoreSession();
                 }
             }
         })
@@ -282,7 +311,7 @@ Template.AlertModal.helpers({
             return "l'après-midi";
         }
         else{
-            return 'la matiné';
+            return 'la matinée';
         }
     },
     'canSwap': function(){
@@ -304,19 +333,19 @@ Template.AlertModal.events({
 
         if(Session.get("changeCourtsBracket")==="true"){
             var listDouble = Session.get("selectNewCourt/listDoubleKnockOff");
-            changeCourtKnockOff(listDouble,newCourtNumber,oldCourtNumber,behavior);
+            changeCourtKnockOff(listDouble,newCourtNumber,oldCourtNumber,behavior,true);
         }
         else{
             var listDouble = Session.get("selectNewCourt/listDoublePools");
             changeCourtPool(listDouble,newCourtNumber,oldCourtNumber,behavior);
-            restoreSession();
+
+            $('#AlertModal')
+            .on('hidden.bs.modal', function() {
+                restoreSession();
+            })
+            .modal('hide');
         }
 
-        $('#AlertModal')
-        .on('hidden.bs.modal', function() {
-            restoreSession();
-        })
-        .modal('hide');
     },
     'click .cancel': function(event){
         $('#AlertModal')

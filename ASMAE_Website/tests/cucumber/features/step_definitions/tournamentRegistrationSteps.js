@@ -45,6 +45,7 @@ module.exports = function () {
 
     this.Then(/^I should see a confirmation page of my inscription$/, function() {
         browser.waitForExist('div.panel-heading');
+        browser.waitForExist('#Status')
         var title = browser.getText('#Status');
         expect(title).toEqual("Statut de votre inscription : En attente d'un partenaire");
         var mail = browser.getText('#Email');

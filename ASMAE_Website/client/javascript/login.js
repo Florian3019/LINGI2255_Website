@@ -1,3 +1,8 @@
+/*
+    This file defines login settings
+*/
+
+
  /*#################################
               LOGIN SETTINGS
     #################################*/

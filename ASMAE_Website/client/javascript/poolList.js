@@ -1,5 +1,15 @@
-// Might be useful at some point :
-// https://developer.mozilla.org/en/docs/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces
+/*
+	This file defines how the pools can be managed.
+	It defines helpers for:
+		-> The pairs to split container
+		-> The merge player container
+		-> The side bar collapsable menu
+		-> The pair info modal
+		-> The draggable items
+		-> The draggable containers
+		-> Equilbrate the pools
+*/
+
 
 var drake; // Draggable object
 
@@ -421,16 +431,22 @@ var addLeaderChangeToLog = function(oldUserId, newUserId){
 	);
 }
 
+/*
+	This function takes a poolId and a removedPairId.
+	It attempts to find a new leader for this pool if the removedPairId was the poolLeader. 
+	If it can't find a new pool leader (there are no full pairs in the pool),
+	it will remove the existing leader for that pool.
+*/
 var findNewPoolLeader = function(poolId, removedPairId){
-	pair = Pairs.findOne({_id:removedPairId});
-	prevPool = Pools.findOne({_id:poolId}, {pairs:1, leader:1});
+	var pair = Pairs.findOne({_id:removedPairId});
+	var prevPool = Pools.findOne({_id:poolId}, {pairs:1, leader:1});
 
 	if(prevPool.leader==undefined || prevPool.leader===pair.player1._id || ((pair.player2==undefined) ? false : prevPool.leader===pair.player2._id)){
-		leaderFound = false;
+		var leaderFound = false;
 		// Find the first pair in the pool that has 2 players (that is a valid pair) and set player1 as new leader
 		for(var j=0;j<prevPool.pairs.length;j++){
 			if(prevPool.pairs[j]===removedPairId) continue;
-			p = Pairs.findOne({_id:prevPool.pairs[j]});
+			var p = Pairs.findOne({_id:prevPool.pairs[j]});
 			if(p.player1 && p.player2 && p.player1._id && p.player2._id){
 				Pools.update({_id:poolId}, {$set:{leader:p.player1._id}});
 				addLeaderChangeToLog(prevPool.leader,p.player1._id);
@@ -445,7 +461,10 @@ var findNewPoolLeader = function(poolId, removedPairId){
 	}
 }
 
-// Returns a list of pair moves
+/* 
+	This function applies the moves that have been made to the pairs inside pools.
+	Returns a list of pair moves
+*/
 var movePairs = function(document){
 	var table = document.getElementById("poolTable");
 	var cells = table.getElementsByClassName('pairs');
@@ -534,6 +553,12 @@ var movePairs = function(document){
 	return moves;
 }
 
+/*
+	This function deletes or moves matches depending on that:
+	If more than one pair is moved at the same time to another pool, 
+	the matches these pairs have played together will be transfered to the new
+	pool. Otherwise, the matches will be deleted.
+*/
 var deleteAndMoveMatches = function(moves){
 	keys = Object.keys(moves);
 
@@ -951,7 +976,7 @@ Template.poolList.helpers({
 			}
 		).on('drag', function (el,source) {
 		  	/*
-				Make the screen scroll when an draggable object is near the border of the screen
+				Make the screen scroll when a draggable object is near the border of the screen
 		  	*/
 
 			const scrollSpeed = 3; //px
@@ -979,7 +1004,7 @@ Template.poolList.helpers({
 		            var h = $(window).height();
 		            var w = $(window).width();
 
-				    if(h-e.y < 50) {
+				    if(h-e.y < 50) { // vertical scroll
 				    	m = true;
 				        scrollPage(0, scrollSpeed);
 				    }
@@ -987,7 +1012,7 @@ Template.poolList.helpers({
 				    	m = true;
 						scrollPage(0, -scrollSpeed);
 				    }
-				    else if(w-e.x < 50) {
+				    else if(w-e.x < 50) { // horizontal scroll
 				    	m = true;
 				        scrollPage(scrollSpeed,0);
 				    }
@@ -1031,6 +1056,11 @@ Template.poolList.helpers({
 /******************************************************************************************************************
 											alonePairsContainerTemplate
 *******************************************************************************************************************/
+/*
+	This container contains pairs that do not have 2 players. They are shown separetely. Note that these
+	pairs are still located in pools in the the db, like any other pair.
+*/
+
 
 var showPairModal = function(){
 	Session.set('closeModal',"pairModal");
@@ -1095,7 +1125,9 @@ Template.alonePairsContainerTemplate.helpers({
 /******************************************************************************************************************
 											poolItem
 *******************************************************************************************************************/
-
+/*
+	This defines the item that will actually be draggable
+*/
 Template.poolItem.helpers({
 	'getPlayer' : function(playerId){
 		return Meteor.users.findOne({_id:playerId});
@@ -1132,12 +1164,18 @@ Template.poolItem.onRendered(function(){
 /******************************************************************************************************************
 											poolContainerTemplate
 *******************************************************************************************************************/
+/*
+	This defines the container that contains poolItems
+*/
 
 Template.poolContainerTemplate.onRendered(function(){
 	doc = document.querySelector('#a'+this.data.POOL._id);
   	drake.containers.push(doc); // Make the id this.data.ID draggable
 });
 
+/*
+	Returns true the list of pairs contains at least one pair with 2 players
+*/
 var moreThanOnePairFunct = function(pairs){
 	for(var i=0;i<pairs.length;i++){
 		pair = Pairs.findOne({"_id":pairs[i]});
@@ -1323,8 +1361,15 @@ Template.poolBracketsSelect.helpers({
 /******************************************************************************************************************
 											modalItem
 *******************************************************************************************************************/
+/*
+	This defines the modal that shows up when a pair is cliqued
+*/
 
 Template.modalItem.helpers({
+
+	/*
+		This returns a list of objects defining which types the pair with pairId can move to. The pair only has 1 player set.
+	*/
 	'getAvailableTypes':function(pairId, poolId, sex, birthDate){
 		var toReturn = [];
 		var type = Session.get("PoolList/Type");
@@ -1333,7 +1378,7 @@ Template.modalItem.helpers({
 
 		for(var i=0; i<typeKeys.length;i++){
 			var key = typeKeys[i];
-			var selected = type===key ? true : false;
+			var selected = type===key;
 			if( type!==key && ((key==="women" && gender==="women") || (key==="men"&&gender==="men") || key==="family" || key=="mixed")){
 				if((key==="family" && acceptForFamily(birthDate)) || key!=="family"){
 					toReturn.push({"key":key, "value":typesTranslate[key], "selected":selected, "pairId":pairId, "poolId":poolId});
@@ -1349,6 +1394,10 @@ Template.modalItem.helpers({
 });
 
 Template.modalItem.events({
+
+	/*
+		This defines what happens when the staff wants to move a player of type.
+	*/
 	'click .typeChosing' :function(event){
 		// Remove this pair from the pool (pair is alone)
 		Pools.update({"_id":this.poolId},{"$pull":{"pairs":this.pairId}});
@@ -1389,6 +1438,9 @@ Template.modalItem.events({
 /******************************************************************************************************************
 											reponsablesTemplate
 *******************************************************************************************************************/
+/*
+	This defines how the responsables are set and displayed
+*/
 
 Template.responsablesTemplate.helpers({
 
@@ -1455,7 +1507,7 @@ Template.responsablesTemplate.helpers({
 
 
 /******************************************************************************************************************
-											split pools in half
+											Equilibrate pools
 *******************************************************************************************************************/
 
 /*
@@ -1497,7 +1549,7 @@ var addNewPool = function(obj){
 }
 
 /*
-	Visually cuts the pools in half
+	Visually sets the same amount of pairs to each pool
 */
 var equilibrate = function(document){
 	var table = document.getElementById("poolTable");
@@ -1514,7 +1566,7 @@ var equilibrate = function(document){
 		}
 	}
 
-	var optimalSize = totalPairs/poolContainers.length; // Goal of pairs/pool
+	var optimalSize = totalPairs/poolContainers.length; // Ideal number of pairs per pool
 
 	// For each poolContainer
 	for(var i=0;i<poolContainers.length;i++){

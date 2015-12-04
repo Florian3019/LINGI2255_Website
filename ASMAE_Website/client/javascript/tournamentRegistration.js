@@ -1,3 +1,6 @@
+/*
+	This file defines how a user can register for the tournament
+*/
 var aloneDependency = new Deps.Dependency();
 
 function isEmptyTable() {
@@ -849,10 +852,10 @@ Template.tournamentRegistration.events({
 		}
 		else{
 
-			var remove; // By default, this is undefine. If it is defined, contains the id of a pair to remove
+			var remove; // By default, this is undefined. If it is defined, contains the id of a pair to remove
 
 			/*
-			Depending if user wants to register alone or with a pair, choose appropriate action
+				Depending if user wants to register alone or with a pair, choose appropriate action
 			*/
 			var pairData;
 			if(alone && !later){

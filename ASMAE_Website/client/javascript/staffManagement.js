@@ -1,3 +1,6 @@
+/*
+	This file defines how the staff can answer to the questions asked by users.
+*/
 var ison = false;
 Template.staffManagement.events({
 	'click #questionButton':function(){
