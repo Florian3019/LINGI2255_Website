@@ -30,4 +30,18 @@ module.exports = function () {
         client.click(b)
     });
 
+    this.Then(/^I should see the page of the points encoding$/,function(){
+        var title1 = '#ResponsableHeader';
+        browser.waitForExist(title1);
+        expect(browser.getText(title1)).toEqual('Responsables:');
+
+        var title2 = '#TerrainHeader';
+        browser.waitForExist(title2);
+        expect(browser.getText(title2)).toEqual('Terrain :');
+
+        var title3 = '#ConsignesHeader';
+        browser.waitForExist(title3);
+        expect(browser.getText(title3)).toEqual('Les paires dans la colonne jouent contre les paires de la ligne.');
+    });
+
 }

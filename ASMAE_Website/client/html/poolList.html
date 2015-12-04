@@ -371,7 +371,7 @@ Takes 2 arguments :
 
 <template name="responsablesTemplate">
   <div>
-    <h3 style="display:inline">Responsables: </h3>
+    <h3 style="display:inline" id="ResponsableHeader">Responsables: </h3>
     {{#if isAdminOrStaff}}
       {{#if isResponsable}}
       <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right">
