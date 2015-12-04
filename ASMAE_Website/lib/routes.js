@@ -61,6 +61,14 @@ Router.route('/carte-terrains', {
 	},
 });
 
+Router.route('/staff-faq', {
+	template: 'staffFaq',
+	name: 'staffFaq',
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
+});
+
 Router.route('/modifications-log', {
 	template: 'modificationsLog',
 	name: 'modificationsLog',
