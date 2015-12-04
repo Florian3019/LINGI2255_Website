@@ -531,7 +531,8 @@ Meteor.methods({
 			coords:{ // automatically set when addressID is provided
 				lat:<latitude>,
 				lng:<longitude>
-			}
+			},
+			HQDist:<double> (distance from HQ)
 		},
 	*/
 	'updateCourt' : function(courtData){
@@ -558,8 +559,10 @@ Meteor.methods({
 			var addr = Addresses.findOne({_id:data.addressID});
 			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
 			if(googleAnswer!==undefined && googleAnswer.length>0){
-          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};  
+          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude}; 
+          		data.HQDist = getDistanceFromHQ(data.coords); 
     		}
+
 		}
 		if(courtData.surface){
 			data.surface = courtData.surface;
@@ -619,6 +622,11 @@ Meteor.methods({
 
 		if(courtId === undefined){
 			// Create a new court
+
+			if(data.HQDist===undefined){
+				data.HQDist=Number.MAX_VALUE;
+			}
+
 			return Courts.insert(data, function(err, courtId){
 				if(err){
 					throw new Meteor.Error("updateCourt error: during Courts.insert", err);
