@@ -19,6 +19,7 @@ Template.courtMap.onCreated(function(){
       position: HQCoords,
       animation: google.maps.Animation.DROP,
       map: map.instance,
+      icon:'HQ.png'
     });
 
     map.instance.addListener('click', function() {
@@ -33,20 +34,26 @@ Template.courtMap.onCreated(function(){
     var courts = Courts.find().fetch(); 
 
     for(var i=0; i<courts.length;i++){
-      var court = courts[i];
-      if(court.coords!==undefined){
-        var marker = new google.maps.Marker({
-          position: court.coords,
-          animation: google.maps.Animation.DROP,
-          map: map.instance,
-        });
+      
+        (function () {
+          var court = courts[i];
+          if(court.coords!==undefined){
+            var marker = new google.maps.Marker({
+              position: court.coords,
+              animation: google.maps.Animation.DROP,
+              map: map.instance,
+            });
 
-        marker.addListener('click', function() {
-          var addr = Addresses.findOne(court.addressID);
-          infowindow.setContent(formatAddress(addr));
-          infowindow.open(map.instance, this);
-        });
-      }
+        
+            google.maps.event.addListener(marker, 'click', function() {
+                var addr = Addresses.findOne(court.addressID);
+                infowindow.setContent(formatAddress(addr));
+                infowindow.open(map.instance, this);
+                map.instance.setCenter(new google.maps.LatLng(court.coords.lat,court.coords.lng));
+            });
+          }
+        })();
+
     }
   });
 });
