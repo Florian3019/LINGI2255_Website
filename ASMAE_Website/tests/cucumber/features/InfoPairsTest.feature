@@ -10,4 +10,4 @@ Feature: Manage the pools
     Scenario: Authenticated user can register to the tournament
         Given I am logged in
         And The database has been populated
-        When I click on a poolManagement
+        When I click on a special Pair

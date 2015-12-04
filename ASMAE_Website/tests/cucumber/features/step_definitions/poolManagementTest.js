@@ -5,6 +5,7 @@ module.exports = function () {
         client.click('#tournamentNavigation');
 
 
+        client.waitForVisible('#Year')
         client.waitForExist('#Year');
         client.click('#Year')
         client.waitForExist('option[value="2015"]')
@@ -15,49 +16,18 @@ module.exports = function () {
         client.click('#btn_men_preminimes')
         client.waitForExist('#Poules')
         client.click('#Poules')
+        client.pause(1000)
         // a allows drag and drop
         // b allows to see the pool/poolmanager/...
 
-        var a = "#"+server.call('getOnePairId')
-        client.waitForExist(a)
-        var b = '#'+'clickOnIt'+server.call('getOnePoolId')
-        var c = '#a'+server.call('getPreviousPoolId')
-        //client.click(b)
-        client.waitForExist(b)
-        client.waitForExist(c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.dragAndDrop(a,c)
-        client.click(a)
-        client.click(a)
-        client.click(a)
-        client.click(a)
-        client.click(a)
-        client.click(a)
-        client.click(a)
-        client.click(a)
-        client.click(a)
-        client.click(a)
+    });
 
+    this.When(/^I click on a poolManagement$/,function(){
+        var b = '#'+'clickOnIt'+server.call('getOnePoolId')
+        
+        client.waitForExist(b)
+        client.waitForVisible(b)
+        client.click(b)
     });
 
 }
