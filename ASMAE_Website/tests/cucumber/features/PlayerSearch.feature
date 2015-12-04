@@ -1,12 +1,12 @@
-Feature: Manage the pools
+Feature: Search amongst players
 
     As an admin
-    I want to manage the pools
+    I want to Search amongst players
 
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @ignore
+    @watch
     Scenario: Authenticated user can register to the tournament
         Given I am logged in
         And The database has been populated

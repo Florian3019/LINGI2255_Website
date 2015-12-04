@@ -1,4 +1,4 @@
-Feature: Manage the pools
+Feature: Manage the pools and see the infos of a pair
 
     As an admin
     I want to manage the pools
@@ -6,7 +6,7 @@ Feature: Manage the pools
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @ignore
+    @watch
     Scenario: Authenticated user can register to the tournament
         Given I am logged in
         And The database has been populated

@@ -1,12 +1,12 @@
-Feature: Manage the pools
+Feature: Check the good working of Deroulement du tournoi
 
     As an admin
-    I want to manage the pools
+    I want to manage the tournament
 
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @ignore
+    @watch
     Scenario: Authenticated user can register to the tournament
         Given I am logged in
         And The database has been populated

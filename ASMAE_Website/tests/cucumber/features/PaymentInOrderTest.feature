@@ -1,7 +1,7 @@
-Feature: Manage the pools
+Feature: Check the payments
 
     As an admin
-    I want to manage the pools
+    I want to check the payments
 
     Background: Tournament registrations launched
         Given An admin has been created
