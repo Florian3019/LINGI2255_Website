@@ -1,14 +1,14 @@
-Feature: Search amongst players
+Feature: Check the payments
 
     As an admin
-    I want to Search amongst players
+    I want to check the payments
 
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @ignore
+    @watch
     Scenario: Authenticated user can register to the tournament
         Given I am logged in
         And The database has been populated
-        When I click on Rechercher un joueur
-        Then I should see the informations about the research between players
+        When I click on Paiements en ordre
+        Then I should see the page that checks the payments

@@ -1,4 +1,4 @@
-Feature: Manage the pools
+Feature: Manage the pools and see the infos of a pair
 
     As an admin
     I want to manage the pools
