@@ -1,3 +1,11 @@
+/*
+	API's needed :
+	Google Maps Geocoding API
+	Google Maps JavaScript API
+	--> Browser & server keys
+*/
+
+
 // Currently setup with guillaume leurquin's secrets. Please change this when going to production
 var Google_API_KEY_SERVER = "AIzaSyAoAQpteuybI8u7FAfpxtF_TFBTdJ4BAyY";
 
