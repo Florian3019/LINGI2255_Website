@@ -108,11 +108,19 @@ Template.courtInfoPage.onCreated(function(){
   // We can use the `ready` callback to interact with the map API once the map is ready.
   GoogleMaps.ready('exampleMap', function(map) {
     // Add a marker to the map once it's ready
-    var marker = new google.maps.Marker({
+
+    var marker1 = new google.maps.Marker({
+      position: HQCoords,
+      animation: google.maps.Animation.DROP,
+      map: map.instance,
+      icon:'HQ.png'
+    });
+
+
+    var marker2 = new google.maps.Marker({
       position: map.options.center,
       animation: google.maps.Animation.DROP,
       map: map.instance,
-      title:addressToString(this.address)
     });
   });
 });

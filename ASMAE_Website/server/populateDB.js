@@ -42,7 +42,7 @@ Meteor.methods({
 			{street:"Chemin de l\'Herbe", nbr:50, city:"Chaumont-Gistoux", zip:1325, lon:4.685590, lat:50.700329},
 			{street:"Rue des Piles", nbr:27, city:"Waterloo", zip:1410, lon:4.364240, lat:50.704083},
 			{street:"Avenue des Croix du Feu", nbr:40, city:"Waterloo", zip:1410, lat:50.727455, lon:4.385354},
-			{street:"Avenue des Primev§res", nbr:4, city:"Rixensart", zip:1332, lat:50.726151, lon:4.497964},
+			{street:"Avenue des Primevères", nbr:4, city:"Rixensart", zip:1332, lat:50.726151, lon:4.497964},
 			{street:"Allée du Bois de Bercuit", nbr:125, city:"Grez-Doiceau", zip:1390, lat:50.725064, lon:4.675634},
 			{street:"Rue du Baty", nbr:32, city:"Jodoigne", zip:1370, lat:50.727237, lon:4.823434},
 			{street:"Rue Brehen", nbr:2, city:"Orp-Jauche", zip:1350, lat:50.709413, lon:4.948404},

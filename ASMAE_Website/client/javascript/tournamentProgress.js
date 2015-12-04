@@ -302,12 +302,12 @@ var assignCourts = function(rain){
     var listCourtsSun;
 
     if(rain){
-        listCourtsSat=Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true},{isOutdoor:false}]}).fetch();
-        listCourtsSun=Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true},{isOutdoor:false}]}).fetch();
+        listCourtsSat=Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true},{isOutdoor:false}]},{$sort :{"HQDist":1} }).fetch();
+        listCourtsSun=Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true},{isOutdoor:false}]},{$sort :{"HQDist":1} }).fetch();
     }
     else{
-        listCourtsSat=Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true}]}).fetch();
-        listCourtsSun=Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true}]}).fetch();
+        listCourtsSat=Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
+        listCourtsSun=Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
     }
 
     var courtsSat = getCourtNumbers(listCourtsSat);
