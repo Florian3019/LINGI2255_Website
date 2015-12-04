@@ -11,3 +11,4 @@ Feature: Manage the pools
         Given I am logged in
         And The database has been populated
         When I click on a special Pair
+        Then I should see correct informations on the pair

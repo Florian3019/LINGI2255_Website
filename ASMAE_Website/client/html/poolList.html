@@ -269,7 +269,7 @@
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <div class="modal-title page-header">
-            <h3>Information sur la paire</h3>
+            <h3 id="HeaderPairObservation">Information sur la paire</h3>
           </div>
         </div>
         <div class="modal-body">
@@ -285,15 +285,15 @@
             {{/unless}}
             {{>playerInfoTemplate ID=PAIR.player1._id MODAL=getModalId}}
             {{#if PAIR.player1.playerWish}}
-            <h3>Souhaits sur les joueurs</h3>
+            <h3 id="WishesOnPlayersValue1">Souhaits sur les joueurs</h3>
             {{PAIR.player1.playerWish}}
             {{/if}}
             {{#if PAIR.player1.courtWish}}
-            <h3>Souhaits sur un terrain</h3>
+            <h3 id="WishesOnCourtValue1">Souhaits sur un terrain</h3>
             {{PAIR.player1.courtWish}}
             {{/if}}
             {{#if PAIR.player1.otherWish}}
-            <h3>Autre souhaits</h3>
+            <h3 id="OtherWishesValue1">Autres souhaits</h3>
             {{PAIR.player1.otherWish}}
             {{/if}}
           </div>
@@ -323,15 +323,15 @@
             {{/if}}
             {{>playerInfoTemplate ID=PAIR.player2._id MODAL='pairModal'}}
             {{#if PAIR.player2.playerWish}}
-            <h3>Souhaits sur les joueurs</h3>
+            <h3 id="WishesOnPlayersValue2">Souhaits sur les joueurs</h3>
             {{PAIR.player2.playerWish}}
             {{/if}}
             {{#if PAIR.player2.courtWish}}
-            <h3>Souhaits sur un terrain</h3>
+            <h3 id="WishesOnCourtValue2">Souhaits sur un terrain</h3>
             {{PAIR.player2.courtWish}}
             {{/if}}
             {{#if PAIR.player2.otherWish}}
-            <h3>Autre souhaits</h3>
+            <h3 id="OtherWishesValue2">Autres souhaits</h3>
             {{PAIR.player2.otherWish}}
             {{/if}}
           </div>
