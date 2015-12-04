@@ -1,6 +1,6 @@
 <template name="brackets">
 	  	<!-- Only display button if all options are selected -->
-        
+
 	  	{{#if isAdminOrStaff}}
 			{{#with getYear}}
 				{{#with getType}}
@@ -100,7 +100,7 @@
 							placeholder="0"
 							autofocus
 							onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()">
-				  		
+
 			    	{{/with}}
 				  	<h5>VS</h5>
 				  	{{#with getIndex this 1}}
@@ -146,8 +146,6 @@
 	<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}" style="display:none">
 	<span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
 	</button>
-		<!-- Frame for the pdf viewer -->
-	<iframe class="preview-pane" type="application/pdf" height="650" width="100%" frameborder="0" hidden></iframe>
 	<br>
 	{{/unless}}
 {{/if}}

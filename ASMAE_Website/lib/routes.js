@@ -382,6 +382,14 @@ Router.route('/terrains', {
 	}
 });
 
+Router.route('/brack', {
+	name: 'PdfBracket',
+	template: 'PdfBracket',
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
+});
+
 Router.route('/forum', {
 	name: 'forum',
 	template: 'forum',
