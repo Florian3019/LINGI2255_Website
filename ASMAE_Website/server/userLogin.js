@@ -16,9 +16,9 @@ ServiceConfiguration.configurations.remove({
 });
 
 if (isProdEnv()) {
-
- // TODO (for production)
-
+    /*
+        Production environment currently set up with guillaume leurquin's secrets. Please change these when using the website
+    */
     ServiceConfiguration.configurations.insert({
         service: 'google',
         clientId: '413437801707-k3bevh2blautvhg0m2mtac69up6jl5ge.apps.googleusercontent.com',
@@ -30,7 +30,7 @@ if (isProdEnv()) {
         secret: '8df4b4b1612e9792af5fd98066918ef7'
     });
 } else {
-    // dev environment, currently set up with guillaume leurquin's secrets.
+    // dev environment, currently set up with guillaume leurquin's secrets. Please change these when using the website
     ServiceConfiguration.configurations.insert({
         service: 'google',
         clientId: '413437801707-k3bevh2blautvhg0m2mtac69up6jl5ge.apps.googleusercontent.com',
@@ -44,7 +44,7 @@ if (isProdEnv()) {
 }
 
 /*
-    Ask for email verification --> TODO, currently doesn't forbid the client
+    Ask for email verification
     from logging in if email is not verified (nor does it erase the account after some time has passed)
     See this link on some ideas on how to do that : http://stackoverflow.com/questions/15383273/force-email-validation-before-login-meteor
 */
@@ -76,7 +76,7 @@ Meteor.setInterval(function() {
 }, 3600000); // Check every hours
 
 /*
-    @param
+    This function uses the information provided by google and facebook and converts it to the format we use
 */
 useServiceInfo = function(user){
     var services = user.services;
@@ -140,12 +140,11 @@ addDefaultFields = function(user){
 
 /*	
     Define what happens when the user logs in. Mainly merges the accounts if he logged in via google/facebook
-    But already had an account on facebook/google. Also checks if he created an account manually (if so, merges the accounts)
+    but already had an account on facebook/google. Also checks if he created an account manually (if so, merges the accounts)
 
-    Currently only keeps the first logging information : if user created account with google but logs in with facebook afterwards,
+    Currently only keeps the first login information : if user created account with google but logs in with facebook afterwards,
     facebook information is discarded (but the user is logged in on its google account).
 */
-
 Accounts.onCreateUser(function (options, user) {
 	user.profile = {}; // To avoid TypeError : Cannot set 'isStaff' and 'isAdmin' of undefined when invoking function addDefaultFields
     // Check if the user logged in via a service (google or facebook)
@@ -202,19 +201,8 @@ Accounts.onCreateUser(function (options, user) {
 
         // At this point, we know that the user is already in the DB
 
-        /*
-            Had to remove this part as it was making the site crash, don't know exactly what it did either
-        */
-        // precaution, these will exist from accounts-password if used
-        // if (!existingUser.services) {
-        //     existingUser.services = { resume: { loginTokens: [] }};
-        // }
-
         // copy accross new service info
         existingUser.services[service] = user.services[service];
-        // existingUser.services.resume.loginTokens.push(
-        //     user.services.resume.loginTokens[0]
-        // );
 
         // even worse hackery
         Meteor.users.remove({_id: existingUser._id}); // remove existing record

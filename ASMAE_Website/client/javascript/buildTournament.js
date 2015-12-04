@@ -1,3 +1,9 @@
+/*
+	This file defines the page where the staff can choose who is selected for the knock-offs or not.
+	By default, a selection of the "n" best pairs of each pool is displayed, where "n" is defined on the 
+	Knock-offs management page in the field "Winners per pool".
+*/
+
 
 var drake; // Draggable object
 

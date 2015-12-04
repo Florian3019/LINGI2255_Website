@@ -1,3 +1,7 @@
+/*
+  This page defines how the scores for a pool can be modified.
+  The scores are modified live and in symmetries.
+*/
 Template.scorePage.helpers({
     'getLeader' : function(poolId){
       if(poolId==undefined) return undefined;

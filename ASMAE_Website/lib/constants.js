@@ -5,19 +5,26 @@ typesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"
 paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
+paymentTranslate = {"paid":"Payé", "pending":"En attente"};
+
+EMAIL_ENABLED = false; // set to true to enable email feedback
 
 HQCoords = {"lat":50.854227, "lng":4.353841}; // Latitude and longitude of the head quarters
-paymentTranslate = {"paid":"Payé", "pending":"En attente"};
+
 
 if(Meteor.isClient){
     Session.setDefault('showNavBar', false);
 }
+
+// Currently setup with guillaume leurquin's secrets. Please change this when going to production
+Google_API_KEY_BROWSER = "AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs"; 
 
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;
 MIN_FAMILY_AGE = 25;
 
 LAST_N_LOGS = 3; // Amount of logs to keep for each user/courts. All logs are still kept in the full log table.
+
 /*
     @param birthDate of the player for which we want to know if he is accepted into the family tournament
 */
@@ -35,6 +42,11 @@ getDistanceFromHQ = function(coords){
     return Math.sqrt(Math.pow(latDist,2) + Math.pow(lngDist,2)); // Pythagore
 }
 
+/*
+    Returns the date as a string that can be compared using the classical string compare method,
+    such that the comparison is coherent with the ordering of dates.
+    --> Formatted as YYYY/MM/DD HH:MM:SS
+*/
 getSortableDate = function(date){
     var month = date.getMonth();
     var day = date.getDate();
@@ -93,6 +105,7 @@ acceptPairForFamilyAge = function(age1, age2) {
 }
 
 /*
+*   Returns the category in which the age belongs.
 * @param age is of type int
 */
 getCategory = function(age){
@@ -329,9 +342,8 @@ getOrder = function(size){
 };
 
 /*
-    Return the number of matches to play for the first round
+    Returns the number of matches to play for the first round
 */
-
 getNumberMatchesFirstRound = function(nbrPairs){
 
     var logPairs = Math.log2(nbrPairs);

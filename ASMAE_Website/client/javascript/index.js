@@ -1,3 +1,6 @@
+/*
+	This file defines helpers for the staff menu and for the populate database
+*/
 Template.index.helpers({
 	'isHomePage' : function(){
 		if(Router.current().route.getName() === 'home'){

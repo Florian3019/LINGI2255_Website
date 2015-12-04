@@ -1,3 +1,6 @@
+/*
+  This file allows displays a table with different filters to search through the registered courts.
+*/
 Template.mySpecialFilterCourt.events({
     'keyup .courtFilter':function(event){
         privInput = event.currentTarget.value;

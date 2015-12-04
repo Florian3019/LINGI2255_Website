@@ -1,3 +1,7 @@
+/*
+	This file defines routes for the website, what should be loaded for each route and 
+	special actions to be made when the user moves to or from a page
+*/
 
 Router.configure({
 	layoutTemplate: 'index',

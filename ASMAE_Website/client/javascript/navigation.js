@@ -1,3 +1,6 @@
+/*
+	This file defines helpers for the top navigation bar
+*/
 Template.navigation.helpers({
 	'isStaff': function(){
 		if(Meteor.user())

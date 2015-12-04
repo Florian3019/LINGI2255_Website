@@ -1,3 +1,7 @@
+/*
+    This file defines how the selection of a new court is made,
+    when choosing one from the knock-offs or from the pool management
+*/
 Template.selectNewCourt.events({
     'click #newCourtCancel':function(event){
         restoreSession();

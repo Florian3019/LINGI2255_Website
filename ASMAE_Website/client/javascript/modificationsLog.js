@@ -1,3 +1,6 @@
+/*
+	This file defines helpers for the log of modifications
+*/
 Template.modificationsLog.helpers({
     modificationsLog: function () {
         return ModificationsLog.find();

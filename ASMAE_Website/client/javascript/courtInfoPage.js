@@ -1,3 +1,7 @@
+/*
+  This file defines helpers and events for the court summary page. It allows the staff
+  to set the flag staffOK and ownerOK to true/false. A button to modify/delete the court is shown.
+*/
 Template.courtInfoPage.helpers({
 
   	'checked': function(value){
@@ -126,7 +130,7 @@ Template.courtInfoPage.onCreated(function(){
 });
 
 Template.courtInfoPage.onRendered(function(){
-   GoogleMaps.load({key:"AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs"});
+   GoogleMaps.load({key:Google_API_KEY_BROWSER});
 });
 
 Template.courtInfoPage.events({

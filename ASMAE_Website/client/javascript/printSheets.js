@@ -1,3 +1,6 @@
+/*
+  This file defines how to the page to print all the pdf in one go behaves
+*/
 Template.printSheets.events({
 
   'click #Save':function(event){

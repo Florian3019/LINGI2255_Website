@@ -1,3 +1,6 @@
+/*
+  This file defines helpers for the page that shows a map displaying all the courts that are registered.
+*/
 function makeInfoWindowEvent(map, infowindow, contentString, marker) {
   google.maps.event.addListener(marker, 'click', function() {
     console.log(marker);
@@ -59,7 +62,7 @@ Template.courtMap.onCreated(function(){
 });
 
 Template.courtMap.onRendered(function(){
-   GoogleMaps.load({key:"AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs"});
+   GoogleMaps.load({key:Google_API_KEY_BROWSER});
 });
 
 Template.courtMap.helpers({
