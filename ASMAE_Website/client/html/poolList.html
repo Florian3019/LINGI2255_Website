@@ -23,6 +23,15 @@
               <table id='allTables' class='table'>
                 {{#if isAdminOrStaff}}
                   <tr>
+                    <center>
+                      <b>Légende:</b>
+                      {{#each getColors}}
+                        <br>
+                        <span style="color:{{this.color}}">{{this.label}}</span>
+                      {{/each}}
+                    </center>
+                  </tr>
+                  <tr>
                     <table id='specialTable' class='table'>
                       <tr>
                         <td>{{>pairsToSplitContainerTemplate}}</td>
