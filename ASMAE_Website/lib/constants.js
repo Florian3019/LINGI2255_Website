@@ -11,6 +11,12 @@ EMAIL_ENABLED = false; // set to true to enable email feedback
 
 HQCoords = {"lat":50.854227, "lng":4.353841}; // Latitude and longitude of the head quarters
 
+colors = {  "other":{color:'magenta', label:"Autres souhaits"} , 
+            "player":{color:'orange', label:'Souhaits sur des joueurs'},
+            "court":{color:'red', label:'Souhaits sur des terrains'},
+            "multiple":{color:'#4782ff', label:'Plusieurs souhaits'}
+         }; // Colors for the wishes
+colorKeys = Object.keys(colors);
 
 if(Meteor.isClient){
     Session.setDefault('showNavBar', false);
@@ -246,10 +252,10 @@ getColorFromPlayer = function(player){
             count+=1;
             code = 3;
         }
-        if(count>1) return '#4782ff';
-        if(code == 1) return 'orange';
-        if(code == 2) return 'red';
-        if(code == 3) return 'magenta';
+        if(count>1) return colors["multiple"].color;
+        if(code == 1) return colors["player"].color;
+        if(code == 2) return colors["court"].color;
+        if(code == 3) return colors["other"].color;
         return "";
 }
 

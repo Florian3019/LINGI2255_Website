@@ -265,24 +265,7 @@ Template.poolsSidebarCollapsableMenu.helpers({
 
 	// Returns a yearData with id year (copy of the same function in poolList.helpers)
 	'getYear' : function(){
-		var year = Session.get('PoolList/Year');
-
-		if(year==="" || year===undefined){
-			setInfo(document, "Veuillez choisir l'année");
-			return;
-		}
-
-		var y = Years.findOne({_id:year});
-
-		if(year!=="" && year!==undefined && y==undefined){
-			setInfo(document, "Pas de données trouvées pour l'année "+ year);
-		}
-		else{
-			infoBox =document.getElementById("infoBox");
-			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
-		}
-
-		return y;
+		return getYearFunct(document);
 	},
 });
 
@@ -773,25 +756,38 @@ Template.poolList.events({
 	}
 });
 
+var getYearFunct = function(document){
+	var year = Session.get('PoolList/Year');
+	var y = Years.findOne({_id:year});
+
+	if(year==="" || year===undefined){
+		setInfo(document, "Veuillez choisir l'année");
+	}
+
+	if(year!=undefined && year !==undefined && y==undefined){
+		setInfo(document, "Pas de données trouvées pour l'année "+ year);
+	}
+	else{
+		infoBox =document.getElementById("infoBox");
+		if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
+	}
+
+	return y;
+}
+
 Template.poolList.helpers({
 	// Returns a yearData with id year (copy of the same function in poolsSidebarCollapsableMenu.helpers)
 	'getYear' : function(){
-		var year = Session.get('PoolList/Year');
-		var y = Years.findOne({_id:year});
+		return getYearFunct(document)
+	},
 
-		if(year==="" || year===undefined){
-			setInfo(document, "Veuillez choisir l'année");
+	'getColors':function(){
+		var toReturn = [];
+		for(var i=0; i<colorKeys.length;i++){
+			var key = colorKeys[i];
+			toReturn.push(colors[key]);
 		}
-
-		if(year!=undefined && year !==undefined && y==undefined){
-			setInfo(document, "Pas de données trouvées pour l'année "+ year);
-		}
-		else{
-			infoBox =document.getElementById("infoBox");
-			if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered
-		}
-
-		return y;
+		return toReturn;
 	},
 
 	// Returns a typeData
