@@ -114,21 +114,17 @@
   color:red;
 }
 
-/*.pairs.ex-over >.list-group>.list-group-item{
-  background-color:rgba(255, 255, 255, 0.3);
-}*/
-
 .pairs.ex-moved >.list-group>.list-group-item{
   color : green;
 }
-
-/*#pairstoremoveparent{
-  margin-left:200px;
-}*/
 
 .handle {
   padding: 0 5px;
   margin-right: 5px;
   background-color: rgba(0, 0, 0, 0.4);
   cursor: move;
+}
+
+.btn-padding{
+  margin-right: 10px;
 }
