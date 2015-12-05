@@ -124,6 +124,16 @@ Template.playerInfoTemplate.helpers({
 		return year.tournamentPrice;
 	},
 
+	'canModify' : function(passedID){
+		if(Meteor.userId() === passedID){
+			return true;
+		}
+		else{
+			var user = Meteor.user();
+			return user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin);
+		}
+	},
+
 	'isCurrentUser' : function(passedID){
 		if(Meteor.userId() === passedID){
 			return true;

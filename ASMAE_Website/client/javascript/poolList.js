@@ -620,10 +620,6 @@ Template.poolList.onRendered(function() {
 
 var showPairModal = function(){
   Session.set('closeModal','pairModal');
-  var user = Meteor.user();
-  if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
-    return; // Do nothing
-  }
   $('#pairModal').modal('show');
 }
 
@@ -633,6 +629,10 @@ Template.poolList.events({
 	},
 
 	'click .alonePair':function(event){
+		var user = Meteor.user();
+		if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+		    return; // Do nothing
+		}
 		var data = event.currentTarget.dataset;
 		var user = Meteor.users.findOne({_id:data.playerid},{"profile.gender":1, "profile.birthDate":1});
 		var pair = Pairs.findOne({_id:event.currentTarget.id});
@@ -641,6 +641,10 @@ Template.poolList.events({
 	},
 
 	'click .fullPair':function(event){
+	  	var user = Meteor.user();
+		if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+		    return; // Do nothing
+		}
         var data = event.currentTarget.dataset;
         var pair = Pairs.findOne({_id:data.id});
         Session.set('PoolList/ModalData',{'PAIR':pair, 'POOL':data.poolid, 'SHOWOPTIONS':true});
