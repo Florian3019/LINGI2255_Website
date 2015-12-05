@@ -378,12 +378,12 @@ var handleBracketErrors = function(document){
     /********************************************
       Error Handling and data gathering
     ********************************************/
-    year = Session.get("PoolList/Year");
-    type = Session.get("PoolList/Type");
-    category = Session.get("PoolList/Category");
+    var year = Session.get("PoolList/Year");
+    var type = Session.get("PoolList/Type");
+    var category = Session.get("PoolList/Category");
 
     Session.set("brackets/infoPdf",{"year":year,"type":type,"cat":category});
-
+    var startButton =  document.getElementById("startText");
 
     yearData = Years.findOne({_id:year},{reactive:false});
     if(yearData==undefined){
@@ -418,7 +418,7 @@ var handleBracketErrors = function(document){
       return;
     }
 
-    allWinners = typeData[category.concat("Bracket")]; // List of pairIds
+    var allWinners = typeData[category.concat("Bracket")]; // List of pairIds
 
     if(startButton!=undefined && startButton!=null) startButton.innerHTML="Démarrer ce knock-off";
 
