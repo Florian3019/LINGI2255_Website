@@ -1,7 +1,8 @@
 Template.PdfBracket.onRendered(function(){
-  Session.set("pdfBrack/bracketCount",0);
-
+  // Session.set("pdfBrack/bracketCount",0);
+  createAndDownloadPdf(document);
 });
+
 Template.PdfBracket.helpers({
   'is32': function(){
     var brack = Session.get("brackets/arrayBrackets");
@@ -13,10 +14,8 @@ Template.PdfBracket.helpers({
   },
 });
 
-Template.PdfBracket.events({
-  // "click #add": function(event, template){
-  "click #pdf":function(event,template){
-    var knownBrackets = [2,4,8,16,32]; // brackets with "perfect" proportions (full fields, no byes)
+var createAndDownloadPdf = function(document){
+  var knownBrackets = [2,4,8,16,32]; // brackets with "perfect" proportions (full fields, no byes)
 
       var brack = Session.get("brackets/arrayBrackets");
 
@@ -38,20 +37,20 @@ Template.PdfBracket.events({
      */
     function getBracket(base) {
 
-      var closest 		= _.find(knownBrackets, function(k) { return k>=base; }),
-        byes 			= closest-base;
+      var closest     = _.find(knownBrackets, function(k) { return k>=base; }),
+        byes      = closest-base;
 
-      if(byes>0)	base = closest;
+      if(byes>0)  base = closest;
 
-      var brackets 	= [],
-        round 		= 1,
-        baseT 		= base/2,
-        baseC 		= base/2,
-        teamMark	= 0,
-        nextInc		= base/2;
+      var brackets  = [],
+        round     = 1,
+        baseT     = base/2,
+        baseC     = base/2,
+        teamMark  = 0,
+        nextInc   = base/2;
 
       for(i=1;i<=(base-1);i++) {
-        var	baseR = i/baseT,
+        var baseR = i/baseT,
           isBye = false;
 
         // if(byes>0 && (i%2!=0 || byes>=(baseT-i))) {
@@ -68,19 +67,19 @@ Template.PdfBracket.events({
 
 
         brackets.push({
-          // lastGames:	round==1 ? null : [last[0].game,last[1].game],
-          lastGames:	null,
-          nextGame:	nextInc+i>base-1?null:nextInc+i,
-          // teamnames:	round==1 ? [getNames(sBrack[i-1][0]),getNames(sBrack[i-1][1])] : round==2? [getNames(sBrack[i-1][0])=="nothing"?" ":getNames(sBrack[i-1][0]),getNames(sBrack[i-1][1])=="nothing"?" ":getNames(sBrack[i-1][1])] :" ",
+          // lastGames: round==1 ? null : [last[0].game,last[1].game],
+          lastGames:  null,
+          nextGame: nextInc+i>base-1?null:nextInc+i,
+          // teamnames: round==1 ? [getNames(sBrack[i-1][0]),getNames(sBrack[i-1][1])] : round==2? [getNames(sBrack[i-1][0])=="nothing"?" ":getNames(sBrack[i-1][0]),getNames(sBrack[i-1][1])=="nothing"?" ":getNames(sBrack[i-1][1])] :" ",
           teamnames:[getNames(sBrack[i-1][0])=="nothing"?" ":getNames(sBrack[i-1][0]),getNames(sBrack[i-1][1])=="nothing"?" ":getNames(sBrack[i-1][1])],
 
-          bracketNo:	i,
-          roundNo:	round,
-          bye:		isBye,
+          bracketNo:  i,
+          roundNo:  round,
+          bye:    isBye,
           ter: sBrack[i-1][0].court==undefined ? "Pas de terrain" : sBrack[i-1][0].court
         });
         teamMark+=2;
-        if(i%2!=0)	nextInc--;
+        if(i%2!=0)  nextInc--;
         while(baseR>=1) {
           round++;
           baseC/= 2;
@@ -108,10 +107,10 @@ Template.PdfBracket.events({
      * Inject our brackets
      */
     function renderBrackets(struct) {
-      var groupCount	= _.uniq(_.map(struct, function(s) { return s.roundNo; })).length;
+      var groupCount  = _.uniq(_.map(struct, function(s) { return s.roundNo; })).length;
 
       count = Session.get("pdfBrack/bracketCount")%2;
-      var group	= $('<div class="group'+(groupCount+1)+'" id="b'+count+'"></div>'),
+      var group = $('<div class="group'+(groupCount+1)+'" id="b'+count+'"></div>'),
         grouped = _.groupBy(struct, function(s) { return s.roundNo; });
 
       for(g=1;g<=groupCount;g++) {
@@ -201,4 +200,3 @@ Template.PdfBracket.events({
     })
   });
 }
-});
