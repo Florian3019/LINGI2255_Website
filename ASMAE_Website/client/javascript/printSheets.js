@@ -124,13 +124,13 @@ Template.printSheets.events({
         pdf.text("Pas de terrain\n assigné",margins.left+350,200);
       }
       if(resp!= undefined && resp.cat != undefined){
-      var infotext  = infoPools.year+" "+infoPools.type+" "+resp.cat;
+      var infotext  = infoPools.year+" "+typesTranslate[infoPools.type]+" "+categoriesTranslate[resp.cat];
     }
     else{
-      var infotext  = infoPools.year+"-"+infoPools.type;
+      var infotext  = infoPools.year+"-"+typesTranslate[infoPools.type];
 
     }
-      pdf.text(infotext,margins.left+400,180);
+      pdf.text(infotext,margins.left+370,180);
     }
 
     function printPage(pdf,i,pools){
@@ -138,7 +138,6 @@ Template.printSheets.events({
       add_header(pdf,pools[i],responsables[i]);
 
       var st = "#pool"+i.toString();
-      // console.log($(st));
 
       pdf.addHTML($(st),
       30,
@@ -155,9 +154,10 @@ Template.printSheets.events({
         if(i+1==length){
           var info = Session.get("printSheets/info");
           if(info.type=="family"){
-            var filename = info.year+"_"+info.type+".pdf"
+            var filename = info.year+"_familles.pdf"
           }else{
-            var filename = info.year+"_"+info.type+"_"+info.cat+".pdf";
+            categ = info.cat=="all"?"all":categoriesTranslate[info.cat];
+            var filename = info.year+"_"+typesTranslate[info.type]+"_"+categ+".pdf";
           }
           pdf.output('save', filename);
           Session.set("printSheets/isWorkingPrint",false);

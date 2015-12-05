@@ -394,7 +394,7 @@ Router.route('/terrains', {
 	}
 });
 
-Router.route('/brack', {
+Router.route('/print-bracket', {
 	name: 'PdfBracket',
 	template: 'PdfBracket',
 	onAfterAction: function(){
