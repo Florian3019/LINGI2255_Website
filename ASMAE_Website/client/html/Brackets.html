@@ -1,31 +1,7 @@
 <template name="brackets">
 	  	<!-- Only display button if all options are selected -->
 
-	  	{{#if isAdminOrStaff}}
-			{{#with getYear}}
-				{{#with getType}}
-					{{#with getCategory}}
-					{{#unless buildingTournament}}
-						<div id="bracketOptions" style="display:none">
-							<button type="button" id="start" class="btn btn-default btn-lg">
-							  <span class="glyphicon glyphicon-star"></span> Start
-							</button>
-						  	<div class="pull-right">
-							  <h4>Gagnants par poule:
-							 	<input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
-							  </h4>
-		 					</div>
-			 			</div>
-		 			{{/unless}}
-		 			{{/with}}
-		 		{{/with}}
-			{{/with}}
-		{{/if}}
-	<!-- </form> -->
-
 	<div id="wrapper">
-	<!-- empty gracket element -->
-
 		{{#with getYear}}
 			{{#with getType}}
 				{{#with getCategory}}
@@ -35,11 +11,28 @@
 						<div class="page-header">
 							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} > {{translateCategory this}} {{/unless}}</h2>
 						</div>
+						{{#if isAdminOrStaff}}
+				 			{{#if isLoading}}
+				 				{{>loading}}
+				 			{{else}}
+								<div id="bracketOptions" class="hideIfEmpty showIfNotStarted">
+									<button type="button" id="start" class="btn btn-default btn-lg">
+									  <span class="glyphicon glyphicon-star"></span> <span id="startText"> Démarrer ce knock-off</span>
+									</button>
+								  	<div class="pull-right">
+									  <h4>Gagnants par poule:
+									 	<input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
+									  </h4>
+				 					</div>
+					 			</div>
+			 				{{/if}}
+			 			{{/if}}
 						{{>gracketTemplate ALLWINNERS=getAllWinners}}
 					{{/if}}
 				{{/with}}
 			{{/with}}
 		{{/with}}
+
 	</div>
 
 
@@ -143,10 +136,12 @@
   </div>
 {{#if isAdminOrStaff}}
 	{{#unless buildingTournament}}
-	<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}" style="display:none">
-	<span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-	</button>
-	<br>
+	<center>
+		<button type="button" id="getPDF" class="btn btn-default btn-lg hideIfNotStarted hideIfEmpty" data-pool="{{this._id}}" style="display:none">
+		<span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+		</button>
+		<br>
+	</center>
 	{{/unless}}
 {{/if}}
 
@@ -155,9 +150,7 @@
 </template>
 
 <template name="gracketTemplate">
-<!-- {{#with getUpdate}} -->
-<div class="my_gracket" id="gracketContainer"></div>
-<!-- {{/with}} -->
+	<div class="my_gracket" id="gracketContainer"></div>
 {{#with makeBrackets}}
 	{{displayBrackets this}}
 {{/with}}

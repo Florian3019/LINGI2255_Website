@@ -113,9 +113,21 @@ var getStringOptions = function(){
 			" (" + Session.get("PoolList/Year")+")";
 };
 
+var showPairModal = function(){
+  Session.set('closeModal','pairModal');
+  var user = Meteor.user();
+  if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+    return; // Do nothing
+  }
+  $('#pairModal').modal('show');
+}
+
 Template.buildTournament.events({
 	'click .clickablePoolItem':function(event){
-		showPairModal(event);
+        var data = event.currentTarget.dataset;
+        var pair = Pairs.findOne({_id:data.id});
+        Session.set('PoolList/ModalData',{'PAIR':pair, 'POOL':data.poolid, 'SHOWOPTIONS':true});
+        showPairModal();
 	},
 
 	'click #continueToTournament':function(event){
@@ -173,16 +185,6 @@ var hasBothPlayers = function(pair){
 	return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
 }
 
-var showPairModal = function(event){
-	user = Meteor.user();
-	if(user==null || !(user.profile.isStaff || user.profile.isAdmin)){
-		return; // Do nothing
-	}
-	mod = $('#pairModal'+event.currentTarget.dataset.id);
-	console.log(mod);
-	mod.modal('show');
-}
-
 
 Template.buildTournamentItem.helpers({
 	'getPlayer' : function(playerId){
@@ -211,16 +213,7 @@ Template.buildContainer.onRendered(function(){
  	*/
  	container = document.querySelector('#'+this.data.ID);
  	drake.containers.push(container);
-
-	// updateSelectedNumber(document);
 });
-
-// Template.buildContainer.events({
-// 	'change .buildContainer':function(event){
-// 		console.log("hi");
-// 		updateSelectedNumber(document);
-// 	}
-// })
 
 Template.buildContainer.helpers({
 	'getLoserPairPoints':function(){
