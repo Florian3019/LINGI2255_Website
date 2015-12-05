@@ -146,10 +146,14 @@ Template.PdfBracket.events({
       height:heightH,
       onrendered: function(canvas) {
         var img =canvas.toDataURL("image/jpeg,1.0");
-        // pdf.addImage(img,'JPEG',10,10,500,300);
-          pdf.addImage(img,'JPEG',10,10,canvas.width>600? 600 : canvas.width,canvas.height?640:canvas.height);
-        // pdf.rect(10,10,800,550); //Size of the page => rect draw in pdf
         var info = Session.get("brackets/infoPdf");
+        if (info != undefined) {
+          var texte=info.year+" "+info.type+" "+info.cat;
+          pdf.text(texte, 350, 15 );
+        }
+        // pdf.addImage(img,'JPEG',10,10,500,300);
+          pdf.addImage(img,'JPEG',110,30,canvas.width>600? 600 : canvas.width,canvas.height?620:canvas.height);
+        // pdf.rect(10,10,800,550); //Size of the page => rect draw in pdf
         if(info != undefined){
           var filename = "knockoff_"+info.year+"_"+info.type+"_"+info.cat+".pdf";
         }
