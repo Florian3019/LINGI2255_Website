@@ -134,6 +134,15 @@ Template.playerInfoTemplate.helpers({
 		}
 	},
 
+	'isCurrentUser' : function(passedID){
+		if(Meteor.userId() === passedID){
+			return true;
+		}
+		else{
+			return false;
+		}
+	},
+
 	'isStaffOrAdmin' : function() {
 		var user = Meteor.user();
 		if (!user) return undefined;
