@@ -21,6 +21,24 @@
       }
       </style>
     {{else}}
+    {{#if is16}}
+    <style type="text/css">
+      html, body, .brackets {
+        width: 1400px;
+        min-height: 100%;
+        font-family: "Arial", sans-serif;
+      }
+      .brackets{
+        font-size: 150%;
+      }
+      .brackets div.bracketbox > span.teama {
+        top: -30px;
+      }
+      .brackets div.bracketbox > span.teamb {
+        bottom: -30px;
+      }
+      </style>
+    {{else}}
     <style type="text/css">
 			html, body, .brackets {
 				width: 100%;
@@ -34,6 +52,7 @@
         bottom: -20px;
       }
       </style>
+    {{/if}}
     {{/if}}
     <style type="text/css">
     .brackets > div {
