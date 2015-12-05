@@ -48,7 +48,7 @@
               </table>
               {{#if isAdminOrStaff}}
                 <button type="button" id="savePools" class="btn btn-default btn-lg">
-                  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
+                  <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauver
                 </button>
                 <button type="button" id="addPool" class="btn btn-default btn-lg">
                   <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Poule
@@ -178,7 +178,7 @@
     {{#if displayPool POOL.pairs}}
       <div class='parent'>
         <div class='PoolWrapper'>
-          <div class='poolContainer poule' id='a{{POOL._id}}'> <!-- _id is here the id of the pool (with css escape a) -->
+          <div class='poolContainer poule poolColor' id='a{{POOL._id}}'> <!-- _id is here the id of the pool (with css escape a) -->
             {{#each POOL.pairs}} <!-- For each pair id in the pool -->
             {{>poolItem PAIRID=this POOLID=../POOL._id LEADER=../POOL.leader}} <!-- Set ID to the id of the pool, so that we can make it draggable -->
             {{/each}}
@@ -195,7 +195,7 @@
     <div class="poolLabel"><span class="label label-primary">Séparer une paire</span></div>
     <div class='parent' id='pairstosplitparent'>
       <div class='PoolWrapper'>
-        <div class='poolContainer' id='pairstosplit'>
+        <div class='poolContainer splitColor' id='pairstosplit'>
           <!-- Empty -->
         </div>
       </div>
@@ -213,17 +213,33 @@
   <div class="poolLabel"><span class="label label-primary">Joueurs seuls</span></div>
   <div class='parent' id='alonepairsparent'>
     <div class='PoolWrapper'>
-      <div class='poolContainer' id='alonepairs'>
+      <div class='poolContainer aloneColor' id='alonepairs'>
         {{#each getAlonePairs TYPEDATA}}
-        <div id="{{this.pair._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{this.startingPoolId}}">
-          {{#with getPlayer this.pair.player1._id}}
-          <ul class="list-group clickablePoolItem clickablePoolItemAlone" data-id="{{../pair._id}}" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}">
-            <li class="list-group-item pairPlayer" style="color:{{getColor ../pair.player1}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}</li>
-          </ul>
+        {{#with getPlayer this.pair.player1._id}}
+          <div id="{{../pair._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}"
+          onclick="
+            /*  This is very ugly, but is the only way I found to make the item clickable after it has been moved to another container */
+            var showPairModal = function(){
+              Session.set('closeModal','pairModal');
+              var user = Meteor.user();
+              if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+                return; // Do nothing
+              }
+              $('#pairModal').modal('show');
+            }
+            var data = this.dataset;
+            var user = Meteor.users.findOne({_id:data.playerid},{'profile.gender':1, 'profile.birthDate':1});
+            var pair = Pairs.findOne({_id:this.id});
+            Session.set('PoolList/ModalData', {'POOL':data.startingpoolid, 'SEX':user.profile.gender, 'SHOWOPTIONS':true, 'BIRTHDATE':user.profile.birthDate, 'PAIR':pair});
+            showPairModal();
+          ">
+            
+            <ul class="list-group clickablePoolItem clickablePoolItemAlone" data-id="{{../pair._id}}" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}">
+              <li class="list-group-item pairPlayer" style="color:{{getColor ../pair.player1}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}</li>
+            </ul>
+          </div>
           {{/with}}
-        </div>
         {{/each}}
-        <!-- Empty -->
       </div>
     </div>
   </div>
@@ -235,14 +251,14 @@
 <div class="poolLabel"><span class="label label-primary">Créer une paire</span></div>
   <div class='parent' id='mergeplayersparent'>
     <div class='PoolWrapper'>
-      <div class='poolContainer' id='mergeplayers'>
+      <div class='poolContainer mergeColor' id='mergeplayers'>
         <!-- Empty -->
       </div>
     </div>
-    <div class="alert alert-danger fade in" id="mergeErrorBox" style="display:none">
-      <a href="#" class="close">&times;</a>
-      <strong>Erreur!</strong> <span id="mergeErrorMessage">Ces deux paires ne peuvent pas aller ensemble !</span>
-    </div>
+  </div>
+  <div class="alert alert-danger fade in" id="mergeErrorBox" style="display:none">
+    <a href="#" class="close">&times;</a>
+    <strong>Erreur!</strong> <span id="mergeErrorMessage">Ces deux paires ne peuvent pas aller ensemble !</span>
   </div>
    </center>
 </template>
@@ -353,8 +369,23 @@ Takes 2 arguments :
 -->
 <template name="poolItem">
   {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
-    <div  class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
-      <ul id="{{this._id}}" class="list-group clickablePoolItem clickablePoolItemFull" data-id="{{this._id}}" data-poolid="{{../POOLID}}">
+    <div id="{{this._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
+      <ul class="list-group clickablePoolItem clickablePoolItemFull" data-id="{{this._id}}" data-poolid="{{../POOLID}}"
+      onclick="
+        /*  This is very ugly, but is the only way I found to make the item clickable after it has been moved to another container */
+        var showPairModal = function(){
+          Session.set('closeModal','pairModal');
+          var user = Meteor.user();
+          if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+            return; // Do nothing
+          }
+          $('#pairModal').modal('show');
+        }
+        var data = this.dataset;
+        var pair = Pairs.findOne({_id:data.id});
+        Session.set('PoolList/ModalData',{'PAIR':pair, 'POOL':data.poolid, 'SHOWOPTIONS':true});
+        showPairModal();
+      ">
         {{#with getPlayer this.player1._id}}
         <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}color:{{getColor ../player1}}{{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
@@ -371,12 +402,18 @@ Takes 2 arguments :
 
 <template name="responsablesTemplate">
   <div>
-    <h3 style="display:inline" id="ResponsableHeader">Responsables: </h3>
+    <h3 style="display:inline" id="ResponsableHeader">
+      {{#if getResponsables}}
+        Responsables: 
+      {{else}}
+        Pas de responsable pour cette catégorie.
+      {{/if}}
+    </h3>
     {{#if isAdminOrStaff}}
       {{#if isResponsable}}
-      <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right">
-          <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Ne plus être responsable
-      </button>
+        <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right">
+            <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Ne plus être responsable
+        </button>
       {{else}}
         <button type="button" id="becomeResponsable" class="btn btn-default btn-lg pull-right">
           <span class="glyphicon glyphicon-star" aria-hidden="true"></span>Devenir responsable

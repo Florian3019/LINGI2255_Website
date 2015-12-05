@@ -132,6 +132,9 @@ Template.mergePlayersContainerTemplate.events({
 	}
 })
 
+/*
+	Merges two players that are in the merge container. Returns true on success, false otherwise
+*/
 var mergePlayers = function(document){
 	var parent = document.getElementById("mergeplayers");
 	var playersToMerge = parent.getElementsByClassName("pairs");
@@ -140,7 +143,7 @@ var mergePlayers = function(document){
 
 	if(length!=2){
 		console.error("Can only have 2 players in merge players");
-		return;
+		return false;
 	}
 	type = Session.get("PoolList/Type");
 	var pairId1 = playersToMerge[0].id;
@@ -164,7 +167,7 @@ var mergePlayers = function(document){
 			console.error("Only 2 mens can be together");
 			mergeErrorBox.style.display = "block";
 			mergeErrorMessage.innerHTML = "Seulement 2 hommes peuvent jouer ensemble !";
-			return;
+			return false;
 		}
 	}
 	else if(type==="women"){
@@ -172,7 +175,7 @@ var mergePlayers = function(document){
 			console.error("Only 2 women can be together");
 			mergeErrorBox.style.display = "block";
 			mergeErrorMessage.innerHTML = "Seulement 2 femmes peuvent jouer ensemble !";
-			return;
+			return false;
 		}
 	}
 	else if(type==="mixed"){
@@ -180,7 +183,7 @@ var mergePlayers = function(document){
 			console.error("Only a man and a woman can be together");
 			mergeErrorBox.style.display = "block";
 			mergeErrorMessage.innerHTML = "Seulement un homme et une femme peuvent jouer ensemble !";
-			return;
+			return false;
 		}
 	}
 	else if(type=="family"){
@@ -188,7 +191,7 @@ var mergePlayers = function(document){
 			console.error("These players can't play together for the family tournament !");
 			mergeErrorBox.style.display = "block";
 			mergeErrorMessage.innerHTML = "Ces deux joueurs n'ont pas le bon age pour jouer ensemble !";
-			return;
+			return false;
 		}
 	}
 
@@ -224,6 +227,7 @@ var mergePlayers = function(document){
 			Meteor.call('addToUserLog', player2._id, logId);
 		}
 	);
+	return true;
 }
 
 /******************************************************************************************************************
@@ -470,7 +474,7 @@ var movePairs = function(document){
 	var cells = table.getElementsByClassName('pairs');
 
 	// Remember which pairs were moved
-	moves = {}; // key = newPoolId, value = [{"oldPoolId":<oldPoolId>, "pairId":<pairId>}, ...]
+	var moves = {}; // key = newPoolId, value = [{"oldPoolId":<oldPoolId>, "pairId":<pairId>}, ...]
 
 	/**********************************************************************
 		Move the pairs to their new pool
@@ -481,11 +485,11 @@ var movePairs = function(document){
 	var year = Session.get('PoolList/Year');
 	// Get the pairs and their pools
 	for(var i=0, len=cells.length; i<len; i++){
-		c = cells[i];
+		var c = cells[i];
 
 		var pairId = c.id;
 		var newPoolId = c.parentNode.id;
-		newPoolId = newPoolId.substring(1, newPoolId.length); // Remove css excape character "a"
+		var newPoolId = newPoolId.substring(1, newPoolId.length); // Remove css excape character "a"
 		var previousPoolId = document.getElementById(pairId).getAttribute("data-startingpoolid");
 
 		if(previousPoolId!=newPoolId){
@@ -494,7 +498,7 @@ var movePairs = function(document){
 			*/
 
 			// Add this pair to the list of pairs that moved
-			move = {"oldPoolId":previousPoolId, "pairId":pairId};
+			var move = {"oldPoolId":previousPoolId, "pairId":pairId};
 			if(!moves[newPoolId]){
 				moves[newPoolId] = [move]; // Create a new entry
 			}
@@ -697,6 +701,8 @@ Template.poolList.events({
 		if(pairsToRemove.length!=0){
 			if(poolList.length==1 && pairsToRemove.length != 0){
 				console.error("Can't remove the last pool, there are still single players linked to it");
+				alert("Vous ne pouvez pas effacer la dernière poule alors qu'il reste des joueurs dans cette catégorie."+
+						"\nSi vous ne souhaitez pas utiliser cette poule, il suffit de la laisser vide, cela n'aura aucun autre impact.");
 				return;
 			}
 
@@ -825,20 +831,20 @@ Template.poolList.helpers({
 
 	// Returns a list of poolData
 	'getPools' : function(typeData){
-		category = Session.get('PoolList/Category');
-		poolIdList = typeData[category];
-		poolList = [];
+		var category = Session.get('PoolList/Category');
+		var poolIdList = typeData[category];
+		var poolList = [];
 
-		totalNumberOfPairs = 0;
-		totalCompletion = 0;
+		var totalNumberOfPairs = 0;
+		var totalCompletion = 0;
 
 		const MAXCOLUMNS = 3; // Change this value if needed
 		var k = 0;
 		var column = [];
 		if(poolIdList){
 			for(var i=0;i<poolIdList.length;i++){
-				pool = Pools.findOne({_id: poolIdList[i]});
-
+				var pool = Pools.findOne({_id: poolIdList[i]});
+			
 				totalNumberOfPairs += pool.pairs==undefined ? 0 : pool.pairs.length;
 				poolCompletion = pool.completion;
 				totalCompletion += (pool.pairs==undefined ? 0 : pool.pairs.length) * (poolCompletion==undefined ? 0 : poolCompletion);
@@ -1035,13 +1041,15 @@ Template.poolList.helpers({
 	  			splitPairs(el);
 	  		}
 	  		else if(target.id==="mergeplayers" && target.getElementsByClassName("pairs").length==2){
-	  			mergePlayers(document);
+	  			var success = mergePlayers(document);
 
-	  			var pairsToMove = document.getElementById("mergeplayers").getElementsByClassName("pairs");
-	  			// Empty any player that still might be here
-	  			while(pairsToMove.length!=0){
-	  				$("#"+pairsToMove[0].id).detach().appendTo("#alonepairs");
-	  			}
+	  			if(success===true){
+	  				var pairsToMove = document.getElementById("mergeplayers").getElementsByClassName("pairs");
+		  			// Empty any player that still might be here
+		  			while(pairsToMove.length!=0){
+		  				$("#"+pairsToMove[0].id).detach().appendTo("#alonepairs");
+		  			}
+		  		}
 	  		}
 	    	el.className += ' ex-moved';
 	  	}).on('over', function (el, container) {
@@ -1061,31 +1069,9 @@ Template.poolList.helpers({
 	pairs are still located in pools in the the db, like any other pair.
 */
 
-
-var showPairModal = function(){
-	Session.set('closeModal',"pairModal");
-	var user = Meteor.user();
-	if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
-		return; // Do nothing
-	}
-	$('#pairModal').modal('show');
-}
-
 Template.alonePairsContainerTemplate.onRendered(function(){
 	// Add the container of this template as a container that can receive draggable objects
   	drake.containers.push(document.querySelector('#alonepairs'));
-
-	var el = this.firstNode.lastElementChild.getElementsByClassName("clickablePoolItemAlone");
-
-	for(var i=0; i<el.length;i++){
-		el[i].onclick = function(){
-			var data = this.dataset;
-			var user = Meteor.users.findOne({_id:data.playerid},{"profile.gender":1, "profile.birthDate":1});
-			var pair = Pairs.findOne({_id:data.id});
-			Session.set("PoolList/ModalData", {"POOL":data.startingpoolid, "SEX":user.profile.gender, "SHOWOPTIONS":true, "BIRTHDATE":user.profile.birthDate, "PAIR":pair});
-			showPairModal();
-		}
-	}
 });
 
 var hasBothPlayers = function(pair){
@@ -1093,6 +1079,16 @@ var hasBothPlayers = function(pair){
 }
 
 Template.alonePairsContainerTemplate.helpers({
+	'makeClickableAlone':function(id){
+		document.getElementById(id).onclick = function(){
+			var data = this.dataset;
+			var user = Meteor.users.findOne({_id:data.playerid},{"profile.gender":1, "profile.birthDate":1});
+			var pair = Pairs.findOne({_id:data.id});
+			Session.set("PoolList/ModalData", {"POOL":data.startingpoolid, "SEX":user.profile.gender, "SHOWOPTIONS":true, "BIRTHDATE":user.profile.birthDate, "PAIR":pair});
+			showPairModal();
+		}
+	},
+
 	'getAlonePairs' : function(typeData){
 		category = Session.get('PoolList/Category');
 		poolIdList = typeData[category];
@@ -1134,7 +1130,7 @@ Template.poolItem.helpers({
 	},
 
 	'getPair' : function(pairId, poolId) {
-		var pair = Pairs.findOne({_id:pairId})
+		var pair = Pairs.findOne({_id:pairId});
 		if(!pair) return undefined;
 
 		// Add this pair to the list of alone pairs, if this pair is not full
@@ -1146,18 +1142,6 @@ Template.poolItem.helpers({
 
 	'getColor' : function(player){
 		return getColorFromPlayer(player);
-	}
-});
-
-Template.poolItem.onRendered(function(){
-	var htmlEl = this.firstNode.nextElementSibling;
-	if(htmlEl==null) return;
-	var el = htmlEl.getElementsByClassName("clickablePoolItemFull")[0];
-	el.onclick = function(){
-		var data = this.dataset;
-		var pair = Pairs.findOne({_id:data.id});
-		Session.set("PoolList/ModalData",{"PAIR":pair, "POOL":data.poolid, "SHOWOPTIONS":true});
-		showPairModal();
 	}
 });
 
