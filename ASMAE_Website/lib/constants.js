@@ -1,7 +1,7 @@
 typeKeys = ["men", "women", "mixed", "family"];
+typesTranslate = {"men":"Hommes", "women":"Dames", "mixed":"Mixtes", "family":"Familles"};
 categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites", "all"];
 categoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites", "all":"familyCategory"};
-typesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
 paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
@@ -11,6 +11,12 @@ EMAIL_ENABLED = false; // set to true to enable email feedback
 
 HQCoords = {"lat":50.854227, "lng":4.353841}; // Latitude and longitude of the head quarters
 
+colors = {  "other":{color:'magenta', label:"Autres souhaits"} , 
+            "player":{color:'orange', label:'Souhaits sur des joueurs'},
+            "court":{color:'red', label:'Souhaits sur des terrains'},
+            "multiple":{color:'#4782ff', label:'Plusieurs souhaits'}
+         }; // Colors for the wishes
+colorKeys = Object.keys(colors);
 
 if(Meteor.isClient){
     Session.setDefault('showNavBar', false);
@@ -53,7 +59,7 @@ getSortableDate = function(date){
     var h = date.getHours();
     var m = date.getMinutes();
     var s = date.getSeconds();
-    return date.getFullYear()+"/"+((month<10)?"0":"")+month+"/"+((day<10)?"0":"")+day+" "+((h<10)?"0":"")+h+":"+((m<10)?"0":"")+m+":"+((s<10)?"0":"")+s; 
+    return date.getFullYear()+"/"+((month<10)?"0":"")+month+"/"+((day<10)?"0":"")+day+" "+((h<10)?"0":"")+h+":"+((m<10)?"0":"")+m+":"+((s<10)?"0":"")+s;
 }
 
 formatAddress = function(addr){
@@ -83,11 +89,104 @@ formatAddress = function(addr){
 /*
     return the pair corresponding to the current year for the current user
 */
-getPairFromPlayerID = function(isForPublish) {
-    var id = isForPublish ? this.userId : Meteor.userId();
+getPairsFromPlayerID = function(userId, cursor) {
+    var id = userId;
+    if (id==undefined) {
+        return undefined;
+    }
     var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
-    var pair = Pairs.findOne({$or:[{"player1._id":id, year:currentYear},{"player2._id":id, year:currentYear}]});
-    return pair;
+    var pairs = Pairs.find({$or:[{"player1._id":id, year:currentYear},{"player2._id":id, year:currentYear}]});
+    if (typeof pairs === 'undefined' || pairs.fetch().length < 1) {
+        return undefined;
+    }
+    return cursor ? pairs : pairs.fetch();
+}
+
+getDayPairFromPlayerID = function(userId, day) {
+    var pairs = getPairsFromPlayerID(userId);
+    for (var i=0; i<pairs.length; i++) {
+        var data = getTypeAndCategoryFromPairID(pairs[i]._id);
+        if (getDayFromType(data.playerType) == day) {
+            return pairs[i];
+        }
+    }
+}
+
+getTypeAndCategoryFromPairID = function(pairID) {
+    var pool = Pools.findOne({pairs:pairID});
+    var poolID = pool._id;
+    var typeData = Types.findOne({$or:[{"preminimes":poolID}, {"minimes":poolID}, {"cadets":poolID}, {"scolars":poolID}, {"juniors":poolID}, {"seniors":poolID}, {"elites":poolID}, {"all":poolID}]});
+    var playerType = typeData.typeString;
+
+    var playerCategory = undefined;
+    for(var i=0; i<categoriesKeys.length;i++){
+        var cat = typeData[categoriesKeys[i]]; // List of pool ids
+        if(cat!==undefined && cat.indexOf(pool._id)>-1){
+            playerCategory = categoriesTranslate[categoriesKeys[i]];
+            break;
+        }
+    }
+    return {playerType:playerType, playerCategory:playerCategory};
+}
+
+
+getDayFromType = function(type) {
+    if (type=="men" || type=="women") {
+        return "sunday";
+    }
+    else if (type=="mixed" || type=="family") {
+        return "saturday";
+    }
+    else {
+        console.error("Error getDayFromType : type provided ("+type+") is not supported.");
+        return undefined;
+    }
+}
+
+getRegistrationInfoFromPlayerID = function(playerID) {
+    var pairs = getPairsFromPlayerID(playerID);
+    if (typeof pairs === 'undefined') {
+        return undefined;
+    }
+    var satData;
+    var sunData;
+    for (var i=0; i<pairs.length; i++) {
+        var pairID = pairs[i]._id;
+        var data = getTypeAndCategoryFromPairID(pairID);
+        var type = data.playerType;
+        var category = data.playerCategory;
+        var day = getDayFromType(type);
+        if (day == 'saturday') {
+            satData = {playerType:type, playerCategory:category};
+        }
+        else if (day == 'sunday') {
+            sunData = {playerType:type, playerCategory:category};
+        }
+        else {
+            console.error("getDayFromType returned something weird : "+day);
+        }
+    }
+    return {saturday: satData, sunday: sunData};
+}
+
+isSaturdayRegistered = function(playerID) {
+    var info = getRegistrationInfoFromPlayerID(playerID);
+    return info !== undefined && info.saturday !== undefined;
+}
+
+isSundayRegistered = function(playerID) {
+    var info = getRegistrationInfoFromPlayerID(playerID);
+    return info !== undefined && info.sunday !== undefined;
+}
+
+isBothRegistered = function(playerID) {
+    var info = getRegistrationInfoFromPlayerID(playerID);
+    return info !== undefined && info.sunday !== undefined && info.saturday !== undefined;
+}
+
+isRegistered = function(playerID) {
+    var info = getRegistrationInfoFromPlayerID(playerID);
+    return info !== undefined && (info.sunday !== undefined || info.saturday !== undefined);
 }
 
 /*
@@ -144,7 +243,6 @@ getCategoryForBirth = function(birth, tournamentDate) {
  *  @param category = preminimes | minimes | ... --> See switch cases
  */
  getAgeBoundsForCategory = function(category) {
-     //console.log("getAgeBoundsForCategory : "+category);
     switch (category) {
         case categoriesKeys[0]:
             return [9, 10];
@@ -246,10 +344,10 @@ getColorFromPlayer = function(player){
             count+=1;
             code = 3;
         }
-        if(count>1) return '#4782ff';
-        if(code == 1) return 'orange';
-        if(code == 2) return 'red';
-        if(code == 3) return 'magenta';
+        if(count>1) return colors["multiple"].color;
+        if(code == 1) return colors["player"].color;
+        if(code == 2) return colors["court"].color;
+        if(code == 3) return colors["other"].color;
         return "";
 }
 

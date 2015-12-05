@@ -1,10 +1,10 @@
 <template name="courtEmail">
 	<div class="page-header">
-        <h2>Contacter les gestionnaires de terrains</h2>
+        <h2 id="SendMailToCourtsHeader">Contacter les gestionnaires de terrains</h2>
   	</div>
 
 	<div>
-	<legend> Le mail sera envoyé à tous les propriétaires selectionnés ci-dessous</legend>
+	<legend id="ConsignesSendEmailID"> Le mail sera envoyé à tous les propriétaires selectionnés ci-dessous</legend>
 	<div class="well">
 		<textarea class="form-control" rows="5" id="mail" placeholder="" name="mail"></textarea>
 	</div>
@@ -15,8 +15,8 @@
 	<br>
 	<legend> Selection propriétaire(s) </legend>
 	<div>
-		<button type="button" id="SelectAll" class="btn btn-default" style="margin-bottom:10px;">Selectionner tous les terrains ! </button>
-		<button type="button" id="UnselectAll" class="btn btn-default" style="margin-bottom:10px;">Déselectionner tous les terrains ! </button>
+		<button type="button" id="SelectAll" class="btn btn-default" style="margin-bottom:10px; margin-right:10px">Selectionner tous les terrains ! </button>
+		<button type="button" id="UnselectAll" class="btn btn-default" style="margin-bottom:10px; margin-right:10px">Déselectionner tous les terrains ! </button>
 	</div>
 		{{>courtSearch}}
 

@@ -5,10 +5,12 @@
 
 <div class="forumContainer">
 {{#each getThreads}}
-	<h3 style="display:inline">{{this.name}}</h3>
-	<button type="button" class="btn btn-default thread-delete" id="delete{{this._id}}" data-threadid="{{this._id}}" aria-label="Left Align">
-	  <span class="glyphicon glyphicon-trash thread-delete" aria-hidden="true"></span>
-	</button>
+	<h3 style="display:inline">{{this.name}}
+		<button type="button" class="btn btn-default thread-delete" style="margin-left:10px" id="delete{{this._id}}" data-threadid="{{this._id}}" aria-label="Left Align">
+		  <span class="glyphicon glyphicon-trash thread-delete" aria-hidden="true"></span>
+		</button>
+	</h3>
+	
   	<div class="form-group pull-right" style="display:inline">
     	<input name="topicName" id="topicName{{this._id}}" class="form-control" placeholder="Sujet" style="width:25%;display:inline" onkeydown="if (event.keyCode == 13) document.getElementById('{{this._id}}').click()">
     	<button type="button" class="btn btn-default addTopic" id="{{this._id}}" style="display:inline">
@@ -80,13 +82,11 @@
 <template name="topic">
 
 <div class="page-header">
-    <h2>Forum</h2>
-</div>
-
-<div>
-	<button type="button" class="btn btn-default" id="goBack">
-		<span class="glyphicon glyphicon-arrow-left"></span> Retour
-	</button>
+    <h2>Forum 
+	    <button type="button" class="btn btn-default pull-right" id="goBack">
+			<span class="glyphicon glyphicon-arrow-left"></span> Retour
+		</button>
+	</h2>
 </div>
 <br>
 
