@@ -6,7 +6,7 @@ Feature: Check the good working of Deroulement du tournoi
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @ignore
+    @watch
     Scenario: Authenticated user can register to the tournament
         Given I am logged in
         And The database has been populated
