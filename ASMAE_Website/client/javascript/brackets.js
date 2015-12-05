@@ -300,7 +300,7 @@ Template.brackets.helpers({
   },
 
   'getGracketWidth':function(){
-    return 350*Session.get('brackets/rounds');
+    return 270*Session.get('brackets/rounds');
   },
 
   'getType':function(){

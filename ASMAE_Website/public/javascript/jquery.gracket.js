@@ -161,7 +161,7 @@
             s = '<h3 class="changeCourtsBracket '+canClick +'" data-clickable=' + data.clickable +'> '+ data.score + c + ' </h3>';
           }
           else{
-            s = '<h3 class="changeCourtsBracket" data-clickable=' + data.clickable +'>  Score: ' + data.score + c + '</h3>';
+            s = '<h3 class="changeCourtsBracket '+canClick+'" data-clickable=' + data.clickable +'>  Score: ' + data.score + c + '</h3>';
           }
 
           var canEditScore = data.clickable ? "g_canClick" : "";
