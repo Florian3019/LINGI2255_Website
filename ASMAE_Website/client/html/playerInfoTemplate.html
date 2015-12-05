@@ -13,7 +13,7 @@
                 <div class=" col-md-9 col-lg-9 ">
                   <table class="table table-user-information">
                     <tbody>
-
+                    {{#if isStaffOrAdmin}}
                       <tr>
                         <td>Addresse email</td>
                         <td id="Email">{{emails}}</td>
@@ -46,21 +46,48 @@
                         <td>Classement</td>
                         <td id="rank">{{rank}}</td>
                       </tr>
+                      {{/if}}
 
-                      {{#with getPayment id}}
+                      {{#with getInscriptions id}}
                         <tr>
-                          <td> Inscription </td>
+                          <td> Inscription samedi {{#if showOption ../id}} ({{tournamentPrice}} euros) {{/if}}</td>
                           <td>
-                              {{getInscription ../id}}
+                            {{displayRegistration saturday}}
+                              {{#if isRegistered saturday}}
+                              {{#if showOption ../id}}
+                              (
                               {{#if isCurrentUser ../id}}
-                                ( <a href="#" id="unsubscribeLink">Supprimer mon inscription</a> )
+                                <a href={{pathFor route='tournamentRegistrationSaturday'}} id="modifySaturdayLink">Modifier</a> |
+                              {{/if}}
+                                 <a href="#" id="unsubscribeSaturdayLink">Supprimer</a> )
+                                {{/if}}
                               {{/if}}
                           </td>
                         </tr>
-                        <!-- We get here only if the player is registered in the tournament -->
+                        <tr>
+                          <td> Inscription dimanche {{#if showOption ../id}} ({{tournamentPrice}} euros) {{/if}}</td>
+
+                          <td>
+                            {{displayRegistration sunday}}
+                            {{#if isRegistered sunday}}
+                            {{#if showOption ../id}}
+                            (
+                            {{#if isCurrentUser ../id}}
+                              <a href={{pathFor route='tournamentRegistrationSunday'}} id="modifySundayLink">Modifier</a> |
+                            {{/if}}
+                               <a href="#" id="unsubscribeSundayLink">Supprimer</a> )
+                              {{/if}}
+                            {{/if}}
+                          </td>
+                        </tr>
+
+                        {{/with}}
+
+                        {{#if showOption id}}
+                        {{#with getPayment id}}
                         {{#each playerExtras ../id}}
                         <tr>
-                            <td>{{extraName}}</td>
+                            <td>{{extraName}} ({{extraPrice}} euros)</td>
                             <td>{{extraQuantity}}</td>
                         </tr>
                         {{/each}}
@@ -90,6 +117,7 @@
                             </td>
                         </tr>
                       {{/with}}
+                      {{/if}}
 
                     </tbody>
                   </table>
@@ -97,7 +125,7 @@
               </div>
 
             </div>
-
+            {{#if isStaffOrAdmin}}
             <center>
 
               <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
@@ -105,6 +133,7 @@
                 <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Supprimer</button>
               {{/unless}}
             </center>
+            {{/if}}
             <br/>
 </div>
 

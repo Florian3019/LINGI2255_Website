@@ -8,10 +8,6 @@ Router.configure({
   	}
 });
 
-function isRegistered() {
-	return getPairFromPlayerID() !== undefined;
-}
-
 Router.onBeforeAction(function() {
 	if(!Meteor.isServer && !Meteor.userId()){
 		this.render("login");
@@ -108,7 +104,7 @@ Router.route('/mon-inscription', {
 	name: 'myRegistration',
 	template: 'myRegistration',
 	onBeforeAction: function() {
-		if (isRegistered()) {
+		if (isRegistered(Meteor.userId())) {
 			this.next();
 		}
 		else {
@@ -119,32 +115,9 @@ Router.route('/mon-inscription', {
 		Session.set('showNavBar', false);
 	}
 });
-Router.route('/mon-inscription2', {
-	name: 'myRegistration2',
-	template: 'myRegistration2',
-	onBeforeAction: function() {
-		if (isRegistered()) {
-			this.next();
-		}
-		else {
-			this.render("login");
-		}
-	},
-	onAfterAction: function(){
-		Session.set('showNavBar', false);
-	}
-});
-Router.route('/inscription-tournoi',  {
-	name: 'tournamentRegistration',
+Router.route('/inscription-tournoi-samedi',  {
+	name: 'tournamentRegistrationSaturday',
 	template: 'tournamentRegistration',
-	onBeforeAction: function() {
-		if (!isRegistered()) {
-			this.next();
-		}
-		else {
-			this.render("login");
-		}
-	},
 	waitOn: function(){
 		var res = [
 			Meteor.subscribe('users')
@@ -153,6 +126,30 @@ Router.route('/inscription-tournoi',  {
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
+	},
+	data : function() {
+		if (this.ready()) {
+			return {day:"saturday"};
+		}
+	}
+});
+
+Router.route('/inscription-tournoi-dimanche',  {
+	name: 'tournamentRegistrationSunday',
+	template: 'tournamentRegistration',
+	waitOn: function(){
+		var res = [
+			Meteor.subscribe('users')
+		];
+		return res;
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	},
+	data : function() {
+		if (this.ready()) {
+			return {day:"sunday"};
+		}
 	}
 });
 

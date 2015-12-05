@@ -1,16 +1,16 @@
 <template name="login">
-    
+
 	<!--  Logo resources :
 			https://www.facebookbrand.com/
-	
+
 	-->
- 
+
 <script>
-    function forgottenPassword() {        
-        
-        $('#forgotten').modal('show');    
+    function forgottenPassword() {
+
+        $('#forgotten').modal('show');
         document.getElementById('send-email').style.display = "initial";
-        
+
         var email = $('[name=email]').val().trim();
         document.getElementById("email-forgotten-password").value = email;
     }
@@ -27,12 +27,12 @@
                 <div class="modal-body">
                     <p> Un email sera envoyer à l'adresse suivante afin de réinitialiser votre mot de passe:</p>
                     <label class=" pull-left" for="email-forgotten-password">Addresse mail :</label>
-                    
+
                     <div class="form-group" id="email-forgotten-password-group">
                         <input  id="email-forgotten-password" name="email-forgotten-password" class="form-control" placeholder="Email" required autofocus>
                     </div>
                     <p> </p> <!-- Espace -->
-                      
+
                     <div class="alert alert-success fade in" style="display:none;" id="email-send-success" role="alert">
                         <span class="glyphicon glyphicon-ok-sign"></span>
                         <strong>Réussi !</strong> Email envoyé, vérifier votre boite mail.
@@ -50,7 +50,7 @@
                         <strong>Erreur :</strong> Veuillez entrer une addresse mail valide.
                     </div>
                 </div>
-                
+
                 <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
                       <button id="send-email" class="btn btn-primary" type="submit" >Envoyer</button>
@@ -58,14 +58,14 @@
             </div>
         </div>
     </div> <!-- Pop up forgotten password -->
-    
-    
+
+
     <!-- Body -->
-  
-	<center> 
+
+	<center>
 		<div class="header">
-			<h3>Veuillez vous connecter avant de poursuivre</h3>  
-		</div> 
+			<h3>Veuillez vous connecter avant de poursuivre</h3>
+		</div>
 	</center>
     <br>
     <br>
@@ -75,25 +75,25 @@
                 <div class="inside">
                     <form class="login">
                         <h4 class="login-heading">Connexion</h4>
-                         
+
                         <div class="form-group" id="user">
                             <input id="balb" name="email" class="form-control" placeholder="Email" required autofocus>
-                            <span class="help-block" id="no-user-message" style="display: none">Veuillez une addresse email</span>
+                            <span class="help-block" id="no-user-message" style="display: none">Veuillez une entrer une addresse email</span>
                             <span class="help-block" id="user-error-message" style="display: none">Utilisateur non trouvé</span>
-                            <span class="help-block" id="no-password-error-message" style="display: none">Cette user n'a pas de mot de passe, connecter vous via google ou facebook</span>
+                            <span class="help-block" id="no-password-error-message" style="display: none">Cet utilisateur n'a pas de mot de passe, veuillez vous connecter via Google ou Facebook</span>
                         </div>
-                            
+
                         <p> </p> <!-- Espace -->
-                            
+
                         <div class="form-group" id="password">
                             <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
                             <span class="help-block" id="password-error-message" style="display: none">Mot de passe incorrect</span>
                         </div>
-                                            
+
                         <div style="padding-bottom:7px;">
                             <button class="btn btn-lg btn-primary btn-block" id="connexion" type="submit">Connexion</button>
                         </div>
-                                            
+
                         <div class="forgotten">
                             <a href="#" onclick="forgottenPassword()">Mot de passe oublié ?</a>
                         </div>
@@ -120,14 +120,14 @@
                         <div id="logos">
                             <img src="logos-and-badges_f-logo_online/png/FB-f-Logo__blue_114.png" width="90%" height="90%">
                         </div>
-                    </div>         
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <br>
     <br>
-	<center>   
+	<center>
 		<a class="btn btn-outline btn-sm" data-toggle="collapse" data-target="#inscription">Pas encore inscrit ?</a>
 		<p> </p> <!-- Espace -->
 			<div class="collapse" id="inscription">
@@ -139,15 +139,15 @@
                             <div class="form-group" id="inputEmailGroup">
                                 <input type="email" id="inputEmail" name="email-sign" class="form-control" placeholder="Email" required autofocus>
                             </div>
-                            
+
 							<p> </p> <!-- Espace -->
-                            
+
                             <div class="form-group" id="inputPasswordGroup">
                                 <input type="password" id="inputPassword" name="password-sign" class="form-control" placeholder="Mot de passe" required>
                             </div>
-                            
+
 							<p> </p> <!-- Espace -->
- 
+
                             <div class="alert alert-success fade in" style="display:none;" id="sign-up-success" role="alert">
                                 <span class="glyphicon glyphicon-ok-sign"></span>
                                 <strong>Réussi !</strong> Vous êtes bien inscrit.
@@ -181,4 +181,4 @@
 		</div>
 	</center>
 </div>
-</template>	
+</template>

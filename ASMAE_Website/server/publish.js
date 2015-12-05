@@ -142,60 +142,64 @@ Meteor.publish("Matches", function(){
 * Only publish the pair needed. Publish nothing if player does not belong to the pair.
 * Known uses : client/myRegistration
 */
-Meteor.publish("PairInfo", function(){
+Meteor.publish("PairsInfo", function(){
     var id = this.userId;
-    pair = Pairs.find({$or:[{"player1._id":id},{"player2._id":id}]});
-    if (!pair) {
+    pairs = getPairsFromPlayerID(this.userId, true);
+    if (!pairs) {
         console.error("Error publish PairInfo : no pair found in the DB for this user.");
         this.ready();
     }
-    return pair;
+    return pairs;
 });
 
 /*
 * Only publish the address of the partner. Publish nothing if player does not belong to the pair.
 * Known uses : client/myRegistration
 */
-Meteor.publish("PartnerAdress", function() {
+Meteor.publish("PartnersAdresses", function() {
     var id = this.userId;
-    var pair = getPairFromPlayerID(true);
-    if (!pair) {
+    var pairs = getPairsFromPlayerID(this.userId);
+    if (!pairs) {
         console.error("Error publish PartnerAdress : no pair found in the DB for this user.");
         this.ready();
+        return;
     }
     var user1, user2;
-  if(pair.player1 && pair.player1._id == id){
-      user1 = Meteor.users.findOne({_id:pair.player1._id});
+    for (var i=0; i<pairs.length; i++) {
+        var pair = pairs[i];
+        if(pair.player1 && pair.player1._id == id){
+            user1 = Meteor.users.findOne({_id:pair.player1._id});
+          }
+          else if(pair.player2 && pair.player2._id == id){
+            user1 = Meteor.users.findOne({_id:pair.player2._id});
+          }
+          if(pair.player1 && pair.player1._id != id){
+            user2 = Meteor.users.findOne({_id:pair.player1._id});
+          }
+          else if(pair.player2 && pair.player2._id != id){
+            user2 = Meteor.users.findOne({_id:pair.player2._id});
+          }
+          if(!user2) {
+              //console.error("Error publish PartnerAdress : you do not have a partner in this pair (user2)");
+              var addrID1 = user1.profile.addressID;
+          var addr1 = Addresses.findOne({_id:addrID1});
+          this.added('Addresses',addrID1,addr1);
+          }
+        else if(!user1) {
+          //console.error("Error publish PartnerAdress : you do not have a partner in this pair (user1)");
+          var addrID2 = user2.profile.addressID;
+          var addr2 = Addresses.findOne({_id:addrID2});
+          this.added('Addresses',addrID2,addr2);
+        }
+        else {
+          var addrID1 = user1.profile.addressID;
+          var addr1 = Addresses.findOne({_id:addrID1});
+          this.added('Addresses',addrID1,addr1);
+          var addrID2 = user2.profile.addressID;
+          var addr2 = Addresses.findOne({_id:addrID2});
+          this.added('Addresses',addrID2,addr2);
+        }
     }
-    else if(pair.player2 && pair.player2._id == id){
-      user1 = Meteor.users.findOne({_id:pair.player2._id});
-    }
-    if(pair.player1 && pair.player1._id != id){
-      user2 = Meteor.users.findOne({_id:pair.player1._id});
-    }
-    else if(pair.player2 && pair.player2._id != id){
-      user2 = Meteor.users.findOne({_id:pair.player2._id});
-    }
-    if(!user2) {
-        //console.error("Error publish PartnerAdress : you do not have a partner in this pair (user2)");
-        var addrID1 = user1.profile.addressID;
-    var addr1 = Addresses.findOne({_id:addrID1});
-    this.added('Addresses',addrID1,addr1);
-    }
-  else if(!user1) {
-    //console.error("Error publish PartnerAdress : you do not have a partner in this pair (user1)");
-    var addrID2 = user2.profile.addressID;
-    var addr2 = Addresses.findOne({_id:addrID2});
-    this.added('Addresses',addrID2,addr2);
-  }
-  else {
-    var addrID1 = user1.profile.addressID;
-    var addr1 = Addresses.findOne({_id:addrID1});
-    this.added('Addresses',addrID1,addr1);
-    var addrID2 = user2.profile.addressID;
-    var addr2 = Addresses.findOne({_id:addrID2});
-    this.added('Addresses',addrID2,addr2);
-  }
 
   this.ready();
 

@@ -439,6 +439,8 @@ Meteor.methods({
 		@param typeData is structured as a type
 		A type structure is as follows :
 		{
+			typeString : men | women | mixed | family
+
 			// Can only $addToSet
 			_id:<typeID>
 			preminimes:<list of poolIDs>
@@ -481,6 +483,9 @@ Meteor.methods({
 		}
 		var hasData = false;
 		var data = {};
+		if (typeof typeData.typeString !== 'undefined') {
+			data.typeString = typeData.typeString;
+		}
 		for (var i=0;i<categoriesKeys.length;i++){
 			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
@@ -571,8 +576,8 @@ Meteor.methods({
 			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
 			if(googleAnswer!==undefined && googleAnswer.length>0){
 
-          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude}; 
-          		data.HQDist = getDistanceFromHQ(data.coords); 
+          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};
+          		data.HQDist = getDistanceFromHQ(data.coords);
 
     		}
 
@@ -1513,6 +1518,9 @@ Meteor.methods({
 			console.error("Error GetPoolToFill : no year and/or type and/or category specified");
 			return undefined;
 		}
+		if (type != "men" && type != "women" && type != "mixed" && type != "family") {
+			console.error("Error GetPoolToFill : type provided ("+type+") is not supported.")
+		}
 
 		var yearTable = Years.findOne({_id:year});
 		if (!yearTable) {
@@ -1527,7 +1535,7 @@ Meteor.methods({
 		// No type table for now
 		if (typeTable==undefined) {
 			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
-			typeID = Types.insert({});
+			typeID = Types.insert({'typeString':type});
 			// typeID = Meteor.call('updateType', {});
 			typeTable = Types.findOne({_id:typeID});
 
