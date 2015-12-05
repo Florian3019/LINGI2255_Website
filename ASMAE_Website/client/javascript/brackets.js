@@ -361,6 +361,8 @@ var handleBracketErrors = function(document){
     type = Session.get("PoolList/Type");
     category = Session.get("PoolList/Category");
 
+    Session.set("brackets/infoPdf",{"year":year,"type":type,"cat":category});
+
     pdfButton = document.getElementById("getPDF");
     startButton =  document.getElementById("start");
     // winnersSelect =  document.getElementById("winnersPerPool");
@@ -407,7 +409,6 @@ var handleBracketErrors = function(document){
         if(startButton!=undefined && startButton!=null) {
           startButton.innerHTML="Démarrer ce knock-off";
           $("#buttonPdf").hide();
-          console.log("fuck");
         }
         if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
         if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
