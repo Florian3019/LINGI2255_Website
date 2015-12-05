@@ -136,13 +136,13 @@
               <h4> Modifications récentes </h4>
               {{>reactiveTable collection=this settings=settings fields=fields}}
             {{/with}}
-            </div>
-            <center>
-              <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Modifier</button>
-              {{#unless isCurrentUser id}}
+            {{/if}}
+            {{#if canModify}}
+              <center>
+                <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Modifier</button>
                 <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Supprimer</button>
-              {{/unless}}
-            </center>
+              </center>
+            {{/if}}
 </div>
 
 <!-- Modal payment -->

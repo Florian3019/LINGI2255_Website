@@ -124,12 +124,13 @@ Template.playerInfoTemplate.helpers({
 		return year.tournamentPrice;
 	},
 
-	'isCurrentUser' : function(passedID){
+	'canModify' : function(passedID){
 		if(Meteor.userId() === passedID){
 			return true;
 		}
 		else{
-			return false;
+			var user = Meteor.user();
+			return user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin);
 		}
 	},
 
