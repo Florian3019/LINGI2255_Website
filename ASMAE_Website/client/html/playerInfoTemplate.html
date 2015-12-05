@@ -15,7 +15,7 @@
                 <div class=" col-md-9 col-lg-9 ">
                   <table class="table table-user-information">
                     <tbody>
-
+                    {{#if isStaffOrAdmin}}
                       <tr>
                         <td>Addresse email</td>
                         <td id="Email">{{emails}}</td>
@@ -48,21 +48,52 @@
                         <td>Classement</td>
                         <td id="rank">{{rank}}</td>
                       </tr>
+                      {{/if}}
 
-                      {{#with getPayment id}}
+                      {{#with getInscriptions id}}
                         <tr>
-                          <td> Inscription </td>
+                          <td> Inscription samedi {{#if showOption ../id}} ({{tournamentPrice}} euros) {{/if}}</td>
                           <td>
-                              {{getInscription ../id}}
+                            {{displayRegistration saturday}}
+                              {{#if isRegistered saturday}}
+                              {{#if showOption ../id}}
+                              (
                               {{#if isCurrentUser ../id}}
-                                ( <a href="#" id="unsubscribeLink">Supprimer mon inscription</a> )
+                                <a href={{pathFor route='tournamentRegistrationSaturday'}} id="modifySaturdayLink">Modifier</a> |
+                              {{/if}}
+                                 <a href="#" id="unsubscribeSaturdayLink">Supprimer</a> )
+                                {{/if}}
+                              {{else}}
+                               (<a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">S'inscrire</a>)
                               {{/if}}
                           </td>
                         </tr>
-                        <!-- We get here only if the player is registered in the tournament -->
+                        <tr>
+                          <td> Inscription dimanche {{#if showOption ../id}} ({{tournamentPrice}} euros) {{/if}}</td>
+
+                          <td>
+                            {{displayRegistration sunday}}
+                            {{#if isRegistered sunday}}
+                            {{#if showOption ../id}}
+                            (
+                            {{#if isCurrentUser ../id}}
+                              <a href={{pathFor route='tournamentRegistrationSunday'}} id="modifySundayLink">Modifier</a> |
+                            {{/if}}
+                               <a href="#" id="unsubscribeSundayLink">Supprimer</a> )
+                              {{/if}}
+                              {{else}}
+                              (<a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">S'inscrire</a>)
+                            {{/if}}
+                          </td>
+                        </tr>
+
+                        {{/with}}
+
+                        {{#if showOption id}}
+                        {{#with getPayment id}}
                         {{#each playerExtras ../id}}
                         <tr>
-                            <td>{{extraName}}</td>
+                            <td>{{extraName}} ({{extraPrice}} euros)</td>
                             <td>{{extraQuantity}}</td>
                         </tr>
                         {{/each}}
@@ -92,6 +123,7 @@
                             </td>
                         </tr>
                       {{/with}}
+                      {{/if}}
 
                     </tbody>
                   </table>
@@ -99,13 +131,11 @@
               </div>
 
             </div>
-
-
+            {{#if isStaffOrAdmin}}
             {{#with getPlayerModLog this.log}}
               <h4> Modifications récentes </h4>
               {{>reactiveTable collection=this settings=settings fields=fields}}
             {{/with}}
-
             <center>
 
               <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Modifier</button>

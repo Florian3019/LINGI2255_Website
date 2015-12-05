@@ -1,6 +1,17 @@
 <template name="tournamentRegistration">
+    {{#if saturdayRegistration}}
+        {{>tournamentRegistrationTemplate day="saturday"}}
+    {{/if}}
+    {{#if sundayRegistration}}
+        {{>tournamentRegistrationTemplate day="sunday"}}
+    {{/if}}
+</template>
+
+
+<template name="tournamentRegistrationTemplate">
+    {{#with getDay}}
   <div class="page-header">
-        <h2>Inscription tournoi</h2>
+        <h2>Inscription au tournoi de {{day}}</h2>
   </div>
   <form role="form">
     <div class="well well-lg">
@@ -228,9 +239,13 @@
             <br>
             <select name="dateMatch" id="dateMatchSelect"  class="form-control dateMatch" style="display: inline">
               <option value="" hidden></option>
+              {{#if saturday}}
               <option value="saturday" selected="selected">Mixtes (Samedi)</option>
               <option value="family" >Tournoi des familles (Samedi)</option>
+              {{/if}}
+              {{#if sunday}}
               <option value="sunday">Doubles (Dimanche)</option>
+              {{/if}}
             </select>
             <div id="dateMatchError" hidden>
               <span class="help-block" >Merci de préciser le tournoi</span>
@@ -444,4 +459,5 @@
     </div>
     </div>
 	</form>
+    {{/with}}
 </template>

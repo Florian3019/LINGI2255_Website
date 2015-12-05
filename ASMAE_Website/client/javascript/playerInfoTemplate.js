@@ -102,7 +102,7 @@ Template.playerInfoTemplate.helpers({
 					  return addr.number + ", " + addr.street + ". Boite " + addr.box;
 				  }
 				  return addr.number + ", " + addr.street;
-				}
+			  }
 			},
 			'city': function(){
 				if(addr) return addr.zipCode +" "+ addr.city;
@@ -116,6 +116,14 @@ Template.playerInfoTemplate.helpers({
 	  return data;
 	},
 
+	'tournamentPrice' : function() {
+		var currentYear = GlobalValues.findOne({_id:"currentYear"});
+		if (!currentYear) return undefined;
+		var year = Years.findOne({_id:currentYear.value});
+		if (!year) return undefined;
+		return year.tournamentPrice;
+	},
+
 	'isCurrentUser' : function(passedID){
 		if(Meteor.userId() === passedID){
 			return true;
@@ -123,6 +131,12 @@ Template.playerInfoTemplate.helpers({
 		else{
 			return false;
 		}
+	},
+
+	'isStaffOrAdmin' : function() {
+		var user = Meteor.user();
+		if (!user) return undefined;
+		return user.profile.isStaff || user.profile.isAdmin;
 	},
 
 	/*
@@ -162,65 +176,40 @@ Template.playerInfoTemplate.helpers({
 		return payment;
 	},
 
-	'getInscription': function(userId){
-		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		var pair = Pairs.findOne({$or:[{"player1._id":userId},{"player2._id":userId}], "year":currentYear},{"_id":1});
-		if(pair===undefined){
-			console.error("Did not find a registration !");
+	'getInscriptions': function(userId){
+		var registrationInfo = getRegistrationInfoFromPlayerID(userId);
+		if (typeof registrationInfo === 'undefined') {
+			return undefined;
+		}
+		return registrationInfo;
+	},
+
+	'displayRegistration' : function(dayData) {
+		if (typeof dayData === 'undefined') {
 			return "Pas inscrit";
 		}
-		var pool = Pools.findOne({"pairs":pair._id},{"_id":1});
-		if(pool===undefined){
-			console.error("Did not find a registration !");
-			return "Pas inscrit";
-		}
+		var type = dayData.playerType;
+		var category = dayData.playerCategory;
+		return "Tournoi "+typesTranslate[type] + ", catégorie "+category;
+	},
 
-		var query = [];
-		for(var i=0; i<categoriesKeys.length;i++){
-			var data = {};
-			data[categoriesKeys[i]] = pool._id;
-			query.push(data);
-		}
+	'isRegistered' : function(dayData) {
+		return dayData !== undefined;
+	},
 
-		var typeData = Types.findOne({$or:query});
-		if(typeData===undefined){
-			console.error("Did not find a registration !");
-			return "Pas inscrit";
+	/*
+	 * Returns true if the user given in argument is a staff member or
+	 * if it is not one of the current user's partners
+	 */
+	'showOption' : function(userId) {
+		var partnersaturdayid = Session.get("partnersaturdayid");
+		var partnersundayid = Session.get("partnersundayid");
+		var user = Meteor.user();
+		if (user === undefined) {
+			return undefined;
 		}
-
-		// Determine the player's category
-		var playerCategory = undefined;
-		for(var i=0; i<categoriesKeys.length;i++){
-			var cat = typeData[categoriesKeys[i]]; // List of pool ids
-			if(cat!==undefined && cat.indexOf(pool._id)>-1){
-				playerCategory = categoriesTranslate[categoriesKeys[i]];
-				break;
-			}
-		}
-
-		var yearQuery = [];
-		for (var i=0; i<typeKeys.length;i++){
-			var data = {};
-			data[typeKeys[i]] = typeData._id;
-			yearQuery.push(data);
-		}
-
-		// Determine the player's type
-		var playerType = undefined
-		var y = Years.findOne({$or:yearQuery});
-		if(y===undefined){
-			console.error("Did not find a registration !");
-			return "Pas inscrit";
-		}
-		for (var i=0; typeKeys.length;i++){
-			var t = y[typeKeys[i]];
-			if(t!==undefined && t.indexOf(typeData._id)>-1){
-				playerType = typesTranslate[typeKeys[i]];
-				break;
-			}
-		}
-
-		return playerType + " > " + playerCategory;
+		var isStaff = user.profile.isAdmin || user.profile.isStaff;
+		return isStaff || (userId != partnersaturdayid && userId != partnersundayid);
 	},
 
 	'notPaid' : function(passedID){
@@ -235,15 +224,17 @@ Template.playerInfoTemplate.helpers({
 		}
 	},
 
-	'playerExtras' : function(userId){
+	'playerExtras': function(userId){
 		var extras = getExtras(userId);
 		if(extras!==undefined)
 		{
 			var extrasArray = [];
 			for(extra in extras){
+				var price = Extras.findOne({name:extra}).price;
 				extraObject = {
 					extraName: extra,
-					extraQuantity: extras[extra]
+					extraQuantity: extras[extra],
+					extraPrice: price
 				};
 				extrasArray.push(extraObject);
 			}
@@ -282,20 +273,38 @@ Template.playerInfoTemplate.helpers({
 
 Template.playerInfoTemplate.events({
 
-	'click #unsubscribeLink' : function(event) {
+	'click #unsubscribeSaturdayLink' : function(event) {
 		event.preventDefault();
 
 		swal({
 			title: "Êtes-vous sûr ?",
-			text: "Vous êtes sur le point de supprimer votre inscription",
+			text: "Vous êtes sur le point de supprimer cette inscription",
 			type: "warning",
 			showCancelButton: true,
 			confirmButtonColor: "#DD6B55",
-			confirmButtonText: "Supprimer mon inscription",
+			confirmButtonText: "Supprimer cette inscription",
 			closeOnConfirm: false },
 			function(){
-				var pair = getPairFromPlayerID();
-				console.log(pair);
+				var pair = getDayPairFromPlayerID(Meteor.userId(), "saturday");
+				Meteor.call('unsubscribePairFromTournament', pair._id);
+				swal("Inscription supprimée", "", "success");
+				Router.go('home');
+			});
+	},
+
+	'click #unsubscribeSundayLink' : function(event) {
+		event.preventDefault();
+
+		swal({
+			title: "Êtes-vous sûr ?",
+			text: "Vous êtes sur le point de supprimer cette inscription",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#DD6B55",
+			confirmButtonText: "Supprimer cette inscription",
+			closeOnConfirm: false },
+			function(){
+				var pair = getDayPairFromPlayerID(Meteor.userId(), "sunday");
 				Meteor.call('unsubscribePairFromTournament', pair._id);
 				swal("Inscription supprimée", "", "success");
 				Router.go('home');
