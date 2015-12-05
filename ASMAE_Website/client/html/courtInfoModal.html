@@ -1,7 +1,7 @@
 <template name="CourtInfoModal">
   {{#with getModalCourtInfo}}
   <!-- Modal -->
-  <div id="CourtInfoModal" class="modal fade" data-backdrop="false" >
+  <div id="CourtInfoModal" class="modal fade" data-backdrop="false">
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
@@ -81,7 +81,11 @@
                         </table>
                       </div>
                     </div>
-
+                    <center>
+                    <button id="goToMap" class="btn btn-default" data-dismiss="modal" data-id="{{COURT._id}}" style="margin:10px">
+                      Voir sur la carte
+                    </button>
+                    </center>
                   </div>
 
           </div>

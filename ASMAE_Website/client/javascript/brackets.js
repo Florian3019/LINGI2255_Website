@@ -164,7 +164,7 @@ var setRoundData = function(roundData){
   return {"s":s, "r":newRoundData};
 };
 
-var forwardData = function(roundData){
+var forwardData = function(roundData, canEditScore){
   round = roundData.data.round;
   points = getPoints(roundData.pair, round+1);
   return {
@@ -176,7 +176,7 @@ var forwardData = function(roundData){
       "score":points==undefined ? (roundData.data.player1===emptyPlayer ? emptyScore : inGame) : points,
       "display":"block",
       "round":round+1, // increase the round
-      "clickable":true,
+      "clickable":canEditScore,
       "court": emptyCourt
     }
   };
@@ -185,7 +185,7 @@ var forwardData = function(roundData){
 
 // Round data format : {pair:<pair>, data:<bracketPairData>}
 // Returns the best of the 2 pairs or undefined if the score is not yet known. If score is known, updates roundData with the new score
-var getBestFrom2 = function(roundData1, roundData2, round){
+var getBestFrom2 = function(roundData1, roundData2, round, canEditScore){
   if(roundData1==undefined || roundData2==undefined || round==undefined){
     console.error("getBestFrom2 : Undefined data");
     return;
@@ -196,11 +196,11 @@ var getBestFrom2 = function(roundData1, roundData2, round){
   }
   else if(roundData1.pair==="placeHolder"){
     // The other one wins !
-    return forwardData(roundData2);
+    return forwardData(roundData2, canEditScore);
   }
   else if(roundData2.pair==="placeHolder"){
     // The other one wins !
-    return forwardData(roundData1);
+    return forwardData(roundData1, canEditScore);
   }
 
   if(roundData1.pair==="empty" || roundData2.pair==="empty"){
@@ -599,12 +599,15 @@ var makeBrackets = function(document){
 
   var matchesCompleted = 0;
   var nextMatchNum = 0;
+  
+  var user = Meteor.user();
+  var canEditScore = user!==undefined && user!==null && (user.profile.isAdmin || user.profile.isStaff);
 
   var pairData = [];
   for(var i=0; i<allWinners.length;i++){
     pairId = allWinners[i];
     pair = Pairs.findOne({_id:pairId},{reactive:false});
-    data = getBracketData(pair,0, "true");
+    data = getBracketData(pair,0, canEditScore);
     pairData.push({"pair":pair, "data":data});
   }
 
@@ -620,6 +623,7 @@ var makeBrackets = function(document){
     Fill the rest of the rounds with "?" or the score
   */
 
+  
   round = 0;
   while(thisRound.length>1){
     newRound = []; // list of roundData
@@ -627,7 +631,7 @@ var makeBrackets = function(document){
     if(round>0){
       // Select the best pair from the 2 for each match
       for(var i=0; i+1<thisRound.length ; i+=2){
-        best = getBestFrom2(thisRound[i], thisRound[i+1], round);
+        best = getBestFrom2(thisRound[i], thisRound[i+1], round,canEditScore);
         newRound.push(best); // best contains a pair and its display data
       }
     }
@@ -685,7 +689,7 @@ var makeBrackets = function(document){
 
     // If newRound.length == 1 --> we are at the last 2 pairs of the tournament and need to display the winner
     if(thisRound.length==2){
-      a = getBestFrom2(thisRound[0], thisRound[1], round);
+      a = getBestFrom2(thisRound[0], thisRound[1], round,canEditScore);
       if(getPoints(a.pair, round)!==undefined){
         a.data.score = 'Gagnant';
       }

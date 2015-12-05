@@ -25,7 +25,7 @@ Router.onBeforeAction(function() {
         else
 			this.next();
 	}
-}, {except: ['home', 'rules', 'login', 'faq', 'poolList']});
+}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -54,9 +54,14 @@ Router.route('/email-terrain', {
 	}
 });
 
-Router.route('/carte-terrains', {
+Router.route('/carte-terrains/:_id?', {
 	template: 'courtMap',
 	name: 'courtMap',
+	data: function(){
+		if (this.ready()) {
+			return {"courtId":this.params._id};
+		}
+	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
 	},

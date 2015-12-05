@@ -12,6 +12,7 @@ function makeInfoWindowEvent(map, infowindow, contentString, marker) {
 }
 
 Template.courtMap.onCreated(function(){
+  var courtId = this.data.courtId;
   // We can use the `ready` callback to interact with the map API once the map is ready.
   GoogleMaps.ready('courtMap', function(map) {
     // Add a marker to the map once it's ready
@@ -46,7 +47,13 @@ Template.courtMap.onCreated(function(){
               animation: google.maps.Animation.DROP,
               map: map.instance,
             });
-
+            // Directly open the court if we came from another page
+            if(courtId == court._id){
+              var addr = Addresses.findOne(court.addressID);
+              infowindow.setContent(formatAddress(addr));
+              infowindow.open(map.instance, marker);
+              map.instance.setCenter(new google.maps.LatLng(court.coords.lat,court.coords.lng));
+            }
         
             google.maps.event.addListener(marker, 'click', function() {
                 var addr = Addresses.findOne(court.addressID);
