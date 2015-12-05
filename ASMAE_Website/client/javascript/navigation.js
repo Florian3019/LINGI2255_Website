@@ -1,36 +1,7 @@
-
-function isStaff() {
-	if(Meteor.user())
-	{
-		return (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin);
-	}
-	else
-	{
-		return false;
-	}
-}
-
-function isAdmin() {
-	if(Meteor.user())
-	{
-		return (Meteor.user().profile.isAdmin);
-	}
-	else
-	{
-		return false;
-	}
-}
-
+/*
+	This file defines helpers for the top navigation bar
+*/
 Template.navigation.helpers({
-	'isStaff': function(){
-		return isStaff();
-	},
-	'isAdmin':function(){
-		return isAdmin();
-	},
-	'isSimpleUser' : function() {
-		return (!isStaff() && !isAdmin());
-	},
 	'registered': function() {
 		return getPairsFromPlayerID(Meteor.userId()) !== undefined;
 	},

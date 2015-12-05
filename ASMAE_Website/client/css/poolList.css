@@ -65,9 +65,27 @@
   padding-left: 5px;
   padding-right: 5px;
 }
-.poolContainer:nth-child(odd) {
+
+.poolColor:nth-child(odd){
   background-color: rgba(51, 153, 255, 0.5);
 }
+
+.aloneColor:nth-child(odd){
+  background-color: rgba(0, 76, 153, 0.5);
+}
+
+.mergeColor:nth-child(odd){
+  background-color: rgba(0, 76, 153, 0.5);
+}
+
+.splitColor:nth-child(odd){
+  background-color: rgba(0, 76, 153, 0.5);
+}
+
+.buildColor:nth-child(odd){
+  background-color: rgba(0, 76, 153, 0.5);
+}
+
 /*
  * note that styling gu-mirror directly is a bad practice because it's too generic.
  * you're better off giving the draggable elements a unique class and styling that directly!
@@ -96,17 +114,9 @@
   color:red;
 }
 
-.pairs.ex-over >.list-group>.list-group-item{
-  background-color:rgba(255, 255, 255, 0.3);
-}
-
 .pairs.ex-moved >.list-group>.list-group-item{
   color : green;
 }
-
-/*#pairstoremoveparent{
-  margin-left:200px;
-}*/
 
 .handle {
   padding: 0 5px;
@@ -115,127 +125,6 @@
   cursor: move;
 }
 
-/*!
- * Start Bootstrap - Simple Sidebar HTML Template (http://startbootstrap.com)
- * Code licensed under the Apache License v2.0.
- * For details, see http://www.apache.org/licenses/LICENSE-2.0.
- */
-
-/* Toggle Styles */
-
-/*#PoolListWrapper {
-    padding-left: 0;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+.btn-padding{
+  margin-right: 10px;
 }
-
-#PoolListWrapper.toggled {
-    padding-left: 250px;
-}
-
-#sidebar-wrapper {
-    z-index: 1000;
-    position: fixed;
-    left: 250px;
-    width: 0;
-    height: 100%;
-    margin-left: -250px;
-    overflow-y: auto;
-    background: #000;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-}
-
-#PoolListWrapper.toggled #sidebar-wrapper {
-    width: 250px;
-}
-
-#page-content-wrapper {
-    width: 100%;
-    position: absolute;
-    padding: 15px;
-}
-
-#PoolListWrapper.toggled #page-content-wrapper {
-    position: absolute;
-    margin-right: -250px;
-}*/
-
-/* Sidebar Styles */
-
-/*.sidebar-nav {
-    position: absolute;
-    top: 0;
-    width: 250px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}*/
-
-
-
-/*.CategoryOption li {
-  text-indent: 30px;
-}
-
-.PoolBracketOption li{
-  text-indent: 100px;
-}
-
-.sidebar-nav li:hover {
-    text-decoration: none;
-    color: #fff;
-    background: rgba(0, 0, 255,0.1);
-}
-
-.sidebar-nav li:active,
-.sidebar-nav li:focus {
-    text-decoration: none;
-}*/
-
-/*.sidebar-nav > .sidebar-brand {
-    height: 65px;
-    font-size: 18px;
-    line-height: 60px;
-}
-
-.sidebar-nav > .sidebar-brand {
-    color: #999999;
-}
-
-.sidebar-nav > .sidebar-brand:hover {
-    color: #fff;
-    background: none;
-}*/
-
-/*@media(min-width:768px) {
-    #PoolListWrapper {
-        padding-left: 250px;
-    }
-
-    #PoolListWrapper.toggled {
-        padding-left: 0;
-    }
-
-    #sidebar-wrapper {
-        width: 250px;
-    }
-
-    #PoolListWrapper.toggled #sidebar-wrapper {
-        width: 0;
-    }
-
-    #page-content-wrapper {
-        padding: 20px;
-        position: relative;
-    }
-
-    #PoolListWrapper.toggled #page-content-wrapper {
-        position: relative;
-        margin-right: 0;
-    }
-}*/

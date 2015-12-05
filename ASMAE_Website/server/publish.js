@@ -1,3 +1,7 @@
+/*
+  This file defines what the client should see or edit of the database
+*/
+
 var isStaffOrAdmin = function(nid){
     if(nid===undefined) return false;
       var user = Meteor.users.findOne(nid);

@@ -1,3 +1,7 @@
+/*
+	This file populates the database with fictive players and courts, for testing purposes.
+*/
+
 Meteor.methods({
 
 	'activateDB' : function() {

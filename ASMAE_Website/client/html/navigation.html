@@ -36,10 +36,10 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-              {{#if isSimpleUser}}
-               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}">Tournoi</a></li>
-              {{else}}
+              {{#if isAdminOrStaff}}
                <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}">Menu staff</a></li>
+              {{else}}
+               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}">Tournoi</a></li>
               {{/if}}
               {{#if currentUser}}
               {{#if registrationsON}}
@@ -48,7 +48,9 @@
               {{else}}
               <li class="dropdown"><a class="dropdown-togglebis" data-toggle="dropdown" href="#" id="Droop">Inscription<span class="caret"></span></a>
                 <ul class="dropdown-menu">
+                    {{#if registered}}
                   <li><a href="{{pathFor route='myRegistration'}}">Mon inscription</a></li>
+                  {{/if}}
                   {{#unless isSaturdayRegistered}}
                   <li><a href="{{pathFor route='tournamentRegistrationSaturday'}}" id="Registr">S'inscrire pour le samedi</a></li>
                   {{/unless}}

@@ -1,4 +1,6 @@
 /*
+	This file defines helpers for the forum.
+
 	Thread structure:
 	{
 		_id:<threadId>,

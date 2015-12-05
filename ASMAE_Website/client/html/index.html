@@ -27,7 +27,7 @@
             </div>
             <hr class="nopadding">
             {{#if isStaffMember}}
-            <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem">Déroulement du tournoi</a></li>
+            <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">Déroulement du tournoi</a></li>
             {{/if}}
             {{#if isStaffMember}}
               <li><a href="{{pathFor route='poolList'}}" class="menuItem">Gestion du tournoi</a></li>
@@ -38,18 +38,18 @@
               {{>poolsSidebarCollapsableMenu}}
             {{/if}}
             {{#if isStaffMember}}
-            <li><a href="{{pathFor route='playersInfo'}}" class="menuItem">Rechercher un joueur</a></li>
-            <li><a href="{{pathFor route='playerPayments'}}" class="menuItem">Paiements pas en ordre</a></li>
-            <li><a href="{{pathFor route='staffManagement'}}" class="menuItem">Questions des joueurs</a></li>
+            <li><a href="{{pathFor route='playersInfo'}}" class="menuItem" id="PlayerSearchButtonMenu">Rechercher un joueur</a></li>
+            <li><a href="{{pathFor route='playerPayments'}}" class="menuItem" id="PaymentInOrderButtonMenu">Paiements pas en ordre</a></li>
+            <li><a href="{{pathFor route='staffManagement'}}" class="menuItem" id="PlayerQuestionsButtonMenu">Questions des joueurs</a></li>
             <br>
-            <li><a href="{{pathFor route='courtSearchTemplate'}}" class="menuItem">Rechercher un terrain</a></li>
-            <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem">Ajouter un terrain</a></li>
-            <li><a href="{{pathFor route='courtEmail'}}" class="menuItem">Envoi de mail aux gestionnaires de terrains</a></li>
+            <li><a href="{{pathFor route='courtSearchTemplate'}}" class="menuItem" id="CourtSearchButtonMenu">Rechercher un terrain</a></li>
+            <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem" id="AddCourtButtonMenu">Ajouter un terrain</a></li>
+            <li><a href="{{pathFor route='courtEmail'}}" class="menuItem" id="SendMailButtonMenu">Envoi de mail aux gestionnaires de terrains</a></li>
             <br>
-            <li><a href="{{pathFor route='printSheets'}}" class="menuItem">Feuille de poule</a></li>
-            <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem">Log des modifications</a></li>
-            <li><a href="{{pathFor route='forum'}}" class="menuItem">Forum</a></li>
-            <li><a href="{{pathFor route='staffFaq'}}" class="menuItem">Staff FAQ</a></li>
+            <li><a href="{{pathFor route='printSheets'}}" class="menuItem" id="PoolSheetsButtonMenu">Feuille de poule</a></li>
+            <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem" id="LogModificationsButtonMenu">Log des modifications</a></li>
+            <li><a href="{{pathFor route='forum'}}" class="menuItem" id="ForumButtonMenu">Forum</a></li>
+            <li><a href="{{pathFor route='staffFaq'}}" class="menuItem" id="StaffFAQButtonMenu">Staff FAQ</a></li>
             {{/if}}
           </ul>
     </div>

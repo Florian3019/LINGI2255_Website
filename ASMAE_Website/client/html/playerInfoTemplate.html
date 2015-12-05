@@ -61,6 +61,8 @@
                               {{/if}}
                                  <a href="#" id="unsubscribeSaturdayLink">Supprimer</a> )
                                 {{/if}}
+                              {{else}}
+                               (<a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">S'inscrire</a>)
                               {{/if}}
                           </td>
                         </tr>
@@ -77,6 +79,8 @@
                             {{/if}}
                                <a href="#" id="unsubscribeSundayLink">Supprimer</a> )
                               {{/if}}
+                              {{else}}
+                              (<a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">S'inscrire</a>)
                             {{/if}}
                           </td>
                         </tr>
@@ -126,21 +130,18 @@
 
             </div>
             {{#if isStaffOrAdmin}}
+            {{#with getPlayerModLog this.log}}
+              <h4> Modifications récentes </h4>
+              {{>reactiveTable collection=this settings=settings fields=fields}}
+            {{/with}}
             <center>
 
               <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
-              {{#unless isCurrentUser id}}
                 <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Supprimer</button>
-              {{/unless}}
             </center>
             {{/if}}
             <br/>
 </div>
-
-{{#with getPlayerModLog this.log}}
-  <h4> Modifications récentes </h4>
-  {{>reactiveTable collection=this settings=settings fields=fields}}
-{{/with}}
 
 <!-- Modal payment -->
 <div class="modal" id="dropinModal">
