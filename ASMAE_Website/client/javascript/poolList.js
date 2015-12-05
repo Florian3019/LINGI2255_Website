@@ -269,6 +269,17 @@ Template.poolsSidebarCollapsableMenu.helpers({
 	},
 });
 
+var resetSessionVar = function(){
+	Session.set("PoolList/ChosenScorePool","");
+	Session.set("PoolList/ChosenCourt","");
+    Session.set("selectNewCourt/saturday","Ignore");
+    Session.set("selectNewCourt/sunday","Ignore");
+    Session.set("selectNewCourt/staffOK","Ignore");
+    Session.set("selectNewCourt/ownerOK","Ignore");
+    Session.set("changeCourtsBracket","false");
+    Session.set("brackets/buildingTournament",false);
+}
+
 Template.poolsSidebarCollapsableMenu.events({
 	'click .PoolOption' : function(event){
 		var type = event.currentTarget.dataset.type;
@@ -279,14 +290,9 @@ Template.poolsSidebarCollapsableMenu.events({
 			type="family";
 		}
 		Session.set('PoolList/Type', type);
-		Session.set("PoolList/ChosenScorePool","");
 		Session.set("PoolList/ChosenBrackets","");
-		Session.set("PoolList/ChosenCourt","");
-        Session.set("selectNewCourt/saturday","Ignore");
-        Session.set("selectNewCourt/sunday","Ignore");
-        Session.set("selectNewCourt/staffOK","Ignore");
-        Session.set("selectNewCourt/ownerOK","Ignore");
-        Session.set("changeCourtsBracket","false");
+		
+		resetSessionVar();
 
 		// Hide previous error message, if any
 		mergeErrorBox = document.getElementById("mergeErrorBox");
@@ -306,13 +312,8 @@ Template.poolsSidebarCollapsableMenu.events({
 		}
 		Session.set('PoolList/Type', type);
 		Session.set("PoolList/ChosenBrackets","true");
-		Session.set("PoolList/ChosenScorePool","");
-		Session.set("PoolList/ChosenCourt","");
-        Session.set("selectNewCourt/saturday","Ignore");
-        Session.set("selectNewCourt/sunday","Ignore");
-        Session.set("selectNewCourt/staffOK","Ignore");
-        Session.set("selectNewCourt/ownerOK","Ignore");
-        Session.set("changeCourtsBracket","false");
+
+		resetSessionVar();
 
 		var info = {"type":type, "category":category, "isPool":false};
 		updateArrow(document, info);
@@ -617,9 +618,33 @@ Template.poolList.onRendered(function() {
 	Session.set("PoolList/Category","");
 });
 
+var showPairModal = function(){
+  Session.set('closeModal','pairModal');
+  var user = Meteor.user();
+  if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
+    return; // Do nothing
+  }
+  $('#pairModal').modal('show');
+}
+
 Template.poolList.events({
 	'click #equilibrate':function(event){
 		equilibrate(document);
+	},
+
+	'click .alonePair':function(event){
+		var data = event.currentTarget.dataset;
+		var user = Meteor.users.findOne({_id:data.playerid},{"profile.gender":1, "profile.birthDate":1});
+		var pair = Pairs.findOne({_id:event.currentTarget.id});
+		Session.set("PoolList/ModalData", {"POOL":data.startingpoolid, "SEX":user.profile.gender, "SHOWOPTIONS":true, "BIRTHDATE":user.profile.birthDate, "PAIR":pair});
+		showPairModal();
+	},
+
+	'click .fullPair':function(event){
+        var data = event.currentTarget.dataset;
+        var pair = Pairs.findOne({_id:data.id});
+        Session.set('PoolList/ModalData',{'PAIR':pair, 'POOL':data.poolid, 'SHOWOPTIONS':true});
+        showPairModal();
 	},
 
 	/*
@@ -776,6 +801,14 @@ var getYearFunct = function(document){
 }
 
 Template.poolList.helpers({
+	'getTranslateType':function(){
+		return typesTranslate[Session.get("PoolList/Type")];
+	},
+
+	'getTranslateCategory':function(){
+		return categoriesTranslate[Session.get("PoolList/Category")];
+	},
+
 	// Returns a yearData with id year (copy of the same function in poolsSidebarCollapsableMenu.helpers)
 	'getYear' : function(){
 		return getYearFunct(document)
@@ -1075,16 +1108,6 @@ var hasBothPlayers = function(pair){
 }
 
 Template.alonePairsContainerTemplate.helpers({
-	'makeClickableAlone':function(id){
-		document.getElementById(id).onclick = function(){
-			var data = this.dataset;
-			var user = Meteor.users.findOne({_id:data.playerid},{"profile.gender":1, "profile.birthDate":1});
-			var pair = Pairs.findOne({_id:data.id});
-			Session.set("PoolList/ModalData", {"POOL":data.startingpoolid, "SEX":user.profile.gender, "SHOWOPTIONS":true, "BIRTHDATE":user.profile.birthDate, "PAIR":pair});
-			showPairModal();
-		}
-	},
-
 	'getAlonePairs' : function(typeData){
 		category = Session.get('PoolList/Category');
 		poolIdList = typeData[category];

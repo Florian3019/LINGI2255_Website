@@ -16,6 +16,9 @@
               {{#with getYear}} <!-- Returns a yearData -->
                 {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
                 {{#with getType this}}
+                <div class="page-header">
+                  <h2> Poules {{getTranslateType}}{{#unless equals this "all"}} > {{getTranslateCategory}} {{/unless}}</h2>
+                </div>
               {{>responsablesTemplate this}}
 
               <!-- Pool Tables -->
@@ -225,24 +228,7 @@
       <div class='poolContainer aloneColor' id='alonepairs'>
         {{#each getAlonePairs TYPEDATA}}
         {{#with getPlayer this.pair.player1._id}}
-          <div id="{{../pair._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}"
-          onclick="
-            /*  This is very ugly, but is the only way I found to make the item clickable after it has been moved to another container */
-            var showPairModal = function(){
-              Session.set('closeModal','pairModal');
-              var user = Meteor.user();
-              if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
-                return; // Do nothing
-              }
-              $('#pairModal').modal('show');
-            }
-            var data = this.dataset;
-            var user = Meteor.users.findOne({_id:data.playerid},{'profile.gender':1, 'profile.birthDate':1});
-            var pair = Pairs.findOne({_id:this.id});
-            Session.set('PoolList/ModalData', {'POOL':data.startingpoolid, 'SEX':user.profile.gender, 'SHOWOPTIONS':true, 'BIRTHDATE':user.profile.birthDate, 'PAIR':pair});
-            showPairModal();
-          ">
-            
+          <div id="{{../pair._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}} alonePair" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}">
             <ul class="list-group clickablePoolItem clickablePoolItemAlone" data-id="{{../pair._id}}" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}">
               <li class="list-group-item pairPlayer" style="color:{{getColor ../pair.player1}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}</li>
             </ul>
@@ -379,22 +365,7 @@ Takes 2 arguments :
 <template name="poolItem">
   {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
     <div id="{{this._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
-      <ul class="list-group clickablePoolItem clickablePoolItemFull" data-id="{{this._id}}" data-poolid="{{../POOLID}}"
-      onclick="
-        /*  This is very ugly, but is the only way I found to make the item clickable after it has been moved to another container */
-        var showPairModal = function(){
-          Session.set('closeModal','pairModal');
-          var user = Meteor.user();
-          if(user==null || user===undefined || !(user.profile.isStaff || user.profile.isAdmin)){
-            return; // Do nothing
-          }
-          $('#pairModal').modal('show');
-        }
-        var data = this.dataset;
-        var pair = Pairs.findOne({_id:data.id});
-        Session.set('PoolList/ModalData',{'PAIR':pair, 'POOL':data.poolid, 'SHOWOPTIONS':true});
-        showPairModal();
-      ">
+      <ul class="list-group clickablePoolItem fullPair" data-id="{{this._id}}" data-poolid="{{../POOLID}}">
         {{#with getPlayer this.player1._id}}
         <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}color:{{getColor ../player1}}{{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}

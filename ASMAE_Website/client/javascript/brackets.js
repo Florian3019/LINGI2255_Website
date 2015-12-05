@@ -291,6 +291,10 @@ Template.brackets.helpers({
     return typesTranslate[type];
   },
 
+  'isLoading':function(){
+    return Session.get('brackets/isLoading');
+  },
+
   'translateCategory':function(category){
     return categoriesTranslate[category];
   },
@@ -344,12 +348,29 @@ Template.brackets.helpers({
 
 });
 
-var hideStuff = function(stuff){
-  for(s in stuff){
-    if(year!=undefined && type!=undefined && category!=undefined && s!=undefined && s.style!=undefined){
-      s.style.display = 'none';
-    }
+var hideStuff = function(document, hideType, hide){
+  var stuff;
+  if(hideType==="empty"){
+    stuff = document.getElementsByClassName("hideIfEmpty");
   }
+  else if(hideType==="notStarted"){
+    stuff = document.getElementsByClassName("hideIfNotStarted");
+  }
+  else if(hideType==="showIfNotStarted"){
+    stuff = document.getElementsByClassName("showIfNotStarted");
+  }
+  for(var i=0; i<stuff.length;i++){
+    var s = stuff[i]; 
+    if(s.style===undefined){
+        s.setAttribute("style","display:block");
+    }
+    s.style.display = hide ? 'none':'block';
+  }
+}
+
+var showAll = function(document){
+  hideStuff(document, "empty", false);
+  hideStuff(document, "notStarted", false);
 }
 
 // Helper of makeBrackets
@@ -361,30 +382,30 @@ var handleBracketErrors = function(document){
     type = Session.get("PoolList/Type");
     category = Session.get("PoolList/Category");
 
-    pdfButton = document.getElementById("getPDF");
-    startButton =  document.getElementById("start");
-    // winnersSelect =  document.getElementById("winnersPerPool");
-    bracketOptions = document.getElementById("bracketOptions");
+    // pdfButton = document.getElementById("getPDF");
+    startButton =  document.getElementById("startText");
+    // // winnersSelect =  document.getElementById("winnersPerPool");
+    // bracketOptions = document.getElementById("bracketOptions");
 
     yearData = Years.findOne({_id:year},{reactive:false});
     if(yearData==undefined){
       console.info("No data found for year "+year);
       setInfo(document, "Pas de données trouvées pour l'année "+year);
-      hideStuff([bracketOptions,pdfButton]);
+      hideStuff(document, "empty", true);
       return;
     }
     typeId = yearData[type];
     if(typeId==undefined){
       console.info("No data found for type "+type);
       setInfo(document, "Pas de données trouvées pour le type "+typesTranslate[type] + " de l'année "+year);
-      hideStuff([bracketOptions,pdfButton]);
+      hideStuff(document, "empty", true);
       return;
     }
     typeData = Types.findOne({_id:typeId},{reactive:false});
     if(typeData==undefined){
       console.error("handleBracketErrors : id search on the Types DB failed");
       setInfo(document, "Oups... Une erreur s'est produite");
-      hideStuff([bracketOptions,pdfButton]);
+      hideStuff(document, "empty", true);
       return;
     }
     if(typeData[category]==undefined){
@@ -393,19 +414,17 @@ var handleBracketErrors = function(document){
         + categoriesTranslate[category]
         + " du type "+typesTranslate[type]
         + " de l'année "+year);
-      hideStuff([bracketOptions,pdfButton]);
+      hideStuff(document, "empty", true);
       return;
     }
 
     allWinners = typeData[category.concat("Bracket")]; // List of pairIds
 
+    if(startButton!=undefined && startButton!=null) startButton.innerHTML="Démarrer ce knock-off";
+
     if(allWinners==undefined){
-      if(bracketOptions!=undefined){
-        console.info("Tournament not started");
-        if(startButton!=undefined && startButton!=null) startButton.innerHTML="Démarrer ce knock-off";
-        if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
-        if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
-      }
+      console.info("Knock-offs not started"); 
+     
       var user = Meteor.user();
       if(user===undefined || user===null || !(user.profile.isStaff || user.profile.isAdmin)){
         setInfo(document, "Les knock-off n'ont pas encore commencés pour cette catégorie!");
@@ -413,13 +432,13 @@ var handleBracketErrors = function(document){
       else{
         setInfo(document, "Les knock-off n'ont pas encore commencés. Cliquez sur démarrer ce knock-off pour en créer un.");
       }
+      hideStuff(document, "notStarted", true);
+      hideStuff(document, "showIfNotStarted",false);
       return;
     }
-    if(bracketOptions!==undefined){
-      if(startButton!=undefined && startButton!=null) startButton.innerHTML="Redémarrer ce knock-off";
-      if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
-      if(pdfButton!==undefined && pdfButton!==null) pdfButton.style.display = 'block';
-    }
+
+
+    
 
     if(allWinners.length==0){
       console.info("There are no matches for that year, type and category, did you create any ?");
@@ -431,12 +450,17 @@ var handleBracketErrors = function(document){
         setInfo(document, "Pas de matchs pour l'année "+year
           + " type " + typesTranslate[type]
           + " de la catégorie " + categoriesTranslate[category]
-          + ". Si vous en avez créé, cliquez sur redémarrer le knock-off pour mettre à jour");
+          + ". Si vous en avez créé, cliquez sur démarrer le knock-off pour mettre à jour");
       }
+      hideStuff(document, "notStarted", true);
+      hideStuff(document, "showIfNotStarted",false);
       return;
     }
 
+    if(startButton!=undefined && startButton!=null) startButton.innerHTML="Redémarrer ce knock-off";
+
     hideInfo(document);
+    showAll(document);
 
     return allWinners;
 }
@@ -714,6 +738,7 @@ var getStringOptions = function(){
 
 Template.brackets.onRendered(function(){
   Session.set('brackets/buildingTournament', false); // By default, we are not building the tournament
+  Session.set('brackets/isLoading', false);
 });
 
 Template.brackets.events({
@@ -789,18 +814,33 @@ Template.brackets.events({
   },
 
   'click #start':function(event){
-      Session.set('brackets/buildingTournament', true);
-      infoBox =document.getElementById("infoBox");
+      Session.set("brackets/isLoading",true);
+
+      var infoBox =document.getElementById("infoBox");
       if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered and hide it
       console.log("calling startTournament");
-      year = Session.get('PoolList/Year');
-      type = Session.get('PoolList/Type');
-      cat = Session.get('PoolList/Category');
+      var year = Session.get('PoolList/Year');
+      var type = Session.get('PoolList/Type');
+      var cat = Session.get('PoolList/Category');
 
-      maxWinners = document.getElementById("winnersPerPool").value;
+      var maxWinners = document.getElementById("winnersPerPool").value;
 
       callback = function(err, retVal){
-        console.log(retVal);
+        Session.set("brackets/isLoading",false);
+        var hasNoPairs = retVal.winnerPairPoints.length == 0 && retVal.loserPairPoints.length ==0;
+        if(hasNoPairs){
+          // Cancel operation
+          setInfo(document, "Pas de matchs pour l'année "+year
+          + " type " + typesTranslate[type]
+          + " de la catégorie " + categoriesTranslate[cat]
+          + ". Si vous en avez créé, cliquez sur démarrer le knock-off pour mettre à jour");
+          
+          return;
+        } 
+        else{
+          hideInfo(document);
+          Session.set('brackets/buildingTournament', true);
+        } 
         Session.set("brackets/pairPoints",retVal);
       };
 
@@ -833,7 +873,7 @@ Template.brackets.events({
 
     var callback = function(err, logId){
       if(err){
-        console.log(err);
+        console.error(err);
         return;
       }
         Meteor.users.update({"_id":pair0.player1._id},{$addToSet:{"log":logId}});
