@@ -6,16 +6,25 @@
 				{{#with getType}}
 					{{#with getCategory}}
 					{{#unless buildingTournament}}
-						<div id="bracketOptions" style="display:none">
-							<button type="button" id="start" class="btn btn-default btn-lg">
-							  <span class="glyphicon glyphicon-star"></span> Start
-							</button>
-						  	<div class="pull-right">
-							  <h4>Gagnants par poule:
-							 	<input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
-							  </h4>
-		 					</div>
-			 			</div>
+          <div class="row">
+            <div class="col-sm-4" id="buttonPdf">
+              <button type="button" id="getPDF" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+              </button>
+            </div>
+            <div id="bracketOptions" style="display:none">
+              <div class="col-sm-4">
+                <button type="button" id="start" class="btn btn-default btn-lg">
+                  <span class="glyphicon glyphicon-star"></span> Start
+                </button>
+              </div>
+              <div class="col-sm-4">
+                <h4>Gagnants par poule:
+                  <input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
+                </h4>
+              </div>
+            </div>
+          </div>
 		 			{{/unless}}
 		 			{{/with}}
 		 		{{/with}}
@@ -141,14 +150,6 @@
 
     </div>
   </div>
-{{#if isAdminOrStaff}}
-	{{#unless buildingTournament}}
-	<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}" style="display:none">
-	<span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-	</button>
-	<br>
-	{{/unless}}
-{{/if}}
 
 {{CourtInfoModal}}
 

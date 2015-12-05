@@ -369,6 +369,7 @@ var handleBracketErrors = function(document){
     yearData = Years.findOne({_id:year},{reactive:false});
     if(yearData==undefined){
       console.info("No data found for year "+year);
+      $("#buttonPdf").hide();
       setInfo(document, "Pas de données trouvées pour l'année "+year);
       hideStuff([bracketOptions,pdfButton]);
       return;
@@ -376,6 +377,7 @@ var handleBracketErrors = function(document){
     typeId = yearData[type];
     if(typeId==undefined){
       console.info("No data found for type "+type);
+      $("#buttonPdf").hide();
       setInfo(document, "Pas de données trouvées pour le type "+typesTranslate[type] + " de l'année "+year);
       hideStuff([bracketOptions,pdfButton]);
       return;
@@ -402,7 +404,11 @@ var handleBracketErrors = function(document){
     if(allWinners==undefined){
       if(bracketOptions!=undefined){
         console.info("Tournament not started");
-        if(startButton!=undefined && startButton!=null) startButton.innerHTML="Démarrer ce knock-off";
+        if(startButton!=undefined && startButton!=null) {
+          startButton.innerHTML="Démarrer ce knock-off";
+          $("#buttonPdf").hide();
+          console.log("fuck");
+        }
         if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
         if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
       }
@@ -416,7 +422,10 @@ var handleBracketErrors = function(document){
       return;
     }
     if(bracketOptions!==undefined){
-      if(startButton!=undefined && startButton!=null) startButton.innerHTML="Redémarrer ce knock-off";
+      if(startButton!=undefined && startButton!=null){
+        startButton.innerHTML="Redémarrer ce knock-off";
+        $("#buttonPdf").show();
+      }
       if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
       if(pdfButton!==undefined && pdfButton!==null) pdfButton.style.display = 'block';
     }
