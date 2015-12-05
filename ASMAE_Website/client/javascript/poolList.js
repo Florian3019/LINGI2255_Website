@@ -1569,8 +1569,8 @@ var equilibrate = function(document){
 		}
 	}
 
-	var optimalSize = totalPairs/poolContainers.length; // Ideal number of pairs per pool
-
+	var optimalSize = Math.floor(totalPairs/poolContainers.length); // Ideal number of pairs per pool
+	console.log("optimalSize : "+optimalSize);
 	// For each poolContainer
 	for(var i=0;i<poolContainers.length;i++){
 		// This is the amount of pairs to remove from this container
@@ -1582,7 +1582,7 @@ var equilibrate = function(document){
 				Now we must find somewhere to put these pairs
 				Start to fill the next container
 			*/
-			for(var k=i+1;k<poolContainers.length;k++){
+			for(var k=0;k<poolContainers.length;k++){
 				var container = poolContainers[k];
 				if(container.pairs.length < optimalSize){
 					// Move the pair overhere !

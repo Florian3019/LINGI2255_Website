@@ -9,7 +9,9 @@
             </div>
             <div class="panel-body">
               <div class="row">
+              {{#unless ../HidePic}}
                 <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://www.saintemesme.fr/medias/images/balle-rigolote-2.gif" class="img-circle img-responsive"> </div>
+              {{/unless}}
                 <div class=" col-md-9 col-lg-9 ">
                   <table class="table table-user-information">
                     <tbody>
@@ -106,12 +108,11 @@
 
             <center>
 
-              <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
+              <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Modifier</button>
               {{#unless isCurrentUser id}}
-                <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Supprimer</button>
+                <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Supprimer</button>
               {{/unless}}
             </center>
-            <br/>
 </div>
 
 <!-- Modal payment -->
