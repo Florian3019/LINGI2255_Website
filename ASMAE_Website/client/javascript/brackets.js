@@ -432,7 +432,6 @@ var handleBracketErrors = function(document){
         if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
       }
       console.info("Knock-offs not started");
-      $("#buttonPdf").hide();
 
 
       var user = Meteor.user();
@@ -446,8 +445,6 @@ var handleBracketErrors = function(document){
       hideStuff(document, "showIfNotStarted",false);
       return;
     }
-
-    $("#buttonPdf").show();
 
 
 
