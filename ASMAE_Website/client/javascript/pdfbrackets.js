@@ -157,6 +157,7 @@ Template.PdfBracket.events({
       onrendered: function(canvas) {
         var ratio = canvas.width/canvas.height;
         var img =canvas.toDataURL("image/jpeg,1.0");
+        console.log(img);
         var info = Session.get("brackets/infoPdf");
         if (info != undefined) {
           var texte=info.year+" "+typesTranslate[info.type]+" "+categoriesTranslate[info.cat];
