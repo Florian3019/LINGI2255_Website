@@ -386,6 +386,7 @@ var handleBracketErrors = function(document){
     Session.set("brackets/infoPdf",{"year":year,"type":type,"cat":category});
     var startButton =  document.getElementById("startText");
     var pdfButton = document.getElementById("getPDF");
+    var bracketOptions = document.getElementById("bracketOptions");
 
     yearData = Years.findOne({_id:year},{reactive:false});
     if(yearData==undefined){
