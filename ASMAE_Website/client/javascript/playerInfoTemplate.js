@@ -1,5 +1,5 @@
 /*
-	This file defines how the player information summary page behaves. 
+	This file defines how the player information summary page behaves.
 	It also uses braintree to display payment informations
 */
 
@@ -10,6 +10,8 @@ function getFormData(){
 
 	var user = Meteor.user();
 	var extras = getExtras();
+
+	//TODO: add data.day the day of the pair
 
   	var data = {
     	firstName : user.profile.firstName,

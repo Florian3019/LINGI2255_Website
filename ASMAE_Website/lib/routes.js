@@ -448,14 +448,6 @@ Router.route('/topic/:_id/:tname',{
 	}
 });
 
-Router.route('/payment', {
-	name: 'payment',
-	template: 'payment',
-	waitOn: function(){
-		return [ Meteor.subscribe('Payments')];
-	}
-});
-
 Router.route('/payment-confirmation', {
   name: 'paymentConfirmation',
 	template: 'paymentConfirmation',
@@ -497,6 +489,14 @@ Router.route('/paiements-des-joueurs', {
 	waitOn: function() {
 		return [Meteor.subscribe('Years'), Meteor.subscribe('Payments')];
 	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
+});
+
+Router.route('/envoyer-mail', {
+  	name: 'sendEmailToList',
+	template: 'sendEmailToList',
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
 	}
