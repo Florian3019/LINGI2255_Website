@@ -6,13 +6,14 @@
     </div>
     <div class="row">
         Envoyer email rappel de paiement: <button class="btn btn-primary" id="sendPaymentReminderEmail" style="margin-left:10px">Envoyer</button>
-        <form id="bankTransferSearchForm" class="pull-right">
-            <input type="text" name="bankTransferSearchField" id="bankTransferSearchField" placeholder="Chercher par numéro d'identification de virement" style="width:300px; font-size:12px">
-            <button type="submit" class="btn btn-primary" id="bankTransferSearchSubmit">Chercher</button>
-        </form>
+        <div class="pull-right">
+            <input type="text" id="paymentInput" placeholder="Chercher" style="width:300px; font-size:12px">
+        </div>
     </div>
-    <br>
-    {{#with payments}}
+
+    {{>reactiveTable collection=getPayments settings=settings fields=fields}}
+
+<!--     {{#with payments}}
         {{#if this.notEmpty}}
     	<table class="table">
     		<thead>
@@ -45,6 +46,16 @@
             </h4>
         </div>
         {{/if}}
-    {{/with}}
+    {{/with}} -->
 </div>
+</template>
+
+<template name="markAsPaid">
+    <a href="" class="markAsPaidLink">Payé</a>
+</template>
+
+<template name="userLabel">
+    {{#with player}}
+        <a href="{{pathFor route='playerInfoTemplate' _id=this._id}}">{{profile.firstName}} {{profile.lastName}}</a>
+    {{/with}}
 </template>
