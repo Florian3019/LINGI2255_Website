@@ -1062,23 +1062,14 @@ Meteor.methods({
 		paymentData = {
 			userID : paymentUser,
 			tournamentYear : currentYear,
+			day : pairData.day,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
 			balance : amount
 		};
 
-		// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
-		if(pairData.paymentMethod === paymentTypes[1]){
-			paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
-
-			var newValue = paymentData.bankTransferNumber + 1;
-			GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
-				value: newValue
-			}});
-		}
-
 		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear});
+		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear, 'day': pairData.day});
 		if(paymentAlreadyExists){
 			if(pairData._id){
 				Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
@@ -1116,6 +1107,16 @@ Meteor.methods({
 				*/
 			}
 			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
+
+				// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
+				paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
+
+				var newValue = paymentData.bankTransferNumber + 1;
+				GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
+					value: newValue
+				}});
+
+
         		var bank = "BE33 3753 3397 1254";
         		var user = Meteor.users.findOne({_id:paymentData.userID});
         		var dataEmail = {
@@ -2088,7 +2089,7 @@ Meteor.methods({
 
 		// Remove payment
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
+		Payments.remove({'userID': userID, 'tournamentYear': currentYear}); 	//TODO: precise the day
 
 
 		console.log(user);

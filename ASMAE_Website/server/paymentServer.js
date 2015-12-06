@@ -56,7 +56,7 @@ Meteor.methods({
             paymentMethod: "CreditCard"
         };
 
-        Payments.update({"userID": Meteor.userId()} , {$set: data}, function(err, result){
+        Payments.update({"userID": Meteor.userId(), "tournamentYear": currentYear, "day":data.day} , {$set: data}, function(err, result){
             if(err){
                 console.error('Payments.update error after transaction');
                 console.error(err);

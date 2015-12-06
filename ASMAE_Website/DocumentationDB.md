@@ -198,6 +198,7 @@ A payment is structured as follows :
     _id:<id>,
     userID: <user id>,
     tournamentYear: <tournament year>,
+    day: <saturday or sunday>,
     status:<string: status>, // paid or pending
     balance:<number: balance>,
     date:<date>,
