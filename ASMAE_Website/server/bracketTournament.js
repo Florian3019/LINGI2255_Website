@@ -85,16 +85,11 @@ var getPoolWinners = function(poolId, MAXWINNERS){
 
   oneTimeWarning = false;
 
-  // Sorter for pairPoints (by descending order)
-  /*
-    First sort by the amount of points. Then sort wrt the number of victories, and finally wrt who won against the other.
-  */
-  var pointComparator = function(a,b){
-    // Return a number > 0 if a is after b
-    // Return a number < 0 if a is before b
+  var comparePoints = function(a,b){
 
-    pointDiff = pairPoints[b]["points"]-pairPoints[a]["points"];
-    if(pointDiff!=0){
+  pointDiff = pairPoints[b]["points"]-pairPoints[a]["points"];
+
+  if(pointDiff!=0){
       // If there is a difference in the points, return that difference
       return pointDiff;
     }
@@ -134,9 +129,9 @@ var getPoolWinners = function(poolId, MAXWINNERS){
       }  
       return 1;
     }
-  }
+};
 
-  pairKeys.sort(pointComparator);
+  pairKeys.sort(comparePoints);
   var i = 0;
 
 
@@ -159,11 +154,63 @@ var getPoolWinners = function(poolId, MAXWINNERS){
 var getCategoryWinners = function(poolIdList, maxWinners){
   allWinnersPairPoints = [];
   allLosersPairPoints = [];
+  
   for(var i=0; i<poolIdList.length;i++){
     poolWinners = getPoolWinners(poolIdList[i], maxWinners);
     allLosersPairPoints = allLosersPairPoints.concat(poolWinners.loserPairPoints);
     allWinnersPairPoints = allWinnersPairPoints.concat(poolWinners.winnerPairPoints);
   }
+
+  console.log(allWinnersPairPoints);
+
+  var comparePoints = function(a,b){
+
+  pointDiff = b["points"]-a["points"];
+
+  if(pointDiff!=0){
+      // If there is a difference in the points, return that difference
+      return pointDiff;
+    }
+
+    /*
+      Deal with equalities...
+    */
+
+    // pair a and b have the same number of points, sort them by the number of victories
+    victDiff = b["victories"]-a["victories"];
+    if(victDiff!=0){
+      return victDiff;
+    }
+
+    // pair a and b have the same number of points and victories, sort them in regard of who won against the other
+    data1 = {};
+    data1[a] = {$exists:true};
+    data2 = {};
+    data2[b] = {$exists:true};
+    m = Matches.find({$and:[data1, data2]}).fetch(); // Get all the matches in which this pair played
+    if(m.length!=1){
+      console.error("pointComparator : No match found (or multiple matches found) for pair "+a +" and "+b);
+      return undefined;
+    }
+
+    p = matchPointDiff(m[0], a);
+    if(p>0){
+      // A won against b
+      return -1;
+    }
+    else{
+      // A lost against b
+      if(p==0 && !oneTimeWarning){
+        oneTimeWarning = true;
+        // Can't have equalities...
+        console.warn("pointComparator : There are equalities in the matches, selection of the pairs will be random for those equalities ...");
+      }  
+      return 1;
+    }
+};
+
+ allWinnersPairPoints.sort(comparePoints);
+ allLosersPairPoints.sort(comparePoints);
 
   return {"loserPairPoints":allLosersPairPoints, "winnerPairPoints":allWinnersPairPoints};
 };

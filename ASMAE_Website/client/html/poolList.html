@@ -404,11 +404,11 @@ Takes 2 arguments :
     </h3>
     {{#if isAdminOrStaff}}
       {{#if isResponsable}}
-        <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right">
+        <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right toHideForPdf">
             <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Ne plus être responsable
         </button>
       {{else}}
-        <button type="button" id="becomeResponsable" class="btn btn-default btn-lg pull-right">
+        <button type="button" id="becomeResponsable" class="btn btn-default btn-lg pull-right toHideForPdf">
           <span class="glyphicon glyphicon-star" aria-hidden="true"></span>Devenir responsable
         </button>
       {{/if}}

@@ -7,71 +7,118 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"></script>
 
-  <button type="button" id="scoreTableBack" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button>
+  <button type="button" id="scoreTableBack" class="btn btn-default btn-lg toHideForPdf"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button>
+  <div class="toHideForPdf">
   {{#with getYear}} <!-- Returns a yearData -->
     {{#with getType this}}
+        <div class="page-header">
+          <h2> Matchs de poule {{getTranslateType}}{{#unless equals this "all"}} > {{getTranslateCategory}} {{/unless}}</h2>
+        </div>
       {{>responsablesTemplate this}}
     {{/with}}
   {{/with}}
+  </div>
 
-  <table class="table">
-    <tbody>
-      <tr>
-        <td align="center">
-          {{#with getLeader this._id}}
-          <h3>Chef de poule: </h3>
-          <address>
-            <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
-              <i class="fa fa-user fa-5x"></i><br/>
-              <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
-              {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
-              {{getEmail this}}<br>
-            </a>
-          </address>
-          {{/with}}
-        </td>
-
-
-        <td align="center">
-          <h3 id="TerrainHeader">Terrain :</h3>
-          <div class="btn btn-sq-lg btn-primary" id="changeCourt">
-            <i class="fa fa-home fa-5x"></i><br/>
-             {{#if getCourt this._id}}
-               {{#with getCourt this._id}}
-                  <strong> Numéro : {{this.id}} </strong><br>
-                  {{this.address.street}} {{this.address.number}} <br>
-                  {{this.address.zipCode}} {{this.address.city}}
-              {{/with}}
-              {{else}}
-                <h4 style="color:white">Assigner un terrain</h4>
-              {{/if}}
-          </div>
-        
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  {{#unless this.isForPdf}}
+    {{>scoreTableInfo this}}
+  {{/unless}}
 
   {{>scoreTable this}}
 
   {{#if isAdminOrStaff}}
-    <button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
+    <button type="button" id="getPDF" class="btn btn-default btn-lg toHideForPdf" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
       <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
     </button>
   {{/if}}
 
 </template>
 
+<template name="scoreTableInfo">
+
+  {{#if this.isForPdf}}
+    <div class="container">
+      <div class="row">
+        {{#if getCourt this._id}}
+          {{#with getCourt this._id}}
+            <div class="col-md-6">
+              <strong> Terrain numéro {{this.id}} </strong>,
+              {{this.address.street}} {{this.address.number}},
+              {{this.address.zipCode}} {{this.address.city}}
+            </div>
+          {{/with}}
+        {{/if}}
+      </div>
+      <div class="row">
+        {{#with getLeader this._id}}
+          <div class="col-md-6">
+            <strong>Chef de poule</strong>: {{this.profile.firstName}} {{this.profile.lastName}}
+            {{#unless equals this.profile.phone undefined}}, {{this.profile.phone}}{{/unless}},
+            {{getEmail this}}
+          </div>
+        {{/with}}
+      </div>
+      <div class="row">
+        {{#with getOneResponsable this._id}}
+        <div class="col-md-6">
+            <strong>Responsable</strong>: {{this.profile.firstName}} {{this.profile.lastName}}
+            {{#unless equals this.profile.phone undefined}}, {{this.profile.phone}}{{/unless}},
+            {{getEmail this}}
+        </div>
+        {{/with}}
+      </div>
+    </div>
+
+  {{else}}
+    <table class="table">
+      <tbody>
+        <tr>
+          <td>
+            {{#with getLeader this._id}}
+              <!-- <h3 style="{{#if ../isForPdf}} display:inline; font-size:0.5em; {{/if}}">Chef de poule: </h3> -->
+              <address>
+                <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
+                  <i class="fa fa-user fa-5x"></i><br/>
+                  <b>Chef de poule</b><br>
+                  <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
+                  {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
+                  {{getEmail this}}<br>
+                </a>
+              </address>
+            {{/with}}
+          </td>
+
+          <td align="center">
+            <!-- <h3 id="TerrainHeader" style="{{#if this.isForPdf}} display:inline; font-size:0.5em;{{/if}}">Terrain :</h3> -->
+            <div class="btn btn-sq-lg btn-primary" id="changeCourt">
+              <i class="fa fa-home fa-5x"></i><br/>
+               {{#if getCourt this._id}}
+                 {{#with getCourt this._id}}
+                    <b>Terrain</b><br>
+                    <strong> Numéro : {{this.id}} </strong><br>
+                    {{this.address.street}} {{this.address.number}} <br>
+                    {{this.address.zipCode}} {{this.address.city}}
+                {{/with}}
+                {{else}}
+                  <h4 style="color:white">Assigner un terrain</h4>
+                {{/if}}
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  {{/if}}
+</template>
+
 
 <!-- Takes 1 parameter : the poolId for this score table under the format {_id:POOLID}-->
 <template name="scoreTable">
   <div id="scoreTab">
-    <h3 id="ConsignesHeader">Les paires dans la colonne jouent contre les paires de la ligne.</h3>
+    <h3 id="ConsignesHeader" class="toHideForPdf">Les paires dans la colonne jouent contre les paires de la ligne.</h3>
     <div class="panel panel-primary" style="background-color:white">
-      <div class="panel-heading">Tableaux des résultats</div>
+      <div class="panel-heading toHideForPdf">Tableaux des résultats</div>
       <table class="table table-bordered" id="scoreTableElement">
         {{#with getPairs this._id}}
-        <thead>
+        <thead class="{{#if ../isForPdf}} scoreTableFontSize {{/if}}">
           <tr>
             <th>
               <h4><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> VS <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> </h4>
@@ -89,7 +136,7 @@
           </tr>
         </thead>
 
-        <tbody>
+        <tbody class="{{#if ../isForPdf}} scoreTableFontSize {{/if}}">
           {{#each this}}
           <tr>
             <th>
@@ -151,8 +198,4 @@
       </table>
     </div>
   </div>
-  <!-- Frame for the pdf viewer -->
-  <iframe class="preview-pane" type="application/pdf" height="900" width="100%" frameborder="0" hidden></iframe>
-  <br>
-
 </template>

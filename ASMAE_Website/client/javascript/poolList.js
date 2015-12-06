@@ -1540,7 +1540,7 @@ var addNewPool = function(obj){
 	}
 
 	/*	Create the new pool	*/
-	var newPoolId = Pools.insert({"pairs":[],"type":type});
+	var newPoolId = Pools.insert({"pairs":[],"type":type, "category":category});
 
 	var data = {$push:{}}
 	data.$push[category] = newPoolId;

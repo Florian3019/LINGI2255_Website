@@ -1,4 +1,7 @@
 <template name="tournamentProgress">
+
+    {{> notEnoughCourtsModal}}
+    
     <div class="page-header">
         <h2 id="TournamentRunning">Déroulement du tournoi</h2>
     </div>
@@ -27,7 +30,7 @@
     </div>
 
     <div class="{{stepIsDoneClass 4}}">
-        <h5 id="AvailabilitiesPoint4">4. Clôturer les inscriptions</h5>
+        <h5 id="AvailabilitiesPoint4">4. Fermer les inscriptions</h5>
         {{> closeRegistrationsBlock}}
     </div>
 
@@ -42,6 +45,8 @@
 
     <div class="{{stepIsDoneClass 6}}">
         <h5 id="AvailabilitiesPoint6">6. Assigner les terrains aux poules</h5>
+        <p>Nombre de terrains manquants pour le samedi: {{MissingSaturday}}</p>
+        <p>Nombre de terrains manquants pour le dimanche: {{MissingSunday}}</p>
         <center>
             <button id="assignCourts" type="button" class="btn btn-default btn-sm notDone">Assigner tous les terrains</button>
             <button id="assignIndoorCourts" type="button" class="btn btn-default btn-sm notDone">Assigner les terrains intérieurs</button>

@@ -1,40 +1,5 @@
 <template name="brackets">
 	  	<!-- Only display button if all options are selected -->
-
-<!-- <<<<<<< HEAD
-	  	{{#if isAdminOrStaff}}
-			{{#with getYear}}
-				{{#with getType}}
-					{{#with getCategory}}
-					{{#unless buildingTournament}}
-          <div class="row">
-            <div class="col-sm-4" id="buttonPdf">
-              <button type="button" id="getPDF" class="btn btn-default btn-lg">
-                <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-              </button>
-            </div>
-            <div id="bracketOptions" style="display:none">
-              <div class="col-sm-4">
-                <button type="button" id="start" class="btn btn-default btn-lg">
-                  <span class="glyphicon glyphicon-star"></span> Start
-                </button>
-              </div>
-              <div class="col-sm-4">
-                <h4>Gagnants par poule:
-                  <input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
-                </h4>
-              </div>
-            </div>
-          </div>
-		 			{{/unless}}
-		 			{{/with}}
-		 		{{/with}}
-			{{/with}}
-		{{/if}}
-
-
-=======
->>>>>>> c759ce91a75c1f574ca157d599ee44bd506dee6e -->
 	<div id="wrapper">
 		{{#with getYear}}
 			{{#with getType}}

@@ -1,0 +1,86 @@
+<template name="printSheetsV2">
+<head>
+<div id="printCSS">
+  <style>
+    @media print {
+      @page {
+        size: A4 landscape;
+      }
+
+      @page :blank {
+        height:0;
+        width:0;
+      }
+
+      .pageContent{
+        width: 280mm;
+        height: 200mm;
+        position: relative;
+        page-break-before: always;
+      }
+
+      table, figure {
+        page-break-inside: avoid;
+      }
+
+      .fn {
+        float: footnote;
+      }
+
+      .selfMatch{
+        background-color: grey;
+        -webkit-print-color-adjust: exact;
+      }
+
+    }
+    .scoreTableFontSize{
+      font-size:0.6em;
+    }
+  </style>
+</div>
+</head>
+
+
+<body>
+
+  <div id="printContent">
+
+    {{#each POOLS}}
+    <div class="pageContent">
+
+      <h1 style='height:7%' id="pdfHeader">
+          <span style="font-size:0.6em;
+            display:inline;
+            vertical-align: middle;
+            line-height: normal;">
+            {{getInfo this.pool._id}}
+          </span>
+          <img src='/charlesLorraine.png' class="pull-right" style="height:80%;display:inline"/>
+      </h1>
+
+
+      <div style="background:#fff;">
+        {{>scorePage _id=this.pool._id isForPdf="true"}}
+      </div>
+
+      <div>
+        <div style="display:inline" class="pull-left">
+         <span>
+            Remettez cette feuille au QG à la fin du jeu.
+            <br>
+            Contact: +32 (0)2 742 03 01
+          </span>
+        </div>
+        <div style="display:inline" class="pull-right">
+          <span>
+            {{>scoreTableInfo _id=this.pool._id isForPdf="true"}}
+          </span>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+
+  </div>
+
+</body>
+</template>
