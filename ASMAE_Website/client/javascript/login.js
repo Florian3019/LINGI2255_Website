@@ -1,3 +1,8 @@
+/*
+    This file defines login settings
+*/
+
+
  /*#################################
               LOGIN SETTINGS
     #################################*/
@@ -5,14 +10,6 @@
     requestPermissions: {
       facebook: ['public_profile','email'], // 'user_birthday' --> requires app review from facebook
       googe: ['profile', 'email','user_birthday']
-    },
-    /*
-      If true, forces the user to approve the
-      app's permissions, even if previously approved.
-      Currently only supported with Google.
-    */
-    forceApprovalPrompt: {
-      google:true
     },
     /*
       Which fields to display in the user creation form.

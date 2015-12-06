@@ -1,12 +1,19 @@
-var Google_API_KEY_BROWSER = "AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs";
+/*
+	API's needed :
+	Google Maps Geocoding API
+	Google Maps JavaScript API
+	--> Browser & server keys
+*/
 
+
+// Currently setup with guillaume leurquin's secrets. Please change this when going to production
 var Google_API_KEY_SERVER = "AIzaSyAoAQpteuybI8u7FAfpxtF_TFBTdJ4BAyY";
 
 Meteor.methods({
-	'loadMap':function(){
-		 GoogleMaps.load({key:Google_Maps_API_key});
-	},
-
+	/*
+		Converts an address string to gps coordinates (latitude and longitude).
+		This asks google servers for the conversion.
+	*/
 	'geoCode':function(addressString){
 		var geo = new GeoCoder({
 			geocoderProvider: "google",

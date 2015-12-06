@@ -1,3 +1,10 @@
+/*
+    AdminAddCourt is the template that allows the staff to add a court and assign it
+    to an existing user. By default, it sets ownerOK and staffOK to true.
+    It creates the address in the db and links it to the created court, that is also
+    added to the db.
+*/
+
 Template.adminAddCourt.helpers({
     'searchComplete':function(){
         return Session.get("adminAddCourt/searchComplete");

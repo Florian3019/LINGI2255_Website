@@ -4,7 +4,7 @@
 /*
 	/!\
 	On the client, Meteor.call is asynchronous - it returns undefined and its return value can only be accesses via a callback.
-	Helpers, on the other hand, execute synchronously.
+	On the server, on the other hand, they execute synchronously.
 	/!\
 */
 
@@ -439,6 +439,8 @@ Meteor.methods({
 		@param typeData is structured as a type
 		A type structure is as follows :
 		{
+			typeString : men | women | mixed | family
+
 			// Can only $addToSet
 			_id:<typeID>
 			preminimes:<list of poolIDs>
@@ -481,6 +483,9 @@ Meteor.methods({
 		}
 		var hasData = false;
 		var data = {};
+		if (typeof typeData.typeString !== 'undefined') {
+			data.typeString = typeData.typeString;
+		}
 		for (var i=0;i<categoriesKeys.length;i++){
 			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
@@ -542,7 +547,8 @@ Meteor.methods({
 			coords:{ // automatically set when addressID is provided
 				lat:<latitude>,
 				lng:<longitude>
-			}
+			},
+			HQDist:<double> (distance from HQ)
 		},
 	*/
 	'updateCourt' : function(courtData){
@@ -569,8 +575,12 @@ Meteor.methods({
 			var addr = Addresses.findOne({_id:data.addressID});
 			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
 			if(googleAnswer!==undefined && googleAnswer.length>0){
+
           		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};
+          		data.HQDist = getDistanceFromHQ(data.coords);
+
     		}
+
 		}
 		if(courtData.surface){
 			data.surface = courtData.surface;
@@ -630,6 +640,11 @@ Meteor.methods({
 
 		if(courtId === undefined){
 			// Create a new court
+
+			if(data.HQDist===undefined){
+				data.HQDist=Number.MAX_VALUE;
+			}
+
 			return Courts.insert(data, function(err, courtId){
 				if(err){
 					throw new Meteor.Error("updateCourt error: during Courts.insert", err);
@@ -1346,10 +1361,6 @@ Meteor.methods({
 			if(!addToSet) addToSet = {};
 			addToSet["pairs"] = {$each: poolData.pairs};
 		}
-		// if(poolData.matches){
-		// 	if(!addToSet) addToSet = {};
-		// 	addToSet["matches"] = {$each: poolData.matches};
-		// }
 
 		if(addToSet) data["$addToSet"] = addToSet;
 
@@ -1362,19 +1373,6 @@ Meteor.methods({
 				}
 			});
 		}
-
-
-		// if(Object.keys(data.$set).length==0) delete data.$set;
-		// if(Object.keys(data.$addToSet).length==0) delete data.$addToSet;
-		// console.log("testEmptyObject");
-		// console.log(data.$set);
-		// console.log(Meteor.call('objectIsEmpty', data.$set));
-		// console.log(Meteor.call('objectIsEmpty', {}));
-		// console.log(Meteor.call('objectIsEmpty', {"hello":1}));
-
-
-		// if(Meteor.call('objectIsEmpty', data.$set)) delete data.$set;
-		// if(Meteor.call('objectIsEmpty', data.$addToSet)) delete data.$addToSet;
 
 		Pools.update({_id: poolData._id} , data, function(err, count, status){
 			if(err){
@@ -1504,6 +1502,9 @@ Meteor.methods({
 			console.error("Error GetPoolToFill : no year and/or type and/or category specified");
 			return undefined;
 		}
+		if (type != "men" && type != "women" && type != "mixed" && type != "family") {
+			console.error("Error GetPoolToFill : type provided ("+type+") is not supported.")
+		}
 
 		var yearTable = Years.findOne({_id:year});
 		if (!yearTable) {
@@ -1518,7 +1519,7 @@ Meteor.methods({
 		// No type table for now
 		if (typeTable==undefined) {
 			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
-			typeID = Types.insert({});
+			typeID = Types.insert({'typeString':type});
 			// typeID = Meteor.call('updateType', {});
 			typeTable = Types.findOne({_id:typeID});
 
@@ -1567,8 +1568,6 @@ Meteor.methods({
 		// Update the type table concerned with the new pool
 		Meteor.call('updateType', data);
 		return poolID;
-
-		// Meteor.call('updatePool', {}, thisCallback);
 	},
 
 	/*
@@ -1698,10 +1697,11 @@ Meteor.methods({
       texte:"Dès aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
       encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
     };
-    //TODO decomment when out of production
-    // for (var i in mails) {
-    //   Meteor.call('emailFeedback',mails[i],subject,data);
-    // }
+    if(EMAIL_ENABLED){
+	    for (var i in mails) {
+	      Meteor.call('emailFeedback',mails[i],subject,data);
+	    }
+	}
     console.log("Mails not send due to MAILGUN");
 
   },
@@ -1776,10 +1776,11 @@ Meteor.methods({
         texte:"Nous voici bientôt arrivé à notre très attendu tournoi de tennis Le Charles de Lorraine et pour que tout se déroule pour le mieux, vous trouverez les informations concernant votre poule dans l'encadré suivant.",
         encadre:encadre,
       };
-      //TODO decomment when out of production
-      // for (var i in mails) {
-      //   Meteor.call('emailFeedback',mails[i],subject,data);
-      // }
+      	if(EMAIL_ENABLED){
+	      for (var i in mails) {
+	        Meteor.call('emailFeedback',mails[i],subject,data);
+	      }
+		}
       console.log("Mails not send due to MAILGUN");
 
     }
@@ -1831,8 +1832,7 @@ Meteor.methods({
         texte:"Cette responsabilité ne vous demande que quelques instants au début à la fin de la poule. Premièrement, il vous sera demandé d'aller récupérer la feuille de poule au quartier général avant d'aller jouer. Ensuite, veillez à ce que les points de chaque match soient inscrits dans les cases correspondantes. Finalement, nous vous demanderons aussi de ramener cette feuille au quartier général. Si vous avez besoin de plus d'informations, n'hésitez pas à contacter un membre du staff ou un responsable.",
         encadre:"Les responsables de votre poules sont : "+responsables+"\n Merci d'avance pour votre implication !",
       };
-      //TODO decomment when out of production
-      // Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
+      if(EMAIL_ENABLED) Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
       console.log("Mails not send due to MAILGUN");
 
 
@@ -2197,9 +2197,6 @@ Meteor.methods({
 		var url = "http://www.aftnet.be/Portail-AFT/Joueurs/Resultats-recherche-affilies.aspx?mode=searchname&nom="+lastName+"&prenom="+firstName;
 		var response = HTTP.get(url);
 
-		//var affiliationNumber = "4013748";
-		//var url = "http://www.aftnet.be/Portail-AFT/Joueurs/Fiche-signaletique-membre.aspx?numfed="+affiliationNumber;
-		//var response = HTTP.get(url);
 		var stringToFind = "plc_lt_zoneContent_pageplaceholder_pageplaceholder_lt_zoneSubPage_pageplaceholder_pageplaceholder_lt_zoneContent_AFT_Member_Profile_lblClassementValue";
 		var beginIndex = response.content.search(stringToFind);
 		if(beginIndex > 0)

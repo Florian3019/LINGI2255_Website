@@ -10,3 +10,7 @@
 .courtRow{
 	cursor: pointer;
 }
+
+.courtLabel{
+	min-width: 80px;
+}

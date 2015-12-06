@@ -1,7 +1,7 @@
 <template name="courtSearchTemplate">
 
   <div class="page-header">
-        <h2>Rechercher un terrain</h2>
+        <h2 id="CourtSearchHeader">Rechercher un terrain</h2>
   </div>
 
   {{>courtSearch}}
@@ -13,16 +13,16 @@
   <div class="col-sm-3">
     {{> mySpecialFilterCourt}}
   </div>
-  <div class="col-sm-4">
-    <label for="saturdaySelect">Samedi</label>
+  <div class="col-sm-3">
+    <label for="saturdaySelect" class="courtLabel">Samedi</label>
     <select id="saturdaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" {{setSelect Saturday "Ignore" }}>Ignorer</option>
                   <option value="Yes" {{setSelect Saturday "Yes" }}>Oui</option>
                   <option value="No" {{setSelect Saturday "No"}}>Non</option>
     </select>
   </div>
-  <div class="col-sm-4">
-    <label for="sundaySelect">Dimanche </label>
+  <div class="col-sm-3">
+    <label for="sundaySelect" class="courtLabel">Dimanche </label>
     <select id="sundaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" {{setSelect Sunday "Ignore"}}>Ignorer</option>
                   <option value="Yes" {{setSelect Sunday "Yes" }}>Oui</option>
@@ -45,16 +45,16 @@
         </div>
     </div>    
   </div>
-  <div class="col-sm-4">
-    <label for="ownerOKSelect">OK proprio </label>
+  <div class="col-sm-3">
+    <label for="ownerOKSelect" class="courtLabel">OK proprio </label>
     <select id="ownerOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" {{setSelect OwnerOk "Ignore"}}>Ignorer</option>
                   <option value="Yes" {{setSelect OwnerOk "Yes"}}>Oui</option>
                   <option value="No" {{setSelect OwnerOk "No"}}>Non</option>
     </select>
   </div>
-  <div class="col-sm-4">
-    <label for="staffOKSelect">OK staff </label>
+  <div class="col-sm-3">
+    <label for="staffOKSelect" class="courtLabel">OK staff </label>
     <select id="staffOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" {{setSelect StaffOk "Ignore"}}>Ignorer</option>
                   <option value="Yes" {{setSelect StaffOk "Yes"}}>Oui</option>

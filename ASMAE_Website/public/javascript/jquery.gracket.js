@@ -161,11 +161,14 @@
             s = '<h3 class="changeCourtsBracket '+canClick +'" data-clickable=' + data.clickable +'> '+ data.score + c + ' </h3>';
           }
           else{
-            s = '<h3 class="changeCourtsBracket" data-clickable=' + data.clickable +'>  Score: ' + data.score + c + '</h3>';
+            s = '<h3 class="changeCourtsBracket '+canClick+'" data-clickable=' + data.clickable +'>  Score: ' + data.score + c + '</h3>';
           }
+
+          var canEditScore = data.clickable ? "g_canClick" : "";
+
           var html = [
             s,
-            '<ul class="list-group changeScoreBracket" data-clickable=' + data.clickable + ' data-round=' + data.round +' data-pair1=' +data.pair1 +' data-pair2='+ data.pair2 + ' data-id='+data.id + ' >',
+            '<ul class="list-group changeScoreBracket '+ canEditScore +'" data-clickable=' + data.clickable + ' data-round=' + data.round +' data-pair1=' +data.pair1 +' data-pair2='+ data.pair2 + ' data-id='+data.id + ' >',
               '<li class="list-group-item" align="center">' + data.player1 + ' | ' + data.player2+ '</li>',
               // '<li class="list-group-item">' + data.player2 + '</li>',
             '</ul>'

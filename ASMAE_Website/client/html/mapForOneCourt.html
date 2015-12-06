@@ -1,0 +1,7 @@
+<template name="mapForOneCourt">
+{{#if this.coords}}
+	<div class="map-container">
+	  {{> googleMap name="courtMap" options=mapOptions}}
+	</div>
+{{/if}}
+</template>

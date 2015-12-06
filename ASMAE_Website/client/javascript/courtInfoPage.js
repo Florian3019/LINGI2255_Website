@@ -1,3 +1,7 @@
+/*
+  This file defines helpers and events for the court summary page. It allows the staff
+  to set the flag staffOK and ownerOK to true/false. A button to modify/delete the court is shown.
+*/
 Template.courtInfoPage.helpers({
 
   	'checked': function(value){
@@ -70,17 +74,6 @@ Template.courtInfoPage.helpers({
       }
     },
 
-    mapOptions: function() {
-      // Make sure the maps API has loaded
-      if (GoogleMaps.loaded()) {
-        // Map initialization options
-        return {
-          center: new google.maps.LatLng(this.court.coords.lat, this.court.coords.lng),
-          zoom: 14
-        };
-      }
-    },
-
 });
 
 var addToLog = function(opType, ownerId, courtId){
@@ -103,23 +96,6 @@ var addToLog = function(opType, ownerId, courtId){
       }
     );
 }
-
-Template.courtInfoPage.onCreated(function(){
-  // We can use the `ready` callback to interact with the map API once the map is ready.
-  GoogleMaps.ready('exampleMap', function(map) {
-    // Add a marker to the map once it's ready
-    var marker = new google.maps.Marker({
-      position: map.options.center,
-      animation: google.maps.Animation.DROP,
-      map: map.instance,
-      title:addressToString(this.address)
-    });
-  });
-});
-
-Template.courtInfoPage.onRendered(function(){
-   GoogleMaps.load({key:"AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs"});
-});
 
 Template.courtInfoPage.events({
 

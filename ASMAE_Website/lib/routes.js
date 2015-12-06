@@ -1,3 +1,7 @@
+/*
+	This file defines routes for the website, what should be loaded for each route and
+	special actions to be made when the user moves to or from a page
+*/
 
 Router.configure({
 	layoutTemplate: 'index',
@@ -8,10 +12,6 @@ Router.configure({
   	}
 });
 
-function isRegistered() {
-	return getPairFromPlayerID() !== undefined;
-}
-
 Router.onBeforeAction(function() {
 	if(!Meteor.isServer && !Meteor.userId()){
 		this.render("login");
@@ -21,7 +21,7 @@ Router.onBeforeAction(function() {
         else
 			this.next();
 	}
-}, {except: ['home', 'rules', 'login', 'faq', 'poolList']});
+}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -50,15 +50,28 @@ Router.route('/email-terrain', {
 	}
 });
 
-Router.route('/carte-terrains', {
+Router.route('/carte-terrains/:_id?', {
 	template: 'courtMap',
 	name: 'courtMap',
+	data: function(){
+		if (this.ready()) {
+			return {"courtId":this.params._id};
+		}
+	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
 	},
 	waitOn: function(){
 		return [ Meteor.subscribe('Courts'), Meteor.subscribe('Addresses')  ]
 	},
+});
+
+Router.route('/staff-faq', {
+	template: 'staffFaq',
+	name: 'staffFaq',
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
 });
 
 Router.route('/modifications-log', {
@@ -100,7 +113,7 @@ Router.route('/mon-inscription', {
 	name: 'myRegistration',
 	template: 'myRegistration',
 	onBeforeAction: function() {
-		if (isRegistered()) {
+		if (isRegistered(Meteor.userId())) {
 			this.next();
 		}
 		else {
@@ -111,32 +124,9 @@ Router.route('/mon-inscription', {
 		Session.set('showNavBar', false);
 	}
 });
-Router.route('/mon-inscription2', {
-	name: 'myRegistration2',
-	template: 'myRegistration2',
-	onBeforeAction: function() {
-		if (isRegistered()) {
-			this.next();
-		}
-		else {
-			this.render("login");
-		}
-	},
-	onAfterAction: function(){
-		Session.set('showNavBar', false);
-	}
-});
-Router.route('/inscription-tournoi',  {
-	name: 'tournamentRegistration',
+Router.route('/inscription-tournoi-samedi',  {
+	name: 'tournamentRegistrationSaturday',
 	template: 'tournamentRegistration',
-	onBeforeAction: function() {
-		if (!isRegistered()) {
-			this.next();
-		}
-		else {
-			this.render("login");
-		}
-	},
 	waitOn: function(){
 		var res = [
 			Meteor.subscribe('users')
@@ -145,6 +135,30 @@ Router.route('/inscription-tournoi',  {
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
+	},
+	data : function() {
+		if (this.ready()) {
+			return {day:"saturday"};
+		}
+	}
+});
+
+Router.route('/inscription-tournoi-dimanche',  {
+	name: 'tournamentRegistrationSunday',
+	template: 'tournamentRegistration',
+	waitOn: function(){
+		var res = [
+			Meteor.subscribe('users')
+		];
+		return res;
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	},
+	data : function() {
+		if (this.ready()) {
+			return {day:"sunday"};
+		}
 	}
 });
 
@@ -377,6 +391,14 @@ Router.route('/print', {
 Router.route('/terrains', {
 	name: 'courtsList',
 	template: 'courtsList',
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
+});
+
+Router.route('/print-bracket', {
+	name: 'PdfBracket',
+	template: 'PdfBracket',
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
 	}

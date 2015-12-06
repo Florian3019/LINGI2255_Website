@@ -1,31 +1,41 @@
 <template name="brackets">
 	  	<!-- Only display button if all options are selected -->
-        
+
+<!-- <<<<<<< HEAD
 	  	{{#if isAdminOrStaff}}
 			{{#with getYear}}
 				{{#with getType}}
 					{{#with getCategory}}
 					{{#unless buildingTournament}}
-						<div id="bracketOptions" style="display:none">
-							<button type="button" id="start" class="btn btn-default btn-lg">
-							  <span class="glyphicon glyphicon-star"></span> Start
-							</button>
-						  	<div class="pull-right">
-							  <h4>Gagnants par poule:
-							 	<input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
-							  </h4>
-		 					</div>
-			 			</div>
+          <div class="row">
+            <div class="col-sm-4" id="buttonPdf">
+              <button type="button" id="getPDF" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+              </button>
+            </div>
+            <div id="bracketOptions" style="display:none">
+              <div class="col-sm-4">
+                <button type="button" id="start" class="btn btn-default btn-lg">
+                  <span class="glyphicon glyphicon-star"></span> Start
+                </button>
+              </div>
+              <div class="col-sm-4">
+                <h4>Gagnants par poule:
+                  <input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
+                </h4>
+              </div>
+            </div>
+          </div>
 		 			{{/unless}}
 		 			{{/with}}
 		 		{{/with}}
 			{{/with}}
 		{{/if}}
-	<!-- </form> -->
 
+
+=======
+>>>>>>> c759ce91a75c1f574ca157d599ee44bd506dee6e -->
 	<div id="wrapper">
-	<!-- empty gracket element -->
-
 		{{#with getYear}}
 			{{#with getType}}
 				{{#with getCategory}}
@@ -35,7 +45,25 @@
 						<div class="page-header">
 							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} > {{translateCategory this}} {{/unless}}</h2>
 						</div>
+						{{#if isAdminOrStaff}}
+				 			{{#if isLoading}}
+				 				{{>loading}}
+				 			{{else}}
+								<div id="bracketOptions" class="hideIfEmpty showIfNotStarted">
+									<button type="button" id="start" class="btn btn-default btn-lg">
+									  <span class="glyphicon glyphicon-star"></span> <span id="startText"> Démarrer ce knock-off</span>
+									</button>
+								  	<div class="pull-right">
+									  <h4>Gagnants par poule:
+									 	<input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
+									  </h4>
+				 					</div>
+					 			</div>
+			 				{{/if}}
+			 			{{/if}}
+			 			<div class="gracket_wrapper">
 						{{>gracketTemplate ALLWINNERS=getAllWinners}}
+						</div>
 					{{/if}}
 				{{/with}}
 			{{/with}}
@@ -46,7 +74,7 @@
 
 	<!-- basic styles -->
 	<style type="text/css">
-		.g_gracket { margin-top:50px;  width: {{getGracketWidth}}px; padding: 60px 0px 5px; line-height: 150%; position: relative; overflow: hidden;}
+		.g_gracket { margin-top:50px; width: {{getGracketWidth}}px; padding: 60px 0px 5px; line-height: 150%; position: relative; overflow:hidden;}
 		.g_round { float: left; margin-right: 70px; }
 		.g_game { position: relative; margin-bottom: 50px; }
 		.g_gracket h3 { margin: 0; padding: 10px 8px 8px; font-size: 18px; font-weight: normal; color: #fff; width:200px; min-height:35px;}
@@ -59,6 +87,7 @@
 		.g_current { {{#if isStaffOrAdmin}} cursor: pointer; {{/if}} background: #A0B43C!important; }
 		.g_canClick { cursor: pointer; }
 		.g_round_label { top: -5px; width: 200px; font-weight: normal; color: #FFF; text-align: center; font-size: 20px; }
+		.gracket_wrapper {width:100%; overflow:auto;}
 	</style>
 
 	<div id="bracketModal" class="modal fade bracketModal" data-backdrop="false" role="dialog" style="cursor:auto">
@@ -100,7 +129,7 @@
 							placeholder="0"
 							autofocus
 							onkeydown="if (event.keyCode == 13) document.getElementById('saveScore').click()">
-				  		
+
 			    	{{/with}}
 				  	<h5>VS</h5>
 				  	{{#with getIndex this 1}}
@@ -133,7 +162,7 @@
 		</div>
         <div class="modal-footer">
 	  	  <button type="button" id="saveScore" class="btn btn-default btn-lg" data-dismiss="modal">
-		    <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Sauver
+		    <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauver
 		  </button>
           <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Fermer</button>
         </div>
@@ -141,25 +170,26 @@
 
     </div>
   </div>
+<!-- <<<<<<< HEAD
+======= -->
 {{#if isAdminOrStaff}}
 	{{#unless buildingTournament}}
-	<button type="button" id="getPDF" class="btn btn-default btn-lg" data-pool="{{this._id}}" style="display:none">
-	<span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-	</button>
-		<!-- Frame for the pdf viewer -->
-	<iframe class="preview-pane" type="application/pdf" height="650" width="100%" frameborder="0" hidden></iframe>
-	<br>
+	<center>
+		<button type="button" id="getPDF" class="btn btn-default btn-lg hideIfNotStarted hideIfEmpty" data-pool="{{this._id}}" style="display:none">
+		<span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+		</button>
+		<br>
+	</center>
 	{{/unless}}
 {{/if}}
+<!-- >>>>>>> c759ce91a75c1f574ca157d599ee44bd506dee6e -->
 
 {{CourtInfoModal}}
 
 </template>
 
 <template name="gracketTemplate">
-<!-- {{#with getUpdate}} -->
-<div class="my_gracket" id="gracketContainer"></div>
-<!-- {{/with}} -->
+	<div class="my_gracket" id="gracketContainer"></div>
 {{#with makeBrackets}}
 	{{displayBrackets this}}
 {{/with}}

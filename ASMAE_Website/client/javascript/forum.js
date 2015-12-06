@@ -1,10 +1,13 @@
+/*
+	This file defines helpers for the forum
+*/
 Template.forum.helpers({
 	'getThreads':function(){
 		return Threads.find();
 	},
 
 	'getAuthorInfo':function(userId){
-		user = Meteor.users.findOne({_id:userId});
+		var user = Meteor.users.findOne({_id:userId});
 		return user;
 	},
 
@@ -73,7 +76,7 @@ Template.topic.events({
 
 Template.topic.helpers({
 	'getAuthorInfo':function(userId){
-		user = Meteor.users.findOne({_id:userId});
+		var user = Meteor.users.findOne({_id:userId});
 		return user;
 	},
 

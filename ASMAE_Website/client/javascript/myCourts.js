@@ -1,3 +1,6 @@
+/*
+  This file defines helpers for the page "My courts", available to every user.
+*/
 Template.myCourts.helpers({
     'court': function(){
         var x = Courts.find({ownerID: Meteor.userId()});
