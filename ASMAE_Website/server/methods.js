@@ -483,9 +483,7 @@ Meteor.methods({
 		}
 		var hasData = false;
 		var data = {};
-		if (typeof typeData.typeString !== 'undefined') {
-			data.typeString = typeData.typeString;
-		}
+		
 		for (var i=0;i<categoriesKeys.length;i++){
 			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
@@ -516,10 +514,18 @@ Meteor.methods({
 		if(!typeData._id){
 			return Types.insert(data);
 		}
+
+		if (typeof typeData.typeString != undefined) {
+			if(data.$set===undefined) data['$set'] = {};
+			data.$set["typeString"] = typeData.typeString;
+			hasData = true;
+		}
+
 		if(!hasData){
 			console.warn("Warning : called updateType with no input");
 			return;
 		}
+		console.log(data);
 		Types.update({_id: typeData._id} , data);
 		return typeData._id;
 	},
