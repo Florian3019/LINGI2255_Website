@@ -1,16 +1,52 @@
 <template name="staffFaq">
 <div class="page-header">
-<h2>Staff FAQ</h2>
+    <h2>Staff FAQ</h2>
 </div>
+
+<div>
+
+<h5>Table des matières</h5>
+<ul>
+    <li><a href="#gotoLaunchTournament">Démarrer le tournoi</a></li>
+    <li><a href="#gotoCloseRegistrations">Fermer les inscriptions au tournoi</a></li>
+    <li><a href="#gotoPairs">Poules et Paires</a></li>
+    <li><a href="#gotoPlayers">Joueurs</a></li>
+    <li><a href="#gotoPayments">Paiements</a></li>
+    <li><a href="#gotoKnockOffs">Knock-offs</a></li>
+    <li><a href="#gotoPDF">Imprimer les PDF</a></li>
+    <li><a href="#gotoCourts">Terrains</a></li>
+    <li><a href="#gotoPermissions">Permissions</a></li>
+    <li><a href="#gotoSendEmailToList">Envoyer un email</a></li>
+    <li><a href="#gotoLogHistory">Historique des modifications</a></li>
+    <li><a href="#gotoForum">Forum</a></li>
+</ul>
+<br>
 
 <h5>Comment afficher le menu staff ?</h5>
 <p>
-Dans le menu supérieur, cliquez sur "Tournoi".
+Dans le menu supérieur, cliquez sur "Menu staff".
+</p>
+
+<h5 id="gotoLaunchTournament">Comment démarrer le tournoi ?</h5>
+<p>
+Cliquez sur "Déroulement du tournoi" dans le menu du staff. Si les inscriptions au tournoi ne sont pas encore lancées, un administrateur peut les démarrer en entrant la date du tournoi (le jour importe peu, donc vous pouvez entrer la date du samedi ou du dimanche) et les autres informations nécessaires (le prix du tournoi et les éventuels extras).
+<br>
+L'administrateur a la possibilité de faire des modifications s'il y a eu erreur dans les informations entrées, mais soyez vigilant car ceci a des conséquences sur les inscriptions qui ont déjà été faites avant la modification (par exemple: si le prix du tournoi est modifié, le prix que les joueurs déjà inscrits devront payer ne sera pas mis à jour).
+<br>
+Les étapes du déroulement du tournoi sont affichées dans l'ordre et la progression est affichée clairement via un code couleur vert pour que le staff sache ce qui a déjà été fait et ne saute pas les étapes.
+Depuis cette page, le staff peut également envoyer un mail automatique d'invitation à tous les utilisateurs, assigner les terrains aux poules et envoyer un mail automatique à tous les joueurs et aux chefs de poules avec les informations sur les poules lorsque le tournoi va commencer. 
+<br>
+<b>Remarque importante:</b> il n'est possible de démarrer qu'un seul tournoi par année (l'année servant d'identification au tournoi à plusieurs endroits du site).
+</p>
+
+<h5 id="gotoCloseRegistrations">Fermer les inscriptions au tournoi</h5>
+<p>
+Une fois les inscriptions au tournoi lancées, un administrateur peut les fermer pour empêcher de nouveaux joueurs de s'inscrire. Ceci se fait via la page du déroulement du tournoi (accessible en cliquant sur "Déroulement du tournoi" dans le menu staff) en allant à la quatrième étape.
 </p>
 
 <h5>Comment accéder à la page de gestion des poules?</h5>
 <p>
-Cliquez sur Gestion du tournoi puis séléctionnez l'année qui vous intéresse. Dans le menu qui s'affiche, choisissez parmi homme, femme, mixte ou familles. Cliquez ensuite sur "Poules".
+Cliquez sur "Gestion du tournoi" puis séléctionnez l'année qui vous intéresse. Dans le menu qui s'affiche, choisissez parmi homme, femme, mixte ou familles. Cliquez ensuite sur "Poules".
 </p>
 
 <h5>Comment voir l'état d'avancement du tournoi?</h5>
@@ -18,7 +54,7 @@ Cliquez sur Gestion du tournoi puis séléctionnez l'année qui vous intéresse.
 L'état d'avancement du tournoi s'affiche entre parenthèses à coté du type ou de la catégorie concernée.
 </p>
 
-<h5>Comment séparer une paire ?</h5>
+<h5 id="gotoPairs">Comment séparer une paire ?</h5>
 <p>
 Dans la page de gestion des poules, il suffit de prendre une paire et le faire glisser dans la boîte "Séparer une paire". Ses deux joueurs seront ensuite automatiquement déplacés dans "Joueurs seuls". Cette modification ne nécessite pas de cliquer sur sauver, elle est immédiate.
 </p>
@@ -28,7 +64,7 @@ Dans la page de gestion des poules, il suffit de prendre une paire et le faire g
 Dans la page de gestion des poules, il suffit de faire glisser deux joueurs qui sont dans "Joueurs seuls" dans la boîte "Créer une paire". La paire ainsi formée, à condition qu'elle respecte les contraintes de la catégorie, sera automatiquement déplacée dans une poule. Cette modification ne nécessite pas de cliquer sur sauver, elle est immédiate.
 </p>
 
-<h5>Comment créer une poule?</h5>
+<h5 id="gotoPools">Comment créer une poule?</h5>
 <p>
 Dans la page de gestion des poules, cliquez sur "+Poule". Celà créera une nouvelle poule vide. Cette modification ne nécessite pas de cliquer sur sauver, elle est immédiate.
 </p>
@@ -48,12 +84,12 @@ Dans la page de gestion des poules, faites glisser une paire d'une poule vers un
 Dans la page de gestion des poules, cliquez sur le dessus d'une poule. Ce bouton ne s'affiche que si des joueurs sont présent dans la poule. Dans la page qui s'affiche, cliquez sur le bouton bleu correspondant au terrain. Séléctionnez ensuite un terrain dans la liste qui s'affiche.
 </p>
 
-<h5>Comment inscire les scores d'une poule?</h5>
+<h5>Comment inscrire les scores d'une poule?</h5>
 <p>
 Dans le menu de gestion des poules, cliquez sur le dessus d'une poule. Ce bouton ne s'affiche que si des joueurs sont présent dans la poule. Dans la page qui s'affiche, insérez les scores des matchs.
 </p>
 
-<h5>Comment afficher les informations relatives à une paire ou un joueur?</h5>
+<h5 id="gotoPlayers">Comment afficher les informations relatives à une paire ou un joueur?</h5>
 <p>
 Dans la page de gestion des poules, cliquez sur une paire ou un joueur seul. Une fenêtre s'ouvrira depuis laquelle l'historique des modifications faites sur ces joueurs s'affichera, ainsi que leurs informations personnelles. Leurs souhaits s'afficheront également. Il est également possible de modifier leur profil depuis cette page.
 </p>
@@ -61,7 +97,21 @@ Dans la page de gestion des poules, cliquez sur une paire ou un joueur seul. Une
 Dans le menu "Rechercher un joueur", faite une recherche sur le joueur concerné puis cliquez sur sa ligne.
 </p>
 
-<h5>Comment accéder à la page de gestion des knock-offs ?</h5>
+<h5 id="gotoPayments">Paiements des joueurs</h5>
+<p>
+Le staff peut marquer les joueurs comme ayant payé de plusieurs façons:
+<ul>
+    <li>Depuis la page d'un joueur (en y accédant via la recherche sur un joueur par exemple).</li>
+    <li>En cliquant sur le menu "Paiements pas en ordre", vous arriverez sur la page des joueurs pas en ordre de paiement. Sur cette page vous pouvez marquer les joueurs en ordre de paiement et envoyer un rappel de paiement aux joueurs pas en ordre.</li>
+</ul>
+</p>
+
+<h5>Paiements par virement bancaire</h5>
+<p>
+Pour simplifier la recherche d'un joueur lorsque celui-ci a choisi d'effectuer son paiement par virement bancaire, un numéro d'identification de paiement lui est envoyé par mail en même temps que le numéro de compte sur lequel il doit effectuer le paiement. Le staff peut faire une recherche sur ce numéro d'identification de paiement depuis le page des joueurs pas en ordre de paiements, accessible depuis le menu staff.
+</p>
+
+<h5 id="gotoKnockOffs">Comment accéder à la page de gestion des knock-offs ?</h5>
 <p>
 Cliquez sur Gestion du tournoi puis séléctionnez l'année qui vous intéresse. Dans le menu qui s'affiche, choisissez parmi homme, femme, mixte ou familles. Cliquez ensuite sur "Knock-offs"
 </p>
@@ -81,12 +131,12 @@ Dans la page de gestion des knock-offs, une fois que le knock-off a été créé
 Dans la page de gestion des knock-offs, une fois que le knock-off a été créé, cliquez sur la bande bleue pour afficher la page de séléction des terrains.
 </p>
 
-<h5>Comment imprimer un pdf des poules ou des knock-offs ?</h5>
+<h5 id="gotoPDF">Comment imprimer un pdf des poules ou des knock-offs ?</h5>
 <p>
 Celà peut être fait de manière individuelle pour chaque poule/knock-offs dans leurs pages de gestion respectives, en cliquant sur le bouton "PDF". Pour en imprimer plus d'un à la fois, cliquez sur le menu "Feuilles de poule" et séléctionnez vos critères. Une fois fait, cliquez sur sauver pour générer les pdf.
 </p>
 
-<h5>Comment ajouter un terrain ?</h5>
+<h5 id="gotoCourts">Comment ajouter un terrain ?</h5>
 <p>
 Si vous êtes propriétaires d'un terrain, cliquez sur "Mes terrains". Dans la page qui s'affiche, cliquez sur "Ajouter un terrain".
 </p>
@@ -99,17 +149,27 @@ Si vous souhaitez ajouter un terrain pour un propriétaire, dans le menu staff, 
 Dans le menu staff, cliquez sur "Rechercher un terrain". Entrez les critères de recherche puis cliquez sur la ligne correspondante. Dans la page qui s'affiche, cliquez sur "modifier".
 </p>
 
-<h5>Comment changer les permissions d'un utilisateur ?</h5>
+<h5 id="gotoPermissions">Comment changer les permissions d'un utilisateur ?</h5>
 <p>
 Dans le menu staff, cliquez sur "Rechercher un joueur". Entrez les critères de recherche puis cliquez sur le menu déroulant de la colonne "Permissions" de l'utilisateur concerné. Choissisez ensuite parmi normal, staff ou admin. N.B. cette fonctionnalité est réservée aux admnistrateurs. Un administrateur ne peut pas modifier ses propres permissions.
 </p>
 
-<h5>Comment afficher l'historique des modifications?</h5>
+<h5 id="gotoSendEmailToList">Envoyer un email</h5>
+<p>
+En cliquant sur le menu "Envoyer un mail", le staff a la possibilité d'envoyer un email d'un seul coup à toutes les personnes appartenant à une de ces catégories:
+<ul>
+    <li>Tous les utilisateurs du site</li>
+    <li>Tous les joueurs inscrits au tournoi de cette année</li>
+    <li>Tous les propriétaires de terrains</li>
+</ul>
+</p>
+
+<h5 id="gotoLogHistory">Comment afficher l'historique des modifications?</h5>
 <p>
 Dans le menu staff, cliquez sur "Log des modifications". Toutes les modifications sont affichées là. L'historique des 3 dernières modifications s'affiche également en bas de la page d'information sur un terrain ou un joueur.
 </p>
 
-<h5>Comment ajouter une catégorie au forum?</h5>
+<h5 id="gotoForum">Comment ajouter une catégorie au forum?</h5>
 <p>
 Dans le menu staff, cliquez sur "Forum" insérez le nom de la nouvelle catégorie puis cliquez sur "+".
 </p>
@@ -124,6 +184,7 @@ Dans le menu staff, cliquez sur "Forum" insérez le nom du nouveau sujet à cot�
 Dans le menu staff, cliquez sur "Forum". Cliquez ensuite sur un sujet et insérez votre commentaire.
 </p>
 
+</div>
 
 
 </template>
