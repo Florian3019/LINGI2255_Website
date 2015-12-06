@@ -107,8 +107,8 @@ var createAndDownloadPdf = function(document){
     function renderBrackets(struct, w) {
       var groupCount  = _.uniq(_.map(struct, function(s) { return s.roundNo; })).length;
 
-      count = Session.get("pdfBrack/bracketCount")%2;
-      var group = $('<div class="group'+(groupCount+1)+'" id="b'+count+'"></div>'),
+      // count = Session.get("pdfBrack/bracketCount")%2;
+      var group = $('<div class="group'+(groupCount+1)+'" id="b0"></div>'),
         grouped = _.groupBy(struct, function(s) { return s.roundNo; });
 
       for(g=1;g<=groupCount;g++) {
@@ -156,7 +156,7 @@ var createAndDownloadPdf = function(document){
         w.document.getElementsByTagName('body')[0].appendChild($("#pdfContainer").get(0));
         // w.print();
 
-        Session.set("pdfBrack/bracketCount",Session.get("pdfBrack/bracketCount")+1);
+        // Session.set("pdfBrack/bracketCount",Session.get("pdfBrack/bracketCount")+1);
         // Router.go('brackets');  
       });
       
