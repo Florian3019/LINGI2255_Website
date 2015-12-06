@@ -2327,6 +2327,77 @@ Meteor.methods({
 
       },
 
+      'emailtoAllUsers':function(text,currentYear){
+        var year = Years.findOne({_id:currentYear});
+        var typest = ["men","women","mixed","family"];
+        var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+        for (var i in typest) {
+          var types=Types.findOne({_id:year[i]});
+          for (var j in allcat) {
+            var pools = Pools.findOne({_id:types[allcat[j]]});
+            for (var k in pools["pairs"]) {
+              var pair = Pairs.findOne({_id:pools["pairs"][k]});
+              if (pair["player1"]!=undefined) {
+                player1= Meteor.users.findOne({_id:pair["player1"]},{emails:1});
+                var data={
+                  intro:"Bonjour,",
+                  texte:text
+                };
+                Meteor.call("emailFeedback", player1.emails[0].address,"Information par rapport au tournoi",data, function(error, result){
+                  if(error){
+                    console.log("error", error);
+                  }
+                });
+              }
+              if (pair["player2"]!=undefined) {
+                player2= Meteor.users.findOne({_id:pair["player2"]},{emails:1});
+                var data={
+                  intro:"Bonjour,",
+                  texte:text
+                };
+                Meteor.call("emailFeedback", player2.emails[0].address,"Information par rapport au tournoi",data, function(error, result){
+                  if(error){
+                    console.log("error", error);
+                  }
+                });
+              }
+
+            }
+          }
+        }
+      },
+
+      'emailToStaff': function(text){
+        var data={
+          intro:"Bonjour,",
+          texte:text
+        };
+        var usersCursor = Meteor.users.find({"profile.isStaff":true},{emails:1});
+        usersCursor.forEach( function(user) {
+          Meteor.call("emailFeedback", user.emails[0].address,"[STAFF] Information concernant le tournoi.",data, function(error, result){
+            if(error){
+              console.log("error", error);
+            }
+          });
+        });
+      },
+
+      'emailToCourtOwner':function(text){
+        var data={
+          intro:"Bonjour,",
+          texte:text,
+        };
+        var courtsCursor= Courts.find();
+        courtsCursor.forEach( function(court){
+          var owner = Meteor.users.findOne({_id:court.ownerID},{emails:1});
+          Meteor.call("emailFeedback",owner.emails[0].address,"Information concernant le tournoi.",data, function(error, result){
+            if(error){
+              console.log("error", error);
+            }
+          });
+        });
+      },
+
 
 
     });
