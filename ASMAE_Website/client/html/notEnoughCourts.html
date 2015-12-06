@@ -1,0 +1,30 @@
+<template name="notEnoughCourtsModal">
+
+	<div id="notEnoughCourtsModal" class="modal fade" data-backdrop="false" >
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-title page-header">
+            <center>
+              <h3>Attention, il n'y a pas assez de terrains pour le {{findDay}}</h3>
+            </center>
+          </div>
+        </div>
+        <div class="modal-body">
+        	<center>
+              <h4>Que voulez-vous faire?</h4>
+          </center>
+        </div>
+        <div class="modal-footer">
+          <center>
+        	   <button type="button" class="btn btn-default valid" data-dismiss="modal">Assigner quand même</button>
+            <button type="button" class="btn btn-default cancel" data-dismiss="modal">Annuler</button>
+          </center>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>

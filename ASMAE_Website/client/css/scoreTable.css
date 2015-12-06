@@ -14,3 +14,11 @@
 #scoreTableElement > tbody > tr > td{
 	border:2px solid black;
 }
+
+.scoreTableFontSize{
+	font-size:0.6em;
+}
+
+.scoreTableFontSize2{
+	font-size:0.9em;
+}

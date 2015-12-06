@@ -2,44 +2,37 @@
   This page defines how the scores for a pool can be modified.
   The scores are modified live and in symmetries.
 */
+
+Template.scorePage.onRendered(function(){
+  if(this.data.isForPdf=="true"){
+    var elements = document.getElementsByClassName("toHideForPdf");
+    for(var i=0; i<elements.length;i++){
+      var el = elements[i];
+      if(el.style===undefined) el.style = "display:none";
+      else el.style.display = "none";
+    }
+  }
+});
+
+Template.scoreTable.onRendered(function(){
+    if(this.data.isForPdf=="true"){
+    var elements = document.getElementsByClassName("toHideForPdf");
+    for(var i=0; i<elements.length;i++){
+      var el = elements[i];
+      if(el.style===undefined) el.style = "display:none";
+      else el.style.display = "none";
+    }
+  }
+})
+
 Template.scorePage.helpers({
-    'getLeader' : function(poolId){
-      if(poolId==undefined) return undefined;
-      pool = Pools.findOne({_id:poolId},{leader:1});
-      if(pool.leader!=undefined){
-          user = Meteor.users.findOne({_id:pool.leader});
-          return user;
-      }
-      return undefined;
+    'getTranslateType':function(){
+      return typesTranslate[Session.get("PoolList/Type")];
     },
 
-    'getEmail' : function(user){
-      if(user.emails){
-        return user.emails[0].address;
-      }
-      else{
-        return undefined;
-      }
+    'getTranslateCategory':function(){
+      return categoriesTranslate[Session.get("PoolList/Category")];
     },
-
-    'getCourt': function(poolId){
-      if(poolId==undefined) return undefined;
-      Session.set("PoolList/poolID",poolId);
-
-      pool = Pools.findOne({_id:poolId});
-      if(pool.courtId!=undefined){
-
-        court = Courts.findOne({"courtNumber":pool.courtId});
-
-        if(court && court.addressID){
-          address = Addresses.findOne({_id:court.addressID});
-          return {id:pool.courtId,
-                  address:address};
-        }
-      }
-      return undefined;
-    },
-
         // Returns a yearData with id year (copy of the same function in poolsSidebarCollapsableMenu.helpers)
     'getYear' : function(){
       var year = Session.get('PoolList/Year');
@@ -53,6 +46,74 @@ Template.scorePage.helpers({
       var t = Types.findOne({_id:yearData[type]});
       return t;
     },
+});
+
+Template.scoreTableInfo.helpers({
+  'getLeader' : function(poolId){
+    if(poolId==undefined) return undefined;
+    pool = Pools.findOne({_id:poolId},{leader:1});
+    if(pool.leader!=undefined){
+        user = Meteor.users.findOne({_id:pool.leader});
+        return user;
+    }
+    return undefined;
+  },
+
+  'getEmail' : function(user){
+    if(user.emails){
+      return user.emails[0].address;
+    }
+    else{
+      return undefined;
+    }
+  },
+
+  'getOneResponsable':function(poolId){
+    var query = [];
+    for(var i=0; i<categoriesKeys.length;i++){
+      var dat = {};
+      dat[categoriesKeys[i]] = poolId;
+      query.push(dat);
+    }
+
+    var typeData = Types.findOne({$or:query});
+
+    if(typeData===undefined){
+      console.error("getOneResponsable : error, did not find the poolId");
+      return;
+    }
+
+    for(var i=0; i<categoriesKeys.length;i++){
+      var cat = categoriesKeys[i];
+      var catData = typeData[cat];
+      if(catData!==undefined && catData.indexOf(poolId)>-1){
+        var respIdList = typeData[cat+"Resp"];
+        if(respIdList===undefined || respIdList.length==0) return undefined;
+        return Meteor.users.findOne({_id:respIdList[0]});
+      }
+    }
+
+    console.error("getOneResponsable : error, did not find the poolId");
+    return undefined;
+  },
+
+  'getCourt': function(poolId){
+    if(poolId==undefined) return undefined;
+    Session.set("PoolList/poolID",poolId);
+
+    pool = Pools.findOne({_id:poolId});
+    if(pool.courtId!=undefined){
+
+      court = Courts.findOne({"courtNumber":pool.courtId});
+
+      if(court && court.addressID){
+        address = Addresses.findOne({_id:court.addressID});
+        return {id:pool.courtId,
+                address:address};
+      }
+    }
+    return undefined;
+  },
 });
 
 Template.scoreTable.events({
@@ -81,7 +142,7 @@ Template.scoreTable.events({
     },
       function(err, logId){
         if(err){
-          console.log(err);
+          console.error(err);
           return;
         }
         Meteor.users.update({_id:playersName1.ids[0]},{$addToSet:{"log":logId}});

@@ -22,6 +22,8 @@
     from { -moz-transform: rotate(0deg);}
     to { -moz-transform: rotate(360deg);}
 }
+}
+
   </style>
 
   <div class="page-header">
@@ -68,22 +70,12 @@
     </div>
   </div>
   <br>
-  {{#if hasPool}}
-  <button type="button" id="Print" class="btn btn-default btn-lg">
-    {{#if isWorkingPrint}}
-    <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-    {{else}}
-    <span class="glyphicon glyphicon-print"></span>
-    {{/if}}
-    Tout imprimer
+
+  <button id="printPdf" style="display:none" class="btn btn-default btn-lg">
+    <span class="glyphicon glyphicon-print"></span> Imprimer
   </button>
-  {{/if}}
   <br>
-  <div id="allTab">
-    {{#each getPool}}
-    <div id={{this.id}} style="background:#fff">
-      {{>scoreTable this.pool}}
-    </div>
-    {{/each}}
-  </div>
+
+  {{>printSheetsV2 POOLS=getPool INFO=getInfo}}
+
 </template>
