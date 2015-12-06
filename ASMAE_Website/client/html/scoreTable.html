@@ -31,23 +31,30 @@
           {{/with}}
         </td>
 
-
-        <td align="center">
-          <h3>Terrain :</h3>
-          <div class="btn btn-sq-lg btn-primary" id="changeCourt">
-            <i class="fa fa-home fa-5x"></i><br/>
-             {{#if getCourt this._id}}
+        {{#if getCourt this._id}}
                {{#with getCourt this._id}}
-                  <strong> Numéro : {{this.id}} </strong><br>
-                  {{this.address.street}} {{this.address.number}} <br>
-                  {{this.address.zipCode}} {{this.address.city}}
+                  <td align="center">
+                  <h3>Terrain :</h3>
+                  <div class="btn btn-sq-lg btn-primary" id="changeCourt">
+                    <i class="fa fa-home fa-5x"></i><br/>
+                        <strong> Numéro : {{this.id}} </strong><br>
+                          {{this.address.street}} {{this.address.number}} <br>
+                          {{this.address.zipCode}} {{this.address.city}}
+                  </div>
+                   </td>
               {{/with}}
-              {{else}}
-                <h4 style="color:white">Assigner un terrain</h4>
+        {{else}}
+              {{#if isAdminOrStaff}}
+                <td align="center">
+                  <h3>Terrain :</h3>
+                  <div class="btn btn-sq-lg btn-primary" id="changeCourt">
+                    <i class="fa fa-home fa-5x"></i><br/>
+                        <h4 style="color:white">Assigner un terrain</h4>
+                  </div>
+                   </td>
               {{/if}}
-          </div>
-        
-        </td>
+        {{/if}}
+                  
       </tr>
     </tbody>
   </table>
