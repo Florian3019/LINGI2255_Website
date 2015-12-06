@@ -11,7 +11,7 @@ EMAIL_ENABLED = false; // set to true to enable email feedback
 
 HQCoords = {"lat":50.854227, "lng":4.353841}; // Latitude and longitude of the head quarters
 
-colors = {  "other":{color:'magenta', label:"Autres souhaits"} , 
+colors = {  "other":{color:'magenta', label:"Autres souhaits"} ,
             "player":{color:'orange', label:'Souhaits sur des joueurs'},
             "court":{color:'red', label:'Souhaits sur des terrains'},
             "multiple":{color:'#4782ff', label:'Plusieurs souhaits'}
@@ -23,7 +23,7 @@ if(Meteor.isClient){
 }
 
 // Currently setup with guillaume leurquin's secrets. Please change this when going to production
-Google_API_KEY_BROWSER = "AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs"; 
+Google_API_KEY_BROWSER = "AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs";
 
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;
@@ -187,6 +187,22 @@ isBothRegistered = function(playerID) {
 isRegistered = function(playerID) {
     var info = getRegistrationInfoFromPlayerID(playerID);
     return info !== undefined && (info.sunday !== undefined || info.saturday !== undefined);
+}
+
+getPlayerNumber = function(playerID, pairID) {
+    var pair = Pairs.findOne({_id:pairID});
+    if (pairID === undefined || playerID === undefined || pair === undefined) {
+        return undefined;
+    }
+    if (pair.player1 && pair.player1._id==playerID) {
+        return "player1";
+    }
+    else if(pair.player2 && pair.player2._id==playerID) {
+        return "player2";
+    }
+    else {
+        return undefined;
+    }
 }
 
 /*

@@ -4,7 +4,167 @@
 var aloneDependency = new Deps.Dependency();
 
 function isEmptyTable() {
-	return Session.get("emptyTable");
+	return Session.get("tournamentRegistration/emptyTable");
+}
+
+/**
+ *	Sets the alone players in the table
+ *	regarding the type and category of the
+ *	user that wants to register for this tournament.
+ *	Performs first a check on the fields that have to be filled
+ *	in order to determine type and category.
+ */
+function setAlonePlayers(document){
+
+	if (Session.get("tournamentRegistration/firstTime")) {
+		return undefined;
+	}
+
+	var check = checkAloneErrors(document);
+	var e = document.getElementById("refreshErrorMessage");
+	if (check) { // An error occurred (mis-filled field)
+		e.style.display = 'block';
+		var table = document.getElementById("tableAlone");
+		table.style.display = 'none';
+		return undefined;
+	}
+	else {
+		e.style.display = 'none';
+	}
+
+	var temp = document.getElementById("dateMatchSelect");
+	var tournamentDateMatch = temp.options[temp.selectedIndex].value;
+	var date = new Date(document.getElementById("birthYear").value,document.getElementById("birthMonth").value-1,document.getElementById("birthDay").value);
+	var age = getAge(date);
+	Session.set("tournamentRegistration/age", age);
+
+	var male = document.getElementById("male").checked;
+	var gender;
+	if (male) {
+		gender = "M";
+	}
+	else {
+		gender = "F";
+	}
+	Session.set("tournamentRegistration/gender",gender);
+
+	var type = getTypeForPlayer(tournamentDateMatch, gender);
+	var category = getCategory(age);
+	Session.set("tournamentRegistration/type",type);
+	Session.set("tournamentRegistration/category",category);
+	var pairsAlonePlayers = Meteor.call('getPairsAlonePlayers', type, category, date, gender, function(err, returnValue) {
+		if (returnValue===undefined || returnValue.length < 1) {
+			Session.set("tournamentRegistration/emptyTable", true);
+		}
+		else {
+			Session.set("tournamentRegistration/emptyTable", false);
+		}
+		Session.set("tournamentRegistration/alonePlayers", returnValue);
+	});
+}
+
+function checkAloneErrors(document) {
+	/**
+		This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
+		If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
+	*/
+	function set_error(id,errorVisible) {
+		const error = "Error";
+		const OK = "OK";
+		const div = "Div";
+		var e = document.getElementById(id.concat(error));
+		if(!errorVisible){
+			e.style.display = 'none';
+			document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
+		}else{
+			e.style.display = 'block';
+			document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
+		}
+		e = document.getElementById(id.concat(OK));
+		if(errorVisible)
+			e.style.display = 'none';
+		else
+			e.style.display = 'block';
+	}
+
+	var errors = new Array();
+	var hasError = false;
+
+	/*
+		Get all the fields and check if they are filled,
+		display error or success according to that
+	*/
+	var male = document.getElementById("male").checked;
+	var female = document.getElementById("female").checked;
+	if(!male && !female){
+		errors.push({id:"sex", error:true});
+		hasError = true;
+	}
+	else{
+		errors.push({id:"sex", error:false});
+	}
+
+	// Birthdate
+	var birthDay = document.getElementById("birthDay").value;
+	var birthMonth = document.getElementById("birthMonth").value;
+	var birthYear = document.getElementById("birthYear").value;
+	if(!birthDay || birthDay > 31 || birthDay < 1){
+		errors.push({id:"birthDay", error:true});
+		hasError = true;
+	}
+	else{
+		errors.push({id:"birthDay", error:false});
+	}
+	if(!birthMonth || birthMonth > 12 || birthMonth < 1){
+		errors.push({id:"birthMonth", error:true});
+		hasError = true;
+	}
+	else{
+		errors.push({id:"birthMonth", error:false});
+	}
+	var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
+	var tournamentDate = (Years.findOne({_id:currentYear})).tournamentDate;
+	if(!birthYear || birthYear < 1900 || birthYear > tournamentDate.getFullYear() - 9){
+		errors.push({id:"birthYear", error:true});
+		hasError = true;
+	}
+	else{
+		errors.push({id:"birthYear", error:false});
+	}
+	// new Date object for the birthdate. Year : only 2 last digits. Month : from 0 to 11.
+	//var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
+
+	var dateMatch = document.getElementById("dateMatchSelect").value;
+	if(!dateMatch){
+		errors.push({id:"dateMatch", error:true});
+		hasError = true;
+	}
+	else{
+		errors.push({id:"dateMatch", error:false});
+	}
+
+	if (dateMatch === 'family' && !acceptForFamily(new Date(birthYear, birthMonth-1, birthDay))) {
+		errors.push({id:"family", error:true});
+		hasError = true;
+	}
+	else {
+		errors.push({id:"family", error:false});
+	}
+
+	/*
+		Display all errors
+	*/
+	for(var i in errors){
+		var d = errors[i];
+		set_error(d.id, d.error);
+	}
+
+	if(hasError){
+		console.log("At least one field is missing or mis-filled");
+		return true;
+	}
+
+	return false;
 }
 
 Template.tournamentRegistration.helpers({
@@ -42,172 +202,19 @@ Template.tournamentRegistrationTemplate.helpers({
     },
 
     'alonePlayers' : function() {
-        function setAlonePlayers(){
-
-    		if (Session.get("firstTime")) {
-    			return undefined;
-    		}
-
-    		function checkErrors() {
-    			/**
-    				This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
-    				If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
-    			*/
-    			function set_error(id,errorVisible) {
-    				const error = "Error";
-    				const OK = "OK";
-    				const div = "Div";
-    				var e = document.getElementById(id.concat(error));
-    				if(!errorVisible){
-    					e.style.display = 'none';
-    					document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
-    				}else{
-    					e.style.display = 'block';
-    					document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
-    				}
-    				e = document.getElementById(id.concat(OK));
-    				if(errorVisible)
-    					e.style.display = 'none';
-    				else
-    					e.style.display = 'block';
-    			}
-
-    			var errors = new Array();
-    			var hasError = false;
-
-    			/*
-    				Get all the fields and check if they are filled,
-    				display error or success according to that
-    	    	*/
-    	        var male = document.getElementById("male").checked;
-    			var female = document.getElementById("female").checked;
-    	        if(!male && !female){
-    	        	errors.push({id:"sex", error:true});
-    	        	hasError = true;
-    	        }
-    	        else{
-    	        	errors.push({id:"sex", error:false});
-    	        }
-
-    			// Birthdate
-    	        var birthDay = document.getElementById("birthDay").value;
-    			var birthMonth = document.getElementById("birthMonth").value;
-    			var birthYear = document.getElementById("birthYear").value;
-    	        if(!birthDay || birthDay > 31 || birthDay < 1){
-    	        	errors.push({id:"birthDay", error:true});
-    	        	hasError = true;
-    	        }
-    	        else{
-    	        	errors.push({id:"birthDay", error:false});
-    	        }
-    			if(!birthMonth || birthMonth > 12 || birthMonth < 1){
-    	        	errors.push({id:"birthMonth", error:true});
-    	        	hasError = true;
-    	        }
-    	        else{
-    	        	errors.push({id:"birthMonth", error:false});
-    	        }
-                var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
-                var tournamentDate = (Years.findOne({_id:currentYear})).tournamentDate;
-    			if(!birthYear || birthYear < 1900 || birthYear > tournamentDate.getFullYear() - 9){
-    	        	errors.push({id:"birthYear", error:true});
-    	        	hasError = true;
-    	        }
-    	        else{
-    	        	errors.push({id:"birthYear", error:false});
-    	        }
-    			// new Date object for the birthdate. Year : only 2 last digits. Month : from 0 to 11.
-    			//var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
-
-    	        var dateMatch = document.getElementById("dateMatchSelect").value;
-    	        if(!dateMatch){
-    	        	errors.push({id:"dateMatch", error:true});
-    	        	hasError = true;
-    	        }
-    	        else{
-    	        	errors.push({id:"dateMatch", error:false});
-    	        }
-
-                if (dateMatch === 'family' && !acceptForFamily(new Date(birthYear, birthMonth-1, birthDay))) {
-                    errors.push({id:"family", error:true});
-                    hasError = true;
-                }
-                else {
-                    errors.push({id:"family", error:false});
-                }
-
-    			/*
-    				Display all errors
-    	 		*/
-    	        for(var i in errors){
-    	        	var d = errors[i];
-    	        	set_error(d.id, d.error);
-    	        }
-
-    	        if(hasError){
-    	        	console.log("At least one field is missing or mis-filled");
-    				return true;
-    	        }
-
-    			return false;
-    		}
-
-    		var check = checkErrors();
-    		var e = document.getElementById("refreshErrorMessage");
-    		if (check) { // An error occurred (mis-filled field)
-    			e.style.display = 'block';
-    			var table = document.getElementById("tableAlone");
-    			table.style.display = 'none';
-    			return undefined;
-    		}
-    		else {
-    			e.style.display = 'none';
-    		}
-
-    		var temp = document.getElementById("dateMatchSelect");
-    		var tournamentDateMatch = temp.options[temp.selectedIndex].value;
-    		var date = new Date(document.getElementById("birthYear").value,document.getElementById("birthMonth").value-1,document.getElementById("birthDay").value);
-    		var age = getAge(date);
-			Session.set("age", age);
-
-    		var male = document.getElementById("male").checked;
-			var gender;
-    		if (male) {
-    			gender = "M";
-    		}
-    		else {
-    			gender = "F";
-    		}
-			Session.set("gender",gender);
-
-            var type = getTypeForPlayer(tournamentDateMatch, gender);
-    		var category = getCategory(age);
-			Session.set("type",type);
-			Session.set("category",category);
-            var pairsAlonePlayers = Meteor.call('getPairsAlonePlayers', type, category, date, gender, function(err, returnValue) {
-				if (returnValue===undefined || returnValue.length < 1) {
-					Session.set("emptyTable", true);
-				}
-				else {
-					Session.set("emptyTable", false);
-				}
-                Session.set("alonePlayers", returnValue);
-            });
-    	}
-
 		aloneDependency.depend(); // Refresh when button is hit
 
-        setAlonePlayers();
-        var alone = Session.get("alonePlayers");
+        setAlonePlayers(document);
+        var alone = Session.get("tournamentRegistration/alonePlayers");
         return alone;
     },
 
 	'emptyTableMessage' : function() {
 		aloneDependency.depend();
-		var type = Session.get("type");
-		var category = Session.get("category");
-		var age = Session.get("age");
-		var gender = Session.get("gender");
+		var type = Session.get("tournamentRegistration/type");
+		var category = Session.get("tournamentRegistration/category");
+		var age = Session.get("tournamentRegistration/age");
+		var gender = Session.get("tournamentRegistration/gender");
 		if (type==="family") {
 			if (age >= 25) {
 				return "Aucun joueur seul de moins de 15 ans n\'est en attente pour le tournoi des familles.";
@@ -481,7 +488,6 @@ Template.tournamentRegistrationTemplate.helpers({
     	return this.price;
     }
 
-
 });
 
 var refreshAlonePlayers = function(event, document){
@@ -533,9 +539,8 @@ Template.tournamentRegistrationTemplate.events({
 		var later = document.getElementById("checkboxLater");
 		var message = document.getElementById("emptyTableMessage");
 		document.getElementById("later").checked = false; // reset "later" checkbox
-		Session.set("firstTime", false);
+		Session.set("tournamentRegistration/firstTime", false);
 		aloneDependency.changed();
-
 
 		if(event.target.checked){
 			table.style.display = 'none';
@@ -576,13 +581,13 @@ Template.tournamentRegistrationTemplate.events({
     },
 
     "click .aloneRow" : function (event){
-    	var previousId = Session.get('aloneSelected');
+    	var previousId = Session.get("tournamentRegistration/aloneSelected");
     	if(previousId){
     		document.getElementById(previousId).className = "aloneRow";
     	}
     	var newId = event.target.parentElement.id;
     	document.getElementById(newId).setAttribute("class", "aloneRow success");
-    	Session.set('aloneSelected', newId); // Set the player's id in the session variable aloneSelected
+    	Session.set("tournamentRegistration/aloneSelected", newId); // Set the player's id in the session variable aloneSelected
     },
 
     "submit form":function(){
@@ -620,49 +625,64 @@ Template.tournamentRegistrationTemplate.events({
 		}
 
 
-
-		/*
-			Returns the pair if userId is already in a pair. Else, returns false.
-		*/
-		function getPairId(userId){
-			var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
-		    var res = Pairs.findOne({$or:[{"player1._id":userId, year:currentYear},{"player2._id":userId, year:currentYear}]}, {_id:1});
-			if(res !== undefined){
-				return res;
-			}
-			return false;
-
-		}
-
 		// Reset the email error status
 		document.getElementById("emailPlayerDiv").removeAttribute("class", "has-success has-error");
 		document.getElementById("emailPlayerError").style.display = 'none';
 		document.getElementById("emailPlayerOK").style.display = 'none';
 		document.getElementById("emailPlayerErrorMessage").style.display = 'none';
 
+		var alonePlayers = alonePlayers(document); // assigns type and category to session variable
+		var userType = Session.get("tournamentRegistration/type");
+		var userCategory = Session.get("tournamentRegistration/category");
+
+		var day = getDayFromType(event.target.dateMatch.value);
+
 		// Array containing the errors/success to display
 		var errors = new Array();
 		var hasError = false;
 
-		var sendEmail = false; //true if we must send an email
+		var unregisteredPartner = false;
+		var givenEmail = false;
 
 		var alone = event.target.alone.checked; // True if the player tries to register alone
-		var player2ID;
+		var partnerID;
+		var partnerData;
 		if(!alone && $(emailPlayerDiv).is(":visible")){
 			// User wants to register a pair, collect the partner's id from his email.
 	    	var email = event.target.emailPlayer.value;
 	    	// Check that we know that email
 	    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
-	    	if(!u){
-	    		// Send an email to the user
-	    		sendEmail=true;
+	    	if(u === undefined){
+	    		unregisteredPartner = true;
 	    	}
 	    	else{
-	    		player2ID = u._id;
-	    		errors.push({id:"emailPlayer", error:false});
+	    		partnerID = u._id;
+				partnerPair = getDayPairFromPlayerID(partnerID, day);
+				if (partnerPair !== undefined && partnerPair.player1 !== undefined && partnerPair.player2 !== undefined) {
+					// Partner is already in a pair that has 2 players
+					errors.push({id:"emailPlayer", error:true});
+				}
+				var partnerInfo = getTypeAndCategoryFromPairID(partnerPair._id);
+				var partnerType = partnerInfo.playerType;
+				var partnerCategory = partnerInfo.playerCategory;
+				if (partnerPair !== undefined && (partnerCategory !== userCategory || partnerType !== userType)) {
+					// This player is already registered for this tournament and does not have the same category or the same type as the current player
+					errors.push({id:"emailPlayer", error:true});
+				}
+				if (partnerPair.player1) {
+					partnerData = partnerPair.player1;
+				}
+				else if(partnerPair.player2) {
+					partnerData = partnerPair.player2;
+				}
+				else {
+					console.error("Such a weird error, partner should be in player1 or player2");
+					return false;
+				}
 	    	}
+			errors.push({id:"emailPlayer", error:false});
+			givenEmail = true;
     	}
-
 
     	/*
 			Get all the fields and check if they are filled,
@@ -791,11 +811,23 @@ Template.tournamentRegistrationTemplate.events({
             errors.push({id:"family", error:false});
         }
 
+		/*
+			Display all errors
+ 		*/
+        for(var i in errors){
+        	var d = errors[i];
+        	set_error(d.id, d.error);
+        }
+        if(hasError){
+        	console.log("An error occured");
+        	return false; // Cancel form submission if errors occured
+        }
+
 
         /*
 			Create the address object
         */
-		addressData = {
+		var addressData = {
 			street : street,
 			box : boxNumber,
 			number : addressNumber,
@@ -808,14 +840,12 @@ Template.tournamentRegistrationTemplate.events({
 		var user = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
 		if(user){
 			addressData._id = user.profile.addressID;
-			//console.log("found existing address !");
 		}
-
 
 		/*
 			Create the object with the informations about the user
 		*/
-        curUserData = {
+        var curUserData = {
           _id: Meteor.userId(),
           profile:{
             lastName : lastname,
@@ -854,91 +884,68 @@ Template.tournamentRegistrationTemplate.events({
 			extrasPlayer[extras[i].name]=document.getElementById(extras[i]._id).value;
 		}
 
-		if(!$(emailPlayerDiv).is(":visible")){
-			// the user wants to confirm his registration with a pair that already exists
+		/*
+		 * Fill pair info
+		 */
+		var pairData;
 
-			var pair = Session.get("pair");
-
-
-			var pairData={
-					_id:pair._id,
-					player2:playerData
-				};
-
-		}
-		else{
-
-			var remove; // By default, this is undefined. If it is defined, contains the id of a pair to remove
-
-			/*
-				Depending if user wants to register alone or with a pair, choose appropriate action
-			*/
-			var pairData;
-			if(alone && !later){
-			var pair = getPairId(Meteor.userId() ); // != false if the user is already in a pair
-			if( pair!=false ){
-				// User is already in a pair
-
-				// Check if he is player1 or player2:
-				var player;
-				if(!pair.player2){
-					// User is trying to register again (he was alone) but with a pair this time
-					// We need to remove the existing pair with him.
-					remove = pair._id;
-				}
-				else{
-					// User is trying to register, but he is already in a pair !
-					document.getElementById("alreadyRegisteredErrorMessage").style.display = 'block';
-					document.getElementById("checkboxAloneDiv").className = "form-group col-md-3 checkboxAloneDiv has-error";
-					console.error("User is already registered in a pair");// TODO display notification
-					hasError = true;
-				}
-			}
-
-
-			// Player wants to register alone but chose a partner in the list
-
-			var player1_pairID = Session.get('aloneSelected'); // The player's 1 pair id, from the selected item in the list
-			if(!player1_pairID){
-				// errors.push({id:"checkboxAlone", error:true});
-				hasError = true;
-			}
-			pairData = {
-				_id:player1_pairID,
-				player2:playerData
-			};
-
-			}
-			else{
-
-			if(alone){
-				// Player wants to register alone but wants to wait for another to join on him
+		if(givenEmail) {
+			// User gives his/her partner email address
+			if (unregisteredPartner) {
 				pairData = {
-					day: dateMatch,
-					player1:playerData
+					player2: playerData
 				};
 			}
-			else{
-				// Player registers a pair
+			else {
 				pairData = {
-					day: dateMatch,
-					player2:playerData,  // Player2 because search for a single player is made on pairs with empty player2 field
+					player1:playerData,
+					player2:partnerData
 				};
-			}
 			}
 		}
+		else {
+			// User did not specify a partner email
+			if (!alone) {
+				var message = document.getElementById("noPartnerChosen");
+				message.style.display = 'block';
+				return false;
+			}
+			else {
+				if(later) {
+					pairData = {
+						player1:playerData
+					};
+				}
+				else {
+					// Current user has to choose a partner between the alone players in the table
+					var selectedPartner = document.getElementsByClassName("aloneRow success");
+					if (selectedPartner.length != 1) {
+						var message = document.getElementById("noPartnerChosen");
+						message.style.display = 'block';
+						return false;
+					}
+					partnerID = selectedPartner.id;
+					var selectedPartnerPair = getDayPairFromPlayerID(partnerID, day);
+					if (selectedPartnerPair.player1) {
+						partnerData = selectedPartnerPair.player1;
+					}
+					else if(selectedPartnerPair.player2) {
+						partnerData = selectedPartnerPair.player2;
+					}
+					else {
+						console.error("Such a weird error, selectedPartner should be player1 or player2");
+						return false;
+					}
+				}
+			}
 
- 		/*
-			Display all errors
- 		*/
-        for(var i in errors){
-        	var d = errors[i];
-        	set_error(d.id, d.error);
-        }
-        if(hasError){
-        	console.log("An error occured");
-        	return false; // Cancel form submission if errors occured
-        }
+		}
+
+		// Delete the current player's pair for that day if any
+		var pair = getDayPairFromPlayerID(Meteor.userId(), day);
+		if (pair !== undefined) {
+			Meteor.call('unsubscribePairFromTournament', pair._id);
+		}
 
 		/*
 			Check the AFT ranking online
@@ -952,8 +959,7 @@ Template.tournamentRegistrationTemplate.events({
 				/*
 					Update the db !
 		        */
-
-		        Meteor.call('updateAddress', addressData, function(err, res){
+				Meteor.call('updateAddress', addressData, function(err, res){
 		        	if(err){
 		        		console.error("tournamentRegistration : updateAddress error");
 		        		console.error(err);
@@ -969,25 +975,8 @@ Template.tournamentRegistrationTemplate.events({
 		        		console.log(err);
 		        		return;
 		        	}
-
-		        	if(sendEmail){
-			        	body=body+Router.routes['confirmPair'].url({_id: pairID});
-				    		var data = {
-				    			intro:"",
-								message:body};
-							Meteor.call('emailFeedback',to,"Demande d'inscription au Charles de Lorraine",Blaze.toHTMLWithData(Template.mail,data));
-			        }
-
-		        	if(remove){
-		        		console.log("removing pair "+ remove);
-		        		Meteor.call('removePair',remove);
-		        	}
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch);
 		        }
-
-		        body="Bonjour, \n " + firstname + " " + lastname + " aimerait jouer avec vous au tournoi le Charles de Lorraine. Cliquez sur le lien suivant pour vous inscrire: "; //body of the email to send
-		        to=email; //address of the other player
-
 
 				//For the payment
 				//Remark: we pass the paymentMethod to pairData but it won't be linked with the Pair in the database)
@@ -1005,7 +994,6 @@ Template.tournamentRegistrationTemplate.events({
 				var e = document.getElementById("AFTcheat");
 				e.style.display = 'block';
 				document.getElementById("AFTcheat").className = "form-group has-error has-feedback";
-
 			}
 		});
 
@@ -1018,5 +1006,5 @@ Template.tournamentRegistrationTemplate.events({
   Template.tournamentRegistrationTemplate.onCreated(function (){
 	  this.subscribe("AddressesNoSafe");
 	  this.subscribe("users");
-	  Session.set("firstTime", true);
+	  Session.set("tournamentRegistration/firstTime", true);
   });

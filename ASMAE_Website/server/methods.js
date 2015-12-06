@@ -2073,10 +2073,6 @@ Meteor.methods({
 			return false;
 		}
 
-		console.log(pair);
-		console.log(userPlayer);
-		console.log(partnerPlayer);
-
 		var user;
 		if (userPlayer==="player1") {
 			user = Meteor.users.findOne({_id:pair.player1._id});
@@ -2090,7 +2086,6 @@ Meteor.methods({
 		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
 
 
-		console.log(user);
 		// No other player
 		if (typeof pair.partnerPlayer === 'undefined') {
 			// Remove the pair from the pool and from the Pairs table
@@ -2139,7 +2134,7 @@ Meteor.methods({
       var dataEmailPartner={
         intro:"Bonjour "+partner.profile.firstName+",",
         important:"Nous avons une mauvaise nouvelle pour vous.",
-        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jour. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours aller choisir un nouveau partneaire sur notre site !"
+        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jouer. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours choisir un nouveau partneaire sur notre site !"
       };
       var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
       var options =   {
