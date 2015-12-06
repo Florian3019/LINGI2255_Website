@@ -2289,7 +2289,44 @@ Meteor.methods({
 			}
 		});
 		return true;
-	}
+	},
+
+  'emailToPay':function(currentYear){
+    var paymentCursor = Payments.find({'status': "pending", 'tournamentYear': currentYear});
+    paymentCursor.forEach( function(payment) {
+      if(payment.paymentMethod!="Cash"){
+        var user = Meteor.users.findOne({_id:payment.userID});
+
+        var bank = "BE33 3753 3397 1254";
+
+        if(payment.paymentMethod=="BankTransfer"){
+          var data = {
+            intro:"Bonjour "+user.profile.firstName+",",
+            important:"Nous souhaitons vous rappeler les modalités du tournoi Le Charles de Lorraine.",
+            texte:"Dans le cadre de l'asbl ASMAE, nous souhaitons collecter des fonds pour mener à bien notre projet. C'est pourquoi nous vous invitons à régulariser au plus vite votre inscription au tournoi",
+            encadre:"Comme vous avez choisi de payer par virement, nous vous rappellons certaines informations pratiques.\n Votre montant : "+payment.balance+"€. Notre numéro de compte est le suivant : "+bank+"\n Merci de faire ceci dans les plus brefs délais."};
+          }else{
+            var data = {
+              intro:"Bonjour "+user.profile.firstName+",",
+              important:"Nous souhaitons vous rappeler les modalités du tournoi Le Charles de Lorraine.",
+              texte:"Dans le cadre de l'asbl ASMAE, nous souhaitons collecter des fonds pour mener à bien notre projet. C'est pourquoi nous vous invitons à régulariser au plus vite votre inscription au tournoi",
+              encadre:"Comme vous avez choisi de payer électroniquement, nous vous invitons à venr finaliser la transaction dans l'onget 'Mon inscription' une fois que vous êtes connecté sur notre site.\n Merci d'avance,"};
+            }
+            if(EMAIL_ENABLED){
+              Meteor.call("emailFeedback", user.emails[0].address,"Concernant la finalisation de votre inscription",data, function(error, result){
+                if(error){
+                  console.log("error", error);
+                }
+              });
+            }
+          }
+          else{
+            console.log("cash");
+          }
+        });
+
+      },
 
 
-});
+
+    });
