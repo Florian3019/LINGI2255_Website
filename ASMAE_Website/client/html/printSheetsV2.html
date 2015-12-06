@@ -27,12 +27,15 @@
         float: footnote;
       }
 
-      .selfMatch{
-        background-color: grey;
-        -webkit-print-color-adjust: exact;
-      }
-
     }
+    .selfMatch{
+      color: #fff;
+      font-family: 'Helvetica', 'Arial', sans-serif;
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+    }
+
     .scoreTableFontSize{
       font-size:0.6em;
     }
@@ -46,7 +49,7 @@
   <div id="printContent">
 
     {{#each POOLS}}
-    <div class="pageContent">
+    <div class="pageContent" media="print">
 
       <h1 style='height:7%' id="pdfHeader">
           <span style="font-size:0.6em;
