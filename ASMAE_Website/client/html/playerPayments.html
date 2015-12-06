@@ -12,41 +12,6 @@
     </div>
 
     {{>reactiveTable collection=getPayments settings=settings fields=fields}}
-
-<!--     {{#with payments}}
-        {{#if this.notEmpty}}
-    	<table class="table">
-    		<thead>
-          		<tr>
-            	<th>Joueur</th>
-                <th>Méthode</th>
-            	<th>Montant</th>
-                <th>Marquer comme payé</th>
-          		</tr>
-        	</thead>
-        	<tbody>
-        		{{#each this.cursor}}
-        		<tr>
-                    {{#with player}}
-        			<td><a href="{{pathFor route='playerInfoTemplate' _id=this._id}}">{{profile.firstName}} {{profile.lastName}}</a></td>
-                    {{/with}}
-                    <td>{{transformPaymentMethod}}</td>
-                    <td>{{balance}}&euro;</td>
-                    <td><a href="" class="markAsPaidLink">Payé</a></td>
-        		</tr>
-        		{{/each}}
-        	</tbody>
-    	</table>
-        {{else}}
-        <div id="infoBox" class="alert alert-info" role="alert">
-            <h4>
-                <span class="glyphicon glyphicon-info-sign"></span>
-                <span class="sr-only">Info:</span>
-                <span>Tous les joueurs sont en ordre de paiement</span>
-            </h4>
-        </div>
-        {{/if}}
-    {{/with}} -->
 </div>
 </template>
 
