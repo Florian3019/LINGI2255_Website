@@ -31,23 +31,30 @@
           {{/with}}
         </td>
 
-
-        <td align="center">
-          <h3 id="TerrainHeader">Terrain :</h3>
-          <div class="btn btn-sq-lg btn-primary" id="changeCourt">
-            <i class="fa fa-home fa-5x"></i><br/>
-             {{#if getCourt this._id}}
+        {{#if getCourt this._id}}
                {{#with getCourt this._id}}
-                  <strong> Numéro : {{this.id}} </strong><br>
-                  {{this.address.street}} {{this.address.number}} <br>
-                  {{this.address.zipCode}} {{this.address.city}}
+                  <td align="center">
+                  <h3>Terrain :</h3>
+                  <div class="btn btn-sq-lg btn-primary" id="changeCourt">
+                    <i class="fa fa-home fa-5x"></i><br/>
+                        <strong> Numéro : {{this.id}} </strong><br>
+                          {{this.address.street}} {{this.address.number}} <br>
+                          {{this.address.zipCode}} {{this.address.city}}
+                  </div>
+                   </td>
               {{/with}}
-              {{else}}
-                <h4 style="color:white">Assigner un terrain</h4>
+        {{else}}
+              {{#if isAdminOrStaff}}
+                <td align="center">
+                  <h3>Terrain :</h3>
+                  <div class="btn btn-sq-lg btn-primary" id="changeCourt">
+                    <i class="fa fa-home fa-5x"></i><br/>
+                        <h4 style="color:white">Assigner un terrain</h4>
+                  </div>
+                   </td>
               {{/if}}
-          </div>
-        
-        </td>
+        {{/if}}
+                  
       </tr>
     </tbody>
   </table>
@@ -66,7 +73,7 @@
 <!-- Takes 1 parameter : the poolId for this score table under the format {_id:POOLID}-->
 <template name="scoreTable">
   <div id="scoreTab">
-    <h3 id="ConsignesHeader">Les paires dans la colonne jouent contre les paires de la ligne.</h3>
+    <h3>Les paires dans la colonne jouent contre les paires de la ligne.</h3>
     <div class="panel panel-primary" style="background-color:white">
       <div class="panel-heading">Tableaux des résultats</div>
       <table class="table table-bordered" id="scoreTableElement">
