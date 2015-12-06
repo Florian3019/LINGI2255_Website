@@ -147,9 +147,9 @@ Template.tournamentProgress.events({
             }
         });
 
-        Meteor.call('emailtoAllUsers', function(err, result){
+        Meteor.call('emailLaunchTournament', function(err, result){
             if(err){
-                console.error("Error while calling emailtoAllUsers");
+                console.error("Error while calling emailLaunchTournament");
             }
         });
     },

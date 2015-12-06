@@ -38,7 +38,7 @@ Template.playerPayments.events({
 
     'click #sendPaymentReminderEmail': function(event){
       var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-      Meteor.call("emailToPay",currentYear, function(error, result){
+      Meteor.call("emailReminderToPay",currentYear, function(error, result){
         if(error){
           console.log("error", error);
         }
