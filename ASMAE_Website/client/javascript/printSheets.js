@@ -15,19 +15,17 @@ Template.printSheets.events({
     };
     Session.set("printSheets/info",info);
 
-    
+
 
     Meteor.call("getPoolListToPrint", info, function(error, result){
       if(error){
         console.log("error", error);
       }
       if(result){
-        if(result.length==Session.get("printSheets/poolList").length){
-          Session.set("printSheets/isWorkingPool",false);
-        }
         Session.set("printSheets/poolList",result);
       }
       document.getElementById("printPdf").style.display="block";
+      Session.set("printSheets/isWorkingPool",false);
     });
   },
 
@@ -37,7 +35,9 @@ Template.printSheets.events({
     if(info.type==="family"){
       infoData = info.year+"_"+typesTranslate[info.type];
     }
-    infoData = info.year+"_"+typesTranslate[info.type]+"_"+categoriesTranslate[info.cat];
+    var cat = info.cat == "all"? "all" :categoriesTranslate[info.cat] ;
+    infoData = info.year+"_"+typesTranslate[info.type]+"_"+cat;
+    console.log(infoData);
 
     var win = window.open("", "Knock-offs", "width=545", "height=840");
     var head = $("#printCSS").html();
@@ -55,7 +55,7 @@ Template.printSheets.events({
       '</body>'
     );
     setTimeout(function(){ win.print() }, 3000);
-    
+
   }
 });
 
@@ -226,13 +226,26 @@ Template.printSheets.onRendered(function() {
   console.log("set to null");
 });
 
+Template.printSheetsV2.helpers({
+  'getInfo':function(poolId){
+    var infoPools = Session.get("printSheets/info");
+    if(infoPools.type==="family"){
+      return infoPools.year+" "+typesTranslate[infoPools.type];
+    }
+    var pool = Pools.findOne({_id:poolId},{category:1});
+    // var cat = infoPools.cat == "all"? "all" :categoriesTranslate[infoPools.cat] ;
+    return infoPools.year+" "+typesTranslate[infoPools.type]+" "+categoriesTranslate[pool.category];
+  },
+});
+
 Template.printSheets.helpers({
   'getInfo':function(){
     var infoPools = Session.get("printSheets/info");
     if(infoPools.type==="family"){
       return infoPools.year+" "+typesTranslate[infoPools.type];
     }
-    return infoPools.year+" "+typesTranslate[infoPools.type]+" "+categoriesTranslate[infoPools.cat];
+    var cat = infoPools.cat == "all"? "all" :categoriesTranslate[infoPools.cat] ;
+    return infoPools.year+" "+typesTranslate[infoPools.type]+" "+cat;
   },
 
   'getPool':function(){
