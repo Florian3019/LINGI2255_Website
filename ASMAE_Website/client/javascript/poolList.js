@@ -1573,7 +1573,7 @@ var equilibrate = function(document){
 		}
 	}
 
-	var optimalSize = Math.floor(totalPairs/poolContainers.length); // Ideal number of pairs per pool
+	var optimalSize = Math.round(totalPairs/poolContainers.length); // Ideal number of pairs per pool
 	console.log("optimalSize : "+optimalSize);
 	// For each poolContainer
 	for(var i=0;i<poolContainers.length;i++){
