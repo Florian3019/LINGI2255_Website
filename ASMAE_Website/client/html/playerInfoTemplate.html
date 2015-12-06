@@ -140,7 +140,10 @@
             {{#if canModify}}
               <center>
                 <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Modifier</button>
-                <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Supprimer</button>
+                {{#unless ../hideDelete}}
+                  <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>
+                  Supprimer</button>
+                {{/unless}}
               </center>
             {{/if}}
 </div>
