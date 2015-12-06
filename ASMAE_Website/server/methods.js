@@ -1140,6 +1140,7 @@ Meteor.methods({
 				}
 
 				paymentData.userID = ID['player2'];
+				delete paymentData.bankTransferNumber;
 				if(typeof paymentData.userID !== 'undefined'){
 					Payments.insert(paymentData, function(err, paymId){
 						if(err){
