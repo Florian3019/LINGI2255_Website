@@ -37,7 +37,12 @@ Template.playerPayments.events({
     },
 
     'click #sendPaymentReminderEmail': function(event){
-        //TODO: send email
+      var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+      Meteor.call("emailToPay",currentYear, function(error, result){
+        if(error){
+          console.log("error", error);
+        }
+      });
     },
 
     'submit form': function(event){

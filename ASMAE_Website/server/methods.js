@@ -1062,23 +1062,14 @@ Meteor.methods({
 		paymentData = {
 			userID : paymentUser,
 			tournamentYear : currentYear,
+			day : pairData.day,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
 			balance : amount
 		};
 
-		// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
-		if(pairData.paymentMethod === paymentTypes[1]){
-			paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
-
-			var newValue = paymentData.bankTransferNumber + 1;
-			GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
-				value: newValue
-			}});
-		}
-
 		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear});
+		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear, 'day': pairData.day});
 		if(paymentAlreadyExists){
 			if(pairData._id){
 				Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
@@ -1116,6 +1107,16 @@ Meteor.methods({
 				*/
 			}
 			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
+
+				// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
+				paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
+
+				var newValue = paymentData.bankTransferNumber + 1;
+				GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
+					value: newValue
+				}});
+
+
         		var bank = "BE33 3753 3397 1254";
         		var user = Meteor.users.findOne({_id:paymentData.userID});
         		var dataEmail = {
@@ -1155,6 +1156,7 @@ Meteor.methods({
 				}
 
 				paymentData.userID = ID['player2'];
+				delete paymentData.bankTransferNumber;
 				if(typeof paymentData.userID !== 'undefined'){
 					Payments.insert(paymentData, function(err, paymId){
 						if(err){
@@ -2087,7 +2089,7 @@ Meteor.methods({
 
 		// Remove payment
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
+		Payments.remove({'userID': userID, 'tournamentYear': currentYear}); 	//TODO: precise the day
 
 
 		console.log(user);
@@ -2289,7 +2291,140 @@ Meteor.methods({
 			}
 		});
 		return true;
-	}
+	},
+
+  'emailToPay':function(currentYear){
+    var paymentCursor = Payments.find({'status': "pending", 'tournamentYear': currentYear});
+    paymentCursor.forEach( function(payment) {
+      if(payment.paymentMethod!="Cash"){
+        var user = Meteor.users.findOne({_id:payment.userID});
+
+        var bank = "BE33 3753 3397 1254";
+
+        if(payment.paymentMethod=="BankTransfer"){
+          var data = {
+            intro:"Bonjour "+user.profile.firstName+",",
+            important:"Nous souhaitons vous rappeler les modalités du tournoi Le Charles de Lorraine.",
+            texte:"Dans le cadre de l'asbl ASMAE, nous souhaitons collecter des fonds pour mener à bien notre projet. C'est pourquoi nous vous invitons à régulariser au plus vite votre inscription au tournoi",
+            encadre:"Comme vous avez choisi de payer par virement, nous vous rappellons certaines informations pratiques.\n Votre montant : "+payment.balance+"€. Notre numéro de compte est le suivant : "+bank+"\n Merci de faire ceci dans les plus brefs délais."};
+          }else{
+            var data = {
+              intro:"Bonjour "+user.profile.firstName+",",
+              important:"Nous souhaitons vous rappeler les modalités du tournoi Le Charles de Lorraine.",
+              texte:"Dans le cadre de l'asbl ASMAE, nous souhaitons collecter des fonds pour mener à bien notre projet. C'est pourquoi nous vous invitons à régulariser au plus vite votre inscription au tournoi",
+              encadre:"Comme vous avez choisi de payer électroniquement, nous vous invitons à venr finaliser la transaction dans l'onget 'Mon inscription' une fois que vous êtes connecté sur notre site.\n Merci d'avance,"};
+            }
+            if(EMAIL_ENABLED){
+              Meteor.call("emailFeedback", user.emails[0].address,"Concernant la finalisation de votre inscription",data, function(error, result){
+                if(error){
+                  console.log("error", error);
+                }
+              });
+            }
+          }
+          else{
+            console.log("cash");
+          }
+        });
+
+  },
+
+  'emailToAllUsers':function(subject,text){
+    var data={
+      intro:"Bonjour,",
+      texte:text
+    };
+    var usersCursor = Meteor.users.find();
+    usersCursor.forEach(function(user){
+      if(EMAIL_ENABLED){
+        Meteor.call("emailFeedback",user.emails[0].address,subject,data, function(error, result){
+          if(error){
+            console.log("error", error);
+          }
+        });
+      }
+    });
+  },
+
+  'emailToPlayers':function(subject,text,currentYear){
+    var year = Years.findOne({_id:currentYear});
+    var typest = ["men","women","mixed","family"];
+    var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+    for (var i in typest) {
+      var types=Types.findOne({_id:year[typest[i]]});
+      for (var j in allcat) {
+        for (var pl in types[allcat[j]]) {
+          var currentPool = Pools.findOne({_id:types[allcat[j]][pl]});
+          for (var k in currentPool["pairs"]) {
+            var pair = Pairs.findOne({_id:currentPool["pairs"][k]});
+            if (pair["player1"]!=undefined) {
+              player1= Meteor.users.findOne({_id:pair["player1"]},{emails:1});
+              var data={
+                intro:"Bonjour,",
+                texte:text
+              };
+              if(EMAIL_ENABLED){
+                Meteor.call("emailFeedback", player1.emails[0].address,subject,data, function(error, result){
+                  if(error){
+                    console.log("error", error);
+                  }
+                });}
+              }
+              if (pair["player2"]!=undefined) {
+                player2= Meteor.users.findOne({_id:pair["player2"]},{emails:1});
+                var data={
+                  intro:"Bonjour,",
+                  texte:text
+                };
+                if(EMAIL_ENABLED){
+                  Meteor.call("emailFeedback", player2.emails[0].address,subject,data, function(error, result){
+                    if(error){
+                      console.log("error", error);
+                    }
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    'emailToStaff': function(subject,text){
+      var data={
+        intro:"Bonjour,",
+        texte:text
+      };
+      var usersCursor = Meteor.users.find({"profile.isStaff":true},{emails:1});
+      usersCursor.forEach( function(user) {
+        if(EMAIL_ENABLED){
+          Meteor.call("emailFeedback", user.emails[0].address,subject,data, function(error, result){
+            if(error){
+              console.log("error", error);
+            }
+          });
+        }
+      });
+    },
+
+    'emailToCourtOwner':function(subject,text){
+      var data={
+        intro:"Bonjour,",
+        texte:text,
+      };
+      var courtsCursor= Courts.find();
+      courtsCursor.forEach( function(court){
+        var owner = Meteor.users.findOne({_id:court.ownerID},{emails:1});
+        if(EMAIL_ENABLED){
+          Meteor.call("emailFeedback",owner.emails[0].address,subject,data, function(error, result){
+            if(error){
+              console.log("error", error);
+            }
+          });
+        }
+      });
+    },
 
 
-});
+
+  });

@@ -1,8 +1,7 @@
 Package.describe({
   name: 'nicktomlin-braintree-example',
   summary: 'A sample integration with Braintree',
-  version: '1.0.0',
-  git: '/* todo */'
+  version: '1.0.0'
 });
 
 Package.onUse(function(api) {

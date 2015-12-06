@@ -21,6 +21,13 @@ Template.closeRegistrationsBlock.helpers({
 
 Template.tournamentProgress.helpers({
 
+    'MissingSaturday': function(){
+        return getNumberMissingCourts("Saturday");
+    },
+    'MissingSunday': function(){
+        return getNumberMissingCourts("Sunday");
+    },
+
     'stepIsDoneClass': function(stepNumber){
         var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
         if(currentYear == ""){ //Tournament didn't launch yet
@@ -206,28 +213,87 @@ Template.tournamentProgress.events({
     */
 
     'click #assignCourts':function(event){
-        assignCourts(false);
+
+        if(getNumberMissingCourts("Saturday")>0 || getNumberMissingCourts("Sunday")>0){
+            Session.set("rain",false);
+            $('#notEnoughCourtsModal').modal('show');
+        }
+        else{
+            assignCourts(false);
+        }
+        
     },
     'click #assignIndoorCourts':function(event){
-        assignCourts(true);
+        if(getNumberMissingCourts("Saturday")>0 || getNumberMissingCourts("Sunday")>0){
+            Session.set("rain",true);
+            $('#notEnoughCourtsModal').modal('show');
+        }
+        else{
+            assignCourts(false);
+        }
     }
 
 });
 
-var assignCourts = function(rain){
-    var getCourtNumbers = function(courts){
-        var result = [];
-
-        for(var k=0; k<courts.length;k++){
-            var courtsList = courts[k].courtNumber;
-
-            for(var t=0;t<courtsList.length;t++){
-                result.push(courtsList[t]);
-            }
+Template.notEnoughCourtsModal.helpers({
+    'findDay': function(){
+        if(getNumberMissingCourts("Saturday")>0 && getNumberMissingCourts("Sunday")>0){
+            return "samedi et dimanche";
         }
-
-        return result;
+        else if(getNumberMissingCourts("Saturday")>0){
+            return "samedi";
+        }
+        else if(getNumberMissingCourts("Sunday")>0){
+            return "dimanche";
+        }
+        else{
+            return "";
+        }
     }
+});
+
+Template.notEnoughCourtsModal.events({
+    'click .valid': function(event){
+        if(Session.get("rain")){
+            assignCourts(true);
+        }
+        else{
+            assignCourts(false);
+        }
+    }
+});
+
+
+var getNumberMissingCourts = function(day){
+
+    if(day==="Saturday"){
+       pools = Pools.find({$or: [{type:"mixed"},{type:"family"}]}).fetch();
+        courts = Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
+        return Math.max(pools.length-getCourtNumbers(courts).length,0); 
+    }
+    else{
+        pools = Pools.find({$or: [{type:"men"},{type:"women"}]}).fetch();
+        courts = Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
+        return Math.max(pools.length-getCourtNumbers(courts).length,0); 
+    }
+
+};
+
+var getCourtNumbers = function(courts){
+    var result = [];
+
+    for(var k=0; k<courts.length;k++){
+        var courtsList = courts[k].courtNumber;
+
+        for(var t=0;t<courtsList.length;t++){
+            result.push(courtsList[t]);
+        }
+    }
+
+    return result;
+}
+
+var assignCourts = function(rain){
 
     /*
         Return N courts, starting at index start and using a modulo to loop through the array

@@ -1,0 +1,37 @@
+<template name="sendEmailToList">
+  <div id="Wrapper">
+        <div class="page-header">
+            <h2>Envoyer un email</h2>
+        </div>
+        <div class="row">
+        <div class="col-sm-4 col-sm-offset-2">
+          <input type="text" class="form-control" id="subject" name="subject" placeholder="Sujet">
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-8 col-sm-offset-2">
+          <label for="mailToList">Destinataires:</label>
+          <select name="mailToList" id="mailToList" class="form-control">
+             <option value="allUsers" selected>Tous les utilisateurs</option>
+             <option value="allPlayers">Utilisateurs inscrits au tournoi cette année</option>
+             <option value="allCourtOwners">Propriétaires de terrains</option>
+             <option value="staffMember">Membres du staff</option>
+          </select>
+        </div>
+	  </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-8 col-sm-offset-2">
+          <label for="mailContent">Contenu:</label>
+          <div class="well">
+            <textarea class="form-control" rows="5" id="mailContent" placeholder="Entrez le contenu de l'email" name="mailContent"></textarea>
+          </div>
+        </div>
+	  </div>
+	    <br>
+      <div class="row">
+          <center><button type="submit" id="submitButtonSendEmail" class="btn btn-default">Envoyer</button></center>
+      </div>
+    </div>
+</template>

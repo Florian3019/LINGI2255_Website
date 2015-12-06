@@ -18,9 +18,11 @@
     {{/with}}
   {{/with}}
   </div>
+
   {{#unless this.isForPdf}}
     {{>scoreTableInfo this}}
   {{/unless}}
+
   {{>scoreTable this}}
 
   {{#if isAdminOrStaff}}
