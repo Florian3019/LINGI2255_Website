@@ -1,3 +1,7 @@
+/*
+  This file defines how pairs are chosen for the knock-offs.
+*/
+
 var resetPairTournament = function(pairId){
     // Unset previous tournament match for that pair
     Pairs.update({"_id":pairId}, {$unset:{"tournament":"", "tournamentCourts":""}});
@@ -128,6 +132,9 @@ var getPoolWinners = function(poolId, MAXWINNERS){
   oneTimeWarning = false;
 
   // Sorter for pairPoints (by descending order)
+  /*
+    First sort by the amount of points. Then sort wrt the number of victories, and finally wrt who won against the other.
+  */
   var pointComparator = function(a,b){
     // Return a number > 0 if a is after b
     // Return a number < 0 if a is before b
@@ -313,12 +320,6 @@ Meteor.methods({
       var pairData = Pairs.findOne({_id : winners[i]});
       var player1Data = Meteor.users.findOne({_id : pairData.player1._id});
       var player2Data = Meteor.users.findOne({_id : pairData.player2._id});
-
-      // var pairData = {
-      //  "name":
-
-      // };
-
       firstRound.push([]);
     }
 

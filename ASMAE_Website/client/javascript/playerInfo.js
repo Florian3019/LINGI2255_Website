@@ -1,3 +1,7 @@
+/*
+    This file allows to display a table that displays the players and allows to filter them
+    It also allows an admin to change user permissions
+*/
 Template.mySpecialFilterPlayers.events({
     'keyup .playerFilter':function(event){
         Session.set("playerInfo/input", event.currentTarget.value);
@@ -11,16 +15,18 @@ Template.playersInfo.onRendered(function(){
 
 Template.playersInfo.helpers({
     userCollection: function () {
-        input = Session.get("playerInfo/input")
-        if(input!==undefined) input = input.toLowerCase();
+        var input = Session.get("playerInfo/input"); // This is the filter input
+        if(input!==undefined) input = input.toLowerCase(); // Convert to lower case for ease of use
 
-        perm = Session.get("playerInfo/permissions");
+        var perm = Session.get("playerInfo/permissions");
 
-        noInput = (input ==="" || input===undefined || input === null) && perm==="Ignore";
+        var noInput = (input ==="" || input===undefined || input === null) && perm==="Ignore";
 
         if(noInput) return Meteor.users.find();
         if(input!==undefined) inputArray = input.split(" ");
-        query = {$where: function(){
+
+        // This will filter the database according to the filters set
+        var query = {$where: function(){
             if(perm=="Admin"){
               if(!this.profile.isAdmin) return false;
             }
@@ -44,9 +50,10 @@ Template.playersInfo.helpers({
             }
         };
 
-        return Meteor.users.find(query);
+        return Meteor.users.find(query); // Make the db request
     },
 
+    // This defines the fields of the search table
     settings : function(){
         return {
             fields:[
@@ -113,7 +120,7 @@ Template.playersInfo.helpers({
                     }
                 }
             ],
-             filters: ['NomDeFamille'],
+             filters: ['NomDeFamille'], // This is just a mockup filter to hide the default one
              rowClass: "playerInfoRow",
              showColumnToggles:true
         }

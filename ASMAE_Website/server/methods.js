@@ -4,7 +4,7 @@
 /*
 	/!\
 	On the client, Meteor.call is asynchronous - it returns undefined and its return value can only be accesses via a callback.
-	Helpers, on the other hand, execute synchronously.
+	On the server, on the other hand, they execute synchronously.
 	/!\
 */
 
@@ -439,6 +439,8 @@ Meteor.methods({
 		@param typeData is structured as a type
 		A type structure is as follows :
 		{
+			typeString : men | women | mixed | family
+
 			// Can only $addToSet
 			_id:<typeID>
 			preminimes:<list of poolIDs>
@@ -481,6 +483,9 @@ Meteor.methods({
 		}
 		var hasData = false;
 		var data = {};
+		if (typeof typeData.typeString !== 'undefined') {
+			data.typeString = typeData.typeString;
+		}
 		for (var i=0;i<categoriesKeys.length;i++){
 			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
@@ -571,8 +576,8 @@ Meteor.methods({
 			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
 			if(googleAnswer!==undefined && googleAnswer.length>0){
 
-          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude}; 
-          		data.HQDist = getDistanceFromHQ(data.coords); 
+          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};
+          		data.HQDist = getDistanceFromHQ(data.coords);
 
     		}
 
@@ -1355,10 +1360,6 @@ Meteor.methods({
 			if(!addToSet) addToSet = {};
 			addToSet["pairs"] = {$each: poolData.pairs};
 		}
-		// if(poolData.matches){
-		// 	if(!addToSet) addToSet = {};
-		// 	addToSet["matches"] = {$each: poolData.matches};
-		// }
 
 		if(addToSet) data["$addToSet"] = addToSet;
 
@@ -1371,19 +1372,6 @@ Meteor.methods({
 				}
 			});
 		}
-
-
-		// if(Object.keys(data.$set).length==0) delete data.$set;
-		// if(Object.keys(data.$addToSet).length==0) delete data.$addToSet;
-		// console.log("testEmptyObject");
-		// console.log(data.$set);
-		// console.log(Meteor.call('objectIsEmpty', data.$set));
-		// console.log(Meteor.call('objectIsEmpty', {}));
-		// console.log(Meteor.call('objectIsEmpty', {"hello":1}));
-
-
-		// if(Meteor.call('objectIsEmpty', data.$set)) delete data.$set;
-		// if(Meteor.call('objectIsEmpty', data.$addToSet)) delete data.$addToSet;
 
 		Pools.update({_id: poolData._id} , data, function(err, count, status){
 			if(err){
@@ -1513,6 +1501,9 @@ Meteor.methods({
 			console.error("Error GetPoolToFill : no year and/or type and/or category specified");
 			return undefined;
 		}
+		if (type != "men" && type != "women" && type != "mixed" && type != "family") {
+			console.error("Error GetPoolToFill : type provided ("+type+") is not supported.")
+		}
 
 		var yearTable = Years.findOne({_id:year});
 		if (!yearTable) {
@@ -1527,7 +1518,7 @@ Meteor.methods({
 		// No type table for now
 		if (typeTable==undefined) {
 			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
-			typeID = Types.insert({});
+			typeID = Types.insert({'typeString':type});
 			// typeID = Meteor.call('updateType', {});
 			typeTable = Types.findOne({_id:typeID});
 
@@ -1576,8 +1567,6 @@ Meteor.methods({
 		// Update the type table concerned with the new pool
 		Meteor.call('updateType', data);
 		return poolID;
-
-		// Meteor.call('updatePool', {}, thisCallback);
 	},
 
 	/*
@@ -1707,10 +1696,11 @@ Meteor.methods({
       texte:"Dès aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
       encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
     };
-    //TODO decomment when out of production
-    // for (var i in mails) {
-    //   Meteor.call('emailFeedback',mails[i],subject,data);
-    // }
+    if(EMAIL_ENABLED){
+	    for (var i in mails) {
+	      Meteor.call('emailFeedback',mails[i],subject,data);
+	    }
+	}
     console.log("Mails not send due to MAILGUN");
 
   },
@@ -1785,10 +1775,11 @@ Meteor.methods({
         texte:"Nous voici bientôt arrivé à notre très attendu tournoi de tennis Le Charles de Lorraine et pour que tout se déroule pour le mieux, vous trouverez les informations concernant votre poule dans l'encadré suivant.",
         encadre:encadre,
       };
-      //TODO decomment when out of production
-      // for (var i in mails) {
-      //   Meteor.call('emailFeedback',mails[i],subject,data);
-      // }
+      	if(EMAIL_ENABLED){
+	      for (var i in mails) {
+	        Meteor.call('emailFeedback',mails[i],subject,data);
+	      }
+		}
       console.log("Mails not send due to MAILGUN");
 
     }
@@ -1840,8 +1831,7 @@ Meteor.methods({
         texte:"Cette responsabilité ne vous demande que quelques instants au début à la fin de la poule. Premièrement, il vous sera demandé d'aller récupérer la feuille de poule au quartier général avant d'aller jouer. Ensuite, veillez à ce que les points de chaque match soient inscrits dans les cases correspondantes. Finalement, nous vous demanderons aussi de ramener cette feuille au quartier général. Si vous avez besoin de plus d'informations, n'hésitez pas à contacter un membre du staff ou un responsable.",
         encadre:"Les responsables de votre poules sont : "+responsables+"\n Merci d'avance pour votre implication !",
       };
-      //TODO decomment when out of production
-      // Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
+      if(EMAIL_ENABLED) Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
       console.log("Mails not send due to MAILGUN");
 
 
@@ -2206,9 +2196,6 @@ Meteor.methods({
 		var url = "http://www.aftnet.be/Portail-AFT/Joueurs/Resultats-recherche-affilies.aspx?mode=searchname&nom="+lastName+"&prenom="+firstName;
 		var response = HTTP.get(url);
 
-		//var affiliationNumber = "4013748";
-		//var url = "http://www.aftnet.be/Portail-AFT/Joueurs/Fiche-signaletique-membre.aspx?numfed="+affiliationNumber;
-		//var response = HTTP.get(url);
 		var stringToFind = "plc_lt_zoneContent_pageplaceholder_pageplaceholder_lt_zoneSubPage_pageplaceholder_pageplaceholder_lt_zoneContent_AFT_Member_Profile_lblClassementValue";
 		var beginIndex = response.content.search(stringToFind);
 		if(beginIndex > 0)
@@ -2302,7 +2289,44 @@ Meteor.methods({
 			}
 		});
 		return true;
-	}
+	},
+
+  'emailToPay':function(currentYear){
+    var paymentCursor = Payments.find({'status': "pending", 'tournamentYear': currentYear});
+    paymentCursor.forEach( function(payment) {
+      if(payment.paymentMethod!="Cash"){
+        var user = Meteor.users.findOne({_id:payment.userID});
+
+        var bank = "BE33 3753 3397 1254";
+
+        if(payment.paymentMethod=="BankTransfer"){
+          var data = {
+            intro:"Bonjour "+user.profile.firstName+",",
+            important:"Nous souhaitons vous rappeler les modalités du tournoi Le Charles de Lorraine.",
+            texte:"Dans le cadre de l'asbl ASMAE, nous souhaitons collecter des fonds pour mener à bien notre projet. C'est pourquoi nous vous invitons à régulariser au plus vite votre inscription au tournoi",
+            encadre:"Comme vous avez choisi de payer par virement, nous vous rappellons certaines informations pratiques.\n Votre montant : "+payment.balance+"€. Notre numéro de compte est le suivant : "+bank+"\n Merci de faire ceci dans les plus brefs délais."};
+          }else{
+            var data = {
+              intro:"Bonjour "+user.profile.firstName+",",
+              important:"Nous souhaitons vous rappeler les modalités du tournoi Le Charles de Lorraine.",
+              texte:"Dans le cadre de l'asbl ASMAE, nous souhaitons collecter des fonds pour mener à bien notre projet. C'est pourquoi nous vous invitons à régulariser au plus vite votre inscription au tournoi",
+              encadre:"Comme vous avez choisi de payer électroniquement, nous vous invitons à venr finaliser la transaction dans l'onget 'Mon inscription' une fois que vous êtes connecté sur notre site.\n Merci d'avance,"};
+            }
+            if(EMAIL_ENABLED){
+              Meteor.call("emailFeedback", user.emails[0].address,"Concernant la finalisation de votre inscription",data, function(error, result){
+                if(error){
+                  console.log("error", error);
+                }
+              });
+            }
+          }
+          else{
+            console.log("cash");
+          }
+        });
+
+      },
 
 
-});
+
+    });

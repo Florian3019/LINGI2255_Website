@@ -113,11 +113,9 @@
 
               
             <center>
-              {{#if this.court.coords}}
-                <div class="map-container">
-                  {{> googleMap name="exampleMap" options=mapOptions}}
-                </div>
-              {{/if}}
+              
+              {{>mapForOneCourt this.court}}
+
               <a class="btn btn-default" href="{{pathFor route='modifyCourt' _id=court._id }}" >Modifier</a>
               <button type="button" id="deleteCourt" class="btn btn-default" >Supprimer</button>
             </center>

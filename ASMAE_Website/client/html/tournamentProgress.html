@@ -1,15 +1,15 @@
 <template name="tournamentProgress">
     <div class="page-header">
-        <h2>Déroulement du tournoi</h2>
+        <h2 id="TournamentRunning">Déroulement du tournoi</h2>
     </div>
 
     <div class="{{stepIsDoneClass 1}} firstBlock">
-        <h5>1. Lancer les inscriptions au tournoi</h5>
+        <h5 id="AvailabilitiesPoint1">1. Lancer les inscriptions au tournoi</h5>
         {{> launchTournament}}
     </div>
 
     <div class="{{stepIsDoneClass 2}}">
-        <h5>2. Envoyer un email d'invitation à tous les utilisateurs</h5>
+        <h5 id="AvailabilitiesPoint2">2. Envoyer un email d'invitation à tous les utilisateurs</h5>
         <p>Cliquez sur ce bouton pour prévenir tous les utilisateurs du site par email que les inscriptions au tournoi sont lancées</p>
         <center>
             <button id="sendRegistrationsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="{{stepIsDoneClass 3}}">
-        <h5>3. Accepter les terrains</h5>
+        <h5 id="AvailabilitiesPoint3">3. Accepter les terrains</h5>
         <center>
             <button id="doneButton3" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
             <button id="notDoneButton3" type="button" class="btn btn-default btn-sm okDone">Marquer comme non fait</button>
@@ -27,12 +27,12 @@
     </div>
 
     <div class="{{stepIsDoneClass 4}}">
-        <h5>4. Clôturer les inscriptions</h5>
+        <h5 id="AvailabilitiesPoint4">4. Clôturer les inscriptions</h5>
         {{> closeRegistrationsBlock}}
     </div>
 
     <div class="{{stepIsDoneClass 5}}">
-        <h5>5. Gérer les poules</h5>
+        <h5 id="AvailabilitiesPoint5">5. Gérer les poules</h5>
         <p>Utilisez le menu "Gestion du tournoi" pour gérer les poules.</p>
         <center>
             <button id="doneButton5" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
@@ -41,7 +41,7 @@
     </div>
 
     <div class="{{stepIsDoneClass 6}}">
-        <h5>6. Assigner les terrains aux poules</h5>
+        <h5 id="AvailabilitiesPoint6">6. Assigner les terrains aux poules</h5>
         <center>
             <button id="assignCourts" type="button" class="btn btn-default btn-sm notDone">Assigner tous les terrains</button>
             <button id="assignIndoorCourts" type="button" class="btn btn-default btn-sm notDone">Assigner les terrains intérieurs</button>
@@ -51,7 +51,7 @@
     </div>
 
     <div class="{{stepIsDoneClass 7}}">
-        <h5>7. Envoyer un email aux joueurs et aux chefs de poules</h5>
+        <h5 id="AvailabilitiesPoint7">7. Envoyer un email aux joueurs et aux chefs de poules</h5>
         <p>Cliquez sur ce bouton pour envoyer aux joueurs les informations sur le tournoi et les informations nécessaires aux chefs de poules</p>
         <center>
             <button id="sendPoolsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
@@ -61,7 +61,7 @@
     </div>
 
     <div class="{{stepIsDoneClass 8}}">
-        <h5>8. Terminer le tournoi</h5>
+        <h5 id="AvailabilitiesPoint8">8. Terminer le tournoi</h5>
         <center>
             <button id="restartTournamentButton" type="button" class="btn btn-default btn-sm">Terminer</button>
         </center>

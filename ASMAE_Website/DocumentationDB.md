@@ -42,8 +42,6 @@ A type structure is as follows :
     juniors:<list of poolIDs>
     seniors:<list of poolIDs>
     elites:<list of poolIDs>
-
-
     // Can only $set
     preminimesBracket:<list of pairId>
     minimesBracket:<list of pairId>
@@ -54,8 +52,20 @@ A type structure is as follows :
     elitesBracket:<list of pairId>
     listBracket:<list of pairID>
 
+
+    // Staff responsables
+        Can only add a single staff for each update to a category.
+    preminimesResp:<list of userId>
+    minimesResp:<list of userId>
+    cadetsResp:<list of userId>
+    scolarsResp:<list of userId>
+    juniorsResp:<list of userId>
+    seniorsResp:<list of userId>
+    elitesResp:<list of userId>
+    listResp:<list of pairID>
+
     NOTE : for the family tournament, only one list of pools :
-    list:<list of poolIDs>
+    all:<list of poolIDs>
 }
 
 
@@ -86,7 +96,14 @@ A court structure is as follows :
     dispoDimanche:<boolean>,
     ownerOK:<boolean>,
     staffOK:<boolean>,
-    numberOfCourts:<integer>
+    numberOfCourts: <integer>,
+    isOutdoor:<boolean>,
+    log:[<logId>, ...],
+    coords:{ // automatically set when addressID is provided
+        lat:<latitude>,
+        lng:<longitude>
+    },
+    HQDist:<double> (distance from HQ)
 }
 
 
@@ -117,7 +134,8 @@ User structure is as follows :
         facebook{
             <facebook stuff>
         }
-    }
+    },
+    log:[<logId>, ...]
 }
 
 
@@ -149,7 +167,7 @@ A pair is structured as follows:
         playerWish:<playerWish>,
         courtWish:<courtWish>,
         otherWish:<otherWish>
-    }
+    },
     player2:{
         _id:<userID>,
         extras:{
@@ -158,10 +176,10 @@ A pair is structured as follows:
         playerWish:<playerWish>,
         courtWish:<courtWish>,
         otherWish:<otherWish>
-    }
-    tournament :[<pointsRound1>, <pointsRound2>, ....]
-    day: family | saturday | sunday
-    category: <category>
+    },
+    tournament :[<pointsRound1>, <pointsRound2>, ....],
+    tournamentCourts:[<courtForRound1>, ...],
+    year:<year>
 }
 
 ## Extra
@@ -204,4 +222,32 @@ matchData is expected to be formated like this :
     poolId:<poolId>,
     pair1: {pairId: <pairID>, points:<points>}, // Note : the order pair1/pair2 is irrelevant and is just for the convenience of parsing the data
     pair2: {pairId: <pairID>, points:<points>}
+}
+
+
+## FORUM
+
+Thread structure:
+{
+    _id:<threadId>,
+    name:<threadName>,
+    topics:[
+        <topicId1>, ...
+    ]
+}
+
+Topic structure:
+{
+    _id:<topicId>,
+    name:<topic name>,
+    lastUpdatedTime:<Date>,
+    lastUpdatedUser:<userId>,
+    posts:[<post1>,...]
+}
+
+Post structure:
+{
+    time:<Date>,
+    author:<userId>,
+    postText:<post text>
 }

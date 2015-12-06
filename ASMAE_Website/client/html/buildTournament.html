@@ -40,7 +40,7 @@
 
 
 <template name="buildContainer">
-	<div class='poolContainer buildContainer' id='{{ID}}'>
+	<div class='poolContainer buildContainer buildColor' id='{{ID}}'>
 		{{#if equals ID "selectedForTournament"}}
 	  		{{#each getWinnerPairPoints}}
 	  			{{>buildTournamentItem PAIRID=this.pairId POOLID=this.poolId COURT=this.courtNumber SCORE=this.points}}
@@ -62,8 +62,8 @@ Takes 2 arguments :
 -->
 <template name="buildTournamentItem">
   {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
-    <div id="{{this._id}}" class="pairs grabbable" data-startingPoolId="{{../POOLID}}">
-      <ul class="list-group clickablePoolItem" data-id="{{this._id}}">
+    <div id="{{this._id}}" class="pairs grabbable">
+      <ul class="list-group clickablePoolItem" data-id="{{this._id}}" data-poolid="{{../POOLID}}">
       	<li class="list-group-item pairPlayerHeader bold"> 
       		Score : {{../SCORE}} <span class="pull-right">T {{../COURT}}</span>
       	</li>

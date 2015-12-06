@@ -1,3 +1,7 @@
+/*
+    This file defines helpers and events for the page where a visitor or regular user can
+    ask questions to the staff.
+*/
 Template.contacts.events({
     'click #sub': function(event){
 	console.log("envoi d'une question");

@@ -1,3 +1,6 @@
+/*
+    This file defines how the form to register a new court works and looks.
+*/
 Template.courtForm.helpers({
     'checked': function(available){
         if(available === null){

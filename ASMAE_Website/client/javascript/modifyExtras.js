@@ -1,3 +1,6 @@
+/*
+	This file defines how extras are modified or created
+*/
 Template.modifyExtras.events({
 	'click #addExtraButton':function(event){
 		// Add new extra

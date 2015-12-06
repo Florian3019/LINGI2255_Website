@@ -1,3 +1,6 @@
+/*
+	This file defines how a user can register for the tournament
+*/
 var aloneDependency = new Deps.Dependency();
 
 function isEmptyTable() {
@@ -5,6 +8,22 @@ function isEmptyTable() {
 }
 
 Template.tournamentRegistration.helpers({
+	'saturdayRegistration' : function() {
+		return this.day=="saturday";
+	},
+	'sundayRegistration' : function() {
+		return this.day=="sunday";
+	}
+});
+
+Template.tournamentRegistrationTemplate.helpers({
+	'getDay' : function() {
+		var saturday = this.day=="saturday";
+		var sunday = this.day=="sunday";
+		var day = saturday ? "samedi" : "dimanche";
+		return {saturday:saturday, sunday:sunday, day:day};
+	},
+
 	'getTournamentPrice':function(){
 		var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
 		return Years.findOne({_id:currentYear}).tournamentPrice;
@@ -487,7 +506,7 @@ var refreshAlonePlayers = function(event, document){
 }
 
 
-Template.tournamentRegistration.events({
+Template.tournamentRegistrationTemplate.events({
 	"change .extraItem":function(event){
 		var extras = document.getElementsByClassName("extraItem");
 
@@ -849,10 +868,10 @@ Template.tournamentRegistration.events({
 		}
 		else{
 
-			var remove; // By default, this is undefine. If it is defined, contains the id of a pair to remove
+			var remove; // By default, this is undefined. If it is defined, contains the id of a pair to remove
 
 			/*
-			Depending if user wants to register alone or with a pair, choose appropriate action
+				Depending if user wants to register alone or with a pair, choose appropriate action
 			*/
 			var pairData;
 			if(alone && !later){
@@ -996,8 +1015,8 @@ Template.tournamentRegistration.events({
   });
 
 
-  Template.tournamentRegistration.onCreated(function (){
-	  this.subscribe("AddressesNoSafe"); //TODO: selective addresses ?
+  Template.tournamentRegistrationTemplate.onCreated(function (){
+	  this.subscribe("AddressesNoSafe");
 	  this.subscribe("users");
-	  Session.set("firstTime", true); // How lovely it is
+	  Session.set("firstTime", true);
   });
