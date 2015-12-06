@@ -1333,6 +1333,8 @@ Meteor.methods({
 			pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
 			leader:<pairId>, // Leader is the player1 from the pair
 			courtId:<courtID>,
+			type:<type>,
+			category:<category>
 		}
 		@return pool id on success
 	*/
@@ -1353,6 +1355,11 @@ Meteor.methods({
 		if(poolData.type){
 			if(!set) set = {};
 			set["type"] = poolData.type;
+		}
+
+		if(poolData.category){
+			if(!set) set={};
+			set["category"] = poolData.category;
 		}
 
 		if(set) data["$set"] = set;
@@ -1483,6 +1490,7 @@ Meteor.methods({
 		data._id = poolID;
 		data.type=type;
 		data.pairs = pairs;
+		data.category = category;
 		if(pool.leader==undefined){
 			data.leader=pair.player1._id;
 		}
