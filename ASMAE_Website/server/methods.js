@@ -2327,8 +2327,104 @@ Meteor.methods({
           }
         });
 
-      },
+  },
 
-
-
+  'emailToAllUsers':function(subject,text){
+    var data={
+      intro:"Bonjour,",
+      texte:text
+    };
+    var usersCursor = Meteor.users.find();
+    usersCursor.forEach(function(user){
+      if(EMAIL_ENABLED){
+        Meteor.call("emailFeedback",user.emails[0].address,subject,data, function(error, result){
+          if(error){
+            console.log("error", error);
+          }
+        });
+      }
     });
+  },
+
+  'emailToPlayers':function(subject,text,currentYear){
+    var year = Years.findOne({_id:currentYear});
+    var typest = ["men","women","mixed","family"];
+    var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+    for (var i in typest) {
+      var types=Types.findOne({_id:year[typest[i]]});
+      for (var j in allcat) {
+        for (var pl in types[allcat[j]]) {
+          var currentPool = Pools.findOne({_id:types[allcat[j]][pl]});
+          for (var k in currentPool["pairs"]) {
+            var pair = Pairs.findOne({_id:currentPool["pairs"][k]});
+            if (pair["player1"]!=undefined) {
+              player1= Meteor.users.findOne({_id:pair["player1"]},{emails:1});
+              var data={
+                intro:"Bonjour,",
+                texte:text
+              };
+              if(EMAIL_ENABLED){
+                Meteor.call("emailFeedback", player1.emails[0].address,subject,data, function(error, result){
+                  if(error){
+                    console.log("error", error);
+                  }
+                });}
+              }
+              if (pair["player2"]!=undefined) {
+                player2= Meteor.users.findOne({_id:pair["player2"]},{emails:1});
+                var data={
+                  intro:"Bonjour,",
+                  texte:text
+                };
+                if(EMAIL_ENABLED){
+                  Meteor.call("emailFeedback", player2.emails[0].address,subject,data, function(error, result){
+                    if(error){
+                      console.log("error", error);
+                    }
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    'emailToStaff': function(subject,text){
+      var data={
+        intro:"Bonjour,",
+        texte:text
+      };
+      var usersCursor = Meteor.users.find({"profile.isStaff":true},{emails:1});
+      usersCursor.forEach( function(user) {
+        if(EMAIL_ENABLED){
+          Meteor.call("emailFeedback", user.emails[0].address,subject,data, function(error, result){
+            if(error){
+              console.log("error", error);
+            }
+          });
+        }
+      });
+    },
+
+    'emailToCourtOwner':function(subject,text){
+      var data={
+        intro:"Bonjour,",
+        texte:text,
+      };
+      var courtsCursor= Courts.find();
+      courtsCursor.forEach( function(court){
+        var owner = Meteor.users.findOne({_id:court.ownerID},{emails:1});
+        if(EMAIL_ENABLED){
+          Meteor.call("emailFeedback",owner.emails[0].address,subject,data, function(error, result){
+            if(error){
+              console.log("error", error);
+            }
+          });
+        }
+      });
+    },
+
+
+
+  });
