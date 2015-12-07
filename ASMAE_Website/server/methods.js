@@ -483,7 +483,7 @@ Meteor.methods({
 		}
 		var hasData = false;
 		var data = {};
-		
+
 		for (var i=0;i<categoriesKeys.length;i++){
 			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
@@ -1913,32 +1913,30 @@ Meteor.methods({
 
 			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
 
+			this.unblock();
 
+			var dataEmailPartner={
+				intro:"Bonjour "+partner.profile.firstName+",",
+				important:"Nous avons une mauvaise nouvelle pour vous.",
+				texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jouer. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours choisir un nouveau partneaire sur notre site !"
+			};
+			var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+			var options =   {
+				auth: "api:" + process.env.MAILGUN_API_KEY,
+				params: {
+					"from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+					"to":partner.emails[0].address,
+					"subject": "Concernant votre inscription au tournoi",
+					"html": SSR.render("mailing",dataEmailPartner),
+				}
+			}
+			var onError = function(error, result) {
+				if(error) {console.error("Error: " + error)}
+			}
 
-      this.unblock();
-
-      var dataEmailPartner={
-        intro:"Bonjour "+partner.profile.firstName+",",
-        important:"Nous avons une mauvaise nouvelle pour vous.",
-        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jouer. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours choisir un nouveau partneaire sur notre site !"
-      };
-      var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
-      var options =   {
-        auth: "api:" + process.env.MAILGUN_API_KEY,
-          params: {
-            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
-            "to":partner.emails[0].address,
-            "subject": "Concernant votre inscription au tournoi",
-            "html": SSR.render("mailing",dataEmailPartner),
-          }
-        }
-        var onError = function(error, result) {
-          if(error) {console.error("Error: " + error)}
-        }
-
-        // Send the request
-          Meteor.http.post(postURL, options, onError);
-        }
+			// Send the request
+			Meteor.http.post(postURL, options, onError);
+		}
 	},
 
 	/*
@@ -2074,4 +2072,54 @@ Meteor.methods({
 
 
 
-  });
+	/*
+		Structure:
+		{
+			_id:<id>, // Automatically set
+			year:<year>,
+			type:<type>,
+			category:<category>,
+			first:<pairId>,
+			second:<pairId>
+		}
+		returns the winnerId
+	*/
+	'updateWinner':function(winnerData){
+		if(!(Meteor.call('isAdmin') || Meteor.call('isStaff'))){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to add a winner");
+			return;
+		}
+
+		var andQuery = [{"type":winnerData.type},{"year":winnerData.year},{"category":winnerData.category}];
+		Winners.remove({$and:andQuery}); // Remove any previous winner
+
+		var data = {};
+
+		if(winnerData.year!==undefined && winnerData.year!==""){
+			data.year = winnerData.year;
+		}
+		if(winnerData.type!==undefined && winnerData.type!==""){
+			data.type = winnerData.type;
+		}
+		if(winnerData.category!==undefined && winnerData.category!==""){
+			data.category = winnerData.category;
+		}
+		if(winnerData.first!==undefined && winnerData.first!==""){
+			data.first = winnerData.first;
+		}
+		if(winnerData.second!==undefined && winnerData.second!==""){
+			data.second = winnerData.second;
+		}
+
+		if(winnerData._id !== undefined){
+			Winners.update({_id:winnerData._id}, {$set:data});
+			return winnerData._id;
+		}
+
+		return Winners.insert(data);
+	},
+
+
+
+}); // End helpers

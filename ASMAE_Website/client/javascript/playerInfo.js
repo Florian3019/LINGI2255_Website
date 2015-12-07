@@ -14,22 +14,6 @@ Template.playersInfo.onRendered(function(){
 }),
 
 Template.playersInfo.helpers({
-    'getStatusKeys':function(){
-        var toReturn  = [];
-        for(var i=0; i<paymentKeys.length;i++){
-            toReturn.push({key:paymentKeys[i], label:paymentTranslate[paymentKeys[i]]});
-        }
-        return toReturn;
-    },
-
-    'getMethodKeys':function(){
-        var toReturn  = [];
-        for(var i=0; i<paymentTypes.length;i++){
-            toReturn.push({key:paymentTypes[i], label:paymentTypesTranslate[paymentTypes[i]]});
-        }
-        return toReturn;
-    },
-
     userCollection: function () {
         var input = Session.get("playerInfo/input"); // This is the filter input
         if(input!==undefined) input = input.toLowerCase(); // Convert to lower case for ease of use
@@ -116,29 +100,7 @@ Template.playersInfo.helpers({
                     }
                     return ret
                 }},
-                { key: 'profile.isStaff', label:'Permissions', tmpl:Template.changePermissions},
-                { key: '_id', label:"Paiement", fn: function(value, object){
-                        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-            		    var payment = Payments.findOne({"userID": value, "tournamentYear": currentYear});
-                        if(payment===undefined){
-                            return "Pas inscrit";
-                        }
-                        else{
-                            return paymentTranslate[payment.status] + " ("+payment.balance+"€)";
-                        }
-                    }
-                },
-                { key: '_id', label:"Méthode", hidden:true ,fn: function(value, object){
-                        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-                        var payment = Payments.findOne({"userID": value, "tournamentYear": currentYear});
-                        if(payment===undefined){
-                            return "Pas inscrit";
-                        }
-                        else{
-                            return paymentTypesTranslate[payment.paymentMethod];
-                        }
-                    }
-                }
+                { key: 'profile.isStaff', label:'Permissions', hidden:true, tmpl:Template.changePermissions},
             ],
              showFilter:false,
              rowClass: "playerInfoRow",

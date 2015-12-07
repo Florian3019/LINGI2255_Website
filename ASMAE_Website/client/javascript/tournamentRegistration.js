@@ -38,14 +38,12 @@ function setAlonePlayers(document){
 	var age = getAge(date);
 	Session.set("tournamentRegistration/age", age);
 
-	var male = document.getElementById("male").checked;
-	var gender;
-	if (male) {
-		gender = "M";
+	var sex = document.getElementById("sex").value;
+	if (sex !== "F" && sex !== "M") {
+		console.error("Error, user should have chosen a sex");
+		return undefined;
 	}
-	else {
-		gender = "F";
-	}
+	var gender = sex;
 	Session.set("tournamentRegistration/gender",gender);
 
 	var type = getTypeForPlayer(tournamentDateMatch, gender);
@@ -94,9 +92,8 @@ function checkAloneErrors(document) {
 		Get all the fields and check if they are filled,
 		display error or success according to that
 	*/
-	var male = document.getElementById("male").checked;
-	var female = document.getElementById("female").checked;
-	if(!male && !female){
+	var sex = document.getElementById("sex").value;
+	if(sex !== "M" && sex !== "F"){
 		errors.push({id:"sex", error:true});
 		hasError = true;
 	}
@@ -293,23 +290,6 @@ Template.tournamentRegistrationTemplate.helpers({
 		else{
 			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.firstName':1});
 			return userData ? userData.profile.firstName : "";
-		}
-	},
-	'setGender' : function(male){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.gender':1});
-
-			if(userData.profile.gender=="M" && male=='true'){
-				return "checked";
-			}
-			else if(userData.profile.gender=="F" && male=='false'){
-				return "checked";
-			}
 		}
 	},
 
@@ -1049,14 +1029,14 @@ Template.tournamentRegistrationTemplate.events({
               important:"Merci pour votre inscription au tournoi.",
               texte:"Vous êtes bien inscrit dans la catégorie : '"+category+"' du type '"+ type+"'."
             };
-            Meteor.call("emailFeedback",Meteor.userId().emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
+            Meteor.call("emailFeedback",Meteor.user().emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
               if(error){
                 console.log("error", error);
               }
             });
 					}
 					else if(mailNotifyUnregisteredPartner) {
-            //TODO secure this with given a pairID which is half-full 
+            //TODO secure this with given a pairID which is half-full
 						// Send mail to partnerEmail (this is an email yey yey !) : "Hey ! firstname lastname wants to player with you in type and category at our great tournament"
             Meteor.call("emailInvitPeople",curUserData._id, partnerEmail, function(error, result){
               if(error){
@@ -1100,8 +1080,25 @@ Template.tournamentRegistrationTemplate.events({
   });
 
 
-  Template.tournamentRegistrationTemplate.onCreated(function (){
-	  this.subscribe("AddressesNoSafe");
-	  this.subscribe("users");
-	  Session.set("tournamentRegistration/firstTime", true);
-  });
+	Template.tournamentRegistrationTemplate.onCreated(function (){
+		this.subscribe("AddressesNoSafe");
+		this.subscribe("users");
+		Session.set("tournamentRegistration/firstTime", true);
+	});
+
+	/**
+	 * Auto-complete
+	 */
+	Template.tournamentRegistrationTemplate.onRendered(function () {
+		var user=Meteor.user();
+		if (user===undefined) {
+			console.error("Error, no user defined in registration page, should have been redirected.");
+			return;
+		}
+		if (user.profile===undefined) {
+			// No info on this user, do nothing
+			return;
+		}
+		var sexSelect = document.getElementById('sex');
+		sexSelect.value = user.profile.gender!==undefined ? user.profile.gender : "default";
+	});

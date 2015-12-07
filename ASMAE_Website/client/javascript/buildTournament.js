@@ -12,7 +12,24 @@ var updateSelectedNumber = function(document){
 	ns = document.getElementById("notSelectedForTournament").getElementsByClassName("pairs").length;
 	Session.set("brackets/selectedSize",[s,ns]);
 }
+function clearInner(node) {
+  while (node.hasChildNodes()) {
+    clear(node.firstChild);
+  }
+}
 
+function clear(node) {
+  while (node.hasChildNodes()) {
+    clear(node.firstChild);
+  }
+  node.parentNode.removeChild(node);
+}
+
+var resetBrackets = function(document){
+  /*  Prevent duplication of the brackets --> remove the previous one */
+    var myNode = document.getElementById("gracketContainer");
+    if(myNode!=undefined) clearInner(myNode);
+}
 Template.buildTournament.helpers({
 	'getNotSelectedSize':function(){
 		var x = Session.get("brackets/selectedSize");
@@ -142,7 +159,7 @@ Template.buildTournament.events({
 			}
 	    	Session.set("brackets/buildingTournament",false);
 			Session.set('brackets/update',Session.get('brackets/update') ? false:true);
-
+				resetBrackets(document);
 			Meteor.call("addToModificationsLog",
 		        {"opType":"Création tournoi knock-off",
 		        "details": getStringOptions()

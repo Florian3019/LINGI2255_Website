@@ -29,15 +29,14 @@ html {
 
 /* Navbar on the top */
 .navbar {
-    min-height: 64px !important;
     background-color: #f3f3f3 !important;
 }
 
 .navbar-nav > li > a, .navbar-brand {
     /*padding-top:5px !important;
     padding-bottom:0 !important;
-    color: white; */
-    height: 64px;
+    color: white; 
+    height: 64px; */
 }
 
 /* Sidebar on the left */
@@ -54,8 +53,17 @@ html {
     box-shadow: 4px 0 3px -1px #888;
 }
 
+.sidebar-mobile {
+    display: none;
+    background: white;
+}
+
 .menuItem {
 	color:black;
+}
+
+.menuItem2 {
+    color:black;
 }
 
 .sidebar-nav li {
@@ -73,6 +81,13 @@ html {
 .nav-sidebar-header {
 	padding: 10px;
     font-size: 25px;
+
+}
+
+.nav-sidebar-header-mobile {
+    padding: 10px;
+    font-size: 25px;
+    display: none;
 }
 
 /* Content of the web site */
@@ -126,11 +141,10 @@ html {
 
 /* Columun same height */
 /* top row */
-.col .well{
+.col .cont{
 	margin-bottom: -99999px;
 	padding-bottom: 99999px;
 }
-
 
 /* bottom row */
 .col-base{
@@ -198,9 +212,9 @@ If screen width smaller than 767 px
     }
 }  */
 
-/* If screen width smaller than 50^0px*/
+/* If screen width smaller than 767px*/
 /* Hide navside menu */
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 767px) {
 
     .sidebar {
         display: none;
@@ -208,5 +222,13 @@ If screen width smaller than 767 px
 
     .page-content {
         margin-left: 0;
+    }
+
+    .sidebar-mobile {
+        display: block;
+    }
+
+    .nav-sidebar-header-mobile {
+        display: block;
     }
 }

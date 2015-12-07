@@ -112,10 +112,10 @@
       </select>
       </div>
           {{#with getYear}}
-            {{>CategorySelect TYPE="men" DESC="Homme"}}
-            {{>CategorySelect TYPE="women" DESC="Femme"}}
-            {{>CategorySelect TYPE="mixed" DESC="Mixte"}}
-            {{>poolBracketsSelect ID="family" CAT="all" DESC="Familles"}}
+            {{>CategorySelect TYPE="men" DESC="Homme" Mob=../MOBILE}}
+            {{>CategorySelect TYPE="women" DESC="Femme" Mob=../MOBILE}}
+            {{>CategorySelect TYPE="mixed" DESC="Mixte" Mob=../MOBILE}}
+            {{>poolBracketsSelect ID="family" CAT="all" DESC="Familles" Mob=../MOBILE}}
           {{/with}}
     </div>
 </template>
@@ -125,11 +125,11 @@
 <ul>
 <li>
   <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span>
-  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType menuItem" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
-  <ul class="nav collapse CategoryOption" id="{{TYPE}}" role="menu" aria-labelledby="btn-{{TYPE}}">
+  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType menuItem2" data-target="#{{TYPE}}{{Mob}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
+  <ul class="nav collapse CategoryOption" id="{{TYPE}}{{Mob}}" role="menu" aria-labelledby="btn-{{TYPE}}">
     {{#each getCategories}}
     {{#unless equals this.key "all"}} <!-- avoid family category -->
-      <li>{{>poolBracketsSelect ID=../TYPE CAT=this.key DESC=this.value}}</li>
+      <li>{{>poolBracketsSelect ID=../TYPE CAT=this.key DESC=this.value MOBILE=../Mob}}</li>
     {{/unless}}
     {{/each}}
   </ul>
@@ -141,8 +141,8 @@
 <ul>
 <li>
   <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_category" style="display:none;"></span>
-  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory menuItem" data-target="#{{this.ID}}_{{this.CAT}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
-  <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
+  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory menuItem2" data-target="#{{this.ID}}_{{this.CAT}}_{{MOBILE}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
+  <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}_{{MOBILE}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
     <li class="PoolOption" data-category="{{this.CAT}}" data-type="{{this.ID}}" >
       <ul>
       <li>
