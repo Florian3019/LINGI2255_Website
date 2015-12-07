@@ -994,6 +994,7 @@ Meteor.methods({
 			if(pData['playerWish']) p['playerWish'] = pData['playerWish'];
 			if(pData['courtWish']) p['courtWish'] = pData['courtWish'];
 			if(pData['otherWish']) p['otherWish'] = pData['otherWish'];
+			if(pData['partnerEmail']) p['partnerEmail'] = pData['partnerEmail'];
 
 			if(pData['extras']){
 				var extr = {};
@@ -1492,7 +1493,7 @@ Meteor.methods({
 		data.pairs = pairs;
 		data.category = category;
 		if(pool.leader==undefined){
-			data.leader=pair.player1._id;
+			data.leader= pair.player1 ? pair.player1._id : pair.player2._id;
 		}
 		Meteor.call('updatePool', data);
 	},
@@ -1559,6 +1560,10 @@ Meteor.methods({
 				}
 				// Pool not full
 				const maxNbrPairsInPool = 6;
+				if (pool.pairs === undefined) {
+					pool.pairs = [];
+					return poolList[i];
+				}
 				if (pool.pairs.length < maxNbrPairsInPool) {
 					return poolList[i];
 				}
@@ -1830,16 +1835,16 @@ Meteor.methods({
 		}
 
 		var userID = Meteor.userId();
-		console.log(userID);
 
-		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1._id && userID!==pair.player2._id))
+		var userInThisPair = (pair.player1 ? userID===pair.player1._id : false) || (pair.player2 ? userID===pair.player2._id : false);
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && !userInThisPair)
 		{
 			console.error("You don't have the permission to do that");
 			throw new Meteor.error("unsubscribeTournament: no permissions");
 			return false;
 		}
 
-		var userPlayer = pair.player1._id===userID ? "player1" : "player2";
+		var userPlayer = pair.player1 && pair.player1._id===userID ? "player1" : "player2";
 		var partnerPlayer = userPlayer==="player1" ? "player2" : "player1";
 
 		var pool = Pools.findOne({pairs:pair_id}); // Find the right pool

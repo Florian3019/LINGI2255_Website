@@ -244,7 +244,7 @@
               <option value="family" >Tournoi des familles (Samedi)</option>
               {{/if}}
               {{#if sunday}}
-              <option value="sunday">Doubles (Dimanche)</option>
+              <option value="sunday" selected="selected">Doubles (Dimanche)</option>
               {{/if}}
             </select>
             <div id="dateMatchError" hidden>
@@ -454,7 +454,24 @@
     			</div>
     	</div>
 
-  		<center><button type="submit" class="btn btn-default" id="submit">Soumettre mon inscription</button></center>
+  		<center><button type="submit" class="btn btn-default" id="submit">
+            {{#if saturday}}
+            {{#if isSaturdayRegistered}}
+            Modifier
+            {{else}}
+            Soumettre
+            {{/if}}
+            {{/if}}
+            {{#if sunday}}
+            {{#if isSundayRegistered}}
+            Modifier
+            {{else}}
+            Soumettre
+            {{/if}}
+            {{/if}}
+
+            mon inscription
+        </button></center>
         <div class="row" id="noPartnerChosen" hidden>
     		<div class="col-sm-6 col-sm-offset-3">
     	          <div id="infoBox" class="alert alert-info" role="alert">

@@ -150,7 +150,7 @@ Meteor.publish("PairsInfo", function(){
     var id = this.userId;
     pairs = getPairsFromPlayerID(this.userId, true);
     if (!pairs) {
-        console.error("Error publish PairInfo : no pair found in the DB for this user.");
+        console.error("Error publish PairsInfo : no pair found in the DB for this user.");
         this.ready();
     }
     return pairs;

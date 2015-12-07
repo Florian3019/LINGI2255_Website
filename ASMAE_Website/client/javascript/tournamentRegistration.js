@@ -582,12 +582,29 @@ Template.tournamentRegistrationTemplate.events({
 
     "click .aloneRow" : function (event){
     	var previousId = Session.get("tournamentRegistration/aloneSelected");
-    	if(previousId){
-    		document.getElementById(previousId).className = "aloneRow";
-    	}
     	var newId = event.target.parentElement.id;
-    	document.getElementById(newId).setAttribute("class", "aloneRow success");
-    	Session.set("tournamentRegistration/aloneSelected", newId); // Set the player's id in the session variable aloneSelected
+		var prevDoc = document.getElementById(previousId);
+		var newDoc = document.getElementById(newId);
+		if (newDoc==prevDoc) {
+			if (newDoc.classList.contains("tr-selected-alone-row")) {
+				newDoc.classList.remove("tr-selected-alone-row");
+				Session.set("tournamentRegistration/aloneSelected", null);
+			}
+			else {
+				newDoc.classList.add("tr-selected-alone-row");
+				Session.set("tournamentRegistration/aloneSelected", newId);
+			}
+		}
+		else {
+			if (prevDoc && prevDoc.classList.contains("tr-selected-alone-row")) {
+				prevDoc.classList.remove("tr-selected-alone-row");
+			}
+			if (!newDoc.classList.contains("tr-selected-alone-row")) {
+				newDoc.classList.add("tr-selected-alone-row");
+			}
+			console.log(previousId + " / "+newId);
+	    	Session.set("tournamentRegistration/aloneSelected", newId);
+		}
     },
 
     "submit form":function(){
@@ -631,11 +648,17 @@ Template.tournamentRegistrationTemplate.events({
 		document.getElementById("emailPlayerOK").style.display = 'none';
 		document.getElementById("emailPlayerErrorMessage").style.display = 'none';
 
-		var alonePlayers = alonePlayers(document); // assigns type and category to session variable
+		var alonePlayers = setAlonePlayers(document); // assigns type and category to session variable
 		var userType = Session.get("tournamentRegistration/type");
 		var userCategory = Session.get("tournamentRegistration/category");
 
-		var day = getDayFromType(event.target.dateMatch.value);
+		function getDayFromValue(dateMatchValue) {
+			if (dateMatchValue == "family") {
+				return "saturday";
+			}
+			return dateMatchValue;
+		}
+		var day = getDayFromValue(event.target.dateMatch.value);
 
 		// Array containing the errors/success to display
 		var errors = new Array();
@@ -644,44 +667,72 @@ Template.tournamentRegistrationTemplate.events({
 		var unregisteredPartner = false;
 		var givenEmail = false;
 
+		var mailNotifyAlreadyRegisteredPartner = false;
+		var mailNotifyUnregisteredPartner = false;
+		var mailNotifyAloneUser = false;
+
 		var alone = event.target.alone.checked; // True if the player tries to register alone
 		var partnerID;
 		var partnerData;
+		var partnerPair;
+		var partnerEmail;
 		if(!alone && $(emailPlayerDiv).is(":visible")){
 			// User wants to register a pair, collect the partner's id from his email.
 	    	var email = event.target.emailPlayer.value;
-	    	// Check that we know that email
-	    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
-	    	if(u === undefined){
-	    		unregisteredPartner = true;
-	    	}
-	    	else{
-	    		partnerID = u._id;
-				partnerPair = getDayPairFromPlayerID(partnerID, day);
-				if (partnerPair !== undefined && partnerPair.player1 !== undefined && partnerPair.player2 !== undefined) {
-					// Partner is already in a pair that has 2 players
-					errors.push({id:"emailPlayer", error:true});
-				}
-				var partnerInfo = getTypeAndCategoryFromPairID(partnerPair._id);
-				var partnerType = partnerInfo.playerType;
-				var partnerCategory = partnerInfo.playerCategory;
-				if (partnerPair !== undefined && (partnerCategory !== userCategory || partnerType !== userType)) {
-					// This player is already registered for this tournament and does not have the same category or the same type as the current player
-					errors.push({id:"emailPlayer", error:true});
-				}
-				if (partnerPair.player1) {
-					partnerData = partnerPair.player1;
-				}
-				else if(partnerPair.player2) {
-					partnerData = partnerPair.player2;
-				}
-				else {
-					console.error("Such a weird error, partner should be in player1 or player2");
-					return false;
-				}
-	    	}
-			errors.push({id:"emailPlayer", error:false});
-			givenEmail = true;
+			if (!email || email.indexOf('@') == -1 || email.indexOf('.') == -1 || email.indexOf('@') > email.indexOf('.')) {
+				errors.push({id:"emailPlayer", error:true});
+			}
+			else {
+				// Check that we know that email
+		    	var u = Meteor.users.findOne({emails: {$elemMatch: {address:email}}});
+		    	if(u === undefined){
+		    		unregisteredPartner = true;
+					partnerEmail = email;
+					errors.push({id:"emailPlayer", error:false});
+					givenEmail = true;
+		    	}
+		    	else{
+		    		partnerID = u._id;
+					partnerPair = getDayPairFromPlayerID(partnerID, day);
+					if (partnerPair === undefined) {
+						// Partner is registered on the site but not on the tournament
+						unregisteredPartner = true;
+						partnerEmail = email;
+						errors.push({id:"emailPlayer", error:false});
+						givenEmail = true;
+					}
+					else {
+						if (partnerPair !== undefined && partnerPair.player1 !== undefined && partnerPair.player2 !== undefined) {
+							// Partner is already in a pair that has 2 players
+							errors.push({id:"emailPlayer", error:true});
+						}
+						else {
+							var partnerInfo = getTypeAndCategoryFromPairID(partnerPair._id);
+							var partnerType = partnerInfo.playerType;
+							var partnerCategory = partnerInfo.playerCategory;
+							if (partnerPair !== undefined && (partnerCategory !== userCategory || partnerType !== userType)) {
+								// This player is already registered for this tournament and does not have the same category or the same type as the current player
+								errors.push({id:"emailPlayer", error:true});
+							}
+							else {
+								if (partnerPair.player1) {
+									partnerData = partnerPair.player1;
+								}
+								else if(partnerPair.player2) {
+									partnerData = partnerPair.player2;
+								}
+								else {
+									console.error("Such a weird error, partner should be in player1 or player2");
+									return false;
+								}
+								partnerEmail = email;
+								errors.push({id:"emailPlayer", error:false});
+								givenEmail = true;
+							}
+						}
+					}
+		    	}
+			}
     	}
 
     	/*
@@ -892,15 +943,20 @@ Template.tournamentRegistrationTemplate.events({
 		if(givenEmail) {
 			// User gives his/her partner email address
 			if (unregisteredPartner) {
+				playerData.partnerEmail = partnerEmail;
 				pairData = {
 					player2: playerData
 				};
+				mailNotifyUnregisteredPartner = true;
 			}
 			else {
+				// update the pair containing the partner
 				pairData = {
+					_id:partnerPair._id,
 					player1:playerData,
 					player2:partnerData
 				};
+				mailNotifyAlreadyRegisteredPartner = true;
 			}
 		}
 		else {
@@ -915,17 +971,17 @@ Template.tournamentRegistrationTemplate.events({
 					pairData = {
 						player1:playerData
 					};
+					mailNotifyAloneUser = true;
 				}
 				else {
 					// Current user has to choose a partner between the alone players in the table
-					var selectedPartner = document.getElementsByClassName("aloneRow success");
-					if (selectedPartner.length != 1) {
+					var selectedPartnerPairID = Session.get("tournamentRegistration/aloneSelected");
+					if (selectedPartnerPairID === null || selectedPartnerPairID === undefined ||  document.getElementById(selectedPartnerPairID) === null || document.getElementById(selectedPartnerPairID) === undefined) {
 						var message = document.getElementById("noPartnerChosen");
 						message.style.display = 'block';
 						return false;
 					}
-					partnerID = selectedPartner.id;
-					var selectedPartnerPair = getDayPairFromPlayerID(partnerID, day);
+					selectedPartnerPair = Pairs.findOne({_id:selectedPartnerPairID});
 					if (selectedPartnerPair.player1) {
 						partnerData = selectedPartnerPair.player1;
 					}
@@ -936,6 +992,12 @@ Template.tournamentRegistrationTemplate.events({
 						console.error("Such a weird error, selectedPartner should be player1 or player2");
 						return false;
 					}
+					pairData = {
+						_id:selectedPartnerPairID,
+						player1:partnerData,
+						player2:playerData
+					}
+					mailNotifyAlreadyRegisteredPartner = true;
 				}
 			}
 
@@ -975,6 +1037,7 @@ Template.tournamentRegistrationTemplate.events({
 		        		console.log(err);
 		        		return;
 		        	}
+					console.log("adding pair with ID "+pairID+" to the tournament YOLO");
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch);
 		        }
 
@@ -984,6 +1047,8 @@ Template.tournamentRegistrationTemplate.events({
 				pairData.paymentMethod = $('[name=paymentMethod]:checked').val();
 
 				pairData.year = currentYear;
+				console.log("YOLOYOLOYOLO ");
+				console.log(pairData);
 		        Meteor.call('updatePair', pairData, callback);
 		        Session.set('aloneSelected',null); // To avoid bugs if trying to register again
 

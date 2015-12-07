@@ -64,7 +64,9 @@
                                  <a href="#" id="unsubscribeSaturdayLink">Supprimer</a> )
                                 {{/if}}
                               {{else}}
-                               (<a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">S'inscrire</a>)
+                              {{#if showOption ../id}}
+                               (<a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">Inscription</a>)
+                               {{/if}}
                               {{/if}}
                           </td>
                         </tr>
@@ -82,7 +84,9 @@
                                <a href="#" id="unsubscribeSundayLink">Supprimer</a> )
                               {{/if}}
                               {{else}}
-                              (<a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">S'inscrire</a>)
+                              {{#if showOption ../id}}
+                              (<a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">Inscription</a>)
+                              {{/if}}
                             {{/if}}
                           </td>
                         </tr>

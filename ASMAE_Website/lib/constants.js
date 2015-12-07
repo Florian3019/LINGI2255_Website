@@ -104,6 +104,9 @@ getPairsFromPlayerID = function(userId, cursor) {
 
 getDayPairFromPlayerID = function(userId, day) {
     var pairs = getPairsFromPlayerID(userId);
+    if (pairs === undefined) {
+        return undefined;
+    }
     for (var i=0; i<pairs.length; i++) {
         var data = getTypeAndCategoryFromPairID(pairs[i]._id);
         if (getDayFromType(data.playerType) == day) {
@@ -114,6 +117,9 @@ getDayPairFromPlayerID = function(userId, day) {
 
 getTypeAndCategoryFromPairID = function(pairID) {
     var pool = Pools.findOne({pairs:pairID});
+    if (pool === undefined) {
+        return undefined;
+    }
     var poolID = pool._id;
     var typeData = Types.findOne({$or:[{"preminimes":poolID}, {"minimes":poolID}, {"cadets":poolID}, {"scolars":poolID}, {"juniors":poolID}, {"seniors":poolID}, {"elites":poolID}, {"all":poolID}]});
     var playerType = typeData.typeString;
