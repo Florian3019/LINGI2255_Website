@@ -37,9 +37,9 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
               {{#if isAdminOrStaff}}
-               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}">Menu staff</a></li>
+               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}" class="toToggle">Menu staff</a></li>
               {{else}}
-               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}">Tournoi</a></li>
+               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}" class="toToggle">Tournoi</a></li>
               {{/if}}
               {{#if currentUser}}
               {{#if registrationsON}}
@@ -49,25 +49,25 @@
               <li class="dropdown"><a class="dropdown-togglebis" data-toggle="dropdown" href="#" id="Droop">Inscription<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     {{#if registered}}
-                  <li><a href="{{pathFor route='myRegistration'}}">Mon inscription</a></li>
+                  <li><a href="{{pathFor route='myRegistration'}}" class="toToggle">Mon inscription</a></li>
                   {{/if}}
                   {{#unless isSaturdayRegistered}}
-                  <li><a href="{{pathFor route='tournamentRegistrationSaturday'}}" id="Registr">S'inscrire pour le samedi</a></li>
+                  <li><a href="{{pathFor route='tournamentRegistrationSaturday'}}" id="Registr" class="toToggle">S'inscrire pour le samedi</a></li>
                   {{/unless}}
                   {{#unless isSundayRegistered}}
-                  <li><a href="{{pathFor route='tournamentRegistrationSunday'}}" id="Registr">S'inscrire pour le dimanche</a></li>
+                  <li><a href="{{pathFor route='tournamentRegistrationSunday'}}" id="Registr" class="toToggle">S'inscrire pour le dimanche</a></li>
                   {{/unless}}
                 </ul>
               </li>
               {{/if}}
               {{/if}}
-              <li><a href="{{pathFor route='myCourts'}}">Mes terrains</a></li>
-              <li><a href="{{pathFor route='contacts'}}" id="askQuestion">Poser une question</a></li>
+              <li><a href="{{pathFor route='myCourts'}}" class="toToggle">Mes terrains</a></li>
+              <li><a href="{{pathFor route='contacts'}}" id="askQuestion" class="toToggle">Poser une question</a></li>
               {{/if}}
-              <li><a href="{{pathFor route='courtMap'}}">Carte</a></li>
+              <li><a href="{{pathFor route='courtMap'}}" class="toToggle">Carte</a></li>
               <li><a href="https://www.facebook.com/media/set/?set=a.10153598504984631.1073741844.9064359630&type=1&l=153e72eadf" target="_blank">Photos</a></li>
-              <li><a href="{{pathFor route='rules'}}">Réglement</a></li>
-              <li><a href="{{pathFor route='faq'}}">FAQ</a></li>
+              <li><a href="{{pathFor route='rules'}}" class="toToggle">Réglement</a></li>
+              <li><a href="{{pathFor route='faq'}}" class="toToggle">FAQ</a></li>
           </ul>
           <div class="nav navbar-nav navbar-right">
             {{> loginButtons}}

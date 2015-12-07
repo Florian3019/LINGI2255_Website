@@ -26,5 +26,10 @@ Template.navigation.helpers({
 Template.navigation.events({
 	'click #tournamentNavigation': function(){
 		Session.set('showNavBar', true);
+	},
+
+	'click .toToggle': function() {
+		$("button.navbar-toggle").click();
+		$(window).scrollTop(0);
 	}
 });

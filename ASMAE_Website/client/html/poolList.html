@@ -125,7 +125,7 @@
 <ul>
 <li>
   <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span>
-  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType menuItem" data-target="#{{TYPE}}{{Mob}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
+  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType menuItem2" data-target="#{{TYPE}}{{Mob}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
   <ul class="nav collapse CategoryOption" id="{{TYPE}}{{Mob}}" role="menu" aria-labelledby="btn-{{TYPE}}">
     {{#each getCategories}}
     {{#unless equals this.key "all"}} <!-- avoid family category -->
@@ -141,7 +141,7 @@
 <ul>
 <li>
   <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_category" style="display:none;"></span>
-  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory menuItem" data-target="#{{this.ID}}_{{this.CAT}}_{{MOBILE}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
+  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory menuItem2" data-target="#{{this.ID}}_{{this.CAT}}_{{MOBILE}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
   <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}_{{MOBILE}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
     <li class="PoolOption" data-category="{{this.CAT}}" data-type="{{this.ID}}" >
       <ul>

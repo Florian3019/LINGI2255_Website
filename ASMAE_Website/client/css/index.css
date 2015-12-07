@@ -62,6 +62,10 @@ html {
 	color:black;
 }
 
+.menuItem2 {
+    color:black;
+}
+
 .sidebar-nav li {
     line-height: 40px;
     display: block;
@@ -77,6 +81,13 @@ html {
 .nav-sidebar-header {
 	padding: 10px;
     font-size: 25px;
+
+}
+
+.nav-sidebar-header-mobile {
+    padding: 10px;
+    font-size: 25px;
+    display: none;
 }
 
 /* Content of the web site */
@@ -130,11 +141,10 @@ html {
 
 /* Columun same height */
 /* top row */
-.col .well{
+.col .cont{
 	margin-bottom: -99999px;
 	padding-bottom: 99999px;
 }
-
 
 /* bottom row */
 .col-base{
@@ -210,11 +220,15 @@ If screen width smaller than 767 px
         display: none;
     }
 
+    .page-content {
+        margin-left: 0;
+    }
+
     .sidebar-mobile {
         display: block;
     }
 
-    .page-content {
-        margin-left: 0;
+    .nav-sidebar-header-mobile {
+        display: block;
     }
 }
