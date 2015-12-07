@@ -1038,20 +1038,40 @@ Template.tournamentRegistrationTemplate.events({
 		        		return;
 		        	}
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch);
-					// TODO Alex
 					var type = Session.get("tournamentRegistration/type");
 					var category = Session.get("tournamentRegistration/category");
 					var firstname = curUserData.firstName;
 					var lastname = curUserData.lastName;
 					if (mailNotifyAloneUser) {
 						// Send mail to Meteor.userId() : "you are registered alone in type and category"
+            var dataMail = {
+              intro:"Bonjour"+firstname+",",
+              important:"Merci pour votre inscription au tournoi.",
+              texte:"Vous êtes bien inscrit dans la catégorie : '"+category+"' du type '"+ type+"'."
+            };
+            Meteor.call("emailFeedback",Meteor.userId().emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
+              if(error){
+                console.log("error", error);
+              }
+            });
 					}
 					else if(mailNotifyUnregisteredPartner) {
+            //TODO secure this with given a pairID which is half-full 
 						// Send mail to partnerEmail (this is an email yey yey !) : "Hey ! firstname lastname wants to player with you in type and category at our great tournament"
-					}
+            Meteor.call("emailInvitPeople",curUserData._id, partnerEmail, function(error, result){
+              if(error){
+                console.log("error", error);
+              }
+            });
+          }
 					else if(mailNotifyAlreadyRegisteredPartner) {
 						// Send mail to partnerID : "Hey ! firstname lastname wants to player with you ! To register with him, first delete your previous registration for that day, then click on the link in this email, see you love !"
-					}
+            Meteor.call("emailToAlreadyRegisteredUser", curUserData._id, partnerID, function(error, result){
+              if(error){
+                console.log("error", error);
+              }
+            });
+          }
 					// else : no mail
 		        }
 
