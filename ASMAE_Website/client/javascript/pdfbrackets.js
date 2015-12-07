@@ -27,11 +27,11 @@ var createAndDownloadPdf = function(document){
           sBrack.push(brack[i][j]);
         }
       }
-
+      var win = getNames(sBrack[sBrack.length-1][0]);
+      var winner = win=="nothing"?" ":win;
+      console.log(sBrack);
       /*Print brackets on screen*/
         getBracket(brack[0].length*2);
-
-
 
     /*
      * Build our bracket "model"
@@ -123,7 +123,7 @@ var createAndDownloadPdf = function(document){
         group.append(round);
       }
       // group.append('<div class="r'+(groupCount+1)+'"><div class="final"><div class="bracketbox"><span class="teamc">'+_.last(struct).teamnames[_.random(1)]+'</span></div></div></div>');
-      group.append('<div class="r'+(groupCount+1)+'"><div class="final"><div class="bracketbox"><span class="teamc">'+'</span></div></div></div>');
+      group.append('<div class="r'+(groupCount+1)+'"><div class="final"><div class="bracketbox"><span class="teamc">'+winner+'</span></div></div></div>');
       if((Session.get("pdfBrack/bracketCount")%2)==0){
         $('#'+bracketContainer).html(group);
       }else{
