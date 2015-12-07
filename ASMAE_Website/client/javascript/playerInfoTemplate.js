@@ -101,9 +101,9 @@ Template.playerInfoTemplate.helpers({
 			'address': function(){
 			  if(addr) {
 				  if (addr.box) {
-					  return addr.number + ", " + addr.street + ". Boite " + addr.box;
+					  return addr.street + ", " +addr.number + ". Boite " + addr.box;
 				  }
-				  return addr.number + ", " + addr.street;
+				  return addr.street + ", "+addr.number;
 			  }
 			},
 			'city': function(){
