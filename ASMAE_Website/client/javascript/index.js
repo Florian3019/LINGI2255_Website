@@ -59,7 +59,11 @@ Template.index.helpers({
 
 	'showNavBar': function(){
 		 return Session.get('showNavBar');
-	}
+	},
+
+  'fullSheets':function(){
+    return {full:true};
+  }
 
 });
 
