@@ -414,6 +414,7 @@ courtToString = function(court){
 
     theString += court.surface;
     theString += court.courtType;
+    theString += court.courtNumber;
 
     return theString.toLowerCase();
 };

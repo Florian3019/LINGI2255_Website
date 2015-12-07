@@ -14,7 +14,6 @@ Template.allCourtsTable.onRendered(function(){
     Session.set("courtSearch/staffOK",Session.get("selectNewCourt/staffOK"));
     Session.set("courtSearch/ownerOK",Session.get("selectNewCourt/ownerOK"));
     Session.set("courtSearch/input","");
-    Session.set("courtSearch/courtNumber","");
 })
 
 
@@ -29,17 +28,15 @@ Template.allCourtsTable.helpers({
         var sunday = Session.get("courtSearch/sunday");
         var owner = Session.get("courtSearch/ownerOK");
         var staff = Session.get("courtSearch/staffOK");
-        var courtNumb = Session.get("courtSearch/courtNumber");
-
         if (input===undefined || input === null) {
             input = "";
         }
-        noInput = input ==="" && saturday==="Ignore" && sunday==="Ignore" && staff==="Ignore" && owner==="Ignore";
+        var noInput = input ==="" && saturday==="Ignore" && sunday==="Ignore" && staff==="Ignore" && owner==="Ignore";
 
         if(noInput) return Courts.find({});
-        inputArray = input.split(" ");
+        var inputArray = input.split(" ");
 
-        query = {$where: function(){
+        var query = {$where: function(){
             if(saturday=="Yes"){
               if(!this.dispoSamedi) return false;
             }
@@ -66,10 +63,6 @@ Template.allCourtsTable.helpers({
             }
             else if(owner=="No"){
               if(this.ownerOK) return false;
-            }
-
-            if(courtNumb!=="" && courtNumb!==null && courtNumb!==undefined){
-              if(this.courtNumber.indexOf(Number(courtNumb))==-1) return false;
             }
 
             var searchString = courtToString(this);
@@ -133,9 +126,9 @@ Template.allCourtsTable.helpers({
           { key: 'staffOK', label:"OK Staff", tmpl:Template.staffOKLabel},
           { key: 'isOutdoor', label:'Extérieur', tmpl:Template.isOutdoorLabel},
           { key: 'courtType', label:"Type"},
-          { key: 'instructions', label:"Instructions"},
-          { key: 'ownerComment', label:"Commentaire propriétaire"},
-          { key: 'staffComment', label:"Commentaire staff"},
+          { key: 'instructions', label:"Instructions", hidden:true},
+          { key: 'ownerComment', label:"Commentaire propriétaire", hidden:true},
+          { key: 'staffComment', label:"Commentaire staff", hidden:true},
           { key: 'courtNumber', label:"Numéros", fn:function(value, object){
               if(value==null) return "";
               return value.join(", ");
@@ -170,10 +163,6 @@ Template.courtSearch.events({
     'change #staffOKSelect':function(event){
       Session.set("courtSearch/staffOK",event.currentTarget.value);
     },
-
-    'change #courtNumberInput':function(event){
-      Session.set("courtSearch/courtNumber",event.currentTarget.value);
-    }
 });
 
 Template.courtSearch.helpers({
