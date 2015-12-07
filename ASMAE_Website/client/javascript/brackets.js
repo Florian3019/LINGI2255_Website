@@ -429,7 +429,7 @@ var handleBracketErrors = function(document){
           startButton.innerHTML="Démarrer ce knock-off";
         }
         if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
-        if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
+        if(pdfButton!=undefined  && pdfButton!=null) pdfButton.style.display = 'block';
       }
       console.info("Knock-offs not started");
 
@@ -607,7 +607,7 @@ var makeBrackets = function(document){
 
   var matchesCompleted = 0;
   var nextMatchNum = 0;
-  
+
   var user = Meteor.user();
   var canEditScore = user!==undefined && user!==null && (user.profile.isAdmin || user.profile.isStaff);
 
@@ -631,7 +631,7 @@ var makeBrackets = function(document){
     Fill the rest of the rounds with "?" or the score
   */
 
-  
+
   round = 0;
   while(thisRound.length>1){
     newRound = []; // list of roundData

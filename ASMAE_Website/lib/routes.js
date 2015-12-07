@@ -385,7 +385,12 @@ Router.route('/print', {
     Session.set("printSheets/isWorkingPrint",false);
     Session.set("printSheets/isWorkingPool",false);
 		Session.set('showNavBar', true);
-	}
+	},
+  onStop:function(){
+    Session.set("printSheets/info");
+    Session.set("printOneSheet/poolId");
+    Session.set("printSheets/OnePage");
+  }
 });
 
 Router.route('/terrains', {
