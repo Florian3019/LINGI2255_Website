@@ -1037,8 +1037,22 @@ Template.tournamentRegistrationTemplate.events({
 		        		console.log(err);
 		        		return;
 		        	}
-					console.log("adding pair with ID "+pairID+" to the tournament YOLO");
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch);
+					// TODO Alex
+					var type = Session.get("tournamentRegistration/type");
+					var category = Session.get("tournamentRegistration/category");
+					var firstname = curUserData.firstName;
+					var lastname = curUserData.lastName;
+					if (mailNotifyAloneUser) {
+						// Send mail to Meteor.userId() : "you are registered alone in type and category"
+					}
+					else if(mailNotifyUnregisteredPartner) {
+						// Send mail to partnerEmail (this is an email yey yey !) : "Hey ! firstname lastname wants to player with you in type and category at our great tournament"
+					}
+					else if(mailNotifyAlreadyRegisteredPartner) {
+						// Send mail to partnerID : "Hey ! firstname lastname wants to player with you ! To register with him, first delete your previous registration for that day, then click on the link in this email, see you love !"
+					}
+					// else : no mail
 		        }
 
 				//For the payment
@@ -1047,8 +1061,6 @@ Template.tournamentRegistrationTemplate.events({
 				pairData.paymentMethod = $('[name=paymentMethod]:checked').val();
 
 				pairData.year = currentYear;
-				console.log("YOLOYOLOYOLO ");
-				console.log(pairData);
 		        Meteor.call('updatePair', pairData, callback);
 		        Session.set('aloneSelected',null); // To avoid bugs if trying to register again
 
