@@ -83,8 +83,8 @@ var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 
 
     if(pair==undefined || pair.player1==undefined || pair.player2==undefined) return;
 
-    pairPlayer1 = Meteor.users.findOne({_id:pair.player1._id},{profile:1});
-    pairPlayer2 = Meteor.users.findOne({_id:pair.player2._id},{profile:1});
+    pairPlayer1 = Meteor.users.findOne({_id:pair.player1._id},{profile:1},{reactive:false});
+    pairPlayer2 = Meteor.users.findOne({_id:pair.player2._id},{profile:1},{reactive:false});
 
     pairPlayer1String = pairPlayer1.profile.firstName.substring(0,1) + ". " + pairPlayer1.profile.lastName;
     pairPlayer2String = pairPlayer2.profile.firstName.substring(0,1) + ". " + pairPlayer2.profile.lastName;
@@ -870,18 +870,18 @@ Template.brackets.events({
   },
 
   'click #saveScore':function(event){
-    pairs = Session.get('brackets/clicked');
+    var pairs = Session.get('brackets/clicked');
     if(pairId==undefined) return;
-    pair0 = Pairs.findOne({_id:pairs[0]});
-    pair1 = Pairs.findOne({_id:pairs[1]});
+    var pair0 = Pairs.findOne({_id:pairs[0]});
+    var pair1 = Pairs.findOne({_id:pairs[1]});
 
-    round = Session.get('brackets/round');
-    score0 = document.getElementById("scoreInput0").value;
-    score0 = parseInt(score0);
+    var round = Session.get('brackets/round');
+    var score0 = document.getElementById("scoreInput0").value;
+    var score0 = parseInt(score0);
     setPoints(pair0, round, score0);
 
-    score1 = document.getElementById("scoreInput1").value;
-    score1 = parseInt(score1);
+    var score1 = document.getElementById("scoreInput1").value;
+    var score1 = parseInt(score1);
     setPoints(pair1, round, score1);
   
     /*
@@ -905,7 +905,7 @@ Template.brackets.events({
     var u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1}, {reactive:false});
     var u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1}, {reactive:false});
 
-    // Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
+    Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
     var callback = function(err, logId){
       if(err){
         console.error(err);
