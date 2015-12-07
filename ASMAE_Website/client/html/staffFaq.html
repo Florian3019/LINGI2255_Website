@@ -6,15 +6,19 @@
 <div>
 
 <h5>Table des matières</h5>
-<ul>
-    <li><a href="#gotoShowStaffMenu">Comment afficher le menu staff ?</a></li>
-    <li><a href="#gotoLaunchTournament">Déroulement du tournoi</a>
+<ul>       
+    <li><a href="#staffMenu">Menu Staff</a>
         <ul>
-            <li><a href="#gotoLaunchTournament">Comment démarrer le tournoi ?</a></li>
-            <li><a href="#gotoCloseRegistrations">Fermer les inscriptions au tournoi</a></li>
+            <li><a href="#gotoShowStaffMenu">Comment afficher le menu staff ?</a></li>
         </ul>
     </li>
-    <li><a href="#gotoPairs">Poules et Paires</a>
+    <li><a href="#tournament">Déroulement du tournoi</a>
+        <ul>
+            <li><a href="#gotoLaunchTournament">Comment démarrer le tournoi ?</a></li>
+            <li><a href="#gotoCloseRegistrations">Comment fermer les inscriptions au tournoi ?</a></li>
+        </ul>
+    </li>
+    <li><a href="#PoolPairs">Gestion des poules et des paires</a>
         <ul>
             <li><a href="#gotoPairs">Comment séparer une paire ?</a></li>
             <li><a href="#gotoPairs2">Comment créer une paire à partir de deux joueurs seuls ?</a></li>
@@ -25,18 +29,18 @@
             <li><a href="#gotoPairs7">Comment inscrire les scores d'une poule ?</a></li>
         </ul>
     </li>
-    <li><a href="#gotoPlayers">Joueurs</a>
+    <li><a href="#infoPlayers">Information sur les joueurs</a>
         <ul>
             <li><a href="#gotoPlayers">Comment afficher les informations relatives à une paire ou un joueur ?</a></li>
         </ul>
     </li>
-    <li><a href="#gotoPayments">Paiements</a>
+    <li><a href="#infoPayments">Information sur les paiements</a>
         <ul>
             <li><a href="#gotoPayments">Paiements des joueurs</a></li>
             <li><a href="#gotoPayments2">Paiements par virement bancaire</a></li>
         </ul>
     </li>
-    <li><a href="#gotoKnockOffs">Knock-offs</a>
+    <li><a href="#infoKnockOffs">Gestion du tournoi à élimination directe</a>
         <ul>
             <li><a href="#gotoKnockOffs">Comment accéder à la page de gestion des knock-offs ?</a></li>
             <li><a href="#gotoKnockOffs2">Comment créer les knock-offs ?</a></li>
@@ -44,9 +48,13 @@
             <li><a href="#gotoKnockOffs4">Comment choisir le terrain utilisé pour un match des knock-offs ?</a></li>
         </ul>
     </li>
-    <li><a href="#gotoPDF">Imprimer les PDF</a>
+    <li><a href="#infoPDF">Impression des documents PDF</a>
+        <ul>
+            <li><a href="#gotoPDF">Comment imprimer les documents PDF ?</a>
+            </li>
+        </ul>
     </li>
-    <li><a href="#gotoCourts">Terrains</a>
+    <li><a href="#infocourts">Gestion des terrains</a>
         <ul>
             <li><a href="#gotoCourts">Comment ajouter un terrain ?</a></li>
             <li><a href="#gotoCourts2">Comment modifier un terrain ?</a></li>
@@ -55,14 +63,20 @@
             <li><a href="#gotoCourts5">Comment accepter un terrain au tournoi de cette année ?</a></li>
         </ul>
     </li>
-    <li><a href="#gotoPermissions">Permissions</a>
+    <li><a href="#GestionPlayers">Gestion des droits d'utilisateur</a>
         <ul>
-            <li><a href="gotoPermissions">Comment changer les permissions d'un utilisateur ?</a></li>
+            <li><a href="#gotoPermissions">Comment changer les permissions d'un utilisateur ?</a></li>
         </ul>
     </li>
-    <li><a href="#gotoSendEmailToList">Envoyer un email</a></li>
-    <li><a href="#gotoLogHistory">Historique des modifications</a></li>
-    <li><a href="#gotoForum">Forum</a>
+    <li><a href="#infoMails">Gestion de l'envois des mails</a></li>
+        <ul>
+            <li><a href="#gotoSendEmailToList">Comment envoyer des emails ?</a></li>
+        </ul>
+    <li><a href="#history">Historique des modifications</a></li>
+        <ul>
+            <li><a href="#gotoLogHistory">Commment afficher l'historique des modifications ?</a></li>
+        </ul>
+    <li><a href="#forum">Gestion du forum</a>
         <ul>
             <li><a href="#gotoForum">Comment ajouter une catégorie au forum ?</a></li>
             <li><a href="#gotoForum2">Comment ajouter un sujet au forum ?</a></li>
@@ -71,12 +85,13 @@
     </li>
 </ul>
 <br>
-
+<h4 id="staffMenu">Menu staff</h4>
 <h5 id="gotoShowStaffMenu">Comment afficher le menu staff ?</h5>
 <p>
 Dans le menu supérieur, cliquez sur "Menu staff".
 </p>
-
+<br>
+<h4 id="tournament">Déroulement du tournoi</h4>
 <h5 id="gotoLaunchTournament">Comment démarrer le tournoi ?</h5>
 <p>
 Cliquez sur "Déroulement du tournoi" dans le menu du staff. Si les inscriptions au tournoi ne sont pas encore lancées, un administrateur peut les démarrer en entrant la date du tournoi (le jour importe peu, donc vous pouvez entrer la date du samedi ou du dimanche) et les autres informations nécessaires (le prix du tournoi et les éventuels extras).
@@ -89,7 +104,7 @@ Depuis cette page, le staff peut également envoyer un mail automatique d'invita
 <b>Remarque importante:</b> il n'est possible de démarrer qu'un seul tournoi par année (l'année servant d'identification au tournoi à plusieurs endroits du site).
 </p>
 
-<h5 id="gotoCloseRegistrations">Fermer les inscriptions au tournoi</h5>
+<h5 id="gotoCloseRegistrations">Comment fermer les inscriptions au tournoi ?</h5>
 <p>
 Une fois les inscriptions au tournoi lancées, un administrateur peut les fermer pour empêcher de nouveaux joueurs de s'inscrire. Ceci se fait via la page du déroulement du tournoi (accessible en cliquant sur "Déroulement du tournoi" dans le menu staff) en allant à la quatrième étape.
 </p>
@@ -103,7 +118,8 @@ Cliquez sur "Gestion du tournoi" puis séléctionnez l'année qui vous intéress
 <p>
 L'état d'avancement du tournoi s'affiche entre parenthèses à coté du type ou de la catégorie concernée.
 </p>
-
+<br>
+<h4 id="PoolPairs">Gestion des poules et des paires</h4>
 <h5 id="gotoPairs">Comment séparer une paire ?</h5>
 <p>
 Dans la page de gestion des poules, il suffit de prendre une paire et le faire glisser dans la boîte "Séparer une paire". Ses deux joueurs seront ensuite automatiquement déplacés dans "Joueurs seuls". Cette modification ne nécessite pas de cliquer sur sauver, elle est immédiate.
@@ -138,7 +154,8 @@ Dans la page de gestion des poules, cliquez sur le dessus d'une poule. Ce bouton
 <p>
 Dans le menu de gestion des poules, cliquez sur le dessus d'une poule. Ce bouton ne s'affiche que si des joueurs sont présent dans la poule. Dans la page qui s'affiche, insérez les scores des matchs.
 </p>
-
+<br>
+<h4 id="infoPlayers">Information sur les joueurs</h4>
 <h5 id="gotoPlayers">Comment afficher les informations relatives à une paire ou un joueur ?</h5>
 <p>
 Dans la page de gestion des poules, cliquez sur une paire ou un joueur seul. Une fenêtre s'ouvrira depuis laquelle l'historique des modifications faites sur ces joueurs s'affichera, ainsi que leurs informations personnelles. Leurs souhaits s'afficheront également. Il est également possible de modifier leur profil depuis cette page.
@@ -146,7 +163,8 @@ Dans la page de gestion des poules, cliquez sur une paire ou un joueur seul. Une
 <p>
 Dans le menu "Rechercher un joueur", faite une recherche sur le joueur concerné puis cliquez sur sa ligne.
 </p>
-
+<br>
+<h4 id="infoPayments">Information sur les paiements</h4>
 <h5 id="gotoPayments">Paiements des joueurs</h5>
 <p>
 Le staff peut marquer les joueurs comme ayant payé de plusieurs façons:
@@ -160,7 +178,8 @@ Le staff peut marquer les joueurs comme ayant payé de plusieurs façons:
 <p>
 Pour simplifier la recherche d'un joueur lorsque celui-ci a choisi d'effectuer son paiement par virement bancaire, un numéro d'identification de paiement lui est envoyé par mail en même temps que le numéro de compte sur lequel il doit effectuer le paiement. Le staff peut faire une recherche sur ce numéro d'identification de paiement depuis le page des joueurs pas en ordre de paiements, accessible depuis le menu staff.
 </p>
-
+<br>
+<h4 id="infoKnockOffs">Gestion du tournoi à élimination directe</h4>
 <h5 id="gotoKnockOffs">Comment accéder à la page de gestion des knock-offs ?</h5>
 <p>
 Cliquez sur Gestion du tournoi puis séléctionnez l'année qui vous intéresse. Dans le menu qui s'affiche, choisissez parmi homme, femme, mixte ou familles. Cliquez ensuite sur "Knock-offs"
@@ -180,12 +199,14 @@ Dans la page de gestion des knock-offs, une fois que le knock-off a été créé
 <p>
 Dans la page de gestion des knock-offs, une fois que le knock-off a été créé, cliquez sur la bande bleue pour afficher la page de séléction des terrains.
 </p>
-
+<br>
+<h4 id="infoPDF">Impression des documents PDF</h4>
 <h5 id="gotoPDF">Comment imprimer un pdf des poules ou des knock-offs ?</h5>
 <p>
 Celà peut être fait de manière individuelle pour chaque poule/knock-offs dans leurs pages de gestion respectives, en cliquant sur le bouton "PDF". Pour en imprimer plus d'un à la fois, cliquez sur le menu "Feuilles de poule" et séléctionnez vos critères. Une fois fait, cliquez sur sauver pour générer les pdf.
 </p>
-
+<br>
+<h4 id="infocourts">Gestion des terrains</h4>
 <h5 id="gotoCourts">Comment ajouter un terrain ?</h5>
 <p>
 Si vous êtes propriétaires d'un terrain, cliquez sur "Mes terrains". Dans la page qui s'affiche, cliquez sur "Ajouter un terrain".
@@ -214,13 +235,15 @@ Depuis le menu staff, allez dans "Rechercher un terrain" pour rechercher un terr
 A chaque tournoi, les terrains doivent être acceptés d'une part par le propriétaire et d'une part par le staff. Lorsqu'un terrain a été accepté par les 2 parties, alors il est utilisé pour le tournoi.<br>
 En se rendant sur la page d'un terrain (pour le staff, via la recherche d'un terrain par exemple), le staff peut marquer s'il est d'accord d'utiliser ce terrain. Le staff peut aussi marquer à la place du propriétaire si ce dernier est d'accord que son terrain soit utilisé.
 </p>
-
+<br>
+<h4 id="GestionPlayers">Gestion des droits d'utilisateur</h4>
 <h5 id="gotoPermissions">Comment changer les permissions d'un utilisateur ?</h5>
 <p>
 Dans le menu staff, cliquez sur "Rechercher un joueur". Entrez les critères de recherche puis cliquez sur le menu déroulant de la colonne "Permissions" de l'utilisateur concerné. Choissisez ensuite parmi normal, staff ou admin. N.B. cette fonctionnalité est réservée aux admnistrateurs. Un administrateur ne peut pas modifier ses propres permissions.
 </p>
-
-<h5 id="gotoSendEmailToList">Envoyer un email</h5>
+<br>
+<h4 id="infoMails">Gestion de l'envois des mails</h4>
+<h5 id="gotoSendEmailToList">Comment envoyer des emails ?</h5>
 <p>
 En cliquant sur le menu "Envoyer un mail", le staff a la possibilité d'envoyer un email d'un seul coup à toutes les personnes appartenant à une de ces catégories:
 <ul>
@@ -229,12 +252,14 @@ En cliquant sur le menu "Envoyer un mail", le staff a la possibilité d'envoyer 
     <li>Tous les propriétaires de terrains</li>
 </ul>
 </p>
-
+<br>
+<h4 id="History">Accès à l'historique</h4>
 <h5 id="gotoLogHistory">Comment afficher l'historique des modifications ?</h5>
 <p>
 Dans le menu staff, cliquez sur "Log des modifications". Toutes les modifications sont affichées là. L'historique des 3 dernières modifications s'affiche également en bas de la page d'information sur un terrain ou un joueur.
 </p>
-
+<br>
+<h4 id="forum">Gestion du forum</h4>
 <h5 id="gotoForum">Comment ajouter une catégorie au forum ?</h5>
 <p>
 Dans le menu staff, cliquez sur "Forum" insérez le nom de la nouvelle catégorie puis cliquez sur "+".

@@ -14,31 +14,48 @@ Template.playersInfo.onRendered(function(){
 }),
 
 Template.playersInfo.helpers({
+    'getStatusKeys':function(){
+        var toReturn  = [];
+        for(var i=0; i<paymentKeys.length;i++){
+            toReturn.push({key:paymentKeys[i], label:paymentTranslate[paymentKeys[i]]});
+        }
+        return toReturn;
+    },
+
+    'getMethodKeys':function(){
+        var toReturn  = [];
+        for(var i=0; i<paymentTypes.length;i++){
+            toReturn.push({key:paymentTypes[i], label:paymentTypesTranslate[paymentTypes[i]]});
+        }
+        return toReturn;
+    },
+
     userCollection: function () {
         var input = Session.get("playerInfo/input"); // This is the filter input
         if(input!==undefined) input = input.toLowerCase(); // Convert to lower case for ease of use
 
-        var perm = Session.get("playerInfo/permissions");
-
-        var noInput = (input ==="" || input===undefined || input === null) && perm==="Ignore";
-
+        var noInput = (input ==="" || input===undefined || input === null);
         if(noInput) return Meteor.users.find();
-        if(input!==undefined) inputArray = input.split(" ");
+        if(input!==undefined){
+            input = " " + input + " ";
+            inputArray = input.split(" ");
+        }
+
 
         // This will filter the database according to the filters set
         var query = {$where: function(){
-            if(perm=="Admin"){
-              if(!this.profile.isAdmin) return false;
-            }
-            else if(perm=="Staff"){
-              if(!this.profile.isStaff) return false;
-            }
-            else if(perm=="Normal"){
-                if(this.profile.isStaff || this.profile.isAdmin) return false;
-            }
-
-            if(input!==undefined){
+            if(!noInput){
                 var searchString = playerToString(this);
+
+                if(input.indexOf(" admin ")>-1){
+                  if(!this.profile.isAdmin) return false;
+                }
+                else if(input.indexOf(" staff ")>-1){
+                  if(!this.profile.isStaff) return false;
+                }
+                else if(input.indexOf(" normal ")>-1){
+                    if(this.profile.isStaff || this.profile.isAdmin) return false;
+                }
 
                 for(var i=0; i<inputArray.length;i++){
                     if(searchString.indexOf(inputArray[i])==-1){
@@ -50,7 +67,10 @@ Template.playersInfo.helpers({
             }
         };
 
-        return Meteor.users.find(query); // Make the db request
+        var userCursor = Meteor.users.find(query); // Make the db request
+
+        return userCursor;
+
     },
 
     // This defines the fields of the search table
@@ -120,7 +140,7 @@ Template.playersInfo.helpers({
                     }
                 }
             ],
-             filters: ['NomDeFamille'], // This is just a mockup filter to hide the default one
+             showFilter:false,
              rowClass: "playerInfoRow",
              showColumnToggles:true
         }
@@ -133,9 +153,6 @@ Template.playersInfo.events({
         var isPermSelect = (' ' + event.originalEvent.srcElement.className + ' ').indexOf(' myPermissionSelects ') > -1;
         if(isPermSelect) return; // Don't allow to change page if we clicked on the select
         Router.go('playerInfoTemplate',{_id:this._id});
-    },
-    'change #permSelect':function(event){
-        Session.set("playerInfo/permissions",event.currentTarget.value);
     },
 });
 

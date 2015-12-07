@@ -2,38 +2,87 @@ Template.playerPayments.onRendered(function(){
     Session.set('bankTransferNumber', 0);
 });
 
-Template.playerPayments.helpers({
-    'payments': function(){
-        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-        var bankTransferNumber = Session.get('bankTransferNumber');
-        if(bankTransferNumber > 0){
-            var x = Payments.find({'status': "pending", 'tournamentYear': currentYear, 'paymentMethod': paymentTypes[1], 'bankTransferNumber': bankTransferNumber});
-        }
-        else{
-            var x = Payments.find({'status': "pending", 'tournamentYear': currentYear});
-        }
-    	return {"cursor":x, "notEmpty":x.count()>0};
-  	},
+Template.playerPayments.onCreated(function(){
+    Session.set("playerPayments/input","");
+});
 
-    'player': function(){
+Template.playerPayments.helpers({
+    'getPayments':function(){
+        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+
+        var baseQuery = [{tournamentYear:currentYear}, {status:"pending"}];
+
+        var input = Session.get("playerPayments/input"); // This is the filter input
+        if(input!==undefined) input = input.toLowerCase(); // Convert to lower case for ease of use
+
+        var noInput = (input ==="" || input===undefined || input === null);
+        if(noInput) return Payments.find({$and:baseQuery});
+        if(input!==undefined){
+            inputArray = input.split(" ");
+        }
+
+
+       var query =  {$where: function(){
+            if(!noInput){
+                var user = Meteor.users.findOne({_id:this.userID});
+                var searchString = " "+user.profile.firstName + " " + user.profile.lastName + " ";
+                searchString += paymentToString(this);
+                searchString = searchString.toLowerCase();
+                for(var i=0; i<inputArray.length;i++){
+                    if(searchString.indexOf(inputArray[i])==-1){
+                        return false;
+                    }
+                }
+            }
+                return true;
+            }
+        };
+
+        baseQuery.push(query);
+        return Payments.find({$and:baseQuery});
+    },
+
+    'settings':function(){
+        return {
+            fields:[
+            { key: 'userID', label:"Joueur", tmpl:Template.userLabel},
+            { key: 'paymentMethod', label: 'Méthode', fn:function(value, object){
+                if(value===undefined) return "/";
+                else return paymentTypesTranslate[value];
+            }},
+            { key: 'balance', label: 'Montant', fn:function(value, object){
+                if(value===undefined) return "/";
+                else return value+"€";
+            }},
+            { key:'bankTransferNumber', label:"N° d'identification"},
+            { key: '_id', label: 'Marquer comme payé', tmpl:Template.markAsPaid},
+        ],
+            showFilter: false,           
+        }
+    },
+});
+
+Template.userLabel.helpers({
+   'player': function(){
         var player = Meteor.users.findOne({_id: this.userID});
         return player;
     },
+});
 
-    'transformPaymentMethod': function(){
-        return paymentTypesTranslate[this.paymentMethod];
-    }
-
+Template.markAsPaid.events({
+    'click .markAsPaidLink': function(event){
+        Meteor.call('markAsPaid', this._id, function(err, result){
+            if(err){
+                console.log("Error while calling method markAsPaid");
+                console.log(err);
+            }
+        });
+    },
 });
 
 Template.playerPayments.events({
-    'click .markAsPaidLink': function(event){
-        Meteor.call('markAsPaid', this._id, function(err, result){
-			if(err){
-				console.log("Error while calling method markAsPaid");
-				console.log(err);
-			}
-		});
+    'keyup #paymentInput':function(event){
+        Session.set("playerPayments/input", event.currentTarget.value);
     },
 
     'click #sendPaymentReminderEmail': function(event){
@@ -44,10 +93,4 @@ Template.playerPayments.events({
         }
       });
     },
-
-    'submit form': function(event){
-        event.preventDefault();
-        var bankTransferNumber = parseInt($('[name=bankTransferSearchField]').val());
-        Session.set('bankTransferNumber', bankTransferNumber);
-    }
 });

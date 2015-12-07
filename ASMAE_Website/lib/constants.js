@@ -6,6 +6,8 @@ paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 paymentTranslate = {"paid":"Payé", "pending":"En attente"};
+paymentKeys = Object.keys(paymentTranslate);
+
 
 EMAIL_ENABLED = false; // set to true to enable email feedback
 
@@ -385,6 +387,18 @@ addressToString = function(theAddress){
     }
     return theString;
 };
+
+paymentToString = function(payment){
+    var theString = "";
+    if(payment!==undefined && payment!==null){
+        theString+=payment.status + " ";
+        theString+=payment.pending + " ";
+        theString+=payment.bankTransferNumber===undefined?"" : payment.bankTransferNumber+" ";
+        theString+=payment.paymentMethod===undefined?"":payment.paymentMethod + " ";
+        theString+=payment.balance + " ";
+    }
+    return theString;
+}
 
 courtToString = function(court){
     if(court===undefined || court===null){

@@ -6,45 +6,21 @@
     </div>
     <div class="row">
         Envoyer email rappel de paiement: <button class="btn btn-primary" id="sendPaymentReminderEmail" style="margin-left:10px">Envoyer</button>
-        <form id="bankTransferSearchForm" class="pull-right">
-            <input type="text" name="bankTransferSearchField" id="bankTransferSearchField" placeholder="Chercher par numéro d'identification de virement" style="width:300px; font-size:12px">
-            <button type="submit" class="btn btn-primary" id="bankTransferSearchSubmit">Chercher</button>
-        </form>
-    </div>
-    <br>
-    {{#with payments}}
-        {{#if this.notEmpty}}
-    	<table class="table">
-    		<thead>
-          		<tr>
-            	<th>Joueur</th>
-                <th>Méthode</th>
-            	<th>Montant</th>
-                <th>Marquer comme payé</th>
-          		</tr>
-        	</thead>
-        	<tbody>
-        		{{#each this.cursor}}
-        		<tr>
-                    {{#with player}}
-        			<td><a href="{{pathFor route='playerInfoTemplate' _id=this._id}}">{{profile.firstName}} {{profile.lastName}}</a></td>
-                    {{/with}}
-                    <td>{{transformPaymentMethod}}</td>
-                    <td>{{balance}}&euro;</td>
-                    <td><a href="" class="markAsPaidLink">Payé</a></td>
-        		</tr>
-        		{{/each}}
-        	</tbody>
-    	</table>
-        {{else}}
-        <div id="infoBox" class="alert alert-info" role="alert">
-            <h4>
-                <span class="glyphicon glyphicon-info-sign"></span>
-                <span class="sr-only">Info:</span>
-                <span>Tous les joueurs sont en ordre de paiement</span>
-            </h4>
+        <div class="pull-right">
+            <input type="text" id="paymentInput" placeholder="Chercher" style="width:300px; font-size:12px">
         </div>
-        {{/if}}
-    {{/with}}
+    </div>
+
+    {{>reactiveTable collection=getPayments settings=settings fields=fields}}
 </div>
+</template>
+
+<template name="markAsPaid">
+    <a href="" class="markAsPaidLink">Payé</a>
+</template>
+
+<template name="userLabel">
+    {{#with player}}
+        <a href="{{pathFor route='playerInfoTemplate' _id=this._id}}">{{profile.firstName}} {{profile.lastName}}</a>
+    {{/with}}
 </template>
