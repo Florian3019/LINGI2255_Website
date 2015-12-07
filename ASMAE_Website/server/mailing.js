@@ -25,6 +25,9 @@ Template.mailing.helpers({
   encadrehtml : function(){
     return this.encadre;
   },
+  hasEncadre:function(){
+    return this.encadre!==undefined;
+  },
 });
 
 
