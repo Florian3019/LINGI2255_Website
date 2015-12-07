@@ -1065,30 +1065,38 @@ Meteor.methods({
 
 
 		var paymentUser = Meteor.userId();
-
 		paymentData = {
 			userID : paymentUser,
 			tournamentYear : currentYear,
-			day : pairData.day,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
 			balance : amount
 		};
 
 		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear, 'day': pairData.day});
+		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentYear': currentYear});
 		if(paymentAlreadyExists){
-			if(pairData._id){
-				Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
+			if(pairData._id){	//If it is an update: update the data
+				if(paymentAlreadyExists.status === "paid"){
+					if(paymentAlreadyExists.balance > amount){		// He paid to much
+						paymentData.balance = 0
 					}
-				});
+					else{		// He didn't paid enough
+						paymentData.balance = amount - paymentAlreadyExists.balance;
+					}
+				}
 			}
-			else {
-				console.error("Payment already exists and should not be updated");
+			else {		// The player registers to the second tournament: merge the two payments
+				console.log("The players registers to the second tournament: merge his payments.");
+				paymentData.balance = paymentAlreadyExists.balance + amount;
 			}
+
+			Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
+				if(err){
+					console.error('insert payment error');
+					console.error(err);
+				}
+			});
 
 		}
 		else {
@@ -1869,7 +1877,7 @@ Meteor.methods({
 
 		// Remove payment
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		Payments.remove({'userID': userID, 'tournamentYear': currentYear}); 	//TODO: precise the day
+		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
 
 
 		// No other player

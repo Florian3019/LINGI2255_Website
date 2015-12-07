@@ -11,7 +11,7 @@ function getFormData(){
 	var user = Meteor.user();
 	var extras = getExtras();
 
-	//TODO: add data.day the day of the pair
+	//TODO: get extras for each day (so find if multiple pairs)
 
   	var data = {
     	firstName : user.profile.firstName,
