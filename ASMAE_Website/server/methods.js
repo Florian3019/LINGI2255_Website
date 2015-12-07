@@ -2072,4 +2072,54 @@ Meteor.methods({
 
 
 
-  });
+	/*
+		Structure:
+		{
+			_id:<id>, // Automatically set
+			year:<year>,
+			type:<type>,
+			category:<category>,
+			first:<pairId>,
+			second:<pairId>
+		}
+		returns the winnerId
+	*/
+	'updateWinner':function(winnerData){
+		if(!(Meteor.call('isAdmin') || Meteor.call('isStaff'))){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to add a winner");
+			return;
+		}
+
+		var andQuery = [{"type":winnerData.type},{"year":winnerData.year},{"category":winnerData.category}];
+		Winners.remove({$and:andQuery}); // Remove any previous winner
+
+		var data = {};
+
+		if(winnerData.year!==undefined && winnerData.year!==""){
+			data.year = winnerData.year;
+		}
+		if(winnerData.type!==undefined && winnerData.type!==""){
+			data.type = winnerData.type;
+		}
+		if(winnerData.category!==undefined && winnerData.category!==""){
+			data.category = winnerData.category;
+		}
+		if(winnerData.first!==undefined && winnerData.first!==""){
+			data.first = winnerData.first;
+		}
+		if(winnerData.second!==undefined && winnerData.second!==""){
+			data.second = winnerData.second;
+		}
+
+		if(winnerData._id !== undefined){
+			Winners.update({_id:winnerData._id}, {$set:data});
+			return winnerData._id;
+		}
+
+		return Winners.insert(data);
+	},
+
+
+
+}); // End helpers

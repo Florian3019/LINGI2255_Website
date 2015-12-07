@@ -18,6 +18,10 @@ Meteor.publish('Courts', function(){
   return Courts.find();
 });
 
+Meteor.publish('Winners', function(){
+  return Winners.find();
+});
+
 Meteor.publish('Addresses', function(){
       if(isStaffOrAdmin(this.userId)) {
         return Addresses.find();
@@ -121,6 +125,9 @@ GlobalValues.allow(allowForStaffOrAdmin);
 
 /*  Known uses : client/scoreTable  */
 Matches.allow(allowForStaffOrAdmin);
+
+Meteor.users.allow(allowForStaffOrAdmin);
+
 
 Meteor.users.deny({'update':function(userId, doc){return !isStaffOrAdmin(userId)}});
 

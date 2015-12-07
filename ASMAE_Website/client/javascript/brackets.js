@@ -588,6 +588,7 @@ var getTournamentFirstRound = function(pairs){
   return toReturn;
 }
 
+var totalRounds = undefined;
 
 var makeBrackets = function(document){
   allWinners = handleBracketErrors(document); // Table of winner pair Id
@@ -719,6 +720,8 @@ var makeBrackets = function(document){
   }
 
   Session.set("brackets/rounds",round+1);
+  
+  totalRounds = brackets.length-2; // Global variable
 
   completionPercentage = (nextMatchNum==0) ? 0 : matchesCompleted/nextMatchNum;
   setCompletion(completionPercentage);
@@ -880,12 +883,29 @@ Template.brackets.events({
     score1 = document.getElementById("scoreInput1").value;
     score1 = parseInt(score1);
     setPoints(pair1, round, score1);
+    
+    console.log(totalRounds);
+    console.log(round);
+    if(round == totalRounds){
+      console.log("Saving Winner !");
+      // This is the last round
+      var data = {};
+      data.first = score0 > score1 ? pair0._id : pair1._id;
+      data.second = score0 < score1 ? pair0._id : pair1._id;
 
-    u01 = Meteor.users.findOne({"_id":pair0.player1._id},{"profile":1});
-    u02 = Meteor.users.findOne({"_id":pair0.player2._id},{"profile":1});
-    u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1});
-    u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1});
+      data.year = Session.get("PoolList/Year");
+      data.type = Session.get("PoolList/Type");
+      data.category = Session.get("PoolList/Category");
 
+      Meteor.call("updateWinner",data);
+    }
+
+    var u01 = Meteor.users.findOne({"_id":pair0.player1._id},{"profile":1}, {reactive:false});
+    var u02 = Meteor.users.findOne({"_id":pair0.player2._id},{"profile":1}, {reactive:false});
+    var u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1}, {reactive:false});
+    var u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1}, {reactive:false});
+
+    // Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
     var callback = function(err, logId){
       if(err){
         console.error(err);
@@ -895,6 +915,7 @@ Template.brackets.events({
         Meteor.users.update({"_id":pair0.player2._id},{$addToSet:{"log":logId}});
         Meteor.users.update({"_id":pair1.player1._id},{$addToSet:{"log":logId}});
         Meteor.users.update({"_id":pair1.player2._id},{$addToSet:{"log":logId}});
+        
     }
 
     Meteor.call("addToModificationsLog",
@@ -906,9 +927,9 @@ Template.brackets.events({
         u11.profile.firstName + " " + u11.profile.lastName + " et "+u12.profile.firstName + " " + u12.profile.lastName +
         " "+score1 +
         getStringOptions()
-    }, callback);
+    },
+    callback);
 
-    Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   },
 
   'click #getPDF':function(event){

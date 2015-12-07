@@ -6,7 +6,7 @@ Template.addressToCSV.events({
 			return;
 		}
 		var users = Meteor.users.find().fetch();
-		var csvContent = "data:text/csv;charset=utf-8,"
+		var csvContent = "data:text/csv;charset=utf-8,";
 		csvContent+="Prenom, Nom, Email , Rue, Numéro, Boite, Code postal, Ville, Pays\n";
 		for(var i=0; i<users.length;i++){
 			var user = users[i];
@@ -30,13 +30,12 @@ Template.addressToCSV.events({
 		}
 
 		var encodedUri = encodeURI(csvContent);
-		window.open(encodedUri);
 
 		var link = document.createElement("a");
 		link.setAttribute("href", encodedUri);
 		link.setAttribute("download", "data.csv");
 
-		link.click(); // This will download the data file named "my_data.csv".
+		link.click(); // This will download the data file named "data.csv".
 	},
 
 });

@@ -42,6 +42,14 @@ Router.route('/', {
 	}
 });
 
+Router.route('/gagnants', {
+	template:'winners',
+	name:"winners",
+	waitOn: function(){
+		return [ Meteor.subscribe('Winners'), Meteor.subscribe('Pairs'),Meteor.subscribe('users')  ]
+	},
+});
+
 Router.route('/email-terrain', {
 	template: 'courtEmail',
 	name: 'courtEmail',

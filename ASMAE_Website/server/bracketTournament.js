@@ -248,6 +248,9 @@ Meteor.methods({
     poolIdList = typeData[category];
     if(poolIdList==undefined) return;
 
+    var andQuery = [{"type":type},{"year":year},{"category":category}];
+    Winners.remove({$and:andQuery}); // Remove any previous winner
+
     var winnersData = getCategoryWinners(poolIdList, maxWinners);
     return winnersData;
   },
