@@ -1000,6 +1000,7 @@ Meteor.methods({
 			if(pData['playerWish']) p['playerWish'] = pData['playerWish'];
 			if(pData['courtWish']) p['courtWish'] = pData['courtWish'];
 			if(pData['otherWish']) p['otherWish'] = pData['otherWish'];
+			if(pData['partnerEmail']) p['partnerEmail'] = pData['partnerEmail'];
 
 			if(pData['extras']){
 				var extr = {};
@@ -1498,7 +1499,7 @@ Meteor.methods({
 		data.pairs = pairs;
 		data.category = category;
 		if(pool.leader==undefined){
-			data.leader=pair.player1._id;
+			data.leader= pair.player1 ? pair.player1._id : pair.player2._id;
 		}
 		Meteor.call('updatePool', data);
 	},
@@ -1565,6 +1566,10 @@ Meteor.methods({
 				}
 				// Pool not full
 				const maxNbrPairsInPool = 6;
+				if (pool.pairs === undefined) {
+					pool.pairs = [];
+					return poolList[i];
+				}
 				if (pool.pairs.length < maxNbrPairsInPool) {
 					return poolList[i];
 				}
@@ -1836,16 +1841,16 @@ Meteor.methods({
 		}
 
 		var userID = Meteor.userId();
-		console.log(userID);
 
-		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1._id && userID!==pair.player2._id))
+		var userInThisPair = (pair.player1 ? userID===pair.player1._id : false) || (pair.player2 ? userID===pair.player2._id : false);
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && !userInThisPair)
 		{
 			console.error("You don't have the permission to do that");
 			throw new Meteor.error("unsubscribeTournament: no permissions");
 			return false;
 		}
 
-		var userPlayer = pair.player1._id===userID ? "player1" : "player2";
+		var userPlayer = pair.player1 && pair.player1._id===userID ? "player1" : "player2";
 		var partnerPlayer = userPlayer==="player1" ? "player2" : "player1";
 
 		var pool = Pools.findOne({pairs:pair_id}); // Find the right pool
@@ -1853,10 +1858,6 @@ Meteor.methods({
 			console.error("Error unsubscribe : no pool found for this pair");
 			return false;
 		}
-
-		console.log(pair);
-		console.log(userPlayer);
-		console.log(partnerPlayer);
 
 		var user;
 		if (userPlayer==="player1") {
@@ -1871,7 +1872,6 @@ Meteor.methods({
 		Payments.remove({'userID': userID, 'tournamentYear': currentYear}); 	//TODO: precise the day
 
 
-		console.log(user);
 		// No other player
 		if (typeof pair.partnerPlayer === 'undefined') {
 			// Remove the pair from the pool and from the Pairs table
@@ -1920,7 +1920,7 @@ Meteor.methods({
       var dataEmailPartner={
         intro:"Bonjour "+partner.profile.firstName+",",
         important:"Nous avons une mauvaise nouvelle pour vous.",
-        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jour. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours aller choisir un nouveau partneaire sur notre site !"
+        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jouer. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours choisir un nouveau partneaire sur notre site !"
       };
       var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
       var options =   {
