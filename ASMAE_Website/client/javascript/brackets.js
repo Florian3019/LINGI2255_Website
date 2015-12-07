@@ -920,11 +920,11 @@ Template.brackets.events({
     Meteor.call("addToModificationsLog",
     {"opType":"Modification points match knock-off",
     "details":
-        "Round: "+round+
+        "Round: "+round+" "+
         u01.profile.firstName + " " + u01.profile.lastName + " et "+u02.profile.firstName + " " + u02.profile.lastName +
-        " "+score0+ " VS "+
+        " ("+score0+ ") VS "+
         u11.profile.firstName + " " + u11.profile.lastName + " et "+u12.profile.firstName + " " + u12.profile.lastName +
-        " "+score1 +
+        " ("+score1 +")"
         getStringOptions()
     },
     callback);
