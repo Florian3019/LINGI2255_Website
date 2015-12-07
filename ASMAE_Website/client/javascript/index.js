@@ -105,7 +105,7 @@ Template.index.events({
 		var nCourtSunday2014 = 20;
 		var nCourtBoth2014 = 10;
 
-		var nUnregistered = 200;
+		var nUnregistered = 50;
 		var nStaff = 10;
 		var nAdmin = 3;
 

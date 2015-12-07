@@ -117,23 +117,15 @@ getDayPairFromPlayerID = function(userId, day) {
     }
 }
 
+
 getTypeAndCategoryFromPairID = function(pairID) {
     var pool = Pools.findOne({pairs:pairID});
     if (pool === undefined) {
         return undefined;
     }
-    var poolID = pool._id;
-    var typeData = Types.findOne({$or:[{"preminimes":poolID}, {"minimes":poolID}, {"cadets":poolID}, {"scolars":poolID}, {"juniors":poolID}, {"seniors":poolID}, {"elites":poolID}, {"all":poolID}]});
-    var playerType = typeData.typeString;
-
-    var playerCategory = undefined;
-    for(var i=0; i<categoriesKeys.length;i++){
-        var cat = typeData[categoriesKeys[i]]; // List of pool ids
-        if(cat!==undefined && cat.indexOf(pool._id)>-1){
-            playerCategory = categoriesTranslate[categoriesKeys[i]];
-            break;
-        }
-    }
+    var playerType = pool.type;
+    var playerCategory = pool.category;
+    
     return {playerType:playerType, playerCategory:playerCategory};
 }
 
@@ -151,9 +143,29 @@ getDayFromType = function(type) {
     }
 }
 
+getExtrasFromPlayerID = function(playerID, day) {
+    if (playerID===undefined || (day!=="saturday" && day!=="sunday")) {
+        return undefined;
+    }
+    var pair = getDayPairFromPlayerID(playerID, day);
+    if (pair===undefined) {
+        return undefined;
+    }
+    if (pair.player1 && pair.player1._id===playerID) {
+        return pair.player1.extras;
+    }
+    else if (pair.player2 && pair.player2._id===playerID) {
+        return pair.player2.extras;
+    }
+    else {
+        console.error("Some weird bug... again ? See getExtrasFromPlayerID");
+        return undefined;
+    }
+}
+
 getRegistrationInfoFromPlayerID = function(playerID) {
     var pairs = getPairsFromPlayerID(playerID);
-    if (typeof pairs === 'undefined') {
+    if (typeof pairs === 'undefined' || pairs.length < 1) {
         return undefined;
     }
     var satData;

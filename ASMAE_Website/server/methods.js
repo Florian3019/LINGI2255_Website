@@ -525,7 +525,6 @@ Meteor.methods({
 			console.warn("Warning : called updateType with no input");
 			return;
 		}
-		console.log(data);
 		Types.update({_id: typeData._id} , data);
 		return typeData._id;
 	},
@@ -1636,6 +1635,9 @@ Meteor.methods({
 			}
 			if(extraData.comment!==undefined){
 				data.comment = extraData.comment;
+			}
+			if(extraData.day!==undefined) {
+				data.day = extraData.day
 			}
 			if(extraId===undefined){
 				extraId = Extras.insert(data);

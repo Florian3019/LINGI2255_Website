@@ -449,8 +449,31 @@ Template.tournamentRegistrationTemplate.helpers({
 		}
 	},
 
-	'extras': function () {
-     	return Extras.find();
+	'extras': function (day) {
+		if (day!=="samedi" && day!="dimanche") {
+			return undefined;
+		}
+		day = day=="samedi" ? "saturday" : "sunday";
+     	var extras = Extras.find({day:day}).fetch();
+		if (extras===undefined) {
+			return undefined;
+		}
+		var playerExtras = getExtrasFromPlayerID(Meteor.userId(),day);
+		if (playerExtras === undefined) {
+			return extras;
+		}
+		for (var i=0; i<playerExtras.length; i++) {
+			var pExtra = playerExtras[i];
+			for(var j=0; j<extras.length; j++) {
+				var ex = extras[j];
+				var qty = pExtra[ex.name];
+				if (qty !== undefined) {
+					ex.quantity = qty;
+				}
+			}
+		}
+		console.log(extras);
+		return extras;
     },
 
     'getName': function(){
@@ -466,7 +489,11 @@ Template.tournamentRegistrationTemplate.helpers({
 
     'getPrice': function(){
     	return this.price;
-    }
+    },
+
+	'getQuantity': function() {
+		return this.quantity;
+	}
 
 });
 
@@ -908,7 +935,7 @@ Template.tournamentRegistrationTemplate.events({
 			"otherWish":otherWish
 		};
 
-		var extras = Extras.find().fetch();
+		var extras = Extras.find({day:day}).fetch();
 		var extrasPlayer = playerData.extras;
 
 		for(var i=0;i<extras.length;i++){

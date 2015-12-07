@@ -125,15 +125,15 @@ Meteor.methods({
 		function insertExtras() {
 			if (typeof Extras.findOne({name:"BBQ"}) === 'undefined') {
 				console.log("Inserting BBQ");
-				Extras.insert({name: "BBQ", price: 8, comment: "poulet-merguez"});
+				Extras.insert({name: "BBQ", price: 8, comment: "poulet-merguez", day:"saturday"});
 			}
 			if (typeof Extras.findOne({name:"Karaoke"}) === 'undefined') {
 				console.log("Inserting Karaoke");
-				Extras.insert({name: "Karaoke", price: 4, comment: "Pour les petits et les grands"});
+				Extras.insert({name: "Karaoke", price: 4, comment: "Pour les petits et les grands", day:"sunday"});
 			}
 			if (typeof Extras.findOne({name:"Dessert"}) === 'undefined') {
 				console.log("Inserting Dessert");
-				Extras.insert({name: "Dessert", price: 3, comment: "Tiramisu"});
+				Extras.insert({name: "Dessert", price: 3, comment: "Tiramisu", day:"saturday"});
 			}
 		}
 
@@ -413,6 +413,7 @@ Meteor.methods({
 					HQDist : getDistanceFromHQ(coords)
 				};
 
+				console.log(court);
 				var id = Courts.insert(court);
 			}
 		}

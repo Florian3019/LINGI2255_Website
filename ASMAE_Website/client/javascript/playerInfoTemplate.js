@@ -217,7 +217,10 @@ Template.playerInfoTemplate.helpers({
 		var partnersaturdayid = Session.get("partnersaturdayid");
 		var partnersundayid = Session.get("partnersundayid");
 		var user = Meteor.user();
-		if (user === undefined) {
+		if (user === undefined || user === null) {
+			return undefined;
+		}
+		if (user.profile === undefined || user.profile === null) {
 			return undefined;
 		}
 		var isStaff = user.profile.isAdmin || user.profile.isStaff;
