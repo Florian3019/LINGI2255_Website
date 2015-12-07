@@ -36,8 +36,26 @@ Template.sendEmailToList.events({
           }
         });
           break;
+          case "email":
+          var mail=document.getElementById("mails").value;
+          Meteor.call("emailFeedback",mail,subject,{texte:texte}, function(error, result){
+            if(error){
+              console.log("error", error);
+            }
+          });
+          break;
       }
-      console.log("done");
+      document.getElementById("mails").value="";
+      document.getElementById("subject").value="";
+      document.getElementById("mailContent").value="";
     }
-  }
+  },
+  'change select': function(e,t){
+      if(document.getElementById("mailToList").value == "email"){
+        $("#mailDiv").show();
+      }
+      else {
+        $("#mailDiv").hide();
+      }
+     }
 });

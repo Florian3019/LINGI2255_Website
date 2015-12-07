@@ -61,13 +61,18 @@ Template.index.helpers({
 		 return Session.get('showNavBar');
 	},
 
-  'fullSheets':function(){
-    return {full:true};
-  }
+  	'fullSheets':function(){
+    	return {full:true};
+  	}
 
 });
 
 Template.index.events({
+	
+	'click .menuItem': function() {
+		$(window).scrollTop(0);
+	},
+
 	'click #popdb' : function(event) {
 		/*
 		 * 2015 data
@@ -126,6 +131,7 @@ Template.index.events({
 
 		Meteor.call("populateDB", tournamentDataTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin);
 	},
+	
 	'click #popdbtest' : function(event) {
 		/*
 		 * 2015 data

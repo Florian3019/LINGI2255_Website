@@ -1064,30 +1064,38 @@ Meteor.methods({
 
 
 		var paymentUser = Meteor.userId();
-
 		paymentData = {
 			userID : paymentUser,
 			tournamentYear : currentYear,
-			day : pairData.day,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
 			balance : amount
 		};
 
 		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear, 'day': pairData.day});
+		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentYear': currentYear});
 		if(paymentAlreadyExists){
-			if(pairData._id){
-				Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
+			if(pairData._id){	//If it is an update: update the data
+				if(paymentAlreadyExists.status === "paid"){
+					if(paymentAlreadyExists.balance > amount){		// He paid to much
+						paymentData.balance = 0
 					}
-				});
+					else{		// He didn't paid enough
+						paymentData.balance = amount - paymentAlreadyExists.balance;
+					}
+				}
 			}
-			else {
-				console.error("Payment already exists and should not be updated");
+			else {		// The player registers to the second tournament: merge the two payments
+				console.log("The players registers to the second tournament: merge his payments.");
+				paymentData.balance = paymentAlreadyExists.balance + amount;
 			}
+
+			Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
+				if(err){
+					console.error('insert payment error');
+					console.error(err);
+				}
+			});
 
 		}
 		else {
@@ -1871,7 +1879,7 @@ Meteor.methods({
 
 		// Remove payment
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		Payments.remove({'userID': userID, 'tournamentYear': currentYear}); 	//TODO: precise the day
+		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
 
 
 		// No other player
@@ -2074,4 +2082,54 @@ Meteor.methods({
 
 
 
-  });
+	/*
+		Structure:
+		{
+			_id:<id>, // Automatically set
+			year:<year>,
+			type:<type>,
+			category:<category>,
+			first:<pairId>,
+			second:<pairId>
+		}
+		returns the winnerId
+	*/
+	'updateWinner':function(winnerData){
+		if(!(Meteor.call('isAdmin') || Meteor.call('isStaff'))){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to add a winner");
+			return;
+		}
+
+		var andQuery = [{"type":winnerData.type},{"year":winnerData.year},{"category":winnerData.category}];
+		Winners.remove({$and:andQuery}); // Remove any previous winner
+
+		var data = {};
+
+		if(winnerData.year!==undefined && winnerData.year!==""){
+			data.year = winnerData.year;
+		}
+		if(winnerData.type!==undefined && winnerData.type!==""){
+			data.type = winnerData.type;
+		}
+		if(winnerData.category!==undefined && winnerData.category!==""){
+			data.category = winnerData.category;
+		}
+		if(winnerData.first!==undefined && winnerData.first!==""){
+			data.first = winnerData.first;
+		}
+		if(winnerData.second!==undefined && winnerData.second!==""){
+			data.second = winnerData.second;
+		}
+
+		if(winnerData._id !== undefined){
+			Winners.update({_id:winnerData._id}, {$set:data});
+			return winnerData._id;
+		}
+
+		return Winners.insert(data);
+	},
+
+
+
+}); // End helpers

@@ -21,7 +21,7 @@ Router.onBeforeAction(function() {
         else
 			this.next();
 	}
-}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap']});
+}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap', 'winners']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -36,6 +36,17 @@ Router.route('/', {
 	name: 'home',
 	waitOn: function(){
 		return [ Meteor.subscribe('Years') ]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	}
+});
+
+Router.route('/gagnants', {
+	template:'winners',
+	name:"winners",
+	waitOn: function(){
+		return [ Meteor.subscribe('Winners'), Meteor.subscribe('Pairs'),Meteor.subscribe('users')  ]
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);

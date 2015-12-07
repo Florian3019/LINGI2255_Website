@@ -18,6 +18,10 @@ Meteor.publish('Courts', function(){
   return Courts.find();
 });
 
+Meteor.publish('Winners', function(){
+  return Winners.find();
+});
+
 Meteor.publish('Addresses', function(){
       if(isStaffOrAdmin(this.userId)) {
         return Addresses.find();

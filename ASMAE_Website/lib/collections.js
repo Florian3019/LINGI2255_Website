@@ -13,3 +13,4 @@ ModificationsLog = new Mongo.Collection('ModificationsLog');
 GlobalValues = new Mongo.Collection('GlobalValues');
 Threads = new Mongo.Collection('Threads');
 Topics = new Mongo.Collection('Topics');
+Winners = new Mongo.Collection('Winners');
