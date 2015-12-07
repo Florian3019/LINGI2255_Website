@@ -96,14 +96,14 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-sm-10 col-sm-offset-3">
+        <div class="col-sm-3 col-sm-offset-3">
           <div class="form-group has-feedback" id="sexDiv">
 		        <label>Sexe: </label> <br>
-              <label class="radio-inline">
-                <input type="radio" name="sex" id="male" value="M" class="alonePlayerChangeListener" {{setGender 'true'}}>Homme</label>
-              <br>
-            <label class="radio-inline">
-            <input type="radio" name="sex" id="female" value="F" class="alonePlayerChangeListener" {{setGender 'false'}}>Femme</label>
+                <select name="sex" id="sex"  class="form-control" style="display: inline">
+                    <option value="default" selected="selected"> </option>
+                     <option value="M">Homme</option>
+                     <option value="F">Femme</option>
+                </select>
             <div id="sexError" hidden>
               <span class="help-block" id="sexErrorText">Merci d'entrer votre sexe</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
