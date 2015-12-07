@@ -3,12 +3,6 @@
         <div class="page-header">
             <h2>Envoyer un email</h2>
         </div>
-        <div class="row">
-        <div class="col-sm-4 col-sm-offset-2">
-          <input type="text" class="form-control" id="subject" name="subject" placeholder="Sujet">
-        </div>
-      </div>
-      <br>
       <div class="row">
         <div class="col-sm-8 col-sm-offset-2">
           <label for="mailToList">Destinataires:</label>
@@ -17,9 +11,22 @@
              <option value="allPlayers">Utilisateurs inscrits au tournoi cette année</option>
              <option value="allCourtOwners">Propriétaires de terrains</option>
              <option value="staffMember">Membres du staff</option>
+             <option value="email">Addresse email</option>
           </select>
         </div>
 	  </div>
+    <br>
+    <div class="row" id="mailDiv" style="display:none">
+      <div class="col-sm-8 col-sm-offset-2">
+        <input type="text" class="form-control" id="mails" name="mails" placeholder="Adresse email">
+      </div>
+  </div>
+  <br>
+    <div class="row">
+    <div class="col-sm-8 col-sm-offset-2">
+      <input type="text" class="form-control" id="subject" name="subject" placeholder="Sujet">
+    </div>
+  </div>
       <br>
       <div class="row">
         <div class="col-sm-8 col-sm-offset-2">
