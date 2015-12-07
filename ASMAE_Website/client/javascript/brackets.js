@@ -883,11 +883,11 @@ Template.brackets.events({
     score1 = document.getElementById("scoreInput1").value;
     score1 = parseInt(score1);
     setPoints(pair1, round, score1);
-    
-    console.log(totalRounds);
-    console.log(round);
+  
+    /*
+      Save the winner to display in the winner table
+    */
     if(round == totalRounds){
-      console.log("Saving Winner !");
       // This is the last round
       var data = {};
       data.first = score0 > score1 ? pair0._id : pair1._id;
