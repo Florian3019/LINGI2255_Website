@@ -475,8 +475,8 @@ Meteor.methods({
         },
 
         'emailInvitPeople':function(userId,partner){
-          var user = Meteor.users.findOne({_id:Meteor.userId()});
-          if(user !== undefined){
+          var user = Meteor.users.findOne({_id:userId});
+          if(user !== undefined && user == Meteor.user()){
             var data ={
               intro:"Bonjour,",
               important:user.firstName+ " "+ user.lastName+ " veut jouer avec vous !",
@@ -488,7 +488,7 @@ Meteor.methods({
               auth: "api:" + process.env.MAILGUN_API_KEY,
               params: {
                 "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
-                "to":part.emails[0].address,
+                "to":partner,
                 "subject": "Quelqu'un veut jouer avec vous !",
                 "html": SSR.render("mailing",data),
               }
