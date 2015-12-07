@@ -126,9 +126,6 @@ GlobalValues.allow(allowForStaffOrAdmin);
 /*  Known uses : client/scoreTable  */
 Matches.allow(allowForStaffOrAdmin);
 
-Meteor.users.allow(allowForStaffOrAdmin);
-
-
 Meteor.users.deny({'update':function(userId, doc){return !isStaffOrAdmin(userId)}});
 
 

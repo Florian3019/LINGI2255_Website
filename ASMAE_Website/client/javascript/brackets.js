@@ -911,11 +911,10 @@ Template.brackets.events({
         console.error(err);
         return;
       }
-        Meteor.users.update({"_id":pair0.player1._id},{$addToSet:{"log":logId}});
-        Meteor.users.update({"_id":pair0.player2._id},{$addToSet:{"log":logId}});
-        Meteor.users.update({"_id":pair1.player1._id},{$addToSet:{"log":logId}});
-        Meteor.users.update({"_id":pair1.player2._id},{$addToSet:{"log":logId}});
-        
+        Meteor.call('addToUserLog', pair0.player1._id, logId);
+        Meteor.call('addToUserLog', pair0.player2._id, logId);
+        Meteor.call('addToUserLog', pair1.player1._id, logId);
+        Meteor.call('addToUserLog', pair1.player2._id, logId);        
     }
 
     Meteor.call("addToModificationsLog",
