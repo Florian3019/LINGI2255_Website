@@ -81,16 +81,21 @@ html {
 .nav-sidebar-header {
 	padding: 10px;
     font-size: 25px;
-
 }
 
 .nav-sidebar-header-mobile {
     padding: 10px;
     font-size: 25px;
     display: none;
+    text-decoration: none;
 }
 
+
 /* Content of the web site */
+.page-header {
+    text-align: center;
+}
+
 .page-content {
     padding-top: 64px;
     margin-left: 240px;
@@ -98,7 +103,6 @@ html {
     /*height: 100%;*/
     overflow: auto;
     z-index: 1;
-
 }
 
 .content {
@@ -170,19 +174,30 @@ html {
     border-radius : 15px !important;
 }
 
+/* Title for information box */
 .panel-heading {
     background: rgba(0, 76, 153, 0.6) !important;
     /*background: #f3f3f3 !important;*/
-    color: #000 !important;
+    color: #fff !important;
+    font-weight: bold;
 }
 
+/* Text to fill can only grow verticaly (no change of the width) */
 textarea {
     resize:vertical !important;
 }
 
+/* Hidde arrow number box */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
 /* Box alert info */
 .alert-info {
-    background-color: #A0522D !important;
+    background-color: rgba(0, 76, 153, 0.6) !important;
 }
 
 
