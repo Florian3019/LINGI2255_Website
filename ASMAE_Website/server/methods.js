@@ -47,7 +47,7 @@ Meteor.methods({
 			var data = {};
 			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
-				return undefined;
+				throw new Meteor.Error("No date for the tournament");
 			}
 
 			data.tournamentDate = launchTournamentData.tournamentDate;
@@ -55,12 +55,12 @@ Meteor.methods({
 
 			if (typeof Years.findOne({_id:data._id}) !== 'undefined') {
 				console.error("Tournament already exists");
-				return undefined;
+				throw new Meteor.Error("A tournament already exists for this year");
 			}
 
 			if(typeof launchTournamentData.tournamentPrice === 'undefined') {
 				console.error("launchTournament: No price for the tournament");
-				return undefined;
+				throw new Meteor.Error("No price for the tournament");
 			}
 
 			data.tournamentPrice = launchTournamentData.tournamentPrice;
@@ -102,7 +102,7 @@ Meteor.methods({
 		}
 		else {
 			console.error("You are not an administrator, you don't have the permission to do this action.");
-			return false;
+			throw new Meteor.Error("You are not an administrator, you don't have the permission to do this action.");
 		}
 	},
 
