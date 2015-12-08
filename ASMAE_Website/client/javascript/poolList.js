@@ -616,6 +616,13 @@ Template.poolList.onRendered(function() {
 	// Session.set("PoolList/Year","");
 	Session.set("PoolList/Type","");
 	Session.set("PoolList/Category","");
+
+	var $window = $(window);
+	var wWidth  = $window.width();
+	if (wWidth <= 750) { // Only in mobile screen (not 767px cause marge of 17px)
+		// Go mobile menu
+		window.location.hash = '#menu-mobile';
+	}
 });
 
 var showPairModal = function(){
@@ -624,6 +631,46 @@ var showPairModal = function(){
 }
 
 Template.poolList.events({
+	"click #helpPool":function(event){
+
+
+		var colorLegend = "";
+		for(var i=0; i<colorKeys.length;i++){
+			var key = colorKeys[i];
+			colorLegend += "<br><span style='color:"+colors[key].color+"'>"+colors[key].label+"</span>";
+		}
+
+	    swal({
+	      title:"<h1>Aide</h1>",
+	      text: "<ul class='list-group' style='text-align:left'>"+
+	      		"<li class='list-group-item'>Pour afficher les informations relatives à un joueur ou une paire, cliquez dessus.</li>"+
+	      		"<li class='list-group-item'>Pour séparer une paire, déplacez la d'une poule vers la boîte 'Séparer une paire'.</li>"+
+	            "<li class='list-group-item'>Pour créer une paire, déplacez deux joueurs compatibles dans la boîte 'Créer une paire'.</li>"+
+	            "<li class='list-group-item'>Pour modifier une poule, déplacez une(des) paire(s) d'une poule à une autre. Cliquez ensuite sur sauver.</li>"+
+	            "<li class='list-group-item'>Pour afficher la table des scores, cliquez sur le bouton en haut de la poule concernée.</li>"+
+	            "<li class='list-group-item'>Pour changer le chef de poule, cliquez sur sa paire puis ensuite sur le bouton 'Choisir comme chef de poule'.</li>"+
+	            "<li class='list-group-item'>Pour devenir responsable de cette catégorie, cliquez sur 'Devenir responsable'.</li>"+
+	            "<li class='list-group-item'>Pour ajouter une poule, cliquez sur '+Poule' en bas de page.</li>"+
+	            "<li class='list-group-item'>La modification d'un terrain se fait sur la page de la table des scores.</li>"+
+	            "\n\n"+
+	            "</ul>"+
+	            "<center>"+
+                      "<b>Légende:</b>"+
+                        colorLegend+
+                        "<br><span class='glyphicon glyphicon-star leaderStar' style='margin-right:15px'></span>Chef de poule"+
+ 	            "</center>",
+	      type:"info",
+	      customClass:"sweetAlertScroll",
+	      confirmButtonText:"Ok",
+	      confirmButtonColor:"#0099ff",
+	      html:true
+	      }
+	      );
+
+    $(document.getElementsByClassName("sweetAlertScroll")[0]).scrollTop(0);
+    // document.getElementsByClassName("sweetAlertScroll")[0].scrollTop(0);
+  	},
+
 	'click #equilibrate':function(event){
 		equilibrate(document);
 	},
@@ -816,15 +863,6 @@ Template.poolList.helpers({
 	// Returns a yearData with id year (copy of the same function in poolsSidebarCollapsableMenu.helpers)
 	'getYear' : function(){
 		return getYearFunct(document)
-	},
-
-	'getColors':function(){
-		var toReturn = [];
-		for(var i=0; i<colorKeys.length;i++){
-			var key = colorKeys[i];
-			toReturn.push(colors[key]);
-		}
-		return toReturn;
 	},
 
 	// Returns a typeData

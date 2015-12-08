@@ -8,7 +8,15 @@
 						{{>buildTournament}}
 					{{else}}
 						<div class="page-header">
-							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} en {{translateCategory this}} {{/unless}}</h2>
+							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} en {{translateCategory this}} {{/unless}}
+							
+							{{#if isAdminOrStaff}}
+								<button type="button" title="Aide" id="helpBrackets" class="btn btn-default btn-info" style="margin-left:15px">
+							  		<span class="glyphicon glyphicon-question-sign"></span>
+								</button>
+							{{/if}}
+							</h2>
+							
 						</div>
 						{{#if isAdminOrStaff}}
 				 			{{#if isLoading}}
@@ -18,11 +26,6 @@
 									<button type="button" id="start" class="btn btn-default btn-lg">
 									  <span class="glyphicon glyphicon-repeat"></span> <span id="startText"> Démarrer ce knock-off</span>
 									</button>
-								  	<div class="pull-right">
-									  <h4>Gagnants par poule:
-									 	<input type="number" min="1" class="form-control" id="winnersPerPool" style="width:15%; display:inline; text-align:center;" value="2">
-									  </h4>
-				 					</div>
 					 			</div>
 			 				{{/if}}
 			 			{{/if}}
@@ -142,7 +145,7 @@
 {{#if isAdminOrStaff}}
 	{{#unless buildingTournament}}
 	<center>
-		<button type="button" id="getPDF" class="btn btn-default btn-lg btn-warning hideIfNotStarted hideIfEmpty" data-pool="{{this._id}}" style="display:none">
+		<button type="button" id="getPDF" class="btn btn-default btn-lg btn-warning hideIfNotStarted hideIfEmpty" data-pool="{{this._id}}" style="display:none; margin:20px" >
 		<span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
 		</button>
 		<br>
