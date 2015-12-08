@@ -832,41 +832,57 @@ Template.brackets.events({
   },
 
   'click #start':function(event){
-      Session.set("brackets/isLoading",true);
+      var startTournamentCallBack = function(){
+        Session.set("brackets/isLoading",true);
 
-      var infoBox =document.getElementById("infoBox");
-      if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered and hide it
-      console.log("calling startTournament");
-      var year = Session.get('PoolList/Year');
-      var type = Session.get('PoolList/Type');
-      var cat = Session.get('PoolList/Category');
+        var infoBox =document.getElementById("infoBox");
+        if(infoBox!=undefined) infoBox.setAttribute("hidden",""); // check if infoBox is already rendered and hide it
+        console.log("calling startTournament");
+        var year = Session.get('PoolList/Year');
+        var type = Session.get('PoolList/Type');
+        var cat = Session.get('PoolList/Category');
 
-      var maxWinners = document.getElementById("winnersPerPool").value;
+        var maxWinners = document.getElementById("winnersPerPool").value;
 
-      callback = function(err, retVal){
-        Session.set("brackets/isLoading",false);
-        var hasNoPairs = retVal.winnerPairPoints.length == 0 && retVal.loserPairPoints.length ==0;
-        if(hasNoPairs){
-          // Cancel operation
-          setInfo(document, "Pas de matchs pour l'année "+year
-          + " type " + typesTranslate[type]
-          + " de la catégorie " + categoriesTranslate[cat]
-          + ". Si vous en avez créé, cliquez sur démarrer le knock-off pour mettre à jour");
+        callback = function(err, retVal){
+          Session.set("brackets/isLoading",false);
+          var hasNoPairs = retVal.winnerPairPoints.length == 0 && retVal.loserPairPoints.length ==0;
+          if(hasNoPairs){
+            // Cancel operation
+            setInfo(document, "Pas de matchs pour l'année "+year
+            + " type " + typesTranslate[type]
+            + " de la catégorie " + categoriesTranslate[cat]
+            + ". Si vous en avez créé, cliquez sur démarrer le knock-off pour mettre à jour");
 
+            return;
+          }
+          else{
+            hideInfo(document);
+            Session.set('brackets/buildingTournament', true);
+          }
+          Session.set("brackets/pairPoints",retVal);
+        };
+
+        if(maxWinners<1){
+          console.error("maxWinners can't be lower than 1");
           return;
         }
-        else{
-          hideInfo(document);
-          Session.set('brackets/buildingTournament', true);
-        }
-        Session.set("brackets/pairPoints",retVal);
+        Meteor.call('startTournament', year, type, cat, maxWinners, callback);
       };
 
-      if(maxWinners<1){
-        console.error("maxWinners can't be lower than 1");
-        return;
-      }
-      Meteor.call('startTournament', year, type, cat, maxWinners, callback);
+
+      swal({
+      title: "Êtes-vous sûr ?",
+      text: "Si ce knock-off a déja commencé, les données existantes seront perdues.",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonText:"Annuler",
+      confirmButtonColor: "#3085d6",
+      confirmButtonText: "Lancer ce knock-off",
+      closeOnConfirm: true },
+      function(){
+        startTournamentCallBack();
+      });
   },
 
   'click #saveScore':function(event){
