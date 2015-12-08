@@ -52,7 +52,7 @@ Template.launchTournament.events({
     },
 
     'click #modifyLaunchButton': function(){
-        Meteor.call('deleteCurrentYear', function(err, result){
+        Meteor.call('deleteCurrentTournament', function(err, result){
             if(err){
                 console.log(err);
             }

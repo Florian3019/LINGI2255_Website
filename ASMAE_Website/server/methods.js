@@ -90,6 +90,7 @@ Meteor.methods({
 			data.step5done = false;
 			data.step6done = false;
 			data.setp7done = false;
+			data.setp8done = false;
 
 			var insertedYearID = Years.insert(data);
 			console.log("Tournament launched for year "+data._id);
@@ -105,7 +106,7 @@ Meteor.methods({
 		}
 	},
 
-	'deleteCurrentYear': function(){
+	'deleteCurrentTournament': function(){
 			if(!Meteor.call('isAdmin')){
 				console.error("You don't have the permission to do that.");
 				return false;
@@ -113,6 +114,9 @@ Meteor.methods({
 
 			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 			Years.remove({_id: currentYear});
+
+			//Delete all pairs
+			Pairs.remove({year: currentYear});
 
 			Meteor.call('restartTournament'); 	//Set currentYear to ""
 	},
