@@ -4,6 +4,7 @@
 Template.modifyExtras.events({
 	'click #addExtraButton':function(event){
 		// Add new extra
+		event.preventDefault();
 
 		var name = document.getElementById("nameExtra");
 		var price = document.getElementById("priceExtra");
@@ -18,9 +19,9 @@ Template.modifyExtras.events({
 					"comment": comment.value
 			};
 			Meteor.call('updateExtra',data);
-			Meteor.call("addToModificationsLog", 
-            {"opType":"Ajout d'un extra", 
-            "details":name.value +": "+price.value+"€ "+ (comment.value!=="" ? "("+comment.value+")" : "") 
+			Meteor.call("addToModificationsLog",
+            {"opType":"Ajout d'un extra",
+            "details":name.value +": "+price.value+"€ "+ (comment.value!=="" ? "("+comment.value+")" : "")
             });
             infoBox.setAttribute("hidden","");
             name.value = "";
@@ -34,7 +35,7 @@ Template.modifyExtras.events({
 });
 
 Template.modifyExtras.helpers({
-	
+
 	'hasExtras' : function(){
 		return Extras.find().fetch().length > 0;
 	},
@@ -74,9 +75,9 @@ var modifyExtra=function(id){
 
 	Meteor.call('updateExtra',data);
 
-	Meteor.call("addToModificationsLog", 
-    {"opType":"Modification d'un extra", 
-    "details":data.name +": "+data.price+"€ "+ (data.comment!=="" ? "("+data.comment+")" : "")  
+	Meteor.call("addToModificationsLog",
+    {"opType":"Modification d'un extra",
+    "details":data.name +": "+data.price+"€ "+ (data.comment!=="" ? "("+data.comment+")" : "")
     });
 }
 
@@ -101,12 +102,12 @@ Template.modifyExtras.events({
 	'click .extra-delete':function(event){
 		id = event.currentTarget.dataset.id;
 		Meteor.call('removeExtra',id);
-		
+
 		data = getData(id);
 
-		Meteor.call("addToModificationsLog", 
-        {"opType":"Effacer un extra", 
-        "details":data.name +": "+data.price+"€ "+ (data.comment!=="" ? "("+data.comment+")" : "") 
+		Meteor.call("addToModificationsLog",
+        {"opType":"Effacer un extra",
+        "details":data.name +": "+data.price+"€ "+ (data.comment!=="" ? "("+data.comment+")" : "")
         });
 	}
 

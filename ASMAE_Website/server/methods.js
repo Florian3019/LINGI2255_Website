@@ -47,7 +47,7 @@ Meteor.methods({
 			var data = {};
 			if(typeof launchTournamentData.tournamentDate === 'undefined') {
 				console.error("launchTournament: No date for the tournament");
-				return undefined;
+				throw new Meteor.Error("No date for the tournament");
 			}
 
 			data.tournamentDate = launchTournamentData.tournamentDate;
@@ -55,12 +55,12 @@ Meteor.methods({
 
 			if (typeof Years.findOne({_id:data._id}) !== 'undefined') {
 				console.error("Tournament already exists");
-				return undefined;
+				throw new Meteor.Error("A tournament already exists for this year");
 			}
 
 			if(typeof launchTournamentData.tournamentPrice === 'undefined') {
 				console.error("launchTournament: No price for the tournament");
-				return undefined;
+				throw new Meteor.Error("No price for the tournament");
 			}
 
 			data.tournamentPrice = launchTournamentData.tournamentPrice;
@@ -90,6 +90,7 @@ Meteor.methods({
 			data.step5done = false;
 			data.step6done = false;
 			data.setp7done = false;
+			data.setp8done = false;
 
 			var insertedYearID = Years.insert(data);
 			console.log("Tournament launched for year "+data._id);
@@ -101,11 +102,11 @@ Meteor.methods({
 		}
 		else {
 			console.error("You are not an administrator, you don't have the permission to do this action.");
-			return false;
+			throw new Meteor.Error("You are not an administrator, you don't have the permission to do this action.");
 		}
 	},
 
-	'deleteCurrentYear': function(){
+	'deleteCurrentTournament': function(){
 			if(!Meteor.call('isAdmin')){
 				console.error("You don't have the permission to do that.");
 				return false;
@@ -113,6 +114,9 @@ Meteor.methods({
 
 			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 			Years.remove({_id: currentYear});
+
+			//Delete all pairs
+			Pairs.remove({year: currentYear});
 
 			Meteor.call('restartTournament'); 	//Set currentYear to ""
 	},
@@ -217,9 +221,15 @@ Meteor.methods({
 
 	'turnAdmin': function(nid){
 		if(Meteor.call('isAdmin')){
+			var user = Meteor.users.findOne({_id:nid});
+			if(user.emails.length>0 && user.emails[0].verified!==true){
+				console.error("Error turning admin : the user required did not verify his email address");
+				return false;
+			}
 			Meteor.users.update({_id:nid}, {
            		$set: {"profile.isAdmin":true,"profile.isStaff":true}
          	});
+         	return true;
 		}
 		else {
 			console.error("Error turning admin");
@@ -229,9 +239,15 @@ Meteor.methods({
 
 	'turnStaff': function(nid){
 		if(Meteor.call('isAdmin')){
+			var user = Meteor.users.findOne({_id:nid});
+			if(user.emails.length>0 && user.emails[0].verified!==true){
+				console.error("Error turning staff : the user required did not verify his email address");
+				return false;
+			}
 			Meteor.users.update({_id:nid}, {
            		$set: {"profile.isAdmin":false,"profile.isStaff":true}
          	});
+         	return true;
 		}
 		else {
 			console.error("Error turnning staff");
@@ -241,12 +257,18 @@ Meteor.methods({
 
 	'turnNormal': function(nid){
 		if(Meteor.call('isAdmin')){
+			var user = Meteor.users.findOne({_id:nid});
+			if(user.emails.length>0 && user.emails[0].verified!==true){
+				console.error("Error turning normal : the user required did not verify his email address");
+				return false;
+			}
 			Meteor.users.update({_id:nid}, {
 	        	$set: {"profile.isAdmin":false,"profile.isStaff":false}
 	      	});
+	      	return true;
 		}
 		else {
-			console.error("Error turning normal");
+			console.error("Error turning normal : user is not admin");
 			return false;
 		}
 	},

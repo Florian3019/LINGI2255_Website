@@ -26,7 +26,6 @@ Template.navigation.helpers({
 Template.navigation.events({
 
 	'click #tournamentNavigation': function(){
-
 		Session.set('showNavBar', true);
 		
 		var $window = $(window);

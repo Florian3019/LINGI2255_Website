@@ -143,9 +143,12 @@
             {{/if}}
             {{#if canModify}}
               <center>
-                <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Modifier</button>
+                <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>
+                <span class="glyphicon glyphicon-pencil" style="margin-right:15px"></span>
+                Modifier</button>
                 {{#unless ../hideDelete}}
                   <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>
+                  <span class="glyphicon glyphicon-remove" style="margin-right:15px; color:red"></span>
                   Supprimer</button>
                 {{/unless}}
               </center>

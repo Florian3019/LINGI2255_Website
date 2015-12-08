@@ -2,6 +2,26 @@
 	margin-top: 20px;
 }
 
-#courtRegistrationButton{
-	margin-top: 20px;
+#tournamentRegistrationSundayButton{
+	margin-left: 15px;
+}
+
+#tournamentRegistrationModal {
+  text-align: center;
+
+}
+
+@media screen and (min-width: 768px) {
+  #tournamentRegistrationModal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
+}
+
+#tournamentRegistrationModal .modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
 }

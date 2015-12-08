@@ -5,9 +5,14 @@
         <h2 id="BigHeaderPayment">Joueurs pas en ordre de paiement</h2>
     </div>
     <div class="row">
-        Envoyer email rappel de paiement: <button class="btn btn-primary" id="sendPaymentReminderEmail" style="margin-left:10px">Envoyer</button>
-        <div class="pull-right">
-            <input class="form-control playerFilter" id="paymentInput" type="text" placeholder="Recherche"/>
+        <div class="col-md-3">
+        <button class="btn btn-primary" id="sendPaymentReminderEmail" style="margin-left:10px"><span class="glyphicon glyphicon-envelope" style="margin-right:15px"></span>Rappel de paiement</button>
+        </div>
+        <div class="col-md-3 pull-right">
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                <input class="form-control playerFilter" id="paymentInput" type="text" placeholder="Recherche"/>
+            </div>
         </div>
     </div>
 

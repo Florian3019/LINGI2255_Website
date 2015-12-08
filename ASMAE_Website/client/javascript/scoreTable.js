@@ -269,6 +269,23 @@ var getPairPlayers = function(pairId){
 }
 
 Template.scorePage.events({
+  'click #helpScore':function(event){
+    swal({
+        title:"<h1>Aide</h1>",
+        text: "<ul class='list-group' style='text-align:left'>"+
+                "<li class='list-group-item'>Pour changer de terrain, cliquez sur 'Assigner un terrain' ou sur le terrain actuel.</li>"+
+                "<li class='list-group-item'>La ligne du dessus dans le tableau correspond au score de la paire dans la colonne.</li>"+
+                "<li class='list-group-item'>Pour devenir responsable de cette catégorie, cliquez sur 'Devenir responsable'.</li>"+
+                "<li class='list-group-item'>Pour imprimer le pdf, cliquez sur le bouton correspondant en bas de page.</li>"+
+              "</ul>",
+        type:"info",
+        customClass:"sweetAlertScroll",
+        confirmButtonText:"Ok",
+        confirmButtonColor:"#0099ff",
+        html:true
+        }
+        );
+  },
   'click #scoreTableBack':function(event){
     Session.set("PoolList/ChosenScorePool","");
   },

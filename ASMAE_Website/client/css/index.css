@@ -23,6 +23,10 @@ html {
     background-size: cover;
 }
 
+.indexIcon{
+    margin-right: 15px;
+}
+
 .btn {
 	text-transform: none !important;
 }
