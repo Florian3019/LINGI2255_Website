@@ -75,16 +75,18 @@ html {
     display: block;
     text-decoration: none;
     cursor: pointer;
-    background-color: rgba(51, 153, 255,0.15);
+    background-color: rgba(51, 153, 255, 0.15);
 }
 
 .sidebar-nav a {
-	color: #fff;
+	color: white;
 }
 
 .nav-sidebar-header {
 	padding: 10px;
     font-size: 25px;
+    background: rgba(0, 76, 153, 0.6);
+    color: white;
 }
 
 .nav-sidebar-header-mobile {
@@ -92,7 +94,12 @@ html {
     font-size: 25px !important;
     display: none !important;
     text-decoration: none !important;
-    color: #fff;
+    background: rgba(0, 76, 153, 0.6) !important;
+    color: white !important;
+}
+
+.nav-sidebar-header-mobile:hover {
+    background-color: rgba(0, 76, 153, 0.4) !important;
 }
 
 
@@ -183,7 +190,7 @@ html {
 .panel-heading {
     background: rgba(0, 76, 153, 0.6) !important;
     /*background: #f3f3f3 !important;*/
-    color: #fff !important;
+    color: white !important;
     font-weight: bold;
 }
 
