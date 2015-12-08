@@ -254,9 +254,9 @@ Template.scoreTable.helpers({
 });
 
 var getStringOptions = function(){
-  return "\ncatégorie: "+Session.get("PoolList/Category")+
-      " type: "+Session.get("PoolList/Type") +
-      " année: "+Session.get("PoolList/Year");
+  return " dans "+typesTranslate[Session.get("PoolList/Type")]+">"+
+      categoriesTranslate[Session.get("PoolList/Category")]+
+      " (" + Session.get("PoolList/Year")+")";
 }
 
 var getPairPlayers = function(pairId){
