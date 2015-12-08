@@ -5,24 +5,6 @@
 
 Session.set('paymentFormStatus', null);
 
-// Create data object for payment
-function getFormData(){
-
-	var user = Meteor.user();
-	var extras = getExtrasFromPlayerID(user._id); // Extras for BOTH days
-
-  	var data = {
-    	firstName : user.profile.firstName,
-    	lastName : user.profile.lastName,
-    	email : user.emails[0].address
-  	};
-	if(extras)
-	{
-		data.extras = extras;
-	}
-  	return data;
-}
-
 function initializeBraintree (clientToken) {
 
   braintree.setup(clientToken, 'dropin', {
@@ -33,7 +15,7 @@ function initializeBraintree (clientToken) {
       // we've received a payment nonce from braintree
       // we need to send it to the server, along with any relevant form data
       // to make a transaction
-      var data = getFormData();
+	  var data = {};
       data.nonce = nonce;
 
       Meteor.call('createTransaction', data, function (err, result) {

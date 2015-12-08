@@ -52,16 +52,16 @@
                   <li><a href="{{pathFor route='myRegistration'}}" class="toToggle">Mon inscription</a></li>
                   {{/if}}
                   {{#unless isSaturdayRegistered}}
-                  <li><a href="{{pathFor route='tournamentRegistrationSaturday'}}" id="Registr" class="toToggle">S'inscrire pour le samedi</a></li>
+                  <li><a href="{{pathFor route='tournamentRegistrationSaturday'}}" id="RegistrSaturday" class="toToggle">S'inscrire pour le samedi</a></li>
                   {{/unless}}
                   {{#unless isSundayRegistered}}
-                  <li><a href="{{pathFor route='tournamentRegistrationSunday'}}" id="Registr" class="toToggle">S'inscrire pour le dimanche</a></li>
+                  <li><a href="{{pathFor route='tournamentRegistrationSunday'}}" id="RegistrSunday" class="toToggle">S'inscrire pour le dimanche</a></li>
                   {{/unless}}
                 </ul>
               </li>
               {{/if}}
               {{/if}}
-              <li><a href="{{pathFor route='myCourts'}}" class="toToggle">Mes terrains</a></li>
+              <li><a href="{{pathFor route='myCourts'}}" class="toToggle" id="MesTerrainsMenuButton">Mes terrains</a></li>
               <li><a href="{{pathFor route='contacts'}}" id="askQuestion" class="toToggle">Poser une question</a></li>
               {{/if}}
               <li><a href="{{pathFor route='courtMap'}}" class="toToggle">Carte</a></li>

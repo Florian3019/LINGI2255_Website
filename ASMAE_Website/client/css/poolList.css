@@ -37,15 +37,15 @@
   vertical-align: top;
 }
 
-#poolTable{
+#poolTable {
   background-color: inherit;
 }
 
-#specialTable{
+#specialTable {
   background-color: inherit;
 }
 
-.parent{
+.parent {
   display: inline-block;
   vertical-align: top;
   height:640px;
@@ -109,12 +109,12 @@
   cursor: -webkit-grabbing;
 }
 
-.removePoolButton{
+.removePoolButton {
   font-size:20px;
   color:red;
 }
 
-.pairs.ex-moved >.list-group>.list-group-item{
+.pairs.ex-moved >.list-group>.list-group-item {
   color : green;
 }
 
@@ -125,6 +125,6 @@
   cursor: move;
 }
 
-.btn-padding{
+.btn-padding {
   margin-right: 10px;
 }

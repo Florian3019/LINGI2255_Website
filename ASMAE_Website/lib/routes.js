@@ -53,14 +53,6 @@ Router.route('/gagnants', {
 	}
 });
 
-Router.route('/email-terrain', {
-	template: 'courtEmail',
-	name: 'courtEmail',
-	onAfterAction: function(){
-		Session.set('showNavBar', true);
-	}
-});
-
 Router.route('/carte-terrains/:_id?', {
 	template: 'courtMap',
 	name: 'courtMap',

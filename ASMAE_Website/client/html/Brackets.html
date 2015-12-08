@@ -8,7 +8,7 @@
 						{{>buildTournament}}
 					{{else}}
 						<div class="page-header">
-							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} > {{translateCategory this}} {{/unless}}</h2>
+							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} en {{translateCategory this}} {{/unless}}</h2>
 						</div>
 						{{#if isAdminOrStaff}}
 				 			{{#if isLoading}}
@@ -16,7 +16,7 @@
 				 			{{else}}
 								<div id="bracketOptions" class="hideIfEmpty showIfNotStarted">
 									<button type="button" id="start" class="btn btn-default btn-lg">
-									  <span class="glyphicon glyphicon-star"></span> <span id="startText"> Démarrer ce knock-off</span>
+									  <span class="glyphicon glyphicon-repeat"></span> <span id="startText"> Démarrer ce knock-off</span>
 									</button>
 								  	<div class="pull-right">
 									  <h4>Gagnants par poule:
@@ -124,10 +124,14 @@
 		  	</div>
 		</div>
         <div class="modal-footer">
-	  	  <button type="button" id="saveScore" class="btn btn-default btn-lg" data-dismiss="modal">
-		    <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauver
-		  </button>
-          <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Fermer</button>
+	  	  	<center>
+		  	  <button type="button" id="saveScore" class="btn btn-default btn-lg btn-success" data-dismiss="modal">
+			    <span class="glyphicon glyphicon-ok"	 aria-hidden="true"></span> Valider
+			  </button>
+	          <button type="button" class="btn btn-default btn-lg btn-danger" data-dismiss="modal">
+	          	<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Annuler
+	          </button>
+        	</center>
         </div>
       </div>
 
@@ -152,7 +156,7 @@
 </template>
 
 <template name="gracketTemplate">
-	<div class="my_gracket" id="gracketContainer"></div>
+	<div class="my_gracket hideIfEmpty hideIfNotStarted" id="gracketContainer"></div>
 {{#with makeBrackets}}
 	{{displayBrackets this}}
 {{/with}}

@@ -6,7 +6,10 @@ module.exports = function () {
     });
 
     this.When(/^I navigate to the court registration page$/, function() {
-        browser.click('#courtRegistrationButton');
+        browser.waitForExist('#MesTerrainsMenuButton')
+        browser.click('#MesTerrainsMenuButton');
+        browser.waitForExist('#AddACourtSuperButton')
+        browser.click('#AddACourtSuperButton')
     });
 
     this.When(/^I fill in information on my court and submit the form$/, function() {
