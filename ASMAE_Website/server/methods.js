@@ -1192,7 +1192,15 @@ Meteor.methods({
 				}
 
 				paymentData.userID = ID['player2'];
-				delete paymentData.bankTransferNumber;
+
+				if(pairData.paymentMethod === paymentTypes[1]){		// Bank transfer
+					paymentData.bankTransferNumber = paymentData.bankTransferNumber + 1;
+					var newValue = paymentData.bankTransferNumber + 1;
+					GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
+						value: newValue
+					}});
+				}
+
 				if(typeof paymentData.userID !== 'undefined'){
 					Payments.insert(paymentData, function(err, paymId){
 						if(err){

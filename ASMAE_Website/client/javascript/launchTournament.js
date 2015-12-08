@@ -57,7 +57,10 @@ Template.launchTournament.events({
 		Meteor.call('launchTournament', launchData, Meteor.userId(), function(error, result){
             if(error){
                 console.error('launchTournament error');
-                console.error(error);
+                console.error(error.error);
+                if(error.error === "A tournament already exists for this year"){
+                    alert(error.error);
+                }
             }
             else if(result == null){
                 console.error("No result in launchTournament...");
