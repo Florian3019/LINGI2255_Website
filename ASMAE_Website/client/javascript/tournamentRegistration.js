@@ -764,7 +764,7 @@ Template.tournamentRegistrationTemplate.events({
         }
         var phone = event.target.phone.value;
         var sex = event.target.sex.value;
-        if(!sex){
+        if(sex !== "M" && sex !== "F"){
         	errors.push({id:"sex", error:true});
         	hasError = true;
         }
@@ -1095,10 +1095,12 @@ Template.tournamentRegistrationTemplate.events({
 		        Meteor.call('updatePair', pairData, callback);
 			}
 			else {	//The players cheats on the AFT ranking
+				var o = document.getElementById("AFTOK");
+				o.style.display = 'none';
 
 				var e = document.getElementById("AFTcheat");
 				e.style.display = 'block';
-				document.getElementById("AFTcheat").className = "form-group has-error has-feedback";
+				document.getElementById("AFTcheat").className = "form-group has-error has-feedback";	
 			}
 		});
 

@@ -7,3 +7,13 @@ Template.home.helpers({
         return false;
     }
 });
+
+Template.home.events({
+    'click #tournamentRegistrationSundayButton': function(){
+        $("#tournamentRegistrationModal").modal("hide");
+    },
+
+    'click #tournamentRegistrationSaterdayButton': function(){
+        $("#tournamentRegistrationModal").modal("hide");
+    }
+});

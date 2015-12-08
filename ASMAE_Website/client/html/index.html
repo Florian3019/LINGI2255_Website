@@ -86,8 +86,8 @@
 
       <!-- Mobile menu header -->
       {{#if showNavBar}}
-      <a href="#sidebar-Mobile">
-        <div class="nav-sidebar-header-mobile">
+      <a class="nav-sidebar-header-mobile" href="#sidebar-Mobile">
+        <div>
           <span class="glyphicon glyphicon-menu-hamburger"></span>
           Menu
         </div>
@@ -143,6 +143,10 @@
           <li><a href="{{pathFor route='staffManagement'}}" class="menuItem" id="PlayerQuestionsButtonMenu">
             <i class="fa fa-question indexIcon"></i>
           Questions des joueurs</a></li>
+          <hr class="nopadding">
+          <li><a href="{{pathFor route='sendEmailToList'}}" class="menuItem" id="SendEmailToListButtonMenu">
+            <span class="glyphicon glyphicon-envelope indexIcon"></span>
+          Envoyer un mail</a></li>
           <hr class="nopadding">
           <li><a href="{{pathFor route='courtSearchTemplate'}}" class="menuItem">
             <span class="glyphicon glyphicon-home indexIcon"></span>

@@ -85,14 +85,15 @@ html {
 .nav-sidebar-header {
 	padding: 10px;
     font-size: 25px;
-
 }
 
 .nav-sidebar-header-mobile {
     padding: 10px;
     font-size: 25px;
     display: none;
+    text-decoration: none;
 }
+
 
 /* Content of the web site */
 .page-header {
@@ -177,6 +178,7 @@ html {
     border-radius : 15px !important;
 }
 
+/* Title for information box */
 .panel-heading {
     background: rgba(0, 76, 153, 0.6) !important;
     /*background: #f3f3f3 !important;*/
@@ -184,8 +186,17 @@ html {
     font-weight: bold;
 }
 
+/* Text to fill can only grow verticaly (no change of the width) */
 textarea {
     resize:vertical !important;
+}
+
+/* Hidde arrow number box */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 /* Box alert info */

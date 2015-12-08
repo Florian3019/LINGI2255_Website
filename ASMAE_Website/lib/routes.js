@@ -7,8 +7,7 @@ Router.configure({
 	layoutTemplate: 'index',
 	loadingTemplate:'loading',
 	waitOn: function() {
-    	return [Meteor.subscribe('GlobalValues')
-    	];
+    	return [Meteor.subscribe('GlobalValues'), Meteor.subscribe('users')];
   	}
 });
 
@@ -34,9 +33,6 @@ Router.onStop(function(){
 Router.route('/', {
 	template: 'home',
 	name: 'home',
-	waitOn: function(){
-		return [ Meteor.subscribe('Years') ]
-	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
 	}
@@ -46,7 +42,7 @@ Router.route('/gagnants', {
 	template:'winners',
 	name:"winners",
 	waitOn: function(){
-		return [ Meteor.subscribe('Winners'), Meteor.subscribe('Pairs'),Meteor.subscribe('users')  ]
+		return [ Meteor.subscribe('Winners'), Meteor.subscribe('Pairs')  ]
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
@@ -81,7 +77,7 @@ Router.route('/modifications-log', {
 	template: 'modificationsLog',
 	name: 'modificationsLog',
 	waitOn: function(){
-		return [ Meteor.subscribe('ModificationsLog'), Meteor.subscribe('users') ]
+		return [ Meteor.subscribe('ModificationsLog') ]
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
