@@ -29,6 +29,12 @@
   <div class="page-header">
     <h2 id="HeaderSheetPrintTestID">Impression feuille de poule</h2>
   </div>
+  {{#if isOnePage}}
+  <button id="printPdf" class="btn btn-default btn-lg">
+    <span class="glyphicon glyphicon-print"></span> Imprimer
+  </button>
+  {{else}}
+  <!-- {{#if equals fullPages undefined}} -->
   <div class="row">
     <div class="col-md-2">
       <select class="form-control Year" id="Year" name = "Year">
@@ -75,7 +81,15 @@
     <span class="glyphicon glyphicon-print"></span> Imprimer
   </button>
   <br>
+  {{/if}}
 
+
+
+  <!-- {{#if equals fullPages undefined}} -->
+  {{#if isOnePage}}
+  {{>printSheetsV2 POOLS=getOnePool}}
+  {{else}}
   {{>printSheetsV2 POOLS=getPool}}
+  {{/if}}
 
 </template>

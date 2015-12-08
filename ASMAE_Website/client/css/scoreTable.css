@@ -22,3 +22,10 @@
 .scoreTableFontSize2{
 	font-size:0.9em;
 }
+.selfMatch{
+  color: #fff;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+}

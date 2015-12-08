@@ -7,7 +7,7 @@ Feature: Check the good working of Deroulement du tournoi
         Given An admin has been created
         
     @watch
-    Scenario: Authenticated user can register to the tournament
+    Scenario: 
         Given I am logged in
         And The database has been populated
         When I click on Deroulement du tournoi

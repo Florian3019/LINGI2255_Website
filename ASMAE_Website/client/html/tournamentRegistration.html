@@ -96,14 +96,14 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-sm-10 col-sm-offset-3">
+        <div class="col-sm-3 col-sm-offset-3">
           <div class="form-group has-feedback" id="sexDiv">
 		        <label>Sexe: </label> <br>
-              <label class="radio-inline">
-                <input type="radio" name="sex" id="male" value="M" class="alonePlayerChangeListener" {{setGender 'true'}}>Homme</label>
-              <br>
-            <label class="radio-inline">
-            <input type="radio" name="sex" id="female" value="F" class="alonePlayerChangeListener" {{setGender 'false'}}>Femme</label>
+                <select name="sex" id="sex"  class="form-control" style="display: inline">
+                    <option value="default" selected="selected"> </option>
+                     <option value="M">Homme</option>
+                     <option value="F">Femme</option>
+                </select>
             <div id="sexError" hidden>
               <span class="help-block" id="sexErrorText">Merci d'entrer votre sexe</span>
               <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -244,7 +244,7 @@
               <option value="family" >Tournoi des familles (Samedi)</option>
               {{/if}}
               {{#if sunday}}
-              <option value="sunday">Doubles (Dimanche)</option>
+              <option value="sunday" selected="selected">Doubles (Dimanche)</option>
               {{/if}}
             </select>
             <div id="dateMatchError" hidden>
@@ -299,10 +299,10 @@
       <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
           <h5><b>Extras:</b></h5>
-            {{#each extras}}
+            {{#each extras day}}
             <div class="form-group">
               <label for="number">{{getName}} ({{getPrice}}&euro;)</label>
-              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" data-price="{{getPrice}}" value="0" class="form-control extraItem" style="width: 15%; display: inline; text-align:center">
+              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" data-price="{{getPrice}}" value={{getQuantity}} class="form-control extraItem" style="width: 15%; display: inline; text-align:center">
               <p style="font-size:100%">{{getComment}}</p>
             </div>
             {{/each}}
@@ -395,7 +395,7 @@
           </div>
         </div>
         <div class="form-group checkboxLater col-sm-6 col-sm-offset-3" id="checkboxLater" hidden>
-          <label class="checkbox-inline"><input type="checkbox" value="" id="later">   Je veux choisir quelqu'un plus tard </label>
+          <label class="checkbox-inline"><input type="checkbox" value="" id="later"> Je veux choisir quelqu'un plus tard </label>
         </div>
 		    <div id="refreshErrorMessage" hidden>
           <span class="refreshMessage"> Veuillez vérifier le formulaire avant de pouvoir choisir un partenaire.</span>
@@ -454,7 +454,35 @@
     			</div>
     	</div>
 
-  		<center><button type="submit" class="btn btn-default" id="submit">Soumettre mon inscription</button></center>
+  		<center><button type="submit" class="btn btn-default" id="submit">
+            {{#if saturday}}
+            {{#if isSaturdayRegistered}}
+            Modifier
+            {{else}}
+            Soumettre
+            {{/if}}
+            {{/if}}
+            {{#if sunday}}
+            {{#if isSundayRegistered}}
+            Modifier
+            {{else}}
+            Soumettre
+            {{/if}}
+            {{/if}}
+
+            mon inscription
+        </button></center>
+        <div class="row" id="noPartnerChosen" hidden>
+    		<div class="col-sm-6 col-sm-offset-3">
+    	          <div id="infoBox" class="alert alert-info" role="alert">
+    		        <h4>
+    		          <span class="glyphicon glyphicon-info-sign"></span>
+    		          <span class="sr-only">Info:</span>
+    		          <span id="infoMsg">Vous n'avez pas choisi de partenaire. Si vous souhaitez choisir un partenaire plus tard ou vous inscrire seul, veuillez cocher la case "Je veux choisir quelqu'un plus tard". Sinon, veuillez spécifier l'adresse email de votre partenaire.</span>
+    		        </h4>
+    		      </div>
+    			</div>
+    	</div>
 
     </div>
     </div>

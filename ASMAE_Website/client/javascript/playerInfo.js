@@ -18,27 +18,28 @@ Template.playersInfo.helpers({
         var input = Session.get("playerInfo/input"); // This is the filter input
         if(input!==undefined) input = input.toLowerCase(); // Convert to lower case for ease of use
 
-        var perm = Session.get("playerInfo/permissions");
-
-        var noInput = (input ==="" || input===undefined || input === null) && perm==="Ignore";
-
+        var noInput = (input ==="" || input===undefined || input === null);
         if(noInput) return Meteor.users.find();
-        if(input!==undefined) inputArray = input.split(" ");
+        if(input!==undefined){
+            input = " " + input + " ";
+            inputArray = input.split(" ");
+        }
+
 
         // This will filter the database according to the filters set
         var query = {$where: function(){
-            if(perm=="Admin"){
-              if(!this.profile.isAdmin) return false;
-            }
-            else if(perm=="Staff"){
-              if(!this.profile.isStaff) return false;
-            }
-            else if(perm=="Normal"){
-                if(this.profile.isStaff || this.profile.isAdmin) return false;
-            }
-
-            if(input!==undefined){
+            if(!noInput){
                 var searchString = playerToString(this);
+
+                if(input.indexOf(" admin ")>-1){
+                  if(!this.profile.isAdmin) return false;
+                }
+                else if(input.indexOf(" staff ")>-1){
+                  if(!this.profile.isStaff) return false;
+                }
+                else if(input.indexOf(" normal ")>-1){
+                    if(this.profile.isStaff || this.profile.isAdmin) return false;
+                }
 
                 for(var i=0; i<inputArray.length;i++){
                     if(searchString.indexOf(inputArray[i])==-1){
@@ -50,7 +51,10 @@ Template.playersInfo.helpers({
             }
         };
 
-        return Meteor.users.find(query); // Make the db request
+        var userCursor = Meteor.users.find(query); // Make the db request
+
+        return userCursor;
+
     },
 
     // This defines the fields of the search table
@@ -96,31 +100,9 @@ Template.playersInfo.helpers({
                     }
                     return ret
                 }},
-                { key: 'profile.isStaff', label:'Permissions', tmpl:Template.changePermissions},
-                { key: '_id', label:"Paiement", fn: function(value, object){
-                        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-            		    var payment = Payments.findOne({"userID": value, "tournamentYear": currentYear});
-                        if(payment===undefined){
-                            return "Pas inscrit";
-                        }
-                        else{
-                            return paymentTranslate[payment.status] + " ("+payment.balance+"€)";
-                        }
-                    }
-                },
-                { key: '_id', label:"Méthode", hidden:true ,fn: function(value, object){
-                        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-                        var payment = Payments.findOne({"userID": value, "tournamentYear": currentYear});
-                        if(payment===undefined){
-                            return "Pas inscrit";
-                        }
-                        else{
-                            return paymentTypesTranslate[payment.paymentMethod];
-                        }
-                    }
-                }
+                { key: 'profile.isStaff', label:'Permissions', hidden:true, tmpl:Template.changePermissions},
             ],
-             filters: ['NomDeFamille'], // This is just a mockup filter to hide the default one
+             showFilter:false,
              rowClass: "playerInfoRow",
              showColumnToggles:true
         }
@@ -133,9 +115,6 @@ Template.playersInfo.events({
         var isPermSelect = (' ' + event.originalEvent.srcElement.className + ' ').indexOf(' myPermissionSelects ') > -1;
         if(isPermSelect) return; // Don't allow to change page if we clicked on the select
         Router.go('playerInfoTemplate',{_id:this._id});
-    },
-    'change #permSelect':function(event){
-        Session.set("playerInfo/permissions",event.currentTarget.value);
     },
 });
 

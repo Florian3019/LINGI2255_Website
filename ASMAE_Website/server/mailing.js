@@ -25,6 +25,9 @@ Template.mailing.helpers({
   encadrehtml : function(){
     return this.encadre;
   },
+  hasEncadre:function(){
+    return this.encadre!==undefined;
+  },
 });
 
 
@@ -440,6 +443,62 @@ Meteor.methods({
               });
             }
           });
+        },
+
+        'emailToAlreadyRegisteredUser' : function(userId, partnerId) {
+          var user = Meteor.users.findOne({_id:userId});
+          var part = Meteor.users.findOne({_id:partnerId});
+
+          if (user!== undefined && part !== undefined) {
+            var data={
+              intro:"Bonjour "+part.profile.firstName+",",
+              important: user.firstName+ " "+ user.lastName+ " veut jouer avec vous !",
+              texte:"Cependant vous êtes déjà inscrit au tournoi. C'est pourquoi nous vous demandons de suivre les instructions dans l'encadré suivant.",
+              encadre:"Premièrement désinscrivez-vous du tournoi auquel vous êtes déjà inscrit.\n Ensuite, réinscrivez-vous en selectionnant la bonne catégorie. Vous verrez apparaître le nom de votre partenaire dans la liste déroulante se trouvant au bas de la page.",
+            };
+            var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+            var options =   {
+              auth: "api:" + process.env.MAILGUN_API_KEY,
+              params: {
+                "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+                "to":part.emails[0].address,
+                "subject": "Quelqu'un veut jouer avec vous !",
+                "html": SSR.render("mailing",data),
+              }
+            }
+            var onError = function(error, result) {
+              if(error) {console.error("Error: " + error)}
+            }
+            Meteor.http.post(postURL, options, onError);
+            console.log("Email sent");
+          }
+        },
+
+        'emailInvitPeople':function(userId,partner){
+          var user = Meteor.users.findOne({_id:userId});
+          if(user !== undefined && user == Meteor.user()){
+            var data ={
+              intro:"Bonjour,",
+              important:user.firstName+ " "+ user.lastName+ " veut jouer avec vous !",
+              texte: "Pour vous inscrire et participer au tournoi de tennis Le Charles de Lorraine, suivez les instructions dans l'encadré suivant !",
+              encadre:"Premièrement, inscrivez-vous sur notre site en cliquand sur 'Se connecter' en haut à droite de votre écran.\n Ensuite, choisissez l'onglet m'inscrire. Une fois que vous avez complétez vos informations et choisi le bon jour pour le tournoi, vous verrez alors l'adresse email de votre partenaire. Il ne vous reste plus qu'à la sélectionner et vous êtes inscrits !"
+            };
+            var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+            var options =   {
+              auth: "api:" + process.env.MAILGUN_API_KEY,
+              params: {
+                "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+                "to":partner,
+                "subject": "Quelqu'un veut jouer avec vous !",
+                "html": SSR.render("mailing",data),
+              }
+            }
+            var onError = function(error, result) {
+              if(error) {console.error("Error: " + error)}
+            }
+            Meteor.http.post(postURL, options, onError);
+            console.log("Email sent");
+          }
         },
 
       });

@@ -1,7 +1,7 @@
-Feature: Check if the page Recherche d'un terrain Admin is still correctly shown
+Feature: Check that the page to add a court is still showing for the admin members
 
     As an admin
-    I want to search through courts
+    I want to add courts
 
     Background: Tournament registrations launched
         Given An admin has been created
@@ -10,5 +10,5 @@ Feature: Check if the page Recherche d'un terrain Admin is still correctly shown
     Scenario: 
         Given I am logged in
         And The database has been populated
-        When I click on Rechercher un Terrain
-        Then I should see the Court Search page
+        When I click on Staff FAQ
+        Then I should see the Staff FAQ page

@@ -27,24 +27,19 @@ Meteor.methods({
     var transaction = Meteor.wrapAsync(gateway.transaction.sale, gateway.transaction);
 
     //Calculate amount to pay
-    var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-    var amount = Years.findOne({_id: currentYear}).tournamentPrice;
 
-    if(data.extras)
-    {
-        for(extra in data.extras){
-            amount += data.extras[extra] * Extras.findOne({name: extra}).price;
-        }
-    }
+    var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+    var user = Meteor.user();
+    var amount = Payments.findOne({'userID': Meteor.userId(), 'tournamentYear': currentYear}).balance;
 
 
     var response = transaction({
       amount: amount,
       paymentMethodNonce: data.nonce,
       customer: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email
+        firstName: user.profile.firstName,
+        lastName: user.profile.lastName,
+        email: user.emails[0].address
       }
     });
 
@@ -56,7 +51,7 @@ Meteor.methods({
             paymentMethod: "CreditCard"
         };
 
-        Payments.update({"userID": Meteor.userId(), "tournamentYear": currentYear, "day":data.day} , {$set: data}, function(err, result){
+        Payments.update({"userID": Meteor.userId(), "tournamentYear": currentYear} , {$set: data}, function(err, result){
             if(err){
                 console.error('Payments.update error after transaction');
                 console.error(err);

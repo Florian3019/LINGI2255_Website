@@ -18,6 +18,10 @@ Meteor.publish('Courts', function(){
   return Courts.find();
 });
 
+Meteor.publish('Winners', function(){
+  return Winners.find();
+});
+
 Meteor.publish('Addresses', function(){
       if(isStaffOrAdmin(this.userId)) {
         return Addresses.find();
@@ -150,7 +154,6 @@ Meteor.publish("PairsInfo", function(){
     var id = this.userId;
     pairs = getPairsFromPlayerID(this.userId, true);
     if (!pairs) {
-        console.error("Error publish PairInfo : no pair found in the DB for this user.");
         this.ready();
     }
     return pairs;
@@ -164,7 +167,6 @@ Meteor.publish("PartnersAdresses", function() {
     var id = this.userId;
     var pairs = getPairsFromPlayerID(this.userId);
     if (!pairs) {
-        console.error("Error publish PartnerAdress : no pair found in the DB for this user.");
         this.ready();
         return;
     }

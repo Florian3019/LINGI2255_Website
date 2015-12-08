@@ -483,7 +483,7 @@ Meteor.methods({
 		}
 		var hasData = false;
 		var data = {};
-		
+
 		for (var i=0;i<categoriesKeys.length;i++){
 			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
@@ -525,7 +525,6 @@ Meteor.methods({
 			console.warn("Warning : called updateType with no input");
 			return;
 		}
-		console.log(data);
 		Types.update({_id: typeData._id} , data);
 		return typeData._id;
 	},
@@ -1000,6 +999,7 @@ Meteor.methods({
 			if(pData['playerWish']) p['playerWish'] = pData['playerWish'];
 			if(pData['courtWish']) p['courtWish'] = pData['courtWish'];
 			if(pData['otherWish']) p['otherWish'] = pData['otherWish'];
+			if(pData['partnerEmail']) p['partnerEmail'] = pData['partnerEmail'];
 
 			if(pData['extras']){
 				var extr = {};
@@ -1064,30 +1064,38 @@ Meteor.methods({
 
 
 		var paymentUser = Meteor.userId();
-
 		paymentData = {
 			userID : paymentUser,
 			tournamentYear : currentYear,
-			day : pairData.day,
 			status : "pending",
 			paymentMethod : pairData.paymentMethod,
 			balance : amount
 		};
 
 		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear, 'day': pairData.day});
+		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentYear': currentYear});
 		if(paymentAlreadyExists){
-			if(pairData._id){
-				Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
+			if(pairData._id){	//If it is an update: update the data
+				if(paymentAlreadyExists.status === "paid"){
+					if(paymentAlreadyExists.balance > amount){		// He paid to much
+						paymentData.balance = 0
 					}
-				});
+					else{		// He didn't paid enough
+						paymentData.balance = amount - paymentAlreadyExists.balance;
+					}
+				}
 			}
-			else {
-				console.error("Payment already exists and should not be updated");
+			else {		// The player registers to the second tournament: merge the two payments
+				console.log("The players registers to the second tournament: merge his payments.");
+				paymentData.balance = paymentAlreadyExists.balance + amount;
 			}
+
+			Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
+				if(err){
+					console.error('insert payment error');
+					console.error(err);
+				}
+			});
 
 		}
 		else {
@@ -1498,7 +1506,7 @@ Meteor.methods({
 		data.pairs = pairs;
 		data.category = category;
 		if(pool.leader==undefined){
-			data.leader=pair.player1._id;
+			data.leader= pair.player1 ? pair.player1._id : pair.player2._id;
 		}
 		Meteor.call('updatePool', data);
 	},
@@ -1565,6 +1573,10 @@ Meteor.methods({
 				}
 				// Pool not full
 				const maxNbrPairsInPool = 6;
+				if (pool.pairs === undefined) {
+					pool.pairs = [];
+					return poolList[i];
+				}
 				if (pool.pairs.length < maxNbrPairsInPool) {
 					return poolList[i];
 				}
@@ -1631,6 +1643,9 @@ Meteor.methods({
 			}
 			if(extraData.comment!==undefined){
 				data.comment = extraData.comment;
+			}
+			if(extraData.day!==undefined) {
+				data.day = extraData.day
 			}
 			if(extraId===undefined){
 				extraId = Extras.insert(data);
@@ -1836,16 +1851,16 @@ Meteor.methods({
 		}
 
 		var userID = Meteor.userId();
-		console.log(userID);
 
-		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1._id && userID!==pair.player2._id))
+		var userInThisPair = (pair.player1 ? userID===pair.player1._id : false) || (pair.player2 ? userID===pair.player2._id : false);
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && !userInThisPair)
 		{
 			console.error("You don't have the permission to do that");
 			throw new Meteor.error("unsubscribeTournament: no permissions");
 			return false;
 		}
 
-		var userPlayer = pair.player1._id===userID ? "player1" : "player2";
+		var userPlayer = pair.player1 && pair.player1._id===userID ? "player1" : "player2";
 		var partnerPlayer = userPlayer==="player1" ? "player2" : "player1";
 
 		var pool = Pools.findOne({pairs:pair_id}); // Find the right pool
@@ -1853,10 +1868,6 @@ Meteor.methods({
 			console.error("Error unsubscribe : no pool found for this pair");
 			return false;
 		}
-
-		console.log(pair);
-		console.log(userPlayer);
-		console.log(partnerPlayer);
 
 		var user;
 		if (userPlayer==="player1") {
@@ -1868,10 +1879,9 @@ Meteor.methods({
 
 		// Remove payment
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		Payments.remove({'userID': userID, 'tournamentYear': currentYear}); 	//TODO: precise the day
+		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
 
 
-		console.log(user);
 		// No other player
 		if (typeof pair.partnerPlayer === 'undefined') {
 			// Remove the pair from the pool and from the Pairs table
@@ -1913,32 +1923,30 @@ Meteor.methods({
 
 			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
 
+			this.unblock();
 
+			var dataEmailPartner={
+				intro:"Bonjour "+partner.profile.firstName+",",
+				important:"Nous avons une mauvaise nouvelle pour vous.",
+				texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jouer. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours choisir un nouveau partneaire sur notre site !"
+			};
+			var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+			var options =   {
+				auth: "api:" + process.env.MAILGUN_API_KEY,
+				params: {
+					"from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+					"to":partner.emails[0].address,
+					"subject": "Concernant votre inscription au tournoi",
+					"html": SSR.render("mailing",dataEmailPartner),
+				}
+			}
+			var onError = function(error, result) {
+				if(error) {console.error("Error: " + error)}
+			}
 
-      this.unblock();
-
-      var dataEmailPartner={
-        intro:"Bonjour "+partner.profile.firstName+",",
-        important:"Nous avons une mauvaise nouvelle pour vous.",
-        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jour. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours aller choisir un nouveau partneaire sur notre site !"
-      };
-      var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
-      var options =   {
-        auth: "api:" + process.env.MAILGUN_API_KEY,
-          params: {
-            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
-            "to":partner.emails[0].address,
-            "subject": "Concernant votre inscription au tournoi",
-            "html": SSR.render("mailing",dataEmailPartner),
-          }
-        }
-        var onError = function(error, result) {
-          if(error) {console.error("Error: " + error)}
-        }
-
-        // Send the request
-          Meteor.http.post(postURL, options, onError);
-        }
+			// Send the request
+			Meteor.http.post(postURL, options, onError);
+		}
 	},
 
 	/*
@@ -2074,4 +2082,54 @@ Meteor.methods({
 
 
 
-  });
+	/*
+		Structure:
+		{
+			_id:<id>, // Automatically set
+			year:<year>,
+			type:<type>,
+			category:<category>,
+			first:<pairId>,
+			second:<pairId>
+		}
+		returns the winnerId
+	*/
+	'updateWinner':function(winnerData){
+		if(!(Meteor.call('isAdmin') || Meteor.call('isStaff'))){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to add a winner");
+			return;
+		}
+
+		var andQuery = [{"type":winnerData.type},{"year":winnerData.year},{"category":winnerData.category}];
+		Winners.remove({$and:andQuery}); // Remove any previous winner
+
+		var data = {};
+
+		if(winnerData.year!==undefined && winnerData.year!==""){
+			data.year = winnerData.year;
+		}
+		if(winnerData.type!==undefined && winnerData.type!==""){
+			data.type = winnerData.type;
+		}
+		if(winnerData.category!==undefined && winnerData.category!==""){
+			data.category = winnerData.category;
+		}
+		if(winnerData.first!==undefined && winnerData.first!==""){
+			data.first = winnerData.first;
+		}
+		if(winnerData.second!==undefined && winnerData.second!==""){
+			data.second = winnerData.second;
+		}
+
+		if(winnerData._id !== undefined){
+			Winners.update({_id:winnerData._id}, {$set:data});
+			return winnerData._id;
+		}
+
+		return Winners.insert(data);
+	},
+
+
+
+}); // End helpers

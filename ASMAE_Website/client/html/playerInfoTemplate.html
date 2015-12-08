@@ -15,11 +15,11 @@
                 <div class=" col-md-9 col-lg-9 ">
                   <table class="table table-user-information">
                     <tbody>
+                        <tr>
+                          <td>Addresse email</td>
+                          <td id="Email">{{emails}}</td>
+                        </tr>
                     {{#if isStaffOrAdmin}}
-                      <tr>
-                        <td>Addresse email</td>
-                        <td id="Email">{{emails}}</td>
-                      </tr>
                       <tr>
                         <td>Numéro de téléphone</td>
                         <td id="phone">{{phone}}</td>
@@ -64,7 +64,9 @@
                                  <a href="#" id="unsubscribeSaturdayLink">Supprimer</a> )
                                 {{/if}}
                               {{else}}
-                               (<a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">S'inscrire</a>)
+                              {{#if isCurrentUser ../id}}
+                               (<a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">Inscription</a>)
+                               {{/if}}
                               {{/if}}
                           </td>
                         </tr>
@@ -82,7 +84,9 @@
                                <a href="#" id="unsubscribeSundayLink">Supprimer</a> )
                               {{/if}}
                               {{else}}
-                              (<a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">S'inscrire</a>)
+                              {{#if isCurrentUser ../id}}
+                              (<a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">Inscription</a>)
+                              {{/if}}
                             {{/if}}
                           </td>
                         </tr>

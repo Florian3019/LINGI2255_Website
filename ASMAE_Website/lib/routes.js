@@ -21,7 +21,7 @@ Router.onBeforeAction(function() {
         else
 			this.next();
 	}
-}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap']});
+}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap', 'winners']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -42,11 +42,14 @@ Router.route('/', {
 	}
 });
 
-Router.route('/email-terrain', {
-	template: 'courtEmail',
-	name: 'courtEmail',
+Router.route('/gagnants', {
+	template:'winners',
+	name:"winners",
+	waitOn: function(){
+		return [ Meteor.subscribe('Winners'), Meteor.subscribe('Pairs'),Meteor.subscribe('users')  ]
+	},
 	onAfterAction: function(){
-		Session.set('showNavBar', true);
+		Session.set('showNavBar', false);
 	}
 });
 
@@ -385,7 +388,12 @@ Router.route('/print', {
     Session.set("printSheets/isWorkingPrint",false);
     Session.set("printSheets/isWorkingPool",false);
 		Session.set('showNavBar', true);
-	}
+	},
+  onStop:function(){
+    Session.set("printSheets/info");
+    Session.set("printOneSheet/poolId");
+    Session.set("printSheets/OnePage");
+  }
 });
 
 Router.route('/terrains', {

@@ -5,26 +5,6 @@
 
 Session.set('paymentFormStatus', null);
 
-// Create data object for payment
-function getFormData(){
-
-	var user = Meteor.user();
-	var extras = getExtras();
-
-	//TODO: add data.day the day of the pair
-
-  	var data = {
-    	firstName : user.profile.firstName,
-    	lastName : user.profile.lastName,
-    	email : user.emails[0].address
-  	};
-	if(extras)
-	{
-		data.extras = extras;
-	}
-  	return data;
-}
-
 function initializeBraintree (clientToken) {
 
   braintree.setup(clientToken, 'dropin', {
@@ -35,7 +15,7 @@ function initializeBraintree (clientToken) {
       // we've received a payment nonce from braintree
       // we need to send it to the server, along with any relevant form data
       // to make a transaction
-      var data = getFormData();
+	  var data = {};
       data.nonce = nonce;
 
       Meteor.call('createTransaction', data, function (err, result) {
@@ -101,9 +81,9 @@ Template.playerInfoTemplate.helpers({
 			'address': function(){
 			  if(addr) {
 				  if (addr.box) {
-					  return addr.number + ", " + addr.street + ". Boite " + addr.box;
+					  return addr.street + ", " +addr.number + ". Boite " + addr.box;
 				  }
-				  return addr.number + ", " + addr.street;
+				  return addr.street + ", "+addr.number;
 			  }
 			},
 			'city': function(){
@@ -217,7 +197,10 @@ Template.playerInfoTemplate.helpers({
 		var partnersaturdayid = Session.get("partnersaturdayid");
 		var partnersundayid = Session.get("partnersundayid");
 		var user = Meteor.user();
-		if (user === undefined) {
+		if (user === undefined || user === null) {
+			return undefined;
+		}
+		if (user.profile === undefined || user.profile === null) {
 			return undefined;
 		}
 		var isStaff = user.profile.isAdmin || user.profile.isStaff;

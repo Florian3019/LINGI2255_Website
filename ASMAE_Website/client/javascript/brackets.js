@@ -83,8 +83,8 @@ var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 
 
     if(pair==undefined || pair.player1==undefined || pair.player2==undefined) return;
 
-    pairPlayer1 = Meteor.users.findOne({_id:pair.player1._id},{profile:1});
-    pairPlayer2 = Meteor.users.findOne({_id:pair.player2._id},{profile:1});
+    pairPlayer1 = Meteor.users.findOne({_id:pair.player1._id},{profile:1},{reactive:false});
+    pairPlayer2 = Meteor.users.findOne({_id:pair.player2._id},{profile:1},{reactive:false});
 
     pairPlayer1String = pairPlayer1.profile.firstName.substring(0,1) + ". " + pairPlayer1.profile.lastName;
     pairPlayer2String = pairPlayer2.profile.firstName.substring(0,1) + ". " + pairPlayer2.profile.lastName;
@@ -382,8 +382,11 @@ var handleBracketErrors = function(document){
     var type = Session.get("PoolList/Type");
     var category = Session.get("PoolList/Category");
 
+
     Session.set("brackets/infoPdf",{"year":year,"type":type,"cat":category});
     var startButton =  document.getElementById("startText");
+    var pdfButton = document.getElementById("getPDF");
+    var bracketOptions = document.getElementById("bracketOptions");
 
     yearData = Years.findOne({_id:year},{reactive:false});
     if(yearData==undefined){
@@ -429,7 +432,7 @@ var handleBracketErrors = function(document){
           startButton.innerHTML="Démarrer ce knock-off";
         }
         if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
-        if(pdfButton!==undefined  && pdfButton!==null) pdfButton.style.display = 'block';
+        if(pdfButton!=undefined  && pdfButton!=null) pdfButton.style.display = 'block';
       }
       console.info("Knock-offs not started");
 
@@ -585,6 +588,7 @@ var getTournamentFirstRound = function(pairs){
   return toReturn;
 }
 
+var totalRounds = undefined;
 
 var makeBrackets = function(document){
   allWinners = handleBracketErrors(document); // Table of winner pair Id
@@ -607,7 +611,7 @@ var makeBrackets = function(document){
 
   var matchesCompleted = 0;
   var nextMatchNum = 0;
-  
+
   var user = Meteor.user();
   var canEditScore = user!==undefined && user!==null && (user.profile.isAdmin || user.profile.isStaff);
 
@@ -631,7 +635,7 @@ var makeBrackets = function(document){
     Fill the rest of the rounds with "?" or the score
   */
 
-  
+
   round = 0;
   while(thisRound.length>1){
     newRound = []; // list of roundData
@@ -716,6 +720,8 @@ var makeBrackets = function(document){
   }
 
   Session.set("brackets/rounds",round+1);
+  
+  totalRounds = brackets.length-2; // Global variable
 
   completionPercentage = (nextMatchNum==0) ? 0 : matchesCompleted/nextMatchNum;
   setCompletion(completionPercentage);
@@ -864,48 +870,65 @@ Template.brackets.events({
   },
 
   'click #saveScore':function(event){
-    pairs = Session.get('brackets/clicked');
+    var pairs = Session.get('brackets/clicked');
     if(pairId==undefined) return;
-    pair0 = Pairs.findOne({_id:pairs[0]});
-    pair1 = Pairs.findOne({_id:pairs[1]});
+    var pair0 = Pairs.findOne({_id:pairs[0]});
+    var pair1 = Pairs.findOne({_id:pairs[1]});
 
-    round = Session.get('brackets/round');
-    score0 = document.getElementById("scoreInput0").value;
-    score0 = parseInt(score0);
+    var round = Session.get('brackets/round');
+    var score0 = document.getElementById("scoreInput0").value;
+    var score0 = parseInt(score0);
     setPoints(pair0, round, score0);
 
-    score1 = document.getElementById("scoreInput1").value;
-    score1 = parseInt(score1);
+    var score1 = document.getElementById("scoreInput1").value;
+    var score1 = parseInt(score1);
     setPoints(pair1, round, score1);
+  
+    /*
+      Save the winner to display in the winner table
+    */
+    if(round == totalRounds){
+      // This is the last round
+      var data = {};
+      data.first = score0 > score1 ? pair0._id : pair1._id;
+      data.second = score0 < score1 ? pair0._id : pair1._id;
 
-    u01 = Meteor.users.findOne({"_id":pair0.player1._id},{"profile":1});
-    u02 = Meteor.users.findOne({"_id":pair0.player2._id},{"profile":1});
-    u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1});
-    u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1});
+      data.year = Session.get("PoolList/Year");
+      data.type = Session.get("PoolList/Type");
+      data.category = Session.get("PoolList/Category");
 
+      Meteor.call("updateWinner",data);
+    }
+
+    var u01 = Meteor.users.findOne({"_id":pair0.player1._id},{"profile":1}, {reactive:false});
+    var u02 = Meteor.users.findOne({"_id":pair0.player2._id},{"profile":1}, {reactive:false});
+    var u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1}, {reactive:false});
+    var u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1}, {reactive:false});
+
+    Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
     var callback = function(err, logId){
       if(err){
         console.error(err);
         return;
       }
-        Meteor.users.update({"_id":pair0.player1._id},{$addToSet:{"log":logId}});
-        Meteor.users.update({"_id":pair0.player2._id},{$addToSet:{"log":logId}});
-        Meteor.users.update({"_id":pair1.player1._id},{$addToSet:{"log":logId}});
-        Meteor.users.update({"_id":pair1.player2._id},{$addToSet:{"log":logId}});
+        Meteor.call('addToUserLog', pair0.player1._id, logId);
+        Meteor.call('addToUserLog', pair0.player2._id, logId);
+        Meteor.call('addToUserLog', pair1.player1._id, logId);
+        Meteor.call('addToUserLog', pair1.player2._id, logId);        
     }
 
     Meteor.call("addToModificationsLog",
     {"opType":"Modification points match knock-off",
     "details":
-        "Round: "+round+
+        "Round: "+round+" "+
         u01.profile.firstName + " " + u01.profile.lastName + " et "+u02.profile.firstName + " " + u02.profile.lastName +
-        " "+score0+ " VS "+
+        " ("+score0+ ") VS "+
         u11.profile.firstName + " " + u11.profile.lastName + " et "+u12.profile.firstName + " " + u12.profile.lastName +
-        " "+score1 +
+        " ("+score1 +")"+
         getStringOptions()
-    }, callback);
+    },
+    callback);
 
-    Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   },
 
   'click #getPDF':function(event){

@@ -8,20 +8,34 @@ function hasPairPlayer(status, userId, day) {
       return false;
     }
 
-    var user;
+	var partnerEmail;
+    var partner;
     if(pair.player1 && pair.player1._id != Meteor.userId()){
-      user = Meteor.users.findOne({_id:pair.player1._id});
+		partner = Meteor.users.findOne({_id:pair.player1._id});
     }
     else if(pair.player2 && pair.player2._id != Meteor.userId()){
-      user = Meteor.users.findOne({_id:pair.player2._id});
+		partner = Meteor.users.findOne({_id:pair.player2._id});
+    }
+	if(pair.player1 && pair.player1._id == Meteor.userId()){
+		partnerEmail = pair.player1.partnerEmail;
+    }
+    else if(pair.player2 && pair.player2._id == Meteor.userId()){
+		partnerEmail = pair.player2.partnerEmail;
     }
 
-    if(!user){
-      if(status == "true") return "En attente d'un partenaire";
+    if(!partner){
+      if(status == "true") {
+		  if (partnerEmail) {
+			  return "En attente d'un partenaire, son email : "+partnerEmail;
+		  }
+		  else {
+			  return "En attente d'un partenaire";
+		  }
+	  }
       return false;
     }
     if(status) {
-		Session.set("partner"+day+"id",user._id);
+		Session.set("partner"+day+"id",partner._id);
 		return "Inscrit avec un partenaire";
 	}
 
