@@ -17,7 +17,7 @@
                 {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
                 {{#with getType this}}
                 <div class="page-header">
-                  <h2> Poules {{getTranslateType}}{{#unless equals this "all"}} > {{getTranslateCategory}} {{/unless}}</h2>
+                  <h2> Poules {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}</h2>
                 </div>
               {{>responsablesTemplate this}}
 
@@ -138,13 +138,13 @@
 </template>
 
 <template name="poolBracketsSelect">
-<ul>
+<ul style="{{#unless equals ID 'family'}} padding-left:25px {{/unless}}">
 <li>
   <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_category" style="display:none;"></span>
   <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory menuItem2" data-target="#{{this.ID}}_{{this.CAT}}_{{MOBILE}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
   <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}_{{MOBILE}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
     <li class="PoolOption" data-category="{{this.CAT}}" data-type="{{this.ID}}" >
-      <ul>
+      <ul style="padding-left:25px">
       <li>
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_pool" style="display:none"></span>
       <a href="#" id="Poules" style="text-decoration: none;display:inline;" class="menuItem"> Poules {{getPoulesCompletion this.ID this.CAT}} </a>
@@ -152,7 +152,7 @@
       </ul>
     </li>
     <li class="BracketOption" data-category="{{this.CAT}}" data-type="{{this.ID}}">
-      <ul>
+      <ul style="padding-left:25px">
       <li>
       <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_bracket" style="display:none"></span>
       <a href="#" style="text-decoration: none;display:inline;" class="menuItem">Knock-offs {{getBracketCompletion this.ID this.CAT}}</a>
