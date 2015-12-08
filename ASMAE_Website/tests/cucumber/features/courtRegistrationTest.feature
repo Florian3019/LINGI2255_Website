@@ -7,8 +7,8 @@ Feature: Register a court
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @watch
-    Scenario: authenticated user can register a court
+    @ignore
+    Scenario: 
         Given I am logged in
         And The tournament inscriptions were launched
         When I navigate to the court registration page

@@ -5,8 +5,8 @@ Feature: As An admin, I want to be able to see the modifications logs
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @watch
-    Scenario: Authenticated user can register to the tournament
+    @ignore
+    Scenario: 
         Given I am logged in
         And The database has been populated
         When I click on Log des modifications
