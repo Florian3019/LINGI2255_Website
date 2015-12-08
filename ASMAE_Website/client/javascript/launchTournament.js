@@ -34,6 +34,28 @@ Template.launchTournament.events({
         var getDateObject = new Date(getDate[2], getDate[1]-1, getDate[0]);
         var price = parseFloat($('[name=tournamentPrice]').val());
 
+        var dateInput = document.getElementById("formGroupDateInput");
+        var dateMsg = document.getElementById("dateError");
+        var priceInput = document.getElementById("formGroupPriceInput");
+        var errorMsg = document.getElementById("priceError");
+        
+        if(getDate.length==1 && getDate[0]===""){    
+            dateInput.className = "form-group has-error";
+            dateMsg.style.display = "block";
+            return; 
+        }
+        
+        if(isNaN(price)){
+            priceInput.className = "form-group has-error";
+            errorMsg.style.display = "block";
+            return; 
+        }
+
+        dateInput.className = "form-group has-success";
+        priceInput.className = "form-group has-success";
+        dateMsg.style.display = "none";
+        errorMsg.style.display = "none";
+
         var launchData = {
             tournamentDate: getDateObject,
             tournamentPrice: price
@@ -52,18 +74,30 @@ Template.launchTournament.events({
     },
 
     'click #modifyLaunchButton': function(){
-        Meteor.call('deleteCurrentTournament', function(err, result){
-            if(err){
-                console.log(err);
-            }
-
-            Meteor.call('stopTournamentRegistrations', function(error, result){
-                if(error){
-                    console.error('stopTournamentRegistrations error');
-                    console.error(error);
+        swal({
+          title:"Confimer la modification du tournoi",
+          text:"Cette opération est irréversible.",
+          type:"warning",
+          showCancelButton:true,
+          cancelButtonText:"Annuler",
+          confirmButtonText:"Modifier le tournoi",
+          confirmButtonColor:"#0099ff",
+          },
+          function(){
+              Meteor.call('deleteCurrentTournament', function(err, result){
+                if(err){
+                    console.log(err);
                 }
+
+                Meteor.call('stopTournamentRegistrations', function(error, result){
+                    if(error){
+                        console.error('stopTournamentRegistrations error');
+                        console.error(error);
+                    }
+                });
             });
-        });
+            }
+        );
     }
 
 });

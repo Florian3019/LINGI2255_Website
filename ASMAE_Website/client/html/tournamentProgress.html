@@ -110,16 +110,31 @@
     {{#if isAdmin}}
 
     <form id="launchTournamentForm" role="form">
-        <div class="form-group">
+        <div class="form-group has-feedback">
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2">
-                    <input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" placeholder="Date de début du tournoi" required>
+                    <div class="form-group" id="formGroupDateInput">
+                        <input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" placeholder="Date de début du tournoi" required>
+                        <div id="dateError" hidden>
+                            <span class="help-block" style="color:red">Merci d'entrer la date du tournoi</span>
+                            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="color:red"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <br>
             <div class="row">
+
+
+
                 <div class="col-sm-8 col-sm-offset-2">
-                    <input type="number" name="tournamentPrice" min="0" id="tournamentPrice" class="form-control" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
+                    <div class="form-group" id="formGroupPriceInput">
+                      <input type="number" name="tournamentPrice" min="0" id="tournamentPrice" class="form-control" placeHolder="Prix de l'inscription au tournoi (&euro;)" required for="priceError">
+                      <div id="priceError" hidden>
+                        <span class="help-block" style="color:red">Merci d'entrer le prix du tournoi</span>
+                        <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="color:red"></span>
+                      </div>
+                  </div>
                 </div>
             </div>
 
