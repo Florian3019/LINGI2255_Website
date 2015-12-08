@@ -8,7 +8,7 @@
 						{{>buildTournament}}
 					{{else}}
 						<div class="page-header">
-							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} > {{translateCategory this}} {{/unless}}</h2>
+							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} en {{translateCategory this}} {{/unless}}</h2>
 						</div>
 						{{#if isAdminOrStaff}}
 				 			{{#if isLoading}}
@@ -152,7 +152,7 @@
 </template>
 
 <template name="gracketTemplate">
-	<div class="my_gracket" id="gracketContainer"></div>
+	<div class="my_gracket hideIfEmpty hideIfNotStarted" id="gracketContainer"></div>
 {{#with makeBrackets}}
 	{{displayBrackets this}}
 {{/with}}

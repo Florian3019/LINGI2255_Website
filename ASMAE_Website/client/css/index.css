@@ -91,6 +91,10 @@ html {
 }
 
 /* Content of the web site */
+.page-header {
+    text-align: center;
+}
+
 .page-content {
     padding-top: 64px;
     margin-left: 240px;
@@ -98,7 +102,6 @@ html {
     /*height: 100%;*/
     overflow: auto;
     z-index: 1;
-
 }
 
 .content {
@@ -173,7 +176,8 @@ html {
 .panel-heading {
     background: rgba(0, 76, 153, 0.6) !important;
     /*background: #f3f3f3 !important;*/
-    color: #000 !important;
+    color: #fff !important;
+    font-weight: bold;
 }
 
 textarea {
@@ -182,7 +186,7 @@ textarea {
 
 /* Box alert info */
 .alert-info {
-    background-color: #A0522D !important;
+    background-color: rgba(0, 76, 153, 0.6) !important;
 }
 
 
