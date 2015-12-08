@@ -17,7 +17,13 @@
                     <tbody>
                         <tr>
                           <td>Addresse email</td>
-                          <td id="Email">{{emails}}</td>
+                          <td id="Email">
+                              {{#if isCurrentUser id}}
+                                {{emails}}
+                              {{else}}
+                                <a href="mailto:{{emails}}">{{emails}} </a>
+                              {{/if}}
+                          </td>
                         </tr>
                     {{#if isStaffOrAdmin}}
                       <tr>
@@ -97,7 +103,7 @@
                         {{#with getPayment id}}
                         {{#each playerExtras ../id}}
                         <tr>
-                            <td>{{extraName}} ({{extraPrice}} euros)</td>
+                            <td>{{extraDay}} : {{extraName}} ({{extraPrice}} euros)</td>
                             <td>{{extraQuantity}}</td>
                         </tr>
                         {{/each}}

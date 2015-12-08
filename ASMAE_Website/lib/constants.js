@@ -50,6 +50,18 @@ getDistanceFromHQ = function(coords){
     return Math.sqrt(Math.pow(latDist,2) + Math.pow(lngDist,2)); // Pythagore
 }
 
+getTournamentDate = function() {
+    var currentYear = GlobalValues.findOne({_id:"currentYear"});
+    if (currentYear===undefined || currentYear.value === undefined) {
+        return undefined;
+    }
+    var year = Years.findOne({_id:currentYear.value});
+    if (year===undefined || year.tournamentDate===undefined) {
+        return undefined;
+    }
+    return year.tournamentDate;
+}
+
 /*
     Returns the date as a string that can be compared using the classical string compare method,
     such that the comparison is coherent with the ordering of dates.

@@ -57,7 +57,7 @@ Template.playerPayments.helpers({
             { key:'bankTransferNumber', label:"N° d'identification"},
             { key: '_id', label: 'Marquer comme payé', tmpl:Template.markAsPaid},
         ],
-            showFilter: false,           
+            showFilter: false,
         }
     },
 });
@@ -78,7 +78,7 @@ Template.markAsPaid.events({
                 return;
             }
             swal({
-                title:"Succès !",
+                title:"A payé !",
                 text:"Cet utilisateur a été marqué comme ayant payé.",
                 type:"success",
                 confirmButtonColor:"#0099ff"

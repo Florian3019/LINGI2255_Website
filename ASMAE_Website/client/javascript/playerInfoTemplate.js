@@ -213,10 +213,13 @@ Template.playerInfoTemplate.helpers({
 			var extrasArray = [];
 			for(extra in extras){
 				var price = Extras.findOne({name:extra}).price;
+                var day = Extras.findOne({name:extra}).day;
+                day = day == "saturday" ? "Samedi" : "Dimanche";
 				extraObject = {
 					extraName: extra,
 					extraQuantity: extras[extra],
-					extraPrice: price
+					extraPrice: price,
+                    extraDay: day
 				};
 				extrasArray.push(extraObject);
 			}

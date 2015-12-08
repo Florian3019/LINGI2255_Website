@@ -449,6 +449,32 @@ Template.tournamentRegistrationTemplate.helpers({
 		}
 	},
 
+	'getFormattedDate' : function(day) {
+		var date = getTournamentDate();
+		if (!date || !day) {
+			return undefined;
+		}
+		var month;
+		var d = date.getDate();
+		d = day=="saturday" ? d : d+1;
+		switch(date.getMonth()) {
+			case 0: month="janvier"; break;
+			case 1: month="février"; break;
+			case 2: month="mars"; break;
+			case 3: month="avril"; break;
+			case 4: month="mai"; break;
+			case 5: month="juin"; break;
+			case 6: month="juillet"; break;
+			case 7: month="août"; break;
+			case 8: month="septembre"; break;
+			case 9: month="octobre"; break;
+			case 10: month="novembre"; break;
+			case 11: month="décembre"; break;
+			default: month="septembre"; break;
+		}
+		return d + " "+month+" "+date.getFullYear();
+	},
+
 	'extras': function (day) {
 		if (day!=="samedi" && day!="dimanche") {
 			return undefined;
@@ -472,7 +498,6 @@ Template.tournamentRegistrationTemplate.helpers({
 				}
 			}
 		}
-		console.log(extras);
 		return extras;
     },
 
@@ -1100,7 +1125,7 @@ Template.tournamentRegistrationTemplate.events({
 
 				var e = document.getElementById("AFTcheat");
 				e.style.display = 'block';
-				document.getElementById("AFTcheat").className = "form-group has-error has-feedback";	
+				document.getElementById("AFTcheat").className = "form-group has-error has-feedback";
 			}
 		});
 
@@ -1131,4 +1156,7 @@ Template.tournamentRegistrationTemplate.events({
 		}
 		var sexSelect = document.getElementById('sex');
 		sexSelect.value = user.profile.gender!==undefined ? user.profile.gender : "default";
+
+		var rankSelect = document.getElementById('rank');
+		rankSelect.value = user.profile.AFT!==undefined ? user.profile.AFT : "NC";
 	});
