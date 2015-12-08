@@ -113,12 +113,12 @@ Meteor.methods({
 			}
 
 			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			Meteor.call('restartTournament'); 	//Set currentYear to ""
 			Years.remove({_id: currentYear});
 
 			//Delete all pairs
 			Pairs.remove({year: currentYear});
 
-			Meteor.call('restartTournament'); 	//Set currentYear to ""
 	},
 
 	'setCurrentYear' : function(currentYear) {
@@ -647,10 +647,10 @@ Meteor.methods({
 		}
 
 
-		if(courtId === undefined){
+		if(typeof courtId === 'undefined'){
 			// Create a new court
 
-			if(data.HQDist===undefined){
+			if(typeof data.HQDist === 'undefined'){
 				data.HQDist=Number.MAX_VALUE;
 			}
 
@@ -673,20 +673,20 @@ Meteor.methods({
 	'deleteCourt' : function(courtId){
 		if(!courtId){
 			console.error("deleteCourt: no courtId in argument");
-			return false;
+			throw new Meteor.Error("deleteCourt: no courtId in argument");
 		}
 
 		var court = Courts.findOne(courtId);
 		if(!court)
 		{
 			console.error("deleteCourt: no court correponds to courtId");
-			return false;
+			throw new Meteor.Error("deleteCourt: no court correponds to courtId");
 		}
 
 		var u = Meteor.users.findOne(court.ownerID);
 		if(!u){
-			console.error('deleteCourt : owner does not exist');
-			return false;
+			console.error("deleteCourt : owner does not exist");
+			throw new Meteor.Error("deleteCourt : owner does not exist");
 		}
 
 		const isAdmin = Meteor.call('isAdmin');
@@ -711,7 +711,7 @@ Meteor.methods({
 		else
 		{
 			console.error("deleteCourt : You don't have the permissions to delete a court !");
-			return false;
+			throw new Meteor.Error("deleteCourt : You don't have the permissions to delete a court !");
 		}
 
 	},

@@ -23,6 +23,21 @@ Template.launchTournament.helpers({
         return Extras.find();
     },
 
+    'getPreviousTournamentDate' : function(){
+        var previousTournamentDate = Session.get('previousTournamentDate');
+        if(typeof previousTournamentDate !== 'undefined'){
+            var m = previousTournamentDate.getMonth() + 1;
+            return previousTournamentDate.getDate()+'/'+ m +'/'+previousTournamentDate.getFullYear();
+        }
+    },
+
+    'getPreviousTournamentPrice' : function(){
+        var previousTournamentPrice = Session.get('previousTournamentPrice');
+        if(typeof previousTournamentPrice !== 'undefined'){
+            return previousTournamentPrice;
+        }
+    }
+
 });
 
 
@@ -52,6 +67,11 @@ Template.launchTournament.events({
     },
 
     'click #modifyLaunchButton': function(){
+        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+        var previousTournament = Years.findOne({_id: currentYear});
+        Session.set('previousTournamentDate', previousTournament.tournamentDate);
+        Session.set('previousTournamentPrice', previousTournament.tournamentPrice);
+
         Meteor.call('deleteCurrentTournament', function(err, result){
             if(err){
                 console.log(err);

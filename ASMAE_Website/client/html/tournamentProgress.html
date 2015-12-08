@@ -111,13 +111,13 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2">
-                    <input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" placeholder="Date de début du tournoi" required>
+                    <input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" value="{{getPreviousTournamentDate}}" placeholder="Date de début du tournoi" required>
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2">
-                    <input type="number" name="tournamentPrice" min="0" id="tournamentPrice" class="form-control" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
+                    <input type="number" name="tournamentPrice" min="0" id="tournamentPrice" class="form-control" value="{{getPreviousTournamentPrice}}" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
                 </div>
             </div>
 

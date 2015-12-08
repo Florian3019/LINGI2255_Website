@@ -42,6 +42,15 @@ Template.courtInfoPage.helpers({
         return null;
     },
 
+    'showAddress': function(addr){
+        if(addr) {
+            if (addr.box) {
+                return addr.street + ", " + addr.number + ". Boite " + addr.box;
+            }
+            return addr.street + ", "+addr.number;
+        }
+    },
+
     'isAdminOrStaffOrOwner':function(ownerId){
       var profile = Meteor.user().profile;
       return profile.isAdmin || profile.isStaff || ownerId===Meteor.userId();
@@ -147,7 +156,7 @@ Template.courtInfoPage.events({
                 Meteor.call("addToModificationsLog",
                   {"opType":"Effacer un terrain",
                   "details":
-                      "Terrain "+ formatAddress(addr) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
+                      "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
                   });
 
   				Router.go('home');
