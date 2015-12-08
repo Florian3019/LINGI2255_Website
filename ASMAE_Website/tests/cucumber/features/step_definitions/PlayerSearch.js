@@ -5,11 +5,11 @@ module.exports = function () {
         client.waitForVisible('#PlayerSearchButtonMenu');
         client.click('#PlayerSearchButtonMenu');
         client.pause(500);
-        client.waitForExist('#permSelect');
+        /*client.waitForExist('#permSelect');
         client.waitForVisible('#permSelect');
         client.click('#permSelect');
         client.waitForVisible('option[value="Admin"]');
-        client.click('option[value="Admin"]');
+        client.click('option[value="Admin"]');*/
     });
 
     this.Then(/^I should see the informations about the research between players$/,function(){

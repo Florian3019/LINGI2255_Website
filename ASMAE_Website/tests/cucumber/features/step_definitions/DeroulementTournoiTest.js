@@ -27,7 +27,7 @@ module.exports = function () {
 
         var title4 = '#AvailabilitiesPoint4';
         browser.waitForExist(title4);
-        expect(browser.getText(title4)).toEqual('4. Clôturer les inscriptions');
+        expect(browser.getText(title4)).toEqual('4. Fermer les inscriptions');
 
         var title5 = '#AvailabilitiesPoint5';
         browser.waitForExist(title5);
