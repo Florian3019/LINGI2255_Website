@@ -138,6 +138,7 @@ var getEmpty = function(round, court){
 
 var setRoundData = function(roundData){
   round = roundData.data.round;
+
   newRoundData = {
     "pair":roundData.pair,
     "data":{
@@ -186,6 +187,7 @@ var forwardData = function(roundData, canEditScore){
 // Round data format : {pair:<pair>, data:<bracketPairData>}
 // Returns the best of the 2 pairs or undefined if the score is not yet known. If score is known, updates roundData with the new score
 var getBestFrom2 = function(roundData1, roundData2, round, canEditScore){
+
   if(roundData1==undefined || roundData2==undefined || round==undefined){
     console.error("getBestFrom2 : Undefined data");
     return;
@@ -659,6 +661,7 @@ var makeBrackets = function(document){
       b = newRound[i+1];
 
       if(a.pair!=="placeHolder" && b.pair!=="placeHolder"){
+        b.data.clickable = true;
         setCourt(a, b,courts,nextMatchNum); // Define which court to use for that match
         nextMatchNum++;
       }
@@ -686,6 +689,10 @@ var makeBrackets = function(document){
       else if(b.pair!=="empty" && b.pair!=="placeHolder" && a.pair==="empty"){
         b.data.score = waiting;
         b.data.clickable = false;
+      }
+
+      if(b.data.clickable){
+        a.data.clickable = true;
       }
 
       if(hasPoints(a) && hasPoints(b)) matchesCompleted += 1;
