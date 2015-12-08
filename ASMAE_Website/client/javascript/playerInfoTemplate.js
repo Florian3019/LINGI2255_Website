@@ -9,9 +9,7 @@ Session.set('paymentFormStatus', null);
 function getFormData(){
 
 	var user = Meteor.user();
-	var extras = getExtras();
-
-	//TODO: get extras for each day (so find if multiple pairs)
+	var extras = getExtrasFromPlayerID(user._id); // Extras for BOTH days
 
   	var data = {
     	firstName : user.profile.firstName,
@@ -51,19 +49,6 @@ function initializeBraintree (clientToken) {
       });
     }
   });
-}
-
-function getExtras(userId){
-	var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-	var pair = Pairs.findOne({$or:[{"player1._id":userId},{"player2._id":userId}], "year":currentYear},{"_id":1});
-	if(pair===undefined) return undefined;
-	if(pair.player1!==undefined && userId === pair.player1._id){
-		return pair.player1.extras;
-	}
-	else {
-		if(pair.player2==undefined) return undefined;
-		return pair.player2.extras;
-	}
 }
 
 // Takes a player id as argument
@@ -240,7 +225,7 @@ Template.playerInfoTemplate.helpers({
 	},
 
 	'playerExtras': function(userId){
-		var extras = getExtras(userId);
+		var extras = getExtrasFromPlayerID(userId);
 		if(extras!==undefined)
 		{
 			var extrasArray = [];
