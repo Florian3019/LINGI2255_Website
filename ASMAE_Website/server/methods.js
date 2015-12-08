@@ -1153,7 +1153,7 @@ Meteor.methods({
 				}});
 
 
-        		var bank = "BE33 3753 3397 1254";
+        		var bank = "BE33 3753 3397 1254"; //TODO: hardcoded here
         		var user = Meteor.users.findOne({_id:paymentData.userID});
         		var dataEmail = {
           			intro:"Bonjour "+user.profile.firstName+",",
@@ -1164,12 +1164,7 @@ Meteor.methods({
 				if (!silentMail) {
 					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
 				}
-					/*
 
-						Envoyer un mail contenant les informations pour payer par virement bancaire:
-						- compte bancaire: hardcoded pour le moment. Je mettrai peut-être un formulaire pour l'admin.
-
-					*/
 			}
 
 			if(userIsOwner){
@@ -1195,9 +1190,9 @@ Meteor.methods({
 
 				if(pairData.paymentMethod === paymentTypes[1]){		// Bank transfer
 					paymentData.bankTransferNumber = paymentData.bankTransferNumber + 1;
-					var newValue = paymentData.bankTransferNumber + 1;
+					var newValue2 = paymentData.bankTransferNumber + 1;
 					GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
-						value: newValue
+						value: newValue2
 					}});
 				}
 
@@ -2105,8 +2100,25 @@ Meteor.methods({
 		}}, function(err, res){
 			if(err){
 				console.log(err);
+				throw new Meteor.Error(err);
 			}
 		});
+
+		var payment = Payments.findOne({_id: paymentID});
+		var user = Meteor.users.findOne({_id: payment.userID});
+
+		Meteor.call("addToModificationsLog",
+		{"opType":"Marquer comme payé",
+		"details": user.profile.firstName + " " + user.profile.lastName + " a été marqué comme ayant payé le tournoi"
+	}, function(err, logId){
+		if(err){
+			console.log(err);
+			return;
+		}
+		Meteor.call('addToUserLog', user._id, logId);
+	});
+
+
 		return true;
 	},
 

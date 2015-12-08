@@ -135,12 +135,7 @@
               </div>
 
             </div>
-            {{#if isStaffOrAdmin}}
-            {{#with getPlayerModLog this.log}}
-              <h4> Modifications récentes </h4>
-              {{>reactiveTable collection=this settings=settings fields=fields}}
-            {{/with}}
-            {{/if}}
+
             {{#if canModify}}
               <center>
                 <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>
@@ -154,6 +149,14 @@
               </center>
             {{/if}}
 </div>
+
+{{#if isStaffOrAdmin}}
+    {{#with getPlayerModLog this.log}}
+    <h4> Modifications récentes </h4>
+    {{>reactiveTable collection=this settings=settings fields=fields}}
+    {{/with}}
+{{/if}}
+
 
 <!-- Modal payment -->
 <div class="modal" id="dropinModal">
