@@ -12,7 +12,13 @@
   {{#with getYear}} <!-- Returns a yearData -->
     {{#with getType this}}
         <div class="page-header">
-          <h2> Matchs de poule {{getTranslateType}}{{#unless equals this "all"}} > {{getTranslateCategory}} {{/unless}}</h2>
+          <h2> Matchs de poule {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}
+            {{#if isAdminOrStaff}}
+              <button type="button" title="Aide" id="helpScore" class="btn btn-default btn-info" style="margin-left:15px">
+                  <span class="glyphicon glyphicon-question-sign"></span>
+              </button>
+            {{/if}}
+          </h2>
         </div>
       {{>responsablesTemplate this}}
     {{/with}}

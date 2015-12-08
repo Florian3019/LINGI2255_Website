@@ -1,14 +1,23 @@
 Template.closeRegistrationsBlock.events({
     'click #closeRegistrationsButton': function(){
-        if(confirm("Confirmer la fermeture des inscriptions:"))
-        {
-            Meteor.call('stopTournamentRegistrations', function(error, result){
-                if(error){
-                    console.error('stopTournamentRegistrations error');
-                    console.error(error);
-                }
-            });
-        }
+        swal({
+          title:"Confirmer la fermeture des inscriptions",
+          text:"Cette opération est irréversible.",
+          type:"warning",
+          showCancelButton:true,
+          cancelButtonText:"Annuler",
+          confirmButtonText:"Fermer les inscriptions",
+          confirmButtonColor:"#0099ff",
+          },
+          function(){
+              Meteor.call('stopTournamentRegistrations', function(error, result){
+                    if(error){
+                        console.error('stopTournamentRegistrations error');
+                        console.error(error);
+                    }
+                });
+            }
+        );
     }
 
 });

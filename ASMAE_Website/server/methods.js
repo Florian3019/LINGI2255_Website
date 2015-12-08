@@ -217,9 +217,15 @@ Meteor.methods({
 
 	'turnAdmin': function(nid){
 		if(Meteor.call('isAdmin')){
+			var user = Meteor.users.findOne({_id:nid});
+			if(user.emails.length>0 && user.emails[0].verified!==true){
+				console.error("Error turning admin : the user required did not verify his email address");
+				return false;
+			}
 			Meteor.users.update({_id:nid}, {
            		$set: {"profile.isAdmin":true,"profile.isStaff":true}
          	});
+         	return true;
 		}
 		else {
 			console.error("Error turning admin");
@@ -229,9 +235,15 @@ Meteor.methods({
 
 	'turnStaff': function(nid){
 		if(Meteor.call('isAdmin')){
+			var user = Meteor.users.findOne({_id:nid});
+			if(user.emails.length>0 && user.emails[0].verified!==true){
+				console.error("Error turning staff : the user required did not verify his email address");
+				return false;
+			}
 			Meteor.users.update({_id:nid}, {
            		$set: {"profile.isAdmin":false,"profile.isStaff":true}
          	});
+         	return true;
 		}
 		else {
 			console.error("Error turnning staff");
@@ -241,12 +253,18 @@ Meteor.methods({
 
 	'turnNormal': function(nid){
 		if(Meteor.call('isAdmin')){
+			var user = Meteor.users.findOne({_id:nid});
+			if(user.emails.length>0 && user.emails[0].verified!==true){
+				console.error("Error turning normal : the user required did not verify his email address");
+				return false;
+			}
 			Meteor.users.update({_id:nid}, {
 	        	$set: {"profile.isAdmin":false,"profile.isStaff":false}
 	      	});
+	      	return true;
 		}
 		else {
-			console.error("Error turning normal");
+			console.error("Error turning normal : user is not admin");
 			return false;
 		}
 	},

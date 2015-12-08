@@ -18,18 +18,18 @@
         Cliquez sur le bouton CSV pour télécharger les addresses sous le format csv.
         </p>
         <center>
-            <button id="sendRegistrationsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
-            <button id="doneButton2" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
-            <button id="notDoneButton2" type="button" class="btn btn-default btn-sm okDone">Marquer comme non fait</button>
+            <button id="sendRegistrationsEmail" type="button" class="btn btn-default btn-sm notDone"><span class="glyphicon glyphicon-envelope" style="margin-right:15px;"></span>Envoyer</button>
             {{>addressToCSV}}
+            <button id="doneButton2" type="button" class="btn btn-default btn-sm notDone btn-danger"><span class="glyphicon glyphicon-remove" style="margin-right:15px; "></span>Non fait</button>
+            <button id="notDoneButton2" type="button" class="btn btn-default btn-sm okDone btn-success"><span class="glyphicon glyphicon-ok" style="margin-right:15px; "></span>Fait</button>
         </center>
     </div>
 
     <div class="{{stepIsDoneClass 3}}">
         <h5 id="AvailabilitiesPoint3">3. Accepter les terrains</h5>
         <center>
-            <button id="doneButton3" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
-            <button id="notDoneButton3" type="button" class="btn btn-default btn-sm okDone">Marquer comme non fait</button>
+            <button id="doneButton3" type="button" class="btn btn-default btn-sm notDone btn-danger"><span class="glyphicon glyphicon-remove" style="margin-right:15px;"></span>Non fait</button>
+            <button id="notDoneButton3" type="button" class="btn btn-default btn-sm okDone btn-success"><span class="glyphicon glyphicon-ok" style="margin-right:15px; "></span>Fait</button>
         </center>
     </div>
 
@@ -42,8 +42,8 @@
         <h5 id="AvailabilitiesPoint5">5. Gérer les poules</h5>
         <p>Utilisez le menu "Gestion du tournoi" pour gérer les poules.</p>
         <center>
-            <button id="doneButton5" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
-            <button id="notDoneButton5" type="button" class="btn btn-default btn-sm okDone">Marquer comme non fait</button>
+            <button id="doneButton5" type="button" class="btn btn-default btn-sm notDone btn-danger"><span class="glyphicon glyphicon-remove" style="margin-right:15px; "></span>Non fait</button>
+            <button id="notDoneButton5" type="button" class="btn btn-default btn-sm okDone btn-success"><span class="glyphicon glyphicon-ok" style="margin-right:15px; "></span>Fait</button>
         </center>
     </div>
 
@@ -54,8 +54,8 @@
         <center>
             <button id="assignCourts" type="button" class="btn btn-default btn-sm notDone">Assigner tous les terrains</button>
             <button id="assignIndoorCourts" type="button" class="btn btn-default btn-sm notDone">Assigner les terrains intérieurs</button>
-            <button id="doneButton6" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
-            <button id="notDoneButton6" type="button" class="btn btn-default btn-sm okDone">Marquer comme non fait</button>
+            <button id="doneButton6" type="button" class="btn btn-default btn-sm notDone btn-danger"><span class="glyphicon glyphicon-remove" style="margin-right:15px; "></span>Non fait</button>
+            <button id="notDoneButton6" type="button" class="btn btn-default btn-sm okDone btn-success"><span class="glyphicon glyphicon-ok" style="margin-right:15px; "></span>Fait</button>
         </center>
     </div>
 
@@ -63,9 +63,9 @@
         <h5 id="AvailabilitiesPoint7">7. Envoyer un email aux joueurs et aux chefs de poules</h5>
         <p>Cliquez sur ce bouton pour envoyer aux joueurs les informations sur le tournoi et les informations nécessaires aux chefs de poules</p>
         <center>
-            <button id="sendPoolsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
-            <button id="doneButton7" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
-            <button id="notDoneButton7" type="button" class="btn btn-default btn-sm okDone">Marquer comme non fait</button>
+            <button id="sendPoolsEmail" type="button" class="btn btn-default btn-sm notDone"><span class="glyphicon glyphicon-envelope" style="margin-right:15px;"></span>Envoyer</button>
+            <button id="doneButton7" type="button" class="btn btn-default btn-sm notDone btn-danger"><span class="glyphicon glyphicon-remove" style="margin-right:15px; "></span>Non fait</button>
+            <button id="notDoneButton7" type="button" class="btn btn-default btn-sm okDone btn-success"><span class="glyphicon glyphicon-ok" style="margin-right:15px; "></span>Fait</button>
         </center>
     </div>
 
@@ -98,7 +98,7 @@
 
     {{#if isAdmin}}
         <p>Si vous vous êtes trompé dans la date ou le prix du tournoi cliquez ici pour les modifier (ceci peut avoir des conséquences sur les inscriptions déjà effectuées)</p>
-        <center><button id="modifyLaunchButton" type="button" class="btn btn-default btn-sm">Modifier</button></center>
+        <center><button id="modifyLaunchButton" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil" style="margin-right:15px;"></span>Modifier</button></center>
     {{else}}
         <p>Si la date ou le prix du tournoi est incorrect, contactez un administrateur.</p>
     {{/if}}

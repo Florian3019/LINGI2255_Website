@@ -29,3 +29,8 @@
   font-weight: bold;
   text-align: center;
 }
+
+.sweetAlertScroll{
+  overflow: auto;
+  max-height:600px;
+}

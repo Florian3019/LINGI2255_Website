@@ -767,6 +767,23 @@ Template.brackets.onRendered(function(){
 });
 
 Template.brackets.events({
+  "click #helpBrackets":function(event){
+    swal({
+      title:"Aide",
+      text: "<ul class='list-group' style='text-align:left'>"+
+            "<li class='list-group-item'>Pour modifier le terrain, cliquez sur la barre bleue en haut d'un match.</li>"+
+            "<li class='list-group-item'>Pour modifier le score, cliquez sur une paire (uniquement si le match est complet).</li>"+
+            "<li class='list-group-item'>Pour imprimer le pdf, cliquez sur le bouton correspondant en bas de page.</li>"+
+            "</ul>",
+      type:"info",
+      html:true,
+      customClass:"sweetAlertScroll",
+      confirmButtonText:"Ok",
+      confirmButtonColor:"#0099ff",
+      }
+      );
+  },
+
 
   // change the court
 
@@ -839,7 +856,7 @@ Template.brackets.events({
   },
 
   'click #start':function(event){
-      var startTournamentCallBack = function(){
+      var startTournamentCallBack = function(maxWinners){
         Session.set("brackets/isLoading",true);
 
         var infoBox =document.getElementById("infoBox");
@@ -848,8 +865,6 @@ Template.brackets.events({
         var year = Session.get('PoolList/Year');
         var type = Session.get('PoolList/Type');
         var cat = Session.get('PoolList/Category');
-
-        var maxWinners = document.getElementById("winnersPerPool").value;
 
         callback = function(err, retVal){
           Session.set("brackets/isLoading",false);
@@ -885,10 +900,29 @@ Template.brackets.events({
       showCancelButton: true,
       cancelButtonText:"Annuler",
       confirmButtonColor: "#3085d6",
-      confirmButtonText: "Lancer ce knock-off",
-      closeOnConfirm: true },
+      confirmButtonText: "Continuer",
+      closeOnConfirm: false },
       function(){
-        startTournamentCallBack();
+        swal({
+          title:"Nombre de gagnants par poule",
+          text:"Vous pourrez changer qui passe dans les knock-offs sur l'écran suivant",
+          type:"input",
+          inputType:"number",
+          inputValue:"2",
+          confirmButtonText:"Lancer ce knock-off !",
+          confirmButtonColor: "#3085d6",
+          closeOnConfirm:false,
+          showCancelButton: true
+        }, 
+        function(inputValue){
+          if(!(inputValue>0)){
+            swal.showInputError("Le nombre de gagnants doit être plus grand que 0");
+            return false;
+          }
+          swal.close();
+          startTournamentCallBack(inputValue);
+          return true;
+        });
       });
   },
 

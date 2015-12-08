@@ -75,7 +75,14 @@ Template.markAsPaid.events({
             if(err){
                 console.log("Error while calling method markAsPaid");
                 console.log(err);
+                return;
             }
+            swal({
+                title:"Succès !",
+                text:"Cet utilisateur a été marqué comme ayant payé.",
+                type:"success",
+                confirmButtonColor:"#0099ff"
+            });
         });
     },
 });
