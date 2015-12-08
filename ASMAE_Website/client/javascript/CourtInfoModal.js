@@ -18,9 +18,9 @@ Template.CourtInfoModal.helpers({
 Template.CourtInfoModal.events({
 	'click #goToMap':function(event){
 		var courtId = event.currentTarget.dataset.id;
-		// $('#CourtInfoModal').modal('hide');
-		// $('#CourtInfoModal').on('hidden.bs.modal', function(){
+		 $('#CourtInfoModal').modal('hide');
+		 $('#CourtInfoModal').on('hidden.bs.modal', function(){
 			Router.go("courtMap", {_id:courtId});
-		// });
+		 });
 	}
 });
