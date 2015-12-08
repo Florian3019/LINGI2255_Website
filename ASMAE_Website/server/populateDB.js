@@ -4,7 +4,7 @@
 
 Meteor.methods({
 
-	'activateDB' : function() {
+	'activateDB' : function(isTest) {
 		console.log("Activation of the DB");
 		console.log("activateDB grants you ADMIN access !");
 		Meteor.call("turnAdminInsecure", Meteor.userId());
@@ -15,14 +15,16 @@ Meteor.methods({
 		console.log("activateDB sets your email to verified");
 		var user = Meteor.users.findOne({_id:Meteor.userId()});
 		var a = "test@test.com";
-		//Accounts.addEmail(Meteor.userId(), a, true);
+		if (!isTest) {
+			Accounts.addEmail(Meteor.userId(), a, true);
+		}
 	},
 
     /*
 	 * Insert some users in the DB for the tournament specified as the first argument
 	 * This is magic
 	 */
-	'populateDB': function(tournamentDateTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin) {
+	'populateDB': function(tournamentDateTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin, isTest) {
 
 		var firstnamesM = [ "Youssef", "Zakaria", "Yannick", "Zachary", "Younès", "Yannis", "Yani", "Ylan", "Yoni", "Julian", "Kilian", "Jules", "Kaïs", "Karim", "Pierre-antoine", "Oumar", "Noam", "Paco", "Bryan", "Anthony", "Arsène", "Auguste", "Aurèle", "Arnaud", "Angelo", "Esteban", "Eliott", "Elliot", "Elouan", "Constantin", "Damien", "Alexis", "Ahmed", "Alban", "Amara", "Adam", "Amaury", "Amir", "Andy", "Benjamin", "Baptiste", "Brayan", "Brieuc", "Ayman", "Briac", "Brian", "Bruno", "Avi", "Dimitri", "Eliot", "Flavio", "Florent", "Franck", "Hugues", "Gabin", "Henri", "Gad", "Mathurin", "Maxime", "Mayeul", "Mateo", "Mahe", "Jarod", "Jason", "Karim", "Ivan", "Joey", "Leonard", "Kyllian", "Lilian", "Kevin", "Nassim", "Noah", "Noam", "Neil", "Mohamed", "Nadir", "Nael", "Luca", "Lino", "Ibrahim", "Idriss", "Ilyès", "Ilan", "Igor", "Nathanaël", "Noe", "Paulin", "Oumar", "Oren", "Paco", "Souleymane", "Titouan", "Tristan", "Ulysse", "Xavier", "Tiago", "Timeo", "Tony", "Tao", "Chahine", "Bruno", "Guillaume", "Ibrahima", "Hector", "Henry", "Constantin", "Clement", "Colin", "Antoine", "Anthony", "Arnaud", "Anton", "Ange", "Balthazar", "Benjamin", "Aurelien", "Aviel", "Aymen", "Badis", "Alexandre", "Adame", "Abel", "Adel", "Adem", "Edouard", "Dan", "Jordan", "Isaac", "Issam", "Jimmy", "Kamil", "Jack", "Killian", "Kevin", "Erwann", "Eytan", "Elie", "Florian", "Georges", "Germain", "Farès", "Lirone", "Loan", "Balthazar", "Benjamin", "Aymeric", "Bakary", "Djibril", "Ambroise", "Anatole", "Alone", "Andy", "Armand", "Arthus", "Aubin", "Ayman", "Aymen", "Gaspard", "Gaspar", "Gianni", "Giulio", "Constantin", "François", "Esteban", "Florian", "Eugène", "Farès", "Ibrahim", "Harold", "Idriss", "Ian", "Sofiane", "Sidney", "Tanguy", "Simon", "Olivier", "Nathan", "Octave", "Noam", "Rodrigue", "Pierre", "Romain", "Oscar", "Sacha", "Mahamadou", "Maël", "Maceo", "Luca", "Sebastien", "Shaï", "Samy", "Youssouf", "Zakaria", "Wesley", "Wissem", "Younes", "Willy", "Michaël", "Moussa", "Alexandre", "Ambroise", "Amadou", "Alan", "Antoine", "Arthur", "Anas", "Ari", "Balthazar", "Aymeric", "Aymane", "Benoit", "Elias", "Elio", "Brandon", "Bilel", "Cyriaque", "Cyprien", "Djibril", "Dorian", "Darius", "Corto", "Dany", "Emmanuel", "Emile", "Enzo", "Eloi", "Christopher", "Corentin", "Chris", "Colin", "Esteban", "Ethan", "Erwan", "Evann", "Fares", "Ewan", "Geoffrey", "Giovanni", "Gautier", "Georges", "Gustave", "Germain", "Vladimir", "Thierry", "Timothe", "Yanni", "Jean-Baptiste", "Jean-Marc", "Ismaël", "Jacques", "Jeremy", "Ilyes", "Jean", "Mahamadou", "Lucien", "Louis", "Luc", "Mathis", "Marwan", "Marko", "Richard", "Romain", "Robin", "Stephane", "Sylvain", "Samuel", "Tanguy", "Simon", "Teddy", "Jonathan", "Johann", "Joël", "Kaïs", "Joris", "John", "Melchior", "Matteo", "Moussa", "Mathys", "Moïse", "Max", "Killian", "Laurent", "Lazare", "Kenny", "Lior", "Ibrahima", "Ilyass", "Hakim", "Idris", "Ilias", "Ilyas", "Hugo", "Guy", "Ian", "Philippe", "Olivier", "Octave", "Paul", "Khalil", "Kevin", "Karl", "Marwane", "Matteo", "Matthieu", "Max", "Maxim", "Melvin", "Melvyn", "Mickael", "Mickaël", "Morgan", "Moussa", "Moustapha", "Nino", "Nolhan", "Octave", "Oren", "Oscar", "Rafaël", "Reda", "Remi", "Riyad", "Rodrigue", "Roman", "Romeo", "Ryad", "Samba", "Stephane", "Steve", "Swan", "Theo", "Thibault", "Timothee", "Tomas", "Tommy", "Virgile", "Wandrille", "Wissem", "Yassin", "Yves", "Zacharie", "Zachary", "Abdallah", "Abdoulaye", "Adama", "Adel", "Adem", "Adil", "Alessandro", "Alfred", "Ali", "Amaury", "Ambroise", "Anis", "Anton", "Aristide", "Armand", "Arsène", "Arthur", "Bilel", "Boubacar", "Charles", "Charly", "Christian", "Denis", "Dimitri", "Djibril", "Dorian", "Elian", "Elias", "Elio", "Elliott", "Emile", "Eric", "Ernest", "Erwan", "Ethan", "Eugène", "Gaspard", "Gauthier", "Guillaume", "Hadrien", "Harry", "Henry", "Hippolyte", "Idriss", "Ilhan", "Ilyan", "Issa", "Issam", "Iyed", "Jacques", "Jad", "Jaden", "Jan", "Jason", "Jimmy", "Joaquim", "Robinson", "Ruben", "Ronan", "Sabri", "Ryad", "Baudouin", "Celestin", "Calvin", "Celian", "Ben", "Baptiste", "Aurèle", "Ariel", "Raphaël", "Pierre", "Riyad", "Rami", "Robinson", "Rudy", "Sean", "Olivier", "Ousmane", "Patrick", "Nolan", "Owen", "Anatole", "Amaury", "Amadou", "Allan", "Andre", "Amir", "Ludovic", "Louka", "Loup", "Christopher", "Christian", "Clarence", "Cesar", "Chris", "Corentin", "Djibril", "Elijah", "Côme", "Frederic", "Giovanni", "Gustave", "Gaëtan", "Flavien", "Franck", "Eliot", "Elyas", "Enzo", "Elio", "Luigi", "Luka", "Mohamed-amine", "Mohammed", "Nicolas", "Mohamed", "Michel", "Noe", "Lorenzo", "Lior", "Souleymane", "Theophile", "Theophane", "Stephane", "Terence", "Thibaud", "Leopold", "Kylian", "Lamine", "Leo", "Mathieu", "Martin", "Matheo", "Alessandro", "Timothe", "Achille", "Abdoul", "Timeo", "Alex", "Jean-baptiste", "Ismaïl", "Jawad", "Jalil", "Issa", "Jad", "Jonathan", "Julien", "Julian", "Justin", "Jules", "John", "Joan", "Erwan", "Felix", "Evan", "Ewan", "Ilyès", "Teo", "Sebastien", "Robinson", "Ronan", "Shaï", "Jeremie", "Joseph", "Joris", "Leonard", "Laurent", "Leon", "Lino", "Luca", "Luka", "Raphael", "Samba", "Samy", "Sam", "Mathurin", "Matisse", "Maxime", "Marvin", "Mayeul", "Mario", "Matys", "Melvin", "Morgan", "Niels", "Nil", "Mamadou", "Malik", "Malo", "Marc", "Mahe", "Selim", "Thibaut", "Solal", "Theo", "Teo", "Valerie", "Victor", "Wissem", "Tiago", "Vadim", "Zakarya", "Achille", "Adrian", "Aaron", "Yaya", "Ylan", "Yoni", "Florentin", "Foucauld", "Florent", "Flavio", "Eyal", "Elliott", "Eliott", "Elio", "Cyprien", "Cheick", "Côme", "Cyril", "Dany", "Andreas", "Angelo", "Amir", "Anas", "Augustin", "Barnabe", "Arthur", "Blaise", "Alexis", "Allan", "Alpha", "Alan", "Alec", "Celestin", "Brahim", "Brieuc", "Celian", "Boris", "Bryan", "Guillaume", "Gregoire", "Isaac", "Aaron", "Hamed", "Henry", "James", "Hugo", "Augustin", "Bastien", "Benoît", "Ayman", "Bilel", "Artus", "Alexander", "Ambroise", "Alexis", "Merlin", "Morgan", "Milan", "Mattheo", "Marius", "Marwan", "Marko", "Mahe", "Vladimir", "Titouan", "Tristan", "Virgile", "Viktor", "Warren", "Tommy", "Tim", "Ugo", "Paul-Antoine", "Patrick", "Raphael", "Rafaël", "Rafael", "Rayan", "Rami", "Ramy", "Moustapha", "Nathan", "Niels", "Milan", "Mory", "Sebastian", "Seydou", "Roman", "Remi", "Sami", "Samy", "Reda", "Rudy", "Timothee", "Vianney", "Virgile", "Wassim", "Vadim", "Tom", "Stanislas", "Simeon", "Stefan", "Solal", "Yanis", "Alban", "Adame", "Ali", "Joaquim", "Killian", "Justin", "Kevin", "Jimmy", "John", "Jude", "Karl", "Ilyas", "Jawad", "Ilan", "Leopold", "Joachim", "Lassana", "Lamine", "Liam", "Matthieu", "Matteo", "Merlin", "Matis", "Matt", "Valentin", "Yacouba", "Youcef", "Younes", "Yoann", "Tony", "Mahamadou", "Lucien", "Maël", "Lukas", "Lyes", "Lilian", "Loïc", "Louis", "Louka", "Moustapha", "Mickaël", "Mouhamed", "Nassim", "Marc-antoine", "Massinissa", "Marouane", "Mathias", "Martin", "Matheo", "Marwan", "Nathan", "Alexandre", "Abdoulaye", "Aboubakar", "Abdel", "Alex", "Christopher", "Christophe", "Baptiste", "Cedric", "Cesar", "Corentin", "Constant", "Damien", "Daouda", "Clovis", "Dan", "Aloïs", "Amine", "Ange", "Dorian", "Dylan", "Eddy", "Elie", "Aurelien", "Antonin", "Aymane", "Ayoub", "Anis", "Giovanni", "Hadrien", "Georges", "Hector", "Gaston", "Helios", "Henri", "Hedi", "Gabriel", "Francis", "Gaëtan", "Eythan", "Felix", "Gabin", "Fabio", "Ismaël", "Ismaïl", "Jason", "Hippolyte", "Hubert", "Ilian", "Elliot", "Emile", "Enzo", "Eric", "Jean-baptiste", "Jonathan", "Julien", "Joan", "Marcel", "Lucas", "Loan", "Luc", "Marwane", "Matthis", "Matteo", "Matias", "Mateo", "Marin", "Sebastien", "Santiago", "Sylvain", "Steven", "Shaï", "Swann", "Moussa", "Naël", "Noah", "Rodrigue", "Ricardo", "Samuel", "Ruben", "Ronan", "Salim", "Ryan", "Phileas", "Pascal", "Pablo", "Paolo", "Paul", "Omar", "Remy", "Maxence", "Melvyn", "Mehdi", "Milan", "Max", "Zakaria", "Wandrille", "Tristan", "Titouan", "Terence", "Jonathan", "Joris", "Justin", "Khalil", "Kilian", "Kilyan", "Lazare", "Loup", "Lucas", "Lukas", "Maceo", "Mahdi", "Malo", "Mamadou", "Marvin", "Adame", "Adem", "Albert", "Alessandro", "Allan", "Alone", "Aly", "Amin", "Amine", "Anatole", "Anthony", "Anton", "Antonin", "Ayman", "Benjamin", "Boubacar", "Brieuc", "Bruno", "Calixte", "Chahine", "Charles", "Christian", "Christophe", "Christopher", "Clarence", "Colin", "Constantin", "Corentin", "Curtis", "Damien", "Diego", "Elie", "Eliot", "Elyas", "Emir", "Eric", "Evann", "Gabin", "Gabriel", "Georges", "Gustave", "Haron", "Ibrahim", "Ilyan", "Jeremy", "Jerôme", "Jibril", "Joey", "Joseph", "Josue", "Julien", "Karamba", "Karl", "Kenzi", "Kilian", "Kyllian", "Lassana", "Liam", "Mael", "Maksim", "Malo", "Marko", "Marouane", "Marvin", "Marwan", "Marwane", "Matteo", "Matteo", "Maxim", "Michael", "Mohamed-amine", "Nael", "Nahel", "Naïm", "Nikola", "Nil", "Nils", "Nino", "Noah", "Oscar", "Oumar", "Ousmane", "Paolo", "Philemon", "Quentin", "Hugues", "Henri", "Ilian", "Ilyes", "Ilias", "Ilyas", "Kilian", "Kevin", "Kaïs", "Malik", "Matisse", "Mathys", "Matias", "Mayeul", "Mehdi", "Mohamed", "Merwan", "Moïse", "Naël", "Sebastian", "Simeon", "Samba", "Raphaël", "Rafaël", "Patrick", "Paul", "Reda", "Remy", "Nathanaël", "Ousmane", "Nelson", "Noah", "Nils", "Owen", "Thibault", "Thierry", "Tidiane", "Thomas", "Vincent", "Yassine", "Victor", "Wassim", "Yanis", "Yoann", "Tony", "Zachary", "Younès", "Yohann", "Youcef", "Yvan", "Jean-baptiste", "Jeremie", "Isidore", "Jeremy", "Jordan", "Jacob", "Issam", "John", "Barthelemy", "Benjamin", "Benoît", "Cedric", "Bryan", "Ben", "Killian", "Joseph", "Joshua", "Kilian", "Kilyan", "Kevin", "Guillaume", "Hector", "Ilyes", "Henry", "Ilias", "Damien", "Dylan", "Cyril", "Demba", "Dany", "Elio", "Leon", "Lior", "Marwan", "Mateo", "Christophe", "Clarence", "Cyprien", "Clovis", "Cesar", "Colin", "Aristide", "Anatole", "Antonin", "Armand", "Armel", "Andy", "Ambroise", "Alexis", "Amadou" ];
 
@@ -102,6 +104,9 @@ Meteor.methods({
 
 		var questions = ["Y aura-t-il un barbecue cette année aussi ?", "Que faire si mon partenaire et moi n\'avons pas le même âge ?", "Comment puis-je m\'inscrire au tournoi ?", "Quel est le nombre maximal de jeux dans un set ?", "Où dois-je me présenter samedi matin ?", "Où se retrouve-t-on à midi ?", "De combien de joueurs sont constituées les pools ?", "Où puis-je trouver des informations sur les actions humanitaires d\'ASMAE ?"];
 
+		var saturdayExtras = ["BBQ", "Dessert"];
+		var sundayExtras = ["Karaoke", "Chateau Gonflable"];
+
 
         // On renvoie un entier aléatoire entre une valeur min (incluse)
         // et une valeur max (exclue).
@@ -133,7 +138,11 @@ Meteor.methods({
 			}
 			if (typeof Extras.findOne({name:"Dessert"}) === 'undefined') {
 				console.log("Inserting Dessert");
-				Extras.insert({name: "Dessert", price: 3, comment: "Tiramisu", day:"saturday"});
+				Extras.insert({name: "Dessert", price: 3, comment: "Tiramisu maison", day:"saturday"});
+			}
+			if (typeof Extras.findOne({name:"Chateau gonflable"}) === 'undefined') {
+				console.log("Inserting Chateau gonflable");
+				Extras.insert({name: "Chateau gonflable", price: 1, comment: "15 min", day:"sunday"});
 			}
 		}
 
@@ -198,18 +207,22 @@ Meteor.methods({
 			return [undefined, undefined, undefined];
 		}
 
-		function getExtra() {
-			var rand = getRandomInt(0,3);
-			var nbr = getRandomInt(1,5);
+		function getExtra(day) {
+			if (day !== "saturday" && day != "sunday") {
+				console.error("Error popDB : day provided to getExtra is not saturday or sunday");
+				return undefined;
+			}
 			if (flipCoin()) {
-				switch (rand) {
-					case 0: return {"BBQ":nbr};
-					case 1: return {"Karaoke":nbr};
-					case 2: return {"Dessert":nbr};
-					default: return null;
+				var nbr = getRandomInt(1,5);
+				var array = day=="saturday" ? saturdayExtras : sundayExtras;
+				var playerExtras = {};
+				for (var i=0; i<array.length; i++) {
+					if (flipCoin()) {
+						playerExtras[array[i]] = getRandomInt(1,5);
+					}
 				}
 			}
-			return null;
+			return undefined;
 		}
 
 		function getPaymentMethod() {
@@ -412,8 +425,6 @@ Meteor.methods({
 					coords : coords,
 					HQDist : getDistanceFromHQ(coords)
 				};
-
-				console.log(court);
 				var id = Courts.insert(court);
 			}
 		}
@@ -591,14 +602,15 @@ Meteor.methods({
 				return gender==='M' ? 'F' : 'M'
 			}
 
+			var day = getDayFromType(type);
 			var wishes1 = getWishes(dateMatch === 'saturday' ? getOppositeGender(gen1) : gen1);
-			var extra1 = getExtra();
+			var extra1 = getExtra(day);
 			var pairID;
 
 			Meteor.call("updateUser", {_id:userID1, profile:{addressID:addressID1}});
 			if (!alone) {
 				var wishes2 = getWishes(dateMatch === 'saturday' ? getOppositeGender(gen2) : gen2);
-				var extra2 = getExtra();
+				var extra2 = getExtra(day);
 				Meteor.call("updateUser", {_id:userID2, profile:{addressID:addressID2}});
 				pairID = Meteor.call("updatePair", {player1: {_id:userID1, playerWish:wishes1[0], courtWish:wishes1[1], otherWish:wishes1[2], extras:extra1}, player2: {_id:userID2, playerWish:wishes2[0], courtWish:wishes2[1], otherWish:wishes2[2], extras:extra2}, year:tournamentYear.toString(), paymentMethod:getPaymentMethod()}, true);
 			}
@@ -663,7 +675,7 @@ Meteor.methods({
 		console.log("---------- Begin popDB ----------");
 
 		console.log("Activation of the DB");
-		Meteor.call("activateDB");
+		Meteor.call("activateDB", isTest);
 
 		console.log("popDB populates extras");
 		insertExtras();
