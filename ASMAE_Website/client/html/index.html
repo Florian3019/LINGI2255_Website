@@ -25,6 +25,11 @@
           Menu
         </div>
         <hr class="nopadding">
+        <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
+          <span class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></span>
+          Statistiques
+        </a>
+        </li>
         {{#if isStaffMember}}
         <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">
         <i class="fa fa-tasks indexIcon"></i>

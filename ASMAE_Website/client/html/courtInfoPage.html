@@ -116,9 +116,11 @@
             <br />
 </div>
 
-{{#with getCourtModLog court.log}}
-  <h4> Modifications récentes </h4>
-  {{>reactiveTable collection=this settings=settings fields=fields}}
-{{/with}}
+{{#if isStaffOrAdmin}}
+    {{#with getCourtModLog court.log}}
+    <h4> Modifications récentes </h4>
+    {{>reactiveTable collection=this settings=settings fields=fields}}
+    {{/with}}
+{{/if}}
 
 </template>

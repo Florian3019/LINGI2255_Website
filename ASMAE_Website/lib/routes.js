@@ -20,7 +20,7 @@ Router.onBeforeAction(function() {
         else
 			this.next();
 	}
-}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap', 'winners']});
+}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap', 'winners', 'tournamentHistory']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -35,6 +35,14 @@ Router.route('/', {
 	name: 'home',
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
+	}
+});
+
+Router.route('/historique-tournoi', {
+	template:'tournamentHistory',
+	name:"tournamentHistory",
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
 	}
 });
 
