@@ -1,17 +1,19 @@
 typeKeys = ["men", "women", "mixed", "family"];
+typesTranslate = {"men":"Hommes", "women":"Dames", "mixed":"Mixtes", "family":"Familles"};
 categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites", "all"];
 categoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites", "all":"familyCategory"};
-typesTranslate = {"men":"Hommes", "women":"Femmes", "mixed":"Mixtes", "family":"Familles"};
 paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 paymentTranslate = {"paid":"Payé", "pending":"En attente"};
+paymentKeys = Object.keys(paymentTranslate);
+
 
 EMAIL_ENABLED = false; // set to true to enable email feedback
 
 HQCoords = {"lat":50.854227, "lng":4.353841}; // Latitude and longitude of the head quarters
 
-colors = {  "other":{color:'magenta', label:"Autres souhaits"} , 
+colors = {  "other":{color:'magenta', label:"Autres souhaits"} ,
             "player":{color:'orange', label:'Souhaits sur des joueurs'},
             "court":{color:'red', label:'Souhaits sur des terrains'},
             "multiple":{color:'#4782ff', label:'Plusieurs souhaits'}
@@ -23,7 +25,7 @@ if(Meteor.isClient){
 }
 
 // Currently setup with guillaume leurquin's secrets. Please change this when going to production
-Google_API_KEY_BROWSER = "AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs"; 
+Google_API_KEY_BROWSER = "AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs";
 
 // One must be < MAX_FAMILY_AGE and the other > MIN_FAMILY_AGE for the pair to be accepted in the families
 MAX_FAMILY_AGE = 15;
@@ -59,7 +61,7 @@ getSortableDate = function(date){
     var h = date.getHours();
     var m = date.getMinutes();
     var s = date.getSeconds();
-    return date.getFullYear()+"/"+((month<10)?"0":"")+month+"/"+((day<10)?"0":"")+day+" "+((h<10)?"0":"")+h+":"+((m<10)?"0":"")+m+":"+((s<10)?"0":"")+s; 
+    return date.getFullYear()+"/"+((month<10)?"0":"")+month+"/"+((day<10)?"0":"")+day+" "+((h<10)?"0":"")+h+":"+((m<10)?"0":"")+m+":"+((s<10)?"0":"")+s;
 }
 
 formatAddress = function(addr){
@@ -89,11 +91,138 @@ formatAddress = function(addr){
 /*
     return the pair corresponding to the current year for the current user
 */
-getPairFromPlayerID = function(isForPublish) {
-    var id = isForPublish ? this.userId : Meteor.userId();
+getPairsFromPlayerID = function(userId, cursor) {
+    var id = userId;
+    if (id==undefined) {
+        return undefined;
+    }
     var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
-    var pair = Pairs.findOne({$or:[{"player1._id":id, year:currentYear},{"player2._id":id, year:currentYear}]});
-    return pair;
+    var pairs = Pairs.find({$or:[{"player1._id":id, year:currentYear},{"player2._id":id, year:currentYear}]});
+    if (typeof pairs === 'undefined' || pairs.fetch().length < 1) {
+        return undefined;
+    }
+    return cursor ? pairs : pairs.fetch();
+}
+
+getDayPairFromPlayerID = function(userId, day) {
+    var pairs = getPairsFromPlayerID(userId);
+    if (pairs === undefined) {
+        return undefined;
+    }
+    for (var i=0; i<pairs.length; i++) {
+        var data = getTypeAndCategoryFromPairID(pairs[i]._id);
+        if (getDayFromType(data.playerType) == day) {
+            return pairs[i];
+        }
+    }
+}
+
+
+getTypeAndCategoryFromPairID = function(pairID) {
+    var pool = Pools.findOne({pairs:pairID});
+    if (pool === undefined) {
+        return undefined;
+    }
+    var playerType = pool.type;
+    var playerCategory = pool.category;
+    
+    return {playerType:playerType, playerCategory:playerCategory};
+}
+
+
+getDayFromType = function(type) {
+    if (type=="men" || type=="women") {
+        return "sunday";
+    }
+    else if (type=="mixed" || type=="family") {
+        return "saturday";
+    }
+    else {
+        console.error("Error getDayFromType : type provided ("+type+") is not supported.");
+        return undefined;
+    }
+}
+
+getExtrasFromPlayerID = function(playerID, day) {
+    if (playerID===undefined || (day!=="saturday" && day!=="sunday")) {
+        return undefined;
+    }
+    var pair = getDayPairFromPlayerID(playerID, day);
+    if (pair===undefined) {
+        return undefined;
+    }
+    if (pair.player1 && pair.player1._id===playerID) {
+        return pair.player1.extras;
+    }
+    else if (pair.player2 && pair.player2._id===playerID) {
+        return pair.player2.extras;
+    }
+    else {
+        console.error("Some weird bug... again ? See getExtrasFromPlayerID");
+        return undefined;
+    }
+}
+
+getRegistrationInfoFromPlayerID = function(playerID) {
+    var pairs = getPairsFromPlayerID(playerID);
+    if (typeof pairs === 'undefined' || pairs.length < 1) {
+        return undefined;
+    }
+    var satData;
+    var sunData;
+    for (var i=0; i<pairs.length; i++) {
+        var pairID = pairs[i]._id;
+        var data = getTypeAndCategoryFromPairID(pairID);
+        var type = data.playerType;
+        var category = data.playerCategory;
+        var day = getDayFromType(type);
+        if (day == 'saturday') {
+            satData = {playerType:type, playerCategory:category};
+        }
+        else if (day == 'sunday') {
+            sunData = {playerType:type, playerCategory:category};
+        }
+        else {
+            console.error("getDayFromType returned something weird : "+day);
+        }
+    }
+    return {saturday: satData, sunday: sunData};
+}
+
+isSaturdayRegistered = function(playerID) {
+    var info = getRegistrationInfoFromPlayerID(playerID);
+    return info !== undefined && info.saturday !== undefined;
+}
+
+isSundayRegistered = function(playerID) {
+    var info = getRegistrationInfoFromPlayerID(playerID);
+    return info !== undefined && info.sunday !== undefined;
+}
+
+isBothRegistered = function(playerID) {
+    var info = getRegistrationInfoFromPlayerID(playerID);
+    return info !== undefined && info.sunday !== undefined && info.saturday !== undefined;
+}
+
+isRegistered = function(playerID) {
+    var info = getRegistrationInfoFromPlayerID(playerID);
+    return info !== undefined && (info.sunday !== undefined || info.saturday !== undefined);
+}
+
+getPlayerNumber = function(playerID, pairID) {
+    var pair = Pairs.findOne({_id:pairID});
+    if (pairID === undefined || playerID === undefined || pair === undefined) {
+        return undefined;
+    }
+    if (pair.player1 && pair.player1._id==playerID) {
+        return "player1";
+    }
+    else if(pair.player2 && pair.player2._id==playerID) {
+        return "player2";
+    }
+    else {
+        return undefined;
+    }
 }
 
 /*
@@ -150,7 +279,6 @@ getCategoryForBirth = function(birth, tournamentDate) {
  *  @param category = preminimes | minimes | ... --> See switch cases
  */
  getAgeBoundsForCategory = function(category) {
-     //console.log("getAgeBoundsForCategory : "+category);
     switch (category) {
         case categoriesKeys[0]:
             return [9, 10];
@@ -272,6 +400,18 @@ addressToString = function(theAddress){
     return theString;
 };
 
+paymentToString = function(payment){
+    var theString = "";
+    if(payment!==undefined && payment!==null){
+        theString+=payment.status + " ";
+        theString+=payment.pending + " ";
+        theString+=payment.bankTransferNumber===undefined?"" : payment.bankTransferNumber+" ";
+        theString+=payment.paymentMethod===undefined?"":payment.paymentMethod + " ";
+        theString+=payment.balance + " ";
+    }
+    return theString;
+}
+
 courtToString = function(court){
     if(court===undefined || court===null){
         return "";
@@ -286,6 +426,7 @@ courtToString = function(court){
 
     theString += court.surface;
     theString += court.courtType;
+    theString += court.courtNumber;
 
     return theString.toLowerCase();
 };

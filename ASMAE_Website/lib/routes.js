@@ -1,5 +1,5 @@
 /*
-	This file defines routes for the website, what should be loaded for each route and 
+	This file defines routes for the website, what should be loaded for each route and
 	special actions to be made when the user moves to or from a page
 */
 
@@ -12,10 +12,6 @@ Router.configure({
   	}
 });
 
-function isRegistered() {
-	return getPairFromPlayerID() !== undefined;
-}
-
 Router.onBeforeAction(function() {
 	if(!Meteor.isServer && !Meteor.userId()){
 		this.render("login");
@@ -25,7 +21,7 @@ Router.onBeforeAction(function() {
         else
 			this.next();
 	}
-}, {except: ['home', 'rules', 'login', 'faq', 'poolList']});
+}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap', 'winners']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -46,6 +42,17 @@ Router.route('/', {
 	}
 });
 
+Router.route('/gagnants', {
+	template:'winners',
+	name:"winners",
+	waitOn: function(){
+		return [ Meteor.subscribe('Winners'), Meteor.subscribe('Pairs'),Meteor.subscribe('users')  ]
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	}
+});
+
 Router.route('/email-terrain', {
 	template: 'courtEmail',
 	name: 'courtEmail',
@@ -54,9 +61,14 @@ Router.route('/email-terrain', {
 	}
 });
 
-Router.route('/carte-terrains', {
+Router.route('/carte-terrains/:_id?', {
 	template: 'courtMap',
 	name: 'courtMap',
+	data: function(){
+		if (this.ready()) {
+			return {"courtId":this.params._id};
+		}
+	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
 	},
@@ -112,7 +124,7 @@ Router.route('/mon-inscription', {
 	name: 'myRegistration',
 	template: 'myRegistration',
 	onBeforeAction: function() {
-		if (isRegistered()) {
+		if (isRegistered(Meteor.userId())) {
 			this.next();
 		}
 		else {
@@ -123,32 +135,9 @@ Router.route('/mon-inscription', {
 		Session.set('showNavBar', false);
 	}
 });
-Router.route('/mon-inscription2', {
-	name: 'myRegistration2',
-	template: 'myRegistration2',
-	onBeforeAction: function() {
-		if (isRegistered()) {
-			this.next();
-		}
-		else {
-			this.render("login");
-		}
-	},
-	onAfterAction: function(){
-		Session.set('showNavBar', false);
-	}
-});
-Router.route('/inscription-tournoi',  {
-	name: 'tournamentRegistration',
+Router.route('/inscription-tournoi-samedi',  {
+	name: 'tournamentRegistrationSaturday',
 	template: 'tournamentRegistration',
-	onBeforeAction: function() {
-		if (!isRegistered()) {
-			this.next();
-		}
-		else {
-			this.render("login");
-		}
-	},
 	waitOn: function(){
 		var res = [
 			Meteor.subscribe('users')
@@ -157,6 +146,30 @@ Router.route('/inscription-tournoi',  {
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
+	},
+	data : function() {
+		if (this.ready()) {
+			return {day:"saturday"};
+		}
+	}
+});
+
+Router.route('/inscription-tournoi-dimanche',  {
+	name: 'tournamentRegistrationSunday',
+	template: 'tournamentRegistration',
+	waitOn: function(){
+		var res = [
+			Meteor.subscribe('users')
+		];
+		return res;
+	},
+	onAfterAction: function(){
+		Session.set('showNavBar', false);
+	},
+	data : function() {
+		if (this.ready()) {
+			return {day:"sunday"};
+		}
 	}
 });
 
@@ -383,7 +396,12 @@ Router.route('/print', {
     Session.set("printSheets/isWorkingPrint",false);
     Session.set("printSheets/isWorkingPool",false);
 		Session.set('showNavBar', true);
-	}
+	},
+  onStop:function(){
+    Session.set("printSheets/info");
+    Session.set("printOneSheet/poolId");
+    Session.set("printSheets/OnePage");
+  }
 });
 
 Router.route('/terrains', {
@@ -394,7 +412,7 @@ Router.route('/terrains', {
 	}
 });
 
-Router.route('/brack', {
+Router.route('/print-bracket', {
 	name: 'PdfBracket',
 	template: 'PdfBracket',
 	onAfterAction: function(){
@@ -446,14 +464,6 @@ Router.route('/topic/:_id/:tname',{
 	}
 });
 
-Router.route('/payment', {
-	name: 'payment',
-	template: 'payment',
-	waitOn: function(){
-		return [ Meteor.subscribe('Payments')];
-	}
-});
-
 Router.route('/payment-confirmation', {
   name: 'paymentConfirmation',
 	template: 'paymentConfirmation',
@@ -495,6 +505,14 @@ Router.route('/paiements-des-joueurs', {
 	waitOn: function() {
 		return [Meteor.subscribe('Years'), Meteor.subscribe('Payments')];
 	},
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	}
+});
+
+Router.route('/envoyer-mail', {
+  	name: 'sendEmailToList',
+	template: 'sendEmailToList',
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
 	}

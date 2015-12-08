@@ -112,10 +112,10 @@
       </select>
       </div>
           {{#with getYear}}
-            {{>CategorySelect TYPE="men" DESC="Homme"}}
-            {{>CategorySelect TYPE="women" DESC="Femme"}}
-            {{>CategorySelect TYPE="mixed" DESC="Mixte"}}
-            {{>poolBracketsSelect ID="family" CAT="all" DESC="Familles"}}
+            {{>CategorySelect TYPE="men" DESC="Homme" Mob=../MOBILE}}
+            {{>CategorySelect TYPE="women" DESC="Femme" Mob=../MOBILE}}
+            {{>CategorySelect TYPE="mixed" DESC="Mixte" Mob=../MOBILE}}
+            {{>poolBracketsSelect ID="family" CAT="all" DESC="Familles" Mob=../MOBILE}}
           {{/with}}
     </div>
 </template>
@@ -125,11 +125,11 @@
 <ul>
 <li>
   <span class="glyphicon glyphicon-menu-right" id="{{TYPE}}_glyphicon_type" style="display:none;"></span>
-  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType menuItem" data-target="#{{TYPE}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
-  <ul class="nav collapse CategoryOption" id="{{TYPE}}" role="menu" aria-labelledby="btn-{{TYPE}}">
+  <a href="#" id="btn_{{TYPE}}" data-toggle="collapse" class="collapsableMenu collapseType menuItem2" data-target="#{{TYPE}}{{Mob}}" aria-expanded="false" style="text-decoration: none;">{{DESC}} {{getTypeCompletion TYPE}}</a>
+  <ul class="nav collapse CategoryOption" id="{{TYPE}}{{Mob}}" role="menu" aria-labelledby="btn-{{TYPE}}">
     {{#each getCategories}}
     {{#unless equals this.key "all"}} <!-- avoid family category -->
-      <li>{{>poolBracketsSelect ID=../TYPE CAT=this.key DESC=this.value}}</li>
+      <li>{{>poolBracketsSelect ID=../TYPE CAT=this.key DESC=this.value MOBILE=../Mob}}</li>
     {{/unless}}
     {{/each}}
   </ul>
@@ -141,8 +141,8 @@
 <ul>
 <li>
   <span class="glyphicon glyphicon-menu-right" id="{{this.ID}}_{{this.CAT}}_glyphicon_category" style="display:none;"></span>
-  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory menuItem" data-target="#{{this.ID}}_{{this.CAT}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
-  <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
+  <a href="#" id="btn_{{this.ID}}_{{this.CAT}}" data-toggle="collapse" class="collapsableMenu collapseCategory menuItem2" data-target="#{{this.ID}}_{{this.CAT}}_{{MOBILE}}" aria-expanded="false" style="text-decoration: none; display:inline;">{{this.DESC}} {{getCategoryCompletion this.ID this.CAT}}</a>
+  <ul class="nav collapse PoolBracketOption" id="{{this.ID}}_{{this.CAT}}_{{MOBILE}}" role="menu" aria-labelledby="btn-{{this.ID}}_{{this.CAT}}">
     <li class="PoolOption" data-category="{{this.CAT}}" data-type="{{this.ID}}" >
       <ul>
       <li>
@@ -273,8 +273,8 @@
  -->
   <!-- Modal -->
   <!-- data-backdrop="false" -->
-  <div id="pairModal" class="modal fade">
-    <div class="modal-dialog">
+  <div id="pairModal" class="modal fade container">
+    <div class="modal-dialog modal-lg">
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
@@ -284,69 +284,82 @@
           </div>
         </div>
         <div class="modal-body">
-          <div class="panel panel-primary pairInfoBox">
-            {{#unless equals PAIR.player2._id undefined}}
-            {{#if SHOWOPTIONS}}
-              <center>
-                <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player1._id}}" data-player="{{PAIR.player1._id}}" data-poolid="{{POOL}}">
-                 Choisir comme chef de poule <span class="glyphicon glyphicon-star leaderStar"></span>
-                </button>
-              </center>
-            {{/if}}
-            {{/unless}}
-            {{>playerInfoTemplate ID=PAIR.player1._id MODAL=getModalId}}
-            {{#if PAIR.player1.playerWish}}
-            <h3 id="WishesOnPlayersValue1">Souhaits sur les joueurs</h3>
-            {{PAIR.player1.playerWish}}
-            {{/if}}
-            {{#if PAIR.player1.courtWish}}
-            <h3 id="WishesOnCourtValue1">Souhaits sur un terrain</h3>
-            {{PAIR.player1.courtWish}}
-            {{/if}}
-            {{#if PAIR.player1.otherWish}}
-            <h3 id="OtherWishesValue1">Autres souhaits</h3>
-            {{PAIR.player1.otherWish}}
-            {{/if}}
-          </div>
+          <!-- <div class="container"> -->
+            <div class="row">
+              <div class="{{#if equals PAIR.player2._id undefined}} col-sm-12 col-md-12 {{else}} col-sm-12 col-md-6 {{/if}}">
+                <div class="panel panel-primary pairInfoBox">
+                  {{#unless equals PAIR.player2._id undefined}}
+                  {{#if SHOWOPTIONS}}
+                    <center>
+                      <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player1._id}}" data-player="{{PAIR.player1._id}}" data-poolid="{{POOL}}" style="margin:10px;">
+                       Choisir comme chef de poule <span class="glyphicon glyphicon-star leaderStar"></span>
+                      </button>
+                    </center>
+                  {{/if}}
+                  {{/unless}}
+                  <div class="playerDetails">
+                    {{>playerInfoTemplate ID=PAIR.player1._id MODAL=getModalId HidePic="true" hideDelete="true"}}
+                  </div>
+                  {{#if PAIR.player1.playerWish}}
+                  <h5 id="WishesOnPlayersValue1">Souhaits sur les joueurs</h5>
+                  {{PAIR.player1.playerWish}}
+                  {{/if}}
+                  {{#if PAIR.player1.courtWish}}
+                  <h5 id="WishesOnCourtValue1">Souhaits sur un terrain</h5>
+                  {{PAIR.player1.courtWish}}
+                  {{/if}}
+                  {{#if PAIR.player1.otherWish}}
+                  <h5 id="OtherWishesValue1">Autres souhaits</h5>
+                  {{PAIR.player1.otherWish}}
+                  {{/if}}
+                </div>
+                {{#if equals PAIR.player2._id undefined}}
+                  {{#if SHOWOPTIONS}}
+                  <div class="dropdown pull-left">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      Changer ce joueur de type
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      {{#each getAvailableTypes PAIR._id POOL SEX BIRTHDATE}}
+                      <li><a href="#" class="typeChosing">{{this.value}}</a></li>
+                      {{/each}}
+                    </ul>
+                  </div>
+                  {{/if}}
+                {{/if}}
+              </div>
 
-          {{#if equals PAIR.player2._id undefined}}
-            {{#if SHOWOPTIONS}}
-            <div class="dropdown pull-left">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Changer ce joueur de type
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                {{#each getAvailableTypes PAIR._id POOL SEX BIRTHDATE}}
-                <li><a href="#" class="typeChosing">{{this.value}}</a></li>
-                {{/each}}
-              </ul>
+              <div class="col-sm-12 col-md-6">
+                {{#unless equals PAIR.player2._id undefined}}
+                  <div class="panel panel-primary pairInfoBox">
+                    {{#if SHOWOPTIONS}}
+                      <center>
+                        <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player2._id}}" data-player="{{PAIR.player2._id}}" data-poolid="{{POOL}}" style="margin:10px;">
+                          Choisir comme chef de poule <span class="glyphicon glyphicon-star leaderStar"></span>
+                        </button>
+                      </center>
+                      {{/if}}
+                      <div class="playerDetails">
+                        {{>playerInfoTemplate ID=PAIR.player2._id MODAL='pairModal' HidePic="true" hideDelete="true"}}
+                      </div>
+                      {{#if PAIR.player2.playerWish}}
+                      <h5 id="WishesOnPlayersValue2">Souhaits sur les joueurs</h5>
+                      {{PAIR.player2.playerWish}}
+                      {{/if}}
+                      {{#if PAIR.player2.courtWish}}
+                      <h5 id="WishesOnCourtValue2">Souhaits sur un terrain</h5>
+                      {{PAIR.player2.courtWish}}
+                      {{/if}}
+                      {{#if PAIR.player2.otherWish}}
+                      <h5 id="OtherWishesValue2">Autres souhaits</h5>
+                      {{PAIR.player2.otherWish}}
+                    {{/if}}
+                  </div>
+                {{/unless}}
+              </div>
             </div>
-            {{/if}}
-          {{else}}
-          <div class="panel panel-primary pairInfoBox">
-            {{#if SHOWOPTIONS}}
-            <center>
-              <button class="btn btn-default setLeader" type="button" id="setLeader{{PAIR.player2._id}}" data-player="{{PAIR.player2._id}}" data-poolid="{{POOL}}">
-                Choisir comme chef de poule <span class="glyphicon glyphicon-star leaderStar"></span>
-              </button>
-            </center>
-            {{/if}}
-            {{>playerInfoTemplate ID=PAIR.player2._id MODAL='pairModal'}}
-            {{#if PAIR.player2.playerWish}}
-            <h3 id="WishesOnPlayersValue2">Souhaits sur les joueurs</h3>
-            {{PAIR.player2.playerWish}}
-            {{/if}}
-            {{#if PAIR.player2.courtWish}}
-            <h3 id="WishesOnCourtValue2">Souhaits sur un terrain</h3>
-            {{PAIR.player2.courtWish}}
-            {{/if}}
-            {{#if PAIR.player2.otherWish}}
-            <h3 id="OtherWishesValue2">Autres souhaits</h3>
-            {{PAIR.player2.otherWish}}
-            {{/if}}
-          </div>
-          {{/if}}
+          <!-- </div> -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
@@ -391,11 +404,11 @@ Takes 2 arguments :
     </h3>
     {{#if isAdminOrStaff}}
       {{#if isResponsable}}
-        <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right">
+        <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right toHideForPdf">
             <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Ne plus être responsable
         </button>
       {{else}}
-        <button type="button" id="becomeResponsable" class="btn btn-default btn-lg pull-right">
+        <button type="button" id="becomeResponsable" class="btn btn-default btn-lg pull-right toHideForPdf">
           <span class="glyphicon glyphicon-star" aria-hidden="true"></span>Devenir responsable
         </button>
       {{/if}}

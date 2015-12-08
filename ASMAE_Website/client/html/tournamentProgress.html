@@ -1,4 +1,7 @@
 <template name="tournamentProgress">
+
+    {{> notEnoughCourtsModal}}
+    
     <div class="page-header">
         <h2 id="TournamentRunning">Déroulement du tournoi</h2>
     </div>
@@ -10,11 +13,15 @@
 
     <div class="{{stepIsDoneClass 2}}">
         <h5 id="AvailabilitiesPoint2">2. Envoyer un email d'invitation à tous les utilisateurs</h5>
-        <p>Cliquez sur ce bouton pour prévenir tous les utilisateurs du site par email que les inscriptions au tournoi sont lancées</p>
+        <p>Cliquez sur ce bouton pour prévenir tous les utilisateurs du site par email que les inscriptions au tournoi sont lancées.</p>
+        <p>
+        Cliquez sur le bouton CSV pour télécharger les addresses sous le format csv.
+        </p>
         <center>
             <button id="sendRegistrationsEmail" type="button" class="btn btn-default btn-sm notDone">Envoyer</button>
             <button id="doneButton2" type="button" class="btn btn-default btn-sm notDone">Marquer comme étant fait</button>
             <button id="notDoneButton2" type="button" class="btn btn-default btn-sm okDone">Marquer comme non fait</button>
+            {{>addressToCSV}}
         </center>
     </div>
 
@@ -27,7 +34,7 @@
     </div>
 
     <div class="{{stepIsDoneClass 4}}">
-        <h5 id="AvailabilitiesPoint4">4. Clôturer les inscriptions</h5>
+        <h5 id="AvailabilitiesPoint4">4. Fermer les inscriptions</h5>
         {{> closeRegistrationsBlock}}
     </div>
 
@@ -42,6 +49,8 @@
 
     <div class="{{stepIsDoneClass 6}}">
         <h5 id="AvailabilitiesPoint6">6. Assigner les terrains aux poules</h5>
+        <p>Nombre de terrains manquants pour le samedi: {{MissingSaturday}}</p>
+        <p>Nombre de terrains manquants pour le dimanche: {{MissingSunday}}</p>
         <center>
             <button id="assignCourts" type="button" class="btn btn-default btn-sm notDone">Assigner tous les terrains</button>
             <button id="assignIndoorCourts" type="button" class="btn btn-default btn-sm notDone">Assigner les terrains intérieurs</button>

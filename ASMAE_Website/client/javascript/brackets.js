@@ -83,8 +83,8 @@ var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 
 
     if(pair==undefined || pair.player1==undefined || pair.player2==undefined) return;
 
-    pairPlayer1 = Meteor.users.findOne({_id:pair.player1._id},{profile:1});
-    pairPlayer2 = Meteor.users.findOne({_id:pair.player2._id},{profile:1});
+    pairPlayer1 = Meteor.users.findOne({_id:pair.player1._id},{profile:1},{reactive:false});
+    pairPlayer2 = Meteor.users.findOne({_id:pair.player2._id},{profile:1},{reactive:false});
 
     pairPlayer1String = pairPlayer1.profile.firstName.substring(0,1) + ". " + pairPlayer1.profile.lastName;
     pairPlayer2String = pairPlayer2.profile.firstName.substring(0,1) + ". " + pairPlayer2.profile.lastName;
@@ -164,7 +164,7 @@ var setRoundData = function(roundData){
   return {"s":s, "r":newRoundData};
 };
 
-var forwardData = function(roundData){
+var forwardData = function(roundData, canEditScore){
   round = roundData.data.round;
   points = getPoints(roundData.pair, round+1);
   return {
@@ -176,7 +176,7 @@ var forwardData = function(roundData){
       "score":points==undefined ? (roundData.data.player1===emptyPlayer ? emptyScore : inGame) : points,
       "display":"block",
       "round":round+1, // increase the round
-      "clickable":true,
+      "clickable":canEditScore,
       "court": emptyCourt
     }
   };
@@ -185,7 +185,7 @@ var forwardData = function(roundData){
 
 // Round data format : {pair:<pair>, data:<bracketPairData>}
 // Returns the best of the 2 pairs or undefined if the score is not yet known. If score is known, updates roundData with the new score
-var getBestFrom2 = function(roundData1, roundData2, round){
+var getBestFrom2 = function(roundData1, roundData2, round, canEditScore){
   if(roundData1==undefined || roundData2==undefined || round==undefined){
     console.error("getBestFrom2 : Undefined data");
     return;
@@ -196,11 +196,11 @@ var getBestFrom2 = function(roundData1, roundData2, round){
   }
   else if(roundData1.pair==="placeHolder"){
     // The other one wins !
-    return forwardData(roundData2);
+    return forwardData(roundData2, canEditScore);
   }
   else if(roundData2.pair==="placeHolder"){
     // The other one wins !
-    return forwardData(roundData1);
+    return forwardData(roundData1, canEditScore);
   }
 
   if(roundData1.pair==="empty" || roundData2.pair==="empty"){
@@ -300,7 +300,7 @@ Template.brackets.helpers({
   },
 
   'getGracketWidth':function(){
-    return 350*Session.get('brackets/rounds');
+    return 270*Session.get('brackets/rounds');
   },
 
   'getType':function(){
@@ -360,7 +360,7 @@ var hideStuff = function(document, hideType, hide){
     stuff = document.getElementsByClassName("showIfNotStarted");
   }
   for(var i=0; i<stuff.length;i++){
-    var s = stuff[i]; 
+    var s = stuff[i];
     if(s.style===undefined){
         s.setAttribute("style","display:block");
     }
@@ -378,18 +378,20 @@ var handleBracketErrors = function(document){
     /********************************************
       Error Handling and data gathering
     ********************************************/
-    year = Session.get("PoolList/Year");
-    type = Session.get("PoolList/Type");
-    category = Session.get("PoolList/Category");
+    var year = Session.get("PoolList/Year");
+    var type = Session.get("PoolList/Type");
+    var category = Session.get("PoolList/Category");
 
-    // pdfButton = document.getElementById("getPDF");
-    startButton =  document.getElementById("startText");
-    // // winnersSelect =  document.getElementById("winnersPerPool");
-    // bracketOptions = document.getElementById("bracketOptions");
+
+    Session.set("brackets/infoPdf",{"year":year,"type":type,"cat":category});
+    var startButton =  document.getElementById("startText");
+    var pdfButton = document.getElementById("getPDF");
+    var bracketOptions = document.getElementById("bracketOptions");
 
     yearData = Years.findOne({_id:year},{reactive:false});
     if(yearData==undefined){
       console.info("No data found for year "+year);
+      $("#buttonPdf").hide();
       setInfo(document, "Pas de données trouvées pour l'année "+year);
       hideStuff(document, "empty", true);
       return;
@@ -397,6 +399,7 @@ var handleBracketErrors = function(document){
     typeId = yearData[type];
     if(typeId==undefined){
       console.info("No data found for type "+type);
+      $("#buttonPdf").hide();
       setInfo(document, "Pas de données trouvées pour le type "+typesTranslate[type] + " de l'année "+year);
       hideStuff(document, "empty", true);
       return;
@@ -418,13 +421,22 @@ var handleBracketErrors = function(document){
       return;
     }
 
-    allWinners = typeData[category.concat("Bracket")]; // List of pairIds
+    var allWinners = typeData[category.concat("Bracket")]; // List of pairIds
 
     if(startButton!=undefined && startButton!=null) startButton.innerHTML="Démarrer ce knock-off";
 
     if(allWinners==undefined){
-      console.info("Knock-offs not started"); 
-     
+      if(bracketOptions!=undefined){
+        console.info("Tournament not started");
+        if(startButton!=undefined && startButton!=null) {
+          startButton.innerHTML="Démarrer ce knock-off";
+        }
+        if(bracketOptions!==undefined && bracketOptions!=null) bracketOptions.style.display = 'block';
+        if(pdfButton!=undefined  && pdfButton!=null) pdfButton.style.display = 'block';
+      }
+      console.info("Knock-offs not started");
+
+
       var user = Meteor.user();
       if(user===undefined || user===null || !(user.profile.isStaff || user.profile.isAdmin)){
         setInfo(document, "Les knock-off n'ont pas encore commencés pour cette catégorie!");
@@ -438,7 +450,6 @@ var handleBracketErrors = function(document){
     }
 
 
-    
 
     if(allWinners.length==0){
       console.info("There are no matches for that year, type and category, did you create any ?");
@@ -577,6 +588,7 @@ var getTournamentFirstRound = function(pairs){
   return toReturn;
 }
 
+var totalRounds = undefined;
 
 var makeBrackets = function(document){
   allWinners = handleBracketErrors(document); // Table of winner pair Id
@@ -600,11 +612,14 @@ var makeBrackets = function(document){
   var matchesCompleted = 0;
   var nextMatchNum = 0;
 
+  var user = Meteor.user();
+  var canEditScore = user!==undefined && user!==null && (user.profile.isAdmin || user.profile.isStaff);
+
   var pairData = [];
   for(var i=0; i<allWinners.length;i++){
     pairId = allWinners[i];
     pair = Pairs.findOne({_id:pairId},{reactive:false});
-    data = getBracketData(pair,0, "true");
+    data = getBracketData(pair,0, canEditScore);
     pairData.push({"pair":pair, "data":data});
   }
 
@@ -620,6 +635,7 @@ var makeBrackets = function(document){
     Fill the rest of the rounds with "?" or the score
   */
 
+
   round = 0;
   while(thisRound.length>1){
     newRound = []; // list of roundData
@@ -627,7 +643,7 @@ var makeBrackets = function(document){
     if(round>0){
       // Select the best pair from the 2 for each match
       for(var i=0; i+1<thisRound.length ; i+=2){
-        best = getBestFrom2(thisRound[i], thisRound[i+1], round);
+        best = getBestFrom2(thisRound[i], thisRound[i+1], round,canEditScore);
         newRound.push(best); // best contains a pair and its display data
       }
     }
@@ -685,7 +701,7 @@ var makeBrackets = function(document){
 
     // If newRound.length == 1 --> we are at the last 2 pairs of the tournament and need to display the winner
     if(thisRound.length==2){
-      a = getBestFrom2(thisRound[0], thisRound[1], round);
+      a = getBestFrom2(thisRound[0], thisRound[1], round,canEditScore);
       if(getPoints(a.pair, round)!==undefined){
         a.data.score = 'Gagnant';
       }
@@ -704,6 +720,8 @@ var makeBrackets = function(document){
   }
 
   Session.set("brackets/rounds",round+1);
+  
+  totalRounds = brackets.length-2; // Global variable
 
   completionPercentage = (nextMatchNum==0) ? 0 : matchesCompleted/nextMatchNum;
   setCompletion(completionPercentage);
@@ -834,13 +852,13 @@ Template.brackets.events({
           + " type " + typesTranslate[type]
           + " de la catégorie " + categoriesTranslate[cat]
           + ". Si vous en avez créé, cliquez sur démarrer le knock-off pour mettre à jour");
-          
+
           return;
-        } 
+        }
         else{
           hideInfo(document);
           Session.set('brackets/buildingTournament', true);
-        } 
+        }
         Session.set("brackets/pairPoints",retVal);
       };
 
@@ -852,48 +870,65 @@ Template.brackets.events({
   },
 
   'click #saveScore':function(event){
-    pairs = Session.get('brackets/clicked');
+    var pairs = Session.get('brackets/clicked');
     if(pairId==undefined) return;
-    pair0 = Pairs.findOne({_id:pairs[0]});
-    pair1 = Pairs.findOne({_id:pairs[1]});
+    var pair0 = Pairs.findOne({_id:pairs[0]});
+    var pair1 = Pairs.findOne({_id:pairs[1]});
 
-    round = Session.get('brackets/round');
-    score0 = document.getElementById("scoreInput0").value;
-    score0 = parseInt(score0);
+    var round = Session.get('brackets/round');
+    var score0 = document.getElementById("scoreInput0").value;
+    var score0 = parseInt(score0);
     setPoints(pair0, round, score0);
 
-    score1 = document.getElementById("scoreInput1").value;
-    score1 = parseInt(score1);
+    var score1 = document.getElementById("scoreInput1").value;
+    var score1 = parseInt(score1);
     setPoints(pair1, round, score1);
+  
+    /*
+      Save the winner to display in the winner table
+    */
+    if(round == totalRounds){
+      // This is the last round
+      var data = {};
+      data.first = score0 > score1 ? pair0._id : pair1._id;
+      data.second = score0 < score1 ? pair0._id : pair1._id;
 
-    u01 = Meteor.users.findOne({"_id":pair0.player1._id},{"profile":1});
-    u02 = Meteor.users.findOne({"_id":pair0.player2._id},{"profile":1});
-    u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1});
-    u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1});
+      data.year = Session.get("PoolList/Year");
+      data.type = Session.get("PoolList/Type");
+      data.category = Session.get("PoolList/Category");
 
+      Meteor.call("updateWinner",data);
+    }
+
+    var u01 = Meteor.users.findOne({"_id":pair0.player1._id},{"profile":1}, {reactive:false});
+    var u02 = Meteor.users.findOne({"_id":pair0.player2._id},{"profile":1}, {reactive:false});
+    var u11 = Meteor.users.findOne({"_id":pair1.player1._id},{"profile":1}, {reactive:false});
+    var u12 = Meteor.users.findOne({"_id":pair1.player2._id},{"profile":1}, {reactive:false});
+
+    Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
     var callback = function(err, logId){
       if(err){
         console.error(err);
         return;
       }
-        Meteor.users.update({"_id":pair0.player1._id},{$addToSet:{"log":logId}});
-        Meteor.users.update({"_id":pair0.player2._id},{$addToSet:{"log":logId}});
-        Meteor.users.update({"_id":pair1.player1._id},{$addToSet:{"log":logId}});
-        Meteor.users.update({"_id":pair1.player2._id},{$addToSet:{"log":logId}});
+        Meteor.call('addToUserLog', pair0.player1._id, logId);
+        Meteor.call('addToUserLog', pair0.player2._id, logId);
+        Meteor.call('addToUserLog', pair1.player1._id, logId);
+        Meteor.call('addToUserLog', pair1.player2._id, logId);        
     }
 
     Meteor.call("addToModificationsLog",
     {"opType":"Modification points match knock-off",
     "details":
-        "Round: "+round+
+        "Round: "+round+" "+
         u01.profile.firstName + " " + u01.profile.lastName + " et "+u02.profile.firstName + " " + u02.profile.lastName +
-        " "+score0+ " VS "+
+        " ("+score0+ ") VS "+
         u11.profile.firstName + " " + u11.profile.lastName + " et "+u12.profile.firstName + " " + u12.profile.lastName +
-        " "+score1 +
+        " ("+score1 +")"+
         getStringOptions()
-    }, callback);
+    },
+    callback);
 
-    Session.set('brackets/update',Session.get('brackets/update') ? false:true); // Update the brackets to reflect the new score
   },
 
   'click #getPDF':function(event){

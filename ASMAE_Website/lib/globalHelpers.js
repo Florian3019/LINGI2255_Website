@@ -24,3 +24,11 @@ Template.registerHelper('isAdminOrStaff', function(){
 	var res = Meteor.users.findOne({_id:Meteor.userId()}, {"profile.isAdmin":1, "profile;isStaff":1});
 	return res!==undefined ? (res.profile.isAdmin||res.profile.isStaff) : false;
 });
+
+Template.registerHelper('isSaturdayRegistered', function(){
+	return isSaturdayRegistered(Meteor.userId());
+});
+
+Template.registerHelper('isSundayRegistered', function(){
+	return isSundayRegistered(Meteor.userId());
+});

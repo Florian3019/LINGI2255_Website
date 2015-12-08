@@ -78,6 +78,8 @@ A pool is structured as follows:
     pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
     leader:<pairId>, // Leader is the player1 from the pair
     courtId:<courtID>,
+    type:<type>,
+    category:<category>
 }
 
 ## Court
@@ -198,6 +200,7 @@ A payment is structured as follows :
     _id:<id>,
     userID: <user id>,
     tournamentYear: <tournament year>,
+    day: <saturday or sunday>,
     status:<string: status>, // paid or pending
     balance:<number: balance>,
     date:<date>,

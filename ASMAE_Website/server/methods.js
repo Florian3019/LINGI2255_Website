@@ -439,6 +439,8 @@ Meteor.methods({
 		@param typeData is structured as a type
 		A type structure is as follows :
 		{
+			typeString : men | women | mixed | family
+
 			// Can only $addToSet
 			_id:<typeID>
 			preminimes:<list of poolIDs>
@@ -481,6 +483,7 @@ Meteor.methods({
 		}
 		var hasData = false;
 		var data = {};
+
 		for (var i=0;i<categoriesKeys.length;i++){
 			if(typeData[categoriesKeys[i]]!=undefined){
 				if(!data.$addToSet) data['$addToSet'] = {};
@@ -511,6 +514,13 @@ Meteor.methods({
 		if(!typeData._id){
 			return Types.insert(data);
 		}
+
+		if (typeof typeData.typeString != undefined) {
+			if(data.$set===undefined) data['$set'] = {};
+			data.$set["typeString"] = typeData.typeString;
+			hasData = true;
+		}
+
 		if(!hasData){
 			console.warn("Warning : called updateType with no input");
 			return;
@@ -571,8 +581,8 @@ Meteor.methods({
 			var googleAnswer = Meteor.call('geoCode', addressToString(addr));
 			if(googleAnswer!==undefined && googleAnswer.length>0){
 
-          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude}; 
-          		data.HQDist = getDistanceFromHQ(data.coords); 
+          		data.coords = {"lat":googleAnswer[0].latitude, "lng":googleAnswer[0].longitude};
+          		data.HQDist = getDistanceFromHQ(data.coords);
 
     		}
 
@@ -989,6 +999,7 @@ Meteor.methods({
 			if(pData['playerWish']) p['playerWish'] = pData['playerWish'];
 			if(pData['courtWish']) p['courtWish'] = pData['courtWish'];
 			if(pData['otherWish']) p['otherWish'] = pData['otherWish'];
+			if(pData['partnerEmail']) p['partnerEmail'] = pData['partnerEmail'];
 
 			if(pData['extras']){
 				var extr = {};
@@ -1053,7 +1064,6 @@ Meteor.methods({
 
 
 		var paymentUser = Meteor.userId();
-
 		paymentData = {
 			userID : paymentUser,
 			tournamentYear : currentYear,
@@ -1062,30 +1072,30 @@ Meteor.methods({
 			balance : amount
 		};
 
-		// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
-		if(pairData.paymentMethod === paymentTypes[1]){
-			paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
-
-			var newValue = paymentData.bankTransferNumber + 1;
-			GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
-				value: newValue
-			}});
-		}
-
 		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentDate': currentYear});
+		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentYear': currentYear});
 		if(paymentAlreadyExists){
-			if(pairData._id){
-				Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
+			if(pairData._id){	//If it is an update: update the data
+				if(paymentAlreadyExists.status === "paid"){
+					if(paymentAlreadyExists.balance > amount){		// He paid to much
+						paymentData.balance = 0
 					}
-				});
+					else{		// He didn't paid enough
+						paymentData.balance = amount - paymentAlreadyExists.balance;
+					}
+				}
 			}
-			else {
-				console.error("Payment already exists and should not be updated");
+			else {		// The player registers to the second tournament: merge the two payments
+				console.log("The players registers to the second tournament: merge his payments.");
+				paymentData.balance = paymentAlreadyExists.balance + amount;
 			}
+
+			Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
+				if(err){
+					console.error('insert payment error');
+					console.error(err);
+				}
+			});
 
 		}
 		else {
@@ -1111,6 +1121,16 @@ Meteor.methods({
 				*/
 			}
 			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
+
+				// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
+				paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
+
+				var newValue = paymentData.bankTransferNumber + 1;
+				GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
+					value: newValue
+				}});
+
+
         		var bank = "BE33 3753 3397 1254";
         		var user = Meteor.users.findOne({_id:paymentData.userID});
         		var dataEmail = {
@@ -1150,6 +1170,7 @@ Meteor.methods({
 				}
 
 				paymentData.userID = ID['player2'];
+				delete paymentData.bankTransferNumber;
 				if(typeof paymentData.userID !== 'undefined'){
 					Payments.insert(paymentData, function(err, paymId){
 						if(err){
@@ -1326,6 +1347,8 @@ Meteor.methods({
 			pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
 			leader:<pairId>, // Leader is the player1 from the pair
 			courtId:<courtID>,
+			type:<type>,
+			category:<category>
 		}
 		@return pool id on success
 	*/
@@ -1346,6 +1369,11 @@ Meteor.methods({
 		if(poolData.type){
 			if(!set) set = {};
 			set["type"] = poolData.type;
+		}
+
+		if(poolData.category){
+			if(!set) set={};
+			set["category"] = poolData.category;
 		}
 
 		if(set) data["$set"] = set;
@@ -1476,8 +1504,9 @@ Meteor.methods({
 		data._id = poolID;
 		data.type=type;
 		data.pairs = pairs;
+		data.category = category;
 		if(pool.leader==undefined){
-			data.leader=pair.player1._id;
+			data.leader= pair.player1 ? pair.player1._id : pair.player2._id;
 		}
 		Meteor.call('updatePool', data);
 	},
@@ -1496,6 +1525,9 @@ Meteor.methods({
 			console.error("Error GetPoolToFill : no year and/or type and/or category specified");
 			return undefined;
 		}
+		if (type != "men" && type != "women" && type != "mixed" && type != "family") {
+			console.error("Error GetPoolToFill : type provided ("+type+") is not supported.")
+		}
 
 		var yearTable = Years.findOne({_id:year});
 		if (!yearTable) {
@@ -1510,7 +1542,7 @@ Meteor.methods({
 		// No type table for now
 		if (typeTable==undefined) {
 			console.log("getPoolToFill : no Type table found for year "+year+" and type "+type+". Creating an empty one.");
-			typeID = Types.insert({});
+			typeID = Types.insert({'typeString':type});
 			// typeID = Meteor.call('updateType', {});
 			typeTable = Types.findOne({_id:typeID});
 
@@ -1541,6 +1573,10 @@ Meteor.methods({
 				}
 				// Pool not full
 				const maxNbrPairsInPool = 6;
+				if (pool.pairs === undefined) {
+					pool.pairs = [];
+					return poolList[i];
+				}
 				if (pool.pairs.length < maxNbrPairsInPool) {
 					return poolList[i];
 				}
@@ -1608,6 +1644,9 @@ Meteor.methods({
 			if(extraData.comment!==undefined){
 				data.comment = extraData.comment;
 			}
+			if(extraData.day!==undefined) {
+				data.day = extraData.day
+			}
 			if(extraId===undefined){
 				extraId = Extras.insert(data);
 				return extraId;
@@ -1632,241 +1671,6 @@ Meteor.methods({
 		}
 	},
 
-	//You need to add the secrets.js file inside the server folder.
-/*
-	@param to: is for the receiver email,
-	@param subject : is for the object of the mail,
-	@param data : var data = {
-      intro:"Bonjour Joseph !",
-			important:"lorem1",
-			texte:"lorem 2",
-			encadre:"final2"};
-	*/
-	'emailFeedback': function (to, subject, data) {
-
-
-							// Don't wait for result
-							this.unblock();
-
-							// Define the settings
-							var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
-							var options =   {
-								auth: "api:" + process.env.MAILGUN_API_KEY,
-									params: {
-										"from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
-										"to":to,
-										"subject": subject,
-										"html": SSR.render("mailing",data),
-									}
-								}
-								var onError = function(error, result) {
-									if(error) {console.error("Error: " + error)}
-								}
-
-								// Send the request
-                var user = Meteor.users.findOne({_id:Meteor.userId()});
-                var usermail = user.emails[0].address;
-                if(Meteor.call('isStaff') || Meteor.call('isAdmin') || usermail==to){
-                  Meteor.http.post(postURL, options, onError);
-                  //console.log("Email sent"); // Commenting this to avoir popDB to last too long
-                }
-                else{
-                  console.error("Forbidden permissions to send mail");
-                }
-	},
-
-  'emailtoAllUsers':function(){
-    var mails=[];
-    var usersCursor = Meteor.users.find();
-    usersCursor.forEach( function(user) {
-      mails.push(user.emails[0].address);
-    });
-    var subject = "[Le Charles De Lorraine] Lancement des inscriptions";
-    var data  ={
-      intro:"Bonjour,",
-      important:"Nous avons une grande nouvelle à vous annoncer !",
-      texte:"Dès aujourd'hui, vous avez la possibilité de vous inscrire à notre nouvelle édition du tournoi de tennis Le Charles de Lorraine.\n",
-      encadre:"N'hésitez donc plus et allez vous inscire sur notre site internet !"
-    };
-    if(EMAIL_ENABLED){
-	    for (var i in mails) {
-	      Meteor.call('emailFeedback',mails[i],subject,data);
-	    }
-	}
-    console.log("Mails not send due to MAILGUN");
-
-  },
-
-  'emailtoPoolPlayers':function(poolId){
-    if(poolId != undefined){
-      var mails = [];
-      var pool = Pools.findOne({_id:poolId});
-      for (var i in pool.pairs) {
-        var p = Pairs.findOne({_id:pool.pairs[i]});
-        if(p.player1!=undefined){
-          var p1 = Meteor.users.findOne({_id:p.player1._id});
-          mails.push(p1.emails[0].address);
-        }
-        if(p.player2!=undefined){
-          var p2 = Meteor.users.findOne({_id:p.player2._id});
-          mails.push(p2.emails[0].address);
-        }
-      }
-      var leaduser = Meteor.users.findOne({_id:pool.leader});
-      var leader= leaduser.profile.firstName+" "+leaduser.profile.lastName+" ("+leaduser.profile.phone+")"; //string
-
-      var fam = Types.findOne({"all":poolId});
-      if(fam==undefined){
-        var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
-        var responsableList=[];
-        var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
-        for (var j in allcat){
-          var cat = allcat[j];
-          if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
-            var r= cat.concat("Resp")
-            var resplist=type[r];
-            if (resplist!=undefined && resplist.length>0){
-              for (var k = 0; k < resplist.length; k++) {
-                responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
-              }
-            }
-          }
-        }
-      }
-      else{
-        var responsableList=[];
-        var resplist = fam["allResp"];
-        if (resplist!=undefined && resplist.length>0){
-          for (var k = 0; k < resplist.length; k++) {
-            responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
-          }
-        }
-      }
-      var responsables="";//string
-      for (var i = 0; i < responsableList.length; i++) {
-        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
-      }
-
-      var adresse="";//string
-      if(pool.courtId!=undefined){
-        court = Courts.findOne({"courtNumber":pool.courtId});
-        if(court && court.addressID){
-          address = Addresses.findOne({_id:court.addressID});
-          adresse = address.street+" "+address.number+" "+address.zipCode+" "+address.city;
-        }
-      }
-      if(responsableList.length>1){
-        var encadre="Voici le nom et le numéro de téléphone des membres du staff qui encadrent votre poule :" + responsables +"\n Votre chef de poule est : "+leader+". C'est auprès de lui que vous obtiendrez les dernières informations."+"\n La poule se déroulera à l'adresse suivante : "+adresse;
-      }else{
-        var encadre="Voici le nom et le numéro de téléphone du membre du staff qui encadre votre poule :" + responsables +"\n Votre chef de poule est : "+leader+". C'est auprès de lui que vous obtiendrez les dernières informations."+"\n La poule se déroulera à l'adresse suivante : "+adresse;
-      }
-      var subject = "Quelques informations concernant votre poule.";
-      var data = {
-        intro:"Bonjour,",
-        important:"",
-        texte:"Nous voici bientôt arrivé à notre très attendu tournoi de tennis Le Charles de Lorraine et pour que tout se déroule pour le mieux, vous trouverez les informations concernant votre poule dans l'encadré suivant.",
-        encadre:encadre,
-      };
-      	if(EMAIL_ENABLED){
-	      for (var i in mails) {
-	        Meteor.call('emailFeedback',mails[i],subject,data);
-	      }
-		}
-      console.log("Mails not send due to MAILGUN");
-
-    }
-    else{
-      console.error("emailtoPoolPlayers/ UNDEFINED POOLID");
-    }
-  },
-
-  'emailtoLeader':function(poolId){
-    if(poolId!=undefined){
-      var pool = Pools.findOne({_id:poolId});
-      leader = Meteor.users.findOne({_id:pool.leader});
-
-      var fam = Types.findOne({"all":poolId});
-      if(fam==undefined){
-        var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
-        var responsableList=[];
-        var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
-        for (var j in allcat){
-          var cat = allcat[j];
-          if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
-            var r= cat.concat("Resp")
-            var resplist=type[r];
-            if (resplist!=undefined && resplist.length>0){
-              for (var k = 0; k < resplist.length; k++) {
-                responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
-              }
-            }
-          }
-        }
-      }
-      else{
-        var responsableList=[];
-        var resplist = fam["allResp"];
-        if (resplist!=undefined && resplist.length>0){
-          for (var k = 0; k < resplist.length; k++) {
-            responsableList.push(Meteor.users.findOne({_id:resplist[k]}));
-          }
-        }
-      }
-      var responsables="";//string
-      for (var i = 0; i < responsableList.length; i++) {
-        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
-      }
-      var subject = "[IMPORTANT] Concernant le déroulement du tournoi de tennis Le Charles de Lorraine.";
-      var data={
-        intro:"Bonjour "+leader.profile.firstName+",",
-        important:"Vous avez été choisi pour être le chef de la poule à laquelle vous allez jouer.",
-        texte:"Cette responsabilité ne vous demande que quelques instants au début à la fin de la poule. Premièrement, il vous sera demandé d'aller récupérer la feuille de poule au quartier général avant d'aller jouer. Ensuite, veillez à ce que les points de chaque match soient inscrits dans les cases correspondantes. Finalement, nous vous demanderons aussi de ramener cette feuille au quartier général. Si vous avez besoin de plus d'informations, n'hésitez pas à contacter un membre du staff ou un responsable.",
-        encadre:"Les responsables de votre poules sont : "+responsables+"\n Merci d'avance pour votre implication !",
-      };
-      if(EMAIL_ENABLED) Meteor.call('emailFeedback',leader.emails[0].address,subject,data);
-      console.log("Mails not send due to MAILGUN");
-
-
-    }
-  },
-
-  /* This function is to the remain player in a pair when the other is unregistered*/
-  'emailtoAlonePairsPlayer':function(alonePlayerId,pair){
-    var alonePlayer = Meteor.users.findOne({_id:alonePlayerId});
-
-    if(alonePlayer!=undefined){
-      if(alonePlayerId==pair.player1._id || alonePlayerId==pair.player2._id){
-        var to = alonePlayer.emails[0].address;
-        var subject= "Concernant votre paire au tournoi de tennis.";
-        var data ={
-          intro:"Bonjour "+alonePlayer.profile.firstName+",",
-          important:"Nous avons une mauvaise nouvelle pour vous.",
-          texte:"Votre partenaire ne souhaite plus s'inscrire pour notre tournoi de tennis Le Charles de Lorraine.",
-          encadre:"C'est pourquoi nous vous invitons à venir choisir un nouveau partenaire sur notre site !"
-        };
-
-        var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
-        var options =   {
-          auth: "api:" + process.env.MAILGUN_API_KEY,
-          params: {
-            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
-            "to":to,
-            "subject": subject,
-            "html": SSR.render("mailing",data),
-          }
-        }
-        var onError = function(error, result) {
-          if(error) {console.error("Error: " + error)}
-        }
-        Meteor.http.post(postURL, options, onError);
-        console.log("Email sent");
-      }else{
-        console.error("Vous n'avez pas les permissions requises");
-      }
-    }else{
-      console.error("Alone player is undefined");
-    }
-  },
 
   	'addToUserLog':function(userId, logId){
   		Meteor.users.update({_id:userId}, {$push:{"log":{$each:[logId],$slice: -LAST_N_LOGS}}});
@@ -2047,16 +1851,16 @@ Meteor.methods({
 		}
 
 		var userID = Meteor.userId();
-		console.log(userID);
 
-		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && (userID!==pair.player1._id && userID!==pair.player2._id))
+		var userInThisPair = (pair.player1 ? userID===pair.player1._id : false) || (pair.player2 ? userID===pair.player2._id : false);
+		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && !userInThisPair)
 		{
 			console.error("You don't have the permission to do that");
 			throw new Meteor.error("unsubscribeTournament: no permissions");
 			return false;
 		}
 
-		var userPlayer = pair.player1._id===userID ? "player1" : "player2";
+		var userPlayer = pair.player1 && pair.player1._id===userID ? "player1" : "player2";
 		var partnerPlayer = userPlayer==="player1" ? "player2" : "player1";
 
 		var pool = Pools.findOne({pairs:pair_id}); // Find the right pool
@@ -2064,10 +1868,6 @@ Meteor.methods({
 			console.error("Error unsubscribe : no pool found for this pair");
 			return false;
 		}
-
-		console.log(pair);
-		console.log(userPlayer);
-		console.log(partnerPlayer);
 
 		var user;
 		if (userPlayer==="player1") {
@@ -2082,7 +1882,6 @@ Meteor.methods({
 		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
 
 
-		console.log(user);
 		// No other player
 		if (typeof pair.partnerPlayer === 'undefined') {
 			// Remove the pair from the pool and from the Pairs table
@@ -2124,32 +1923,30 @@ Meteor.methods({
 
 			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
 
+			this.unblock();
 
+			var dataEmailPartner={
+				intro:"Bonjour "+partner.profile.firstName+",",
+				important:"Nous avons une mauvaise nouvelle pour vous.",
+				texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jouer. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours choisir un nouveau partneaire sur notre site !"
+			};
+			var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
+			var options =   {
+				auth: "api:" + process.env.MAILGUN_API_KEY,
+				params: {
+					"from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
+					"to":partner.emails[0].address,
+					"subject": "Concernant votre inscription au tournoi",
+					"html": SSR.render("mailing",dataEmailPartner),
+				}
+			}
+			var onError = function(error, result) {
+				if(error) {console.error("Error: " + error)}
+			}
 
-      this.unblock();
-
-      var dataEmailPartner={
-        intro:"Bonjour "+partner.profile.firstName+",",
-        important:"Nous avons une mauvaise nouvelle pour vous.",
-        texte:"Votre partenaire a décidé de se désinscrire du tournoi. Vous vous retrouvez donc tout seul pour jour. Afin d'éviter que quelqu'un vous soit automatiquement assigné, vous pouvez toujours aller choisir un nouveau partneaire sur notre site !"
-      };
-      var postURL = process.env.MAILGUN_API_URL + '/' + process.env.MAILGUN_DOMAIN + '/messages';
-      var options =   {
-        auth: "api:" + process.env.MAILGUN_API_KEY,
-          params: {
-            "from":"Le Charles de Lorraine <staff@lecharlesdelorraine.com>",
-            "to":partner.emails[0].address,
-            "subject": "Concernant votre inscription au tournoi",
-            "html": SSR.render("mailing",dataEmailPartner),
-          }
-        }
-        var onError = function(error, result) {
-          if(error) {console.error("Error: " + error)}
-        }
-
-        // Send the request
-          Meteor.http.post(postURL, options, onError);
-        }
+			// Send the request
+			Meteor.http.post(postURL, options, onError);
+		}
 	},
 
 	/*
@@ -2281,7 +2078,58 @@ Meteor.methods({
 			}
 		});
 		return true;
-	}
+	},
 
 
-});
+
+	/*
+		Structure:
+		{
+			_id:<id>, // Automatically set
+			year:<year>,
+			type:<type>,
+			category:<category>,
+			first:<pairId>,
+			second:<pairId>
+		}
+		returns the winnerId
+	*/
+	'updateWinner':function(winnerData){
+		if(!(Meteor.call('isAdmin') || Meteor.call('isStaff'))){
+			console.error("You don't have the permissions to do that");
+			throw new Meteor.error("You don't have the permissions to add a winner");
+			return;
+		}
+
+		var andQuery = [{"type":winnerData.type},{"year":winnerData.year},{"category":winnerData.category}];
+		Winners.remove({$and:andQuery}); // Remove any previous winner
+
+		var data = {};
+
+		if(winnerData.year!==undefined && winnerData.year!==""){
+			data.year = winnerData.year;
+		}
+		if(winnerData.type!==undefined && winnerData.type!==""){
+			data.type = winnerData.type;
+		}
+		if(winnerData.category!==undefined && winnerData.category!==""){
+			data.category = winnerData.category;
+		}
+		if(winnerData.first!==undefined && winnerData.first!==""){
+			data.first = winnerData.first;
+		}
+		if(winnerData.second!==undefined && winnerData.second!==""){
+			data.second = winnerData.second;
+		}
+
+		if(winnerData._id !== undefined){
+			Winners.update({_id:winnerData._id}, {$set:data});
+			return winnerData._id;
+		}
+
+		return Winners.insert(data);
+	},
+
+
+
+}); // End helpers

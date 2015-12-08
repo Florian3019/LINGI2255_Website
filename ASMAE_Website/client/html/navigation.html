@@ -24,7 +24,7 @@
     </div>  <!-- Pop up inscription -->
 
  <nav class="navbar navbar-default navbar-fixed-top {{marginNavBar}}">
-      <div class="container">
+      <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -36,26 +36,39 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-              <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}">Tournoi</a></li>
+              {{#if isAdminOrStaff}}
+               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}" class="toToggle">Menu staff</a></li>
+              {{else}}
+               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}" class="toToggle">Tournoi</a></li>
+              {{/if}}
               {{#if currentUser}}
               {{#if registrationsON}}
-              {{#if registered}}
-              <li class="dropdown"><a class="dropdown-togglebis" data-toggle="dropdown" href="#" id="Droop">Inscription <span class="caret"></span></a>
+              {{#if isBothRegistered}}
+              <li><a href="{{pathFor route='myRegistration'}}">Mon inscription</a></li>
+              {{else}}
+              <li class="dropdown"><a class="dropdown-togglebis" data-toggle="dropdown" href="#" id="Droop">Inscription<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="{{pathFor route='myRegistration'}}">Mes inscriptions</a></li>
+                    {{#if registered}}
+                  <li><a href="{{pathFor route='myRegistration'}}" class="toToggle">Mon inscription</a></li>
+                  {{/if}}
+                  {{#unless isSaturdayRegistered}}
+                  <li><a href="{{pathFor route='tournamentRegistrationSaturday'}}" id="Registr" class="toToggle">S'inscrire pour le samedi</a></li>
+                  {{/unless}}
+                  {{#unless isSundayRegistered}}
+                  <li><a href="{{pathFor route='tournamentRegistrationSunday'}}" id="Registr" class="toToggle">S'inscrire pour le dimanche</a></li>
+                  {{/unless}}
                 </ul>
               </li>
-              {{else}}
-              <li><a href="{{pathFor route='tournamentRegistration'}}" id="Registr">Inscription au tournoi</a></li>
               {{/if}}
               {{/if}}
-              <li><a href="{{pathFor route='myCourts'}}">Mes terrains</a></li>
-              <li><a href="{{pathFor route='courtMap'}}">Carte</a></li>
-              <li><a href="{{pathFor route='contacts'}}" id="askQuestion">Poser une question</a></li>
+              <li><a href="{{pathFor route='myCourts'}}" class="toToggle">Mes terrains</a></li>
+              <li><a href="{{pathFor route='contacts'}}" id="askQuestion" class="toToggle">Poser une question</a></li>
               {{/if}}
+              <li><a href="{{pathFor route='courtMap'}}" class="toToggle">Carte</a></li>
+              <li><a href="{{pathFor route='winners'}}" class="toToggle">Gagnants</a></li>
               <li><a href="https://www.facebook.com/media/set/?set=a.10153598504984631.1073741844.9064359630&type=1&l=153e72eadf" target="_blank">Photos</a></li>
-              <li><a href="{{pathFor route='rules'}}">Réglement</a></li>
-              <li><a href="{{pathFor route='faq'}}">FAQ</a></li>
+              <li><a href="{{pathFor route='rules'}}" class="toToggle">Réglement</a></li>
+              <li><a href="{{pathFor route='faq'}}" class="toToggle">FAQ</a></li>
           </ul>
           <div class="nav navbar-nav navbar-right">
             {{> loginButtons}}
@@ -70,5 +83,5 @@
 
 <!-- Edit profile button only visible when logged in -->
 <template name="_loginButtonsAdditionalLoggedInDropdownActions">
-  <button class="btn btn-default btn-block" id="login-buttons-edit-profile">Modifier mon profil</button>
+  <button class="btn btn-default btn-block" id="login-buttons-edit-profile">Mon profil</button>
 </template>

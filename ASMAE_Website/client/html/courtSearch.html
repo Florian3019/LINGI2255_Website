@@ -22,6 +22,16 @@
     </select>
   </div>
   <div class="col-sm-3">
+    <label for="staffOKSelect" class="courtLabel">OK staff </label>
+    <select id="staffOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
+                  <option value="Ignore" {{setSelect StaffOk "Ignore"}}>Ignorer</option>
+                  <option value="Yes" {{setSelect StaffOk "Yes"}}>Oui</option>
+                  <option value="No" {{setSelect StaffOk "No"}}>Non</option>
+    </select>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-3 col-sm-offset-3">
     <label for="sundaySelect" class="courtLabel">Dimanche </label>
     <select id="sundaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" {{setSelect Sunday "Ignore"}}>Ignorer</option>
@@ -29,36 +39,12 @@
                   <option value="No" {{setSelect Sunday "No" }}>Non</option>
     </select>
   </div>
-</div>
-<div class="row">
-  <div class="col-sm-3">
-    <div class="form-group">
-      <label for="name" class="col-sm-4" style="margin-top:10px; padding-left:0px;">Numéro</label>
-        <div class="col-sm-8" style="margin:0px padding:0px;">
-          <input
-            id="courtNumberInput"
-            type="number"
-            min="0"
-            step="1"
-            class="form-control"
-            style="text-align:center; width=15%; display:inline">
-        </div>
-    </div>    
-  </div>
   <div class="col-sm-3">
     <label for="ownerOKSelect" class="courtLabel">OK proprio </label>
     <select id="ownerOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" {{setSelect OwnerOk "Ignore"}}>Ignorer</option>
                   <option value="Yes" {{setSelect OwnerOk "Yes"}}>Oui</option>
                   <option value="No" {{setSelect OwnerOk "No"}}>Non</option>
-    </select>
-  </div>
-  <div class="col-sm-3">
-    <label for="staffOKSelect" class="courtLabel">OK staff </label>
-    <select id="staffOKSelect" class="form-control" style="width: 50%; display: inline; text-align:center">
-                  <option value="Ignore" {{setSelect StaffOk "Ignore"}}>Ignorer</option>
-                  <option value="Yes" {{setSelect StaffOk "Yes"}}>Oui</option>
-                  <option value="No" {{setSelect StaffOk "No"}}>Non</option>
     </select>
   </div>
 </div>

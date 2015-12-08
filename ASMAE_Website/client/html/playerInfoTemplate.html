@@ -9,15 +9,17 @@
             </div>
             <div class="panel-body">
               <div class="row">
+              {{#unless ../HidePic}}
                 <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://www.saintemesme.fr/medias/images/balle-rigolote-2.gif" class="img-circle img-responsive"> </div>
+              {{/unless}}
                 <div class=" col-md-9 col-lg-9 ">
                   <table class="table table-user-information">
                     <tbody>
-
-                      <tr>
-                        <td>Addresse email</td>
-                        <td id="Email">{{emails}}</td>
-                      </tr>
+                        <tr>
+                          <td>Addresse email</td>
+                          <td id="Email">{{emails}}</td>
+                        </tr>
+                    {{#if isStaffOrAdmin}}
                       <tr>
                         <td>Numéro de téléphone</td>
                         <td id="phone">{{phone}}</td>
@@ -46,21 +48,56 @@
                         <td>Classement</td>
                         <td id="rank">{{rank}}</td>
                       </tr>
+                      {{/if}}
 
-                      {{#with getPayment id}}
+                      {{#with getInscriptions id}}
                         <tr>
-                          <td> Inscription </td>
+                          <td> Inscription samedi {{#if showOption ../id}} ({{tournamentPrice}} euros) {{/if}}</td>
                           <td>
-                              {{getInscription ../id}}
+                            {{displayRegistration saturday}}
+                              {{#if isRegistered saturday}}
+                              {{#if showOption ../id}}
+                              (
                               {{#if isCurrentUser ../id}}
-                                ( <a href="#" id="unsubscribeLink">Supprimer mon inscription</a> )
+                                <a href={{pathFor route='tournamentRegistrationSaturday'}} id="modifySaturdayLink">Modifier</a> |
+                              {{/if}}
+                                 <a href="#" id="unsubscribeSaturdayLink">Supprimer</a> )
+                                {{/if}}
+                              {{else}}
+                              {{#if isCurrentUser ../id}}
+                               (<a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">Inscription</a>)
+                               {{/if}}
                               {{/if}}
                           </td>
                         </tr>
-                        <!-- We get here only if the player is registered in the tournament -->
+                        <tr>
+                          <td> Inscription dimanche {{#if showOption ../id}} ({{tournamentPrice}} euros) {{/if}}</td>
+
+                          <td>
+                            {{displayRegistration sunday}}
+                            {{#if isRegistered sunday}}
+                            {{#if showOption ../id}}
+                            (
+                            {{#if isCurrentUser ../id}}
+                              <a href={{pathFor route='tournamentRegistrationSunday'}} id="modifySundayLink">Modifier</a> |
+                            {{/if}}
+                               <a href="#" id="unsubscribeSundayLink">Supprimer</a> )
+                              {{/if}}
+                              {{else}}
+                              {{#if isCurrentUser ../id}}
+                              (<a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">Inscription</a>)
+                              {{/if}}
+                            {{/if}}
+                          </td>
+                        </tr>
+
+                        {{/with}}
+
+                        {{#if showOption id}}
+                        {{#with getPayment id}}
                         {{#each playerExtras ../id}}
                         <tr>
-                            <td>{{extraName}}</td>
+                            <td>{{extraName}} ({{extraPrice}} euros)</td>
                             <td>{{extraQuantity}}</td>
                         </tr>
                         {{/each}}
@@ -90,6 +127,7 @@
                             </td>
                         </tr>
                       {{/with}}
+                      {{/if}}
 
                     </tbody>
                   </table>
@@ -97,21 +135,21 @@
               </div>
 
             </div>
-
-
+            {{#if isStaffOrAdmin}}
             {{#with getPlayerModLog this.log}}
               <h4> Modifications récentes </h4>
               {{>reactiveTable collection=this settings=settings fields=fields}}
             {{/with}}
-
-            <center>
-
-              <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Modifier</button>
-              {{#unless isCurrentUser id}}
-                <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" hidden>Supprimer</button>
-              {{/unless}}
-            </center>
-            <br/>
+            {{/if}}
+            {{#if canModify}}
+              <center>
+                <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Modifier</button>
+                {{#unless ../hideDelete}}
+                  <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>
+                  Supprimer</button>
+                {{/unless}}
+              </center>
+            {{/if}}
 </div>
 
 <!-- Modal payment -->
