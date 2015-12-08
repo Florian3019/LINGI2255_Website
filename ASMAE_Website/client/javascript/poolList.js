@@ -616,6 +616,13 @@ Template.poolList.onRendered(function() {
 	// Session.set("PoolList/Year","");
 	Session.set("PoolList/Type","");
 	Session.set("PoolList/Category","");
+
+	var $window = $(window);
+	var wWidth  = $window.width();
+	if (wWidth <= 750) { // Only in mobile screen (not 767px cause marge of 17px)
+		// Go mobile menu
+		window.location.hash = '#menu-mobile';
+	}
 });
 
 var showPairModal = function(){

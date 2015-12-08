@@ -84,10 +84,11 @@ html {
 }
 
 .nav-sidebar-header-mobile {
-    padding: 10px;
-    font-size: 25px;
-    display: none;
-    text-decoration: none;
+    padding: 10px !important;
+    font-size: 25px !important;
+    display: none !important;
+    text-decoration: none !important;
+    color: #fff;
 }
 
 
@@ -244,6 +245,6 @@ If screen width smaller than 767 px
     }
 
     .nav-sidebar-header-mobile {
-        display: block;
+        display: block !important;
     }
 }

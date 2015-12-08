@@ -58,10 +58,11 @@
 
       <!-- Mobile menu header -->
       {{#if showNavBar}}
-      <a class="nav-sidebar-header-mobile" href="#sidebar-Mobile">
+      
+      <a class="nav-sidebar-header-mobile btn btn-lg btn-default" href="#menu-mobile" style="width:100%;">
         <div>
-          <span class="glyphicon glyphicon-menu-hamburger"></span>
-          Menu
+          <span class="glyphicon glyphicon-menu-down"></span>
+          Retour menu
         </div>
       </a>
       <hr class="nopadding">
@@ -80,7 +81,7 @@
 
       <!-- Mobile menu navigation -->
       {{#if showNavBar}}
-      <div class="sidebar-mobile" id="sidebar-Mobile" style="padding-top: 63px; margin-top: -63px;">
+      <div class="sidebar-mobile" id="menu-mobile" style="padding-top: 63px; margin-top: -63px;">
         <ul class="nav nav-sidebar">
           <hr class="nopadding">
           {{#if isStaffMember}}
@@ -110,8 +111,6 @@
           <hr class="nopadding">
           <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem">Ajouter un terrain</a></li>
           <hr class="nopadding">
-          <li><a href="{{pathFor route='courtEmail'}}" class="menuItem">Envoi de mail aux gestionnaires de terrains</a></li>
-          <hr class="nopadding">            
           <li><a href="{{pathFor route='printSheets'}}" class="menuItem">Feuille de poule</a></li>
           <hr class="nopadding">
           <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem">Log des modifications</a></li>
