@@ -26,7 +26,7 @@
   {{>scoreTable this}}
 
   {{#if isAdminOrStaff}}
-    <button type="button" id="getPDF" class="btn btn-default btn-lg toHideForPdf" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
+    <button type="button" id="getPDF" class="btn btn-default btn-lg btn-warning toHideForPdf" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
       <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
     </button>
   {{/if}}

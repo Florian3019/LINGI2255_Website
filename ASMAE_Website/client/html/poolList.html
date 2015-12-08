@@ -59,8 +59,8 @@
                 </tr>
               </table>
               {{#if isAdminOrStaff}}
-                <button type="button" id="savePools" class="btn btn-default btn-lg btn-padding">
-                  <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauver
+                <button type="button" id="savePools" class="btn btn-default btn-lg btn-success btn-padding">
+                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Sauver
                 </button>
                 <button type="button" id="addPool" class="btn btn-default btn-lg btn-padding">
                   <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Poule
@@ -414,7 +414,7 @@ Takes 2 arguments :
       {{/if}}
     {{/if}}
   </div>
-
+  <center>
   <table class="table">
     <tbody>
       {{#each getResponsables}} <!-- Array of columns -->
@@ -436,4 +436,5 @@ Takes 2 arguments :
       {{/each}}
     </tbody>
   </table>
+  </center>
 </template>
