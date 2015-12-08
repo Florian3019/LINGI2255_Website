@@ -27,7 +27,7 @@ Template.launchTournament.helpers({
 
 
 Template.launchTournament.events({
-    'submit form': function(event){
+    'click #launchTournamentSubmitButton': function(event){
         event.preventDefault();
 
         var getDate = $('[name=launchTournamentDate]').val().split('/');
