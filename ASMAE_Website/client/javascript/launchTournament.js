@@ -42,7 +42,7 @@ Template.launchTournament.helpers({
 
 
 Template.launchTournament.events({
-    'click #launchTournamentSubmitButton': function(event){
+    'submit #launchTournamentForm': function(event){
         event.preventDefault();
 
         var getDate = $('[name=launchTournamentDate]').val().split('/');
