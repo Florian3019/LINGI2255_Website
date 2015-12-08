@@ -23,11 +23,26 @@ Template.launchTournament.helpers({
         return Extras.find();
     },
 
+    'getPreviousTournamentDate' : function(){
+        var previousTournamentDate = Session.get('previousTournamentDate');
+        if(typeof previousTournamentDate !== 'undefined'){
+            var m = previousTournamentDate.getMonth() + 1;
+            return previousTournamentDate.getDate()+'/'+ m +'/'+previousTournamentDate.getFullYear();
+        }
+    },
+
+    'getPreviousTournamentPrice' : function(){
+        var previousTournamentPrice = Session.get('previousTournamentPrice');
+        if(typeof previousTournamentPrice !== 'undefined'){
+            return previousTournamentPrice;
+        }
+    }
+
 });
 
 
 Template.launchTournament.events({
-    'click #launchTournamentSubmitButton': function(event){
+    'submit #launchTournamentForm': function(event){
         event.preventDefault();
 
         var getDate = $('[name=launchTournamentDate]').val().split('/');
@@ -64,7 +79,10 @@ Template.launchTournament.events({
 		Meteor.call('launchTournament', launchData, Meteor.userId(), function(error, result){
             if(error){
                 console.error('launchTournament error');
-                console.error(error);
+                console.error(error.error);
+                if(error.error === "A tournament already exists for this year"){
+                    alert(error.error);
+                }
             }
             else if(result == null){
                 console.error("No result in launchTournament...");
@@ -75,29 +93,34 @@ Template.launchTournament.events({
 
     'click #modifyLaunchButton': function(){
         swal({
-          title:"Confimer la modification du tournoi",
-          text:"Cette opération est irréversible.",
-          type:"warning",
-          showCancelButton:true,
-          cancelButtonText:"Annuler",
-          confirmButtonText:"Modifier le tournoi",
-          confirmButtonColor:"#0099ff",
-          },
-          function(){
-              Meteor.call('deleteCurrentTournament', function(err, result){
-                if(err){
-                    console.log(err);
-                }
+            title:"Confimer la modification du tournoi",
+            text:"Cette opération est irréversible.",
+            type:"warning",
+            showCancelButton:true,
+            cancelButtonText:"Annuler",
+            confirmButtonText:"Modifier le tournoi",
+            confirmButtonColor:"#0099ff",
+            },
+            function(){
+                var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+                var previousTournament = Years.findOne({_id: currentYear});
+                Session.set('previousTournamentDate', previousTournament.tournamentDate);
+                Session.set('previousTournamentPrice', previousTournament.tournamentPrice);
 
-                Meteor.call('stopTournamentRegistrations', function(error, result){
-                    if(error){
-                        console.error('stopTournamentRegistrations error');
-                        console.error(error);
+                Meteor.call('deleteCurrentTournament', function(err, result){
+                    if(err){
+                        console.log(err);
                     }
+
+                    Meteor.call('stopTournamentRegistrations', function(error, result){
+                        if(error){
+                            console.error('stopTournamentRegistrations error');
+                            console.error(error);
+                        }
+                    });
                 });
-            });
             }
         );
-    }
+    },
 
 });

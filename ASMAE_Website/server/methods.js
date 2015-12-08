@@ -113,12 +113,12 @@ Meteor.methods({
 			}
 
 			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			Meteor.call('restartTournament'); 	//Set currentYear to ""
 			Years.remove({_id: currentYear});
 
 			//Delete all pairs
 			Pairs.remove({year: currentYear});
 
-			Meteor.call('restartTournament'); 	//Set currentYear to ""
 	},
 
 	'setCurrentYear' : function(currentYear) {
@@ -665,10 +665,10 @@ Meteor.methods({
 		}
 
 
-		if(courtId === undefined){
+		if(typeof courtId === 'undefined'){
 			// Create a new court
 
-			if(data.HQDist===undefined){
+			if(typeof data.HQDist === 'undefined'){
 				data.HQDist=Number.MAX_VALUE;
 			}
 
@@ -691,20 +691,20 @@ Meteor.methods({
 	'deleteCourt' : function(courtId){
 		if(!courtId){
 			console.error("deleteCourt: no courtId in argument");
-			return false;
+			throw new Meteor.Error("deleteCourt: no courtId in argument");
 		}
 
 		var court = Courts.findOne(courtId);
 		if(!court)
 		{
 			console.error("deleteCourt: no court correponds to courtId");
-			return false;
+			throw new Meteor.Error("deleteCourt: no court correponds to courtId");
 		}
 
 		var u = Meteor.users.findOne(court.ownerID);
 		if(!u){
-			console.error('deleteCourt : owner does not exist');
-			return false;
+			console.error("deleteCourt : owner does not exist");
+			throw new Meteor.Error("deleteCourt : owner does not exist");
 		}
 
 		const isAdmin = Meteor.call('isAdmin');
@@ -729,7 +729,7 @@ Meteor.methods({
 		else
 		{
 			console.error("deleteCourt : You don't have the permissions to delete a court !");
-			return false;
+			throw new Meteor.Error("deleteCourt : You don't have the permissions to delete a court !");
 		}
 
 	},
@@ -1153,7 +1153,7 @@ Meteor.methods({
 				}});
 
 
-        		var bank = "BE33 3753 3397 1254";
+        		var bank = "BE33 3753 3397 1254"; //TODO: hardcoded here
         		var user = Meteor.users.findOne({_id:paymentData.userID});
         		var dataEmail = {
           			intro:"Bonjour "+user.profile.firstName+",",
@@ -1164,12 +1164,7 @@ Meteor.methods({
 				if (!silentMail) {
 					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
 				}
-					/*
 
-						Envoyer un mail contenant les informations pour payer par virement bancaire:
-						- compte bancaire: hardcoded pour le moment. Je mettrai peut-être un formulaire pour l'admin.
-
-					*/
 			}
 
 			if(userIsOwner){
@@ -1192,7 +1187,15 @@ Meteor.methods({
 				}
 
 				paymentData.userID = ID['player2'];
-				delete paymentData.bankTransferNumber;
+
+				if(pairData.paymentMethod === paymentTypes[1]){		// Bank transfer
+					paymentData.bankTransferNumber = paymentData.bankTransferNumber + 1;
+					var newValue2 = paymentData.bankTransferNumber + 1;
+					GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
+						value: newValue2
+					}});
+				}
+
 				if(typeof paymentData.userID !== 'undefined'){
 					Payments.insert(paymentData, function(err, paymId){
 						if(err){
@@ -2097,8 +2100,25 @@ Meteor.methods({
 		}}, function(err, res){
 			if(err){
 				console.log(err);
+				throw new Meteor.Error(err);
 			}
 		});
+
+		var payment = Payments.findOne({_id: paymentID});
+		var user = Meteor.users.findOne({_id: payment.userID});
+
+		Meteor.call("addToModificationsLog",
+		{"opType":"Marquer comme payé",
+		"details": user.profile.firstName + " " + user.profile.lastName + " a été marqué comme ayant payé le tournoi"
+	}, function(err, logId){
+		if(err){
+			console.log(err);
+			return;
+		}
+		Meteor.call('addToUserLog', user._id, logId);
+	});
+
+
 		return true;
 	},
 
