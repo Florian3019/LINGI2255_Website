@@ -7,7 +7,7 @@ Feature: Check that the page to add a court is still showing for the admin membe
         Given An admin has been created
         
     @watch
-    Scenario: Authenticated user can register to the tournament
+    Scenario: 
         Given I am logged in
         And The database has been populated
         When I click on Ajouter un Terrain
