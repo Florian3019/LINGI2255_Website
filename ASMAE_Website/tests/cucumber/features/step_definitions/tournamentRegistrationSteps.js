@@ -15,8 +15,10 @@ module.exports = function () {
     });
     this.When(/^I navigate to the tournament registration page$/, function () {
         
-        browser.waitForExist('a#Registr');
-        browser.click('a#Registr');
+        browser.waitForExist('#Droop');
+        browser.click('#Droop');
+        browser.waitForExist('#RegistrSaturday');
+        browser.click('#RegistrSaturday');
     });
 
     this.Given(/^An admin launched the tournament registrations for this year$/, function(){
@@ -29,7 +31,7 @@ module.exports = function () {
     	client.setValue('#birthDay', '23');
     	client.setValue('#birthMonth', '9');
     	client.setValue('#birthYear', '1994');
-    	client.click('#male');
+    	//client.click('#male');
     	client.setValue('#phone', '0473383143');
     	client.setValue('#street', 'Place de l université');
     	client.setValue('#addressnumber', '23');
@@ -44,10 +46,9 @@ module.exports = function () {
     });
 
     this.Then(/^I should see a confirmation page of my inscription$/, function() {
-        browser.waitForExist('div.panel-heading');
-        browser.waitForExist('#Status')
-        var title = browser.getText('#Status');
-        expect(title).toEqual("Statut de votre inscription : En attente d'un partenaire");
+        browser.waitForExist('#MyInscriptionHeader')
+        var title = browser.getText('#MyInscriptionHeader');
+        expect(title).toEqual("Votre inscription");
         var mail = browser.getText('#Email');
         expect(mail).toEqual("test@test.com");
         //Get the surface value (This is an example. It's better to do it for every value).
@@ -62,8 +63,7 @@ module.exports = function () {
 
         expect(phone).toEqual("0473/38.31.43");
         expect(dob).toEqual("23/9/1994");
-        expect(sex).toEqual("M");
-        expect(address).toEqual("23, Place de l université. Boite 123b");
+        expect(address).toEqual("Place de l université, 23. Boite 123b");
 		expect(city).toEqual("1348 Louvain La Neuve");
         expect(country).toEqual("Belgique");
         expect(rank).toEqual("NC");
