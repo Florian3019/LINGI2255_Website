@@ -121,6 +121,8 @@ Template.login.events({
     
 	'click #sign-up': function(event) { 
 
+        
+
         document.getElementById("inputEmailGroup").className = "form-group";
         document.getElementById("inputPasswordGroup").className = "form-group";
         
@@ -146,6 +148,10 @@ Template.login.events({
             document.getElementById("inputPasswordGroup").className = "form-group has-error";
         }
         else {
+            $('#sign-up').hide();
+
+            $('#sign-up-chargement').show();
+
             Accounts.createUser({email: email, password: password}, function(error){
                 if(error){
                     console.log(error.reason);
