@@ -331,3 +331,8 @@ Template.tournamentHistory.helpers({
 	    return currentYear;
 	},
 });
+
+Template.tournamentHistory.onCreated(function(){
+	init_chartist_plugin_axisTitle(window, document, Chartist);
+	init_chartist_plugin_tooltip(window, document, Chartist);
+});
