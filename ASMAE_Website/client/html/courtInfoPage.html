@@ -120,7 +120,7 @@
             <br />
 </div>
 
-{{#if isStaffOrAdmin}}
+{{#if isAdminOrStaff}}
     {{#with getCourtModLog court.log}}
     <h4> Modifications récentes </h4>
     {{>reactiveTable collection=this settings=settings fields=fields}}

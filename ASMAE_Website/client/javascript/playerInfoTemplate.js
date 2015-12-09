@@ -402,12 +402,26 @@ Template.playerInfoTemplate.events({
 	},
 
 	'click #markAsPaid': function(event){
-		Meteor.call('markAsPaid', this._id, function(err, result){
-			if(err){
-				console.log("Error while calling method markAsPaid");
-				console.log(err);
-			}
-		});
+		var userId = this._id;
+		
+		swal({
+        title: "Etes vous sûr ?",
+        text: "Cette action est irréversible.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Marquer comme payé",
+        closeOnConfirm: true
+        },
+        function(){
+			Meteor.call('markAsPaid', this._id, function(err, result){
+				if(err){
+					console.log("Error while calling method markAsPaid");
+					console.log(err);
+				}
+			});
+        }
+        );		
 	}
 
 });
