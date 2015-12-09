@@ -6,6 +6,13 @@ Template.forum.helpers({
 		return Threads.find();
 	},
 
+	'emptyArray':function(array){
+		if(array===undefined){
+			return true;
+		}
+		return array.length==0;
+	},
+
 	'getAuthorInfo':function(userId){
 		var user = Meteor.users.findOne({_id:userId});
 		return user;
