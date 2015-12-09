@@ -73,7 +73,7 @@
                               {{#if isCurrentUser ../id}}
                                 <a href={{pathFor route='tournamentRegistrationSaturday'}} id="modifySaturdayLink">Modifier</a> |
                               {{/if}}
-                                 <a href="#" id="unsubscribeSaturdayLink">Désinscrire</a> )
+                                 <a href="#" id="unsubscribeSaturdayLink" data-id={{../id}}>Désinscrire</a> )
                                 {{/if}}
                               {{else}}
                               {{#if isCurrentUser ../id}}
@@ -93,7 +93,7 @@
                             {{#if isCurrentUser ../id}}
                               <a href={{pathFor route='tournamentRegistrationSunday'}} id="modifySundayLink">Modifier</a> |
                             {{/if}}
-                               <a href="#" id="unsubscribeSundayLink">Désinscrire</a> )
+                               <a href="#" id="unsubscribeSundayLink" data-id={{../id}}>Désinscrire</a> )
                               {{/if}}
                               {{else}}
                               {{#if isCurrentUser ../id}}

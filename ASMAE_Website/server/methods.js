@@ -1866,9 +1866,9 @@ Meteor.methods({
 		return ret;
 	},
 
-	'unsubscribePairFromTournament': function(pair_id){
-		if (typeof pair_id === 'undefined') {
-			console.error("Error unsubscribe : pair_id is undefined");
+	'unsubscribePairFromTournament': function(pair_id, playerID){
+		if (typeof pair_id === 'undefined' || playerID === undefined) {
+			console.error("Error unsubscribe : pair_id is undefined or playerID is undefined");
 			return false;
 		}
 		var pair = Pairs.findOne({_id:pair_id});
@@ -1877,7 +1877,7 @@ Meteor.methods({
 			return false;
 		}
 
-		var userID = Meteor.userId();
+		var userID = playerID;
 
 		var userInThisPair = (pair.player1 ? userID===pair.player1._id : false) || (pair.player2 ? userID===pair.player2._id : false);
 		if(!(Meteor.call('isStaff') || Meteor.call('isAdmin')) && !userInThisPair)

@@ -260,6 +260,9 @@ Template.playerInfoTemplate.events({
 
 	'click #unsubscribeSaturdayLink' : function(event) {
 		event.preventDefault();
+        var dataSet = event.currentTarget.dataset;
+        var userID = dataSet.id
+        console.log(userID);
 
 		swal({
 			title: "Êtes-vous sûr ?",
@@ -271,7 +274,7 @@ Template.playerInfoTemplate.events({
 			closeOnConfirm: false },
 			function(){
 				var pair = getDayPairFromPlayerID(Meteor.userId(), "saturday");
-				Meteor.call('unsubscribePairFromTournament', pair._id);
+				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 				swal("Inscription supprimée", "", "success");
 				Router.go('home');
 			});
@@ -279,6 +282,9 @@ Template.playerInfoTemplate.events({
 
 	'click #unsubscribeSundayLink' : function(event) {
 		event.preventDefault();
+        var dataSet = event.currentTarget.dataset;
+        var userID = dataSet.id;
+        console.log(userID);
 
 		swal({
 			title: "Êtes-vous sûr ?",
@@ -290,7 +296,7 @@ Template.playerInfoTemplate.events({
 			closeOnConfirm: false },
 			function(){
 				var pair = getDayPairFromPlayerID(Meteor.userId(), "sunday");
-				Meteor.call('unsubscribePairFromTournament', pair._id);
+				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 				swal("Inscription supprimée", "", "success");
 				Router.go('home');
 			});
@@ -361,7 +367,7 @@ Template.playerInfoTemplate.events({
 								});
 								return;
 							}
-						}	
+						}
 					}
 
             		swal({
@@ -372,7 +378,7 @@ Template.playerInfoTemplate.events({
 						cancelButtonText:"Annuler",
 						confirmButtonColor: "#DD6B55",
 						confirmButtonText: "Supprimer",
-						closeOnConfirm: false 
+						closeOnConfirm: false
 						},
 						function(){
 				      		Meteor.call('deleteUser',userId, function(err, status){
@@ -403,7 +409,7 @@ Template.playerInfoTemplate.events({
 
 	'click #markAsPaid': function(event){
 		var userId = this._id;
-		
+
 		swal({
         title: "Etes vous sûr ?",
         text: "Cette action est irréversible.",
@@ -421,7 +427,7 @@ Template.playerInfoTemplate.events({
 				}
 			});
         }
-        );		
+        );
 	}
 
 });
