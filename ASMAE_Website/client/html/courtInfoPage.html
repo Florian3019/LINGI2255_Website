@@ -110,8 +110,12 @@
 
               {{>mapForOneCourt this.court}}
 
-              <a class="btn btn-default" href="{{pathFor route='modifyCourt' _id=court._id }}" >Modifier</a>
-              <button type="button" id="deleteCourt" class="btn btn-default" >Supprimer</button>
+              <a class="btn btn-default" href="{{pathFor route='modifyCourt' _id=court._id }}" >
+                <span class="glyphicon glyphicon-pencil" style="margin-right:15px"></span>
+              Modifier</a>
+              <button type="button" id="deleteCourt" class="btn btn-default" >
+                <span class="glyphicon glyphicon-remove" style="margin-right:15px; color:red"></span>
+              Supprimer</button>
             </center>
             <br />
 </div>

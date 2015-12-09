@@ -370,7 +370,7 @@ Template.playerInfoTemplate.events({
 						type: "warning",
 						showCancelButton: true,
 						cancelButtonText:"Annuler",
-						confirmButtonColor: "#ff0000",
+						confirmButtonColor: "#DD6B55",
 						confirmButtonText: "Supprimer",
 						closeOnConfirm: false 
 						},
