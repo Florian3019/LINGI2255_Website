@@ -1593,6 +1593,8 @@ var addNewPool = function(obj){
 	Visually sets the same amount of pairs to each pool
 */
 var equilibrate = function(document){
+	hideSuccessBox(document);
+
 	var table = document.getElementById("poolTable");
 	var poolContainersRow = table.rows; // Table of rows
 

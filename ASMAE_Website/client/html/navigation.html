@@ -32,14 +32,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-             <a class="navbar-brand toToggle" href="{{pathFor route='home'}}"><img border="0" alt="le Charles de Lorraine" src="charlesLorraine.png" width="175" height="30"> </a>
+             <a class="navbar-brand" href="{{pathFor route='home'}}"><img border="0" alt="le Charles de Lorraine" src="charlesLorraine.png" width="175" height="30"> </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
               {{#if isAdminOrStaff}}
-               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}" class="toToggle">Menu staff</a></li>
+               <li><a id="tournamentNavigation" href="{{pathFor route='tournamentHistory'}}" class="toToggle">Menu staff</a></li>
               {{else}}
-               <li><a id="tournamentNavigation" href="{{pathFor route='poolList'}}" class="toToggle">Tournoi</a></li>
+               <li><a id="tournamentNavigation" href="{{pathFor route='tournamentHistory'}}" class="toToggle">Tournoi</a></li>
               {{/if}}
               {{#if currentUser}}
               {{#if registrationsON}}
@@ -47,7 +47,7 @@
               <li><a href="{{pathFor route='myRegistration'}}">Mon inscription</a></li>
               {{else}}
               <li class="dropdown"><a class="dropdown-togglebis" data-toggle="dropdown" href="#" id="Droop">Inscription<span class="caret"></span></a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu auto-dropdown-menu">
                     {{#if registered}}
                   <li><a href="{{pathFor route='myRegistration'}}" class="toToggle">Mon inscription</a></li>
                   {{/if}}

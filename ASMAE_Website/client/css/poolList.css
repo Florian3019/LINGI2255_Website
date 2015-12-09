@@ -5,6 +5,11 @@
   height: 640px;
   width: 250px;
   vertical-align: top;
+  -moz-box-shadow: inset 0px 0px 10px 4px #656565;
+  -webkit-box-shadow: inset 0px 0px 10px 4px #656565;
+  -o-box-shadow: inset 0px 0px 10px 4px #656565;
+  box-shadow: inset 0px 0px 10px 4px #656565;
+  filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=NaN, Strength=10);
 }
 
 .poolLabel{

@@ -908,6 +908,7 @@ Template.brackets.events({
           text:"Vous pourrez changer qui passe dans les knock-offs sur l'écran suivant",
           type:"input",
           inputType:"number",
+          inputAlign:"middle",
           inputValue:"2",
           confirmButtonText:"Lancer ce knock-off !",
           confirmButtonColor: "#3085d6",
