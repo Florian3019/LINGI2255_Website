@@ -6,6 +6,10 @@ Template.modificationsLog.helpers({
         return ModificationsLog.find();
     },
 
+    logIsEmpty:function(){
+    	return ModificationsLog.find().count()==0;
+    },
+
     settings : function(){
     	return {
     		fields:[
