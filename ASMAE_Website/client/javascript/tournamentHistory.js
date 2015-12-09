@@ -109,18 +109,9 @@ var makeYearGraph = function(){
 		right: 0,
 		bottom: 30,
 		left: 0
-		},
+	  },
 	  plugins: [
         Chartist.plugins.ctAxisTitle({
-            axisX: {
-                axisTitle: 'Années',
-                axisClass: 'ct-axis-title',
-                offset: {
-                    x: 0,
-                    y: 50
-                },
-                textAnchor: 'middle'
-            },
             axisY: {
                 axisTitle: 'Joueurs',
                 axisClass: 'ct-axis-title',

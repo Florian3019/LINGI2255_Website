@@ -3,6 +3,8 @@
 }
 
 .rotate {
+	transform-origin:bottom;
+
 	/* Safari */
 	-webkit-transform: rotate(-90.0deg);
 
@@ -20,6 +22,4 @@
 
 	 /* Standard */
   	transform: rotate(-90.0deg);
-
-  	padding-top: 35px;
 }
