@@ -67,10 +67,17 @@ Template.index.helpers({
 
 });
 
+var anchorBool = false;
+
 Template.index.events({
 
 	'click .menuItem': function() {
 		$(window).scrollTop(0);
+	},
+
+	'click #mobile-menu-button': function(){
+			window.location.hash = anchorBool ? '#menu-mobile' : "#menu-mobile2";
+			anchorBool = !anchorBool;
 	},
 
 	'click #popdb' : function(event) {

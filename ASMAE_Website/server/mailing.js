@@ -132,7 +132,7 @@ Meteor.methods({
         Meteor.call('emailFeedback',mails[i],subject,data);
       }
     }
-    console.log("Mails not send due to MAILGUN");
+
 
   },
 

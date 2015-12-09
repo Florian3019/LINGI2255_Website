@@ -31,7 +31,7 @@ Template.printSheets.events({
         showCancelButton: false,
         confirmButtonColor: "#3085d6",
         confirmButtonText: "Ok",
-        closeOnConfirm: true 
+        closeOnConfirm: true
         });
         return;
       }
@@ -73,7 +73,10 @@ Template.printSheets.events({
       body+
       '</body>'
     );
-    setTimeout(function(){ win.print() }, 3000);
+    setTimeout(function(){
+      win.print();
+      win.close();
+    }, 3000);
 
   }
 });

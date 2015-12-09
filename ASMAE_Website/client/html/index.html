@@ -92,7 +92,7 @@
       <!-- Mobile menu header -->
       {{#if showNavBar}}
       
-      <a class="nav-sidebar-header-mobile btn btn-lg btn-default" href="#menu-mobile" style="width:100%;">
+      <a class="nav-sidebar-header-mobile btn btn-lg btn-default" id="mobile-menu-button" style="width:100%;">
         <div>
           <span class="glyphicon glyphicon-menu-down"></span>
           Retour menu
@@ -115,7 +115,8 @@
       <!-- Mobile menu navigation -->
       {{#if showNavBar}}
       <div class="sidebar-mobile" id="menu-mobile" style="padding-top: 63px; margin-top: -63px;">
-        <ul class="nav nav-sidebar">
+        <ul class="nav nav-sidebar" id="menu-mobile2" style="padding-top: 63px; margin-top: -63px;">
+          <hr class="nopadding">
           <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
             <i class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></i>
           Statistiques </a></li>
