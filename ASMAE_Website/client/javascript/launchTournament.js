@@ -24,25 +24,35 @@ Template.launchTournament.helpers({
     },
 
     'getPreviousTournamentDate' : function(){
-        var previousTournamentDate = Session.get('previousTournamentDate');
-        if(typeof previousTournamentDate !== 'undefined'){
-            var m = previousTournamentDate.getMonth() + 1;
-            return previousTournamentDate.getDate()+'/'+ m +'/'+previousTournamentDate.getFullYear();
+        var c = GlobalValues.findOne({_id:"currentYear"});
+        if (c===undefined || c.value === undefined) {
+            return undefined;
         }
+        var y = Years.findOne({_id:c.value});
+        if (y===undefined || y.tournamentDate===undefined) {
+            return undefined;
+        }
+        var date = y.tournamentDate;
+        return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
     },
 
     'getPreviousTournamentPrice' : function(){
-        var previousTournamentPrice = Session.get('previousTournamentPrice');
-        if(typeof previousTournamentPrice !== 'undefined'){
-            return previousTournamentPrice;
+        var c = GlobalValues.findOne({_id:"currentYear"});
+        if (c===undefined || c.value === undefined) {
+            return undefined;
         }
+        var y = Years.findOne({_id:c.value});
+        if (y===undefined) {
+            return undefined;
+        }
+        return y.tournamentPrice;
     }
 
 });
 
 
 Template.launchTournament.events({
-    'submit #launchTournamentForm': function(event){
+    'click #launchTournamentButton': function(event){
         event.preventDefault();
 
         var getDate = $('[name=launchTournamentDate]').val().split('/');
@@ -53,17 +63,17 @@ Template.launchTournament.events({
         var dateMsg = document.getElementById("dateError");
         var priceInput = document.getElementById("formGroupPriceInput");
         var errorMsg = document.getElementById("priceError");
-        
-        if(getDate.length==1 && getDate[0]===""){    
+
+        if(getDate.length==1 && getDate[0]===""){
             dateInput.className = "form-group has-error";
             dateMsg.style.display = "block";
-            return; 
+            return;
         }
-        
+
         if(isNaN(price)){
             priceInput.className = "form-group has-error";
             errorMsg.style.display = "block";
-            return; 
+            return;
         }
 
         dateInput.className = "form-group has-success";
@@ -76,25 +86,25 @@ Template.launchTournament.events({
             tournamentPrice: price
         };
 
-		Meteor.call('launchTournament', launchData, Meteor.userId(), function(error, result){
-            if(error){
-                console.error('launchTournament error');
-                console.error(error.error);
-                if(error.error === "A tournament already exists for this year"){
-                    alert(error.error);
-                }
+        swal({
+            title: "Ouverture des inscriptions",
+            text: "Les informations entrées sont-elles correctes ? Après validation, les inscriptions sont ouvertes",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Confirmer",
+            closeOnConfirm: true
+        },
+            function() {
+                Meteor.call('launchTournament', launchData);
             }
-            else if(result == null){
-                console.error("No result in launchTournament...");
-            }
-	    });
-
+        );
     },
 
     'click #modifyLaunchButton': function(){
         swal({
-            title:"Confimer la modification du tournoi",
-            text:"Cette opération est irréversible.",
+            title:"Confirmer la modification du tournoi",
+            text:"Les inscriptions déjà enregistrées ne seront pas modifiées",
             type:"warning",
             showCancelButton:true,
             cancelButtonText:"Annuler",
@@ -102,23 +112,9 @@ Template.launchTournament.events({
             confirmButtonColor:"#0099ff",
             },
             function(){
-                var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-                var previousTournament = Years.findOne({_id: currentYear});
-                Session.set('previousTournamentDate', previousTournament.tournamentDate);
-                Session.set('previousTournamentPrice', previousTournament.tournamentPrice);
-
-                Meteor.call('deleteCurrentTournament', function(err, result){
-                    if(err){
-                        console.log(err);
-                    }
-
-                    Meteor.call('stopTournamentRegistrations', function(error, result){
-                        if(error){
-                            console.error('stopTournamentRegistrations error');
-                            console.error(error);
-                        }
-                    });
-                });
+                GlobalValues.update({_id:"registrationsON"}, {$set: {
+    				value : false
+    			}});
             }
         );
     },

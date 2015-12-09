@@ -7,8 +7,10 @@ Template.modifyExtras.events({
 		event.preventDefault();
 
 		var name = document.getElementById("nameExtra");
-		var price = document.getElementById("priceExtra");
+		var price = parseFloat(document.getElementById("priceExtra"));
 		var comment =  document.getElementById("commentExtra");
+		var jour = document.getElementById("dayExtra").value;
+		var day = jour == "Samedi" ? "saturday" : "sunday";
 
 		var infoBox = document.getElementById("infoBoxExtra");
 
@@ -16,12 +18,13 @@ Template.modifyExtras.events({
 			var data={
 					"name": name.value,
 					"price": price.value,
-					"comment": comment.value
+					"comment": comment.value,
+					"day": day
 			};
 			Meteor.call('updateExtra',data);
 			Meteor.call("addToModificationsLog",
             {"opType":"Ajout d'un extra",
-            "details":name.value +": "+price.value+"€ "+ (comment.value!=="" ? "("+comment.value+")" : "")
+            "details":name.value +": "+price.value+"€ "+day+" "+ (comment.value!=="" ? "("+comment.value+")" : "")
             });
             infoBox.setAttribute("hidden","");
             name.value = "";
@@ -58,26 +61,35 @@ Template.modifyExtras.helpers({
 
     'getComment': function(){
     	return this.comment;
-    }
+    },
+	'getDay': function() {
+		if (this.day!=="saturday" && this.day!=="sunday") {
+			console.error("Error, extra day is not saturday or sunday");
+			return undefined;
+		}
+		return this.day=="saturday" ? "Samedi" : "Dimanche";
+	}
 });
 
 var getData = function(id){
 	return data={
 		"_id": id,
 		"name": document.getElementById("name"+id).value,
-		"price": document.getElementById("price"+id).value,
-		"comment": document.getElementById("comment"+id).value
+		"price": parseFloat(document.getElementById("price"+id).value),
+		"comment": document.getElementById("comment"+id).value,
+		"day": document.getElementById("day"+id).value
 	};
 }
 
 var modifyExtra=function(id){
 	data = getData(id);
+	var jour = data.day == "saturday" ? "Samedi" : "Dimanche";
 
 	Meteor.call('updateExtra',data);
 
 	Meteor.call("addToModificationsLog",
     {"opType":"Modification d'un extra",
-    "details":data.name +": "+data.price+"€ "+ (data.comment!=="" ? "("+data.comment+")" : "")
+    "details":data.name +": "+data.price+"€ "+jour+" "+ (data.comment!=="" ? "("+data.comment+")" : "")
     });
 }
 
@@ -85,17 +97,18 @@ var modifyExtra=function(id){
 Template.modifyExtras.events({
 	'change .extra-name':function(event){
 		extraId = event.currentTarget.dataset.id;
-		console.log(extraId);
 		modifyExtra(extraId);
 	},
 	'change .extra-price':function(event){
 		extraId = event.currentTarget.dataset.id;
-		console.log(extraId);
 		modifyExtra(extraId);
 	},
 	'change .extra-comment':function(event){
 		extraId = event.currentTarget.dataset.id;
-		console.log(extraId);
+		modifyExtra(extraId);
+	},
+	'change .extra-day':function(event) {
+		extraId = event.currentTarget.dataset.id;
 		modifyExtra(extraId);
 	},
 
@@ -107,10 +120,17 @@ Template.modifyExtras.events({
 
 		Meteor.call("addToModificationsLog",
         {"opType":"Effacer un extra",
-        "details":data.name +": "+data.price+"€ "+ (data.comment!=="" ? "("+data.comment+")" : "")
+        "details":data.name +": "+data.price+"€ "+data.day+" "+ (data.comment!=="" ? "("+data.comment+")" : "")
         });
 	}
+});
 
 
-
+Template.modifyExtras.onRendered(function() {
+	var extras = Extras.find().fetch();
+	for (var i=0; i<extras.length; i++) {
+		var e = extras[i];
+		var daySelect = document.getElementById("day"+e._id);
+		daySelect.value = e.day;
+	}
 });

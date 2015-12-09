@@ -14,7 +14,7 @@ Meteor.methods({
 
 		console.log("activateDB sets your email to verified");
 		var user = Meteor.users.findOne({_id:Meteor.userId()});
-		var a = "test@test.com";
+		var a = user.emails[0].address;
 		if (!isTest) {
 			Accounts.addEmail(Meteor.userId(), a, true);
 		}

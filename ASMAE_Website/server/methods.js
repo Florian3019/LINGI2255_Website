@@ -53,10 +53,7 @@ Meteor.methods({
 			data.tournamentDate = launchTournamentData.tournamentDate;
 			data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
 
-			if (typeof Years.findOne({_id:data._id}) !== 'undefined') {
-				console.error("Tournament already exists");
-				throw new Meteor.Error("A tournament already exists for this year");
-			}
+			var newTournament = typeof Years.findOne({_id:data._id}) === 'undefined';
 
 			if(typeof launchTournamentData.tournamentPrice === 'undefined') {
 				console.error("launchTournament: No price for the tournament");
@@ -83,20 +80,25 @@ Meteor.methods({
 				}
 			});
 
-			//Add the stepXdone fields
-			data.step2done = false;
-			data.step3done = false;
-			data.step4done = false;
-			data.step5done = false;
-			data.step6done = false;
-			data.setp7done = false;
-			data.setp8done = false;
-
-			var insertedYearID = Years.insert(data);
-			console.log("Tournament launched for year "+data._id);
-
-			//Put all the courts ownerOK and staffOK to false for this year's tournament
-			Courts.update({}, {ownerOK: false, staffOK: false});
+			var insertedYearID;
+			if (newTournament) {
+				//Add the stepXdone fields
+				data.step2done = false;
+				data.step3done = false;
+				data.step4done = false;
+				data.step5done = false;
+				data.step6done = false;
+				data.setp7done = false;
+				data.setp8done = false;
+				insertedYearID = Years.insert(data);
+				console.log("Tournament launched for year "+data._id);
+				//Put all the courts ownerOK and staffOK to false for this year's tournament
+				Courts.update({}, {ownerOK: false, staffOK: false});
+			}
+			else {
+				Years.update({_id:data._id}, {$set:data});
+				console.log("Opening the registrations for year "+data._id);
+			}
 
 			return insertedYearID;
 		}
