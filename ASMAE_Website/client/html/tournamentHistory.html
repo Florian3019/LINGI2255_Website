@@ -3,7 +3,7 @@
 <h2> Historique du tournoi </h2>
 </div>
 	<div class="row">
-		<div class="col-sm-6 col-sm-offset-3">
+		<div class="col-sm-8 col-sm-offset-2">
 			<p>
 			Le Charles de Lorraine a été fondé en 1974 par Monsieur et Madame Thierry de Ville de Goyet. Ils ont eu le soutien de Monsieur et Madame Francis Lagae et de Monsieur et Madame Thierry de Patoul pour se lancer dans cette grande aventure!
 			</p>
@@ -21,22 +21,49 @@
 		</div>
 	</div>
 
-	<div>
-		<div class="row">
-			<div class="col-sm-8 col-sm-offset-2">
-				<center>
-			    	<a href="https://plot.ly/~guillaume.leurquin/74/" target="_blank" title="Statistiques de fréquentation du tournoi" style="display: block; text-align: center;"><img src="https://plot.ly/~guillaume.leurquin/74.png" alt="Statistiques de fréquentation du tournoi" style="max-width: 100%;width: 1620px;"  width="1620" onerror="this.onerror=null;this.src='https://plot.ly/404.png';" /></a>
-			    <script data-plotly="guillaume.leurquin:74"  src="https://plot.ly/embed.js" async></script>
-				</center>
-			</div>
-	    </div>
+	<div class="page-header">
+	<h3> Statistiques de fréquentations du tournoi</h3>
+	</div>
+
+	<div class="page-header">
+	<h5> Pour toutes les années</h5>
 	</div>
 
 	<div class="row">
-		<div class="col-sm-6 col-sm-offset-3">
+		<div class="col-sm-12">
+			<center>
+		    	<div id="yearGraph"></div>
+			</center>
+		</div>
+    </div>
+
+    <div class="row">
+		<div class="col-sm-8 col-sm-offset-2">
 			<p>NB : Il nous manque quelques informations pour certaines années. Nous essayerons de compléter les statistiques manquantes, dans les prochains mois. En tout cas, plus de 25.000 joueurs sont déjà passés par le tournoi même si certains d'entre-eux ont participé pendant de longues années au Charles de Lorraine.
 			</p>
 		</div>
+	</div>
+
+	<div class="page-header">
+	<h5> Pour cette année ({{getCurrentYear}})</h5>
+	</div>
+
+    <div class="row">
+		<div class="col-sm-8 col-sm-offset-2">
+		{{#if tournamentStarted}}
+			{{getNumberOfPlayers}} joueurs sont actuellement inscrits pour l'année {{getCurrentYear}} ! 
+		{{/if}}
+		</div>
+	</div>
+
+	<div>
+		<div class="row">
+			<div class="col-sm-12">
+				<center>
+			    	<div id="thisYearGraph" style="height:200%"></div>
+				</center>
+			</div>
+	    </div>
 	</div>
 
 </template>

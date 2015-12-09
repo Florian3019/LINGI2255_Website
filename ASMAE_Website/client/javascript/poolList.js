@@ -1145,10 +1145,6 @@ Template.alonePairsContainerTemplate.onRendered(function(){
   	drake.containers.push(document.querySelector('#alonepairs'));
 });
 
-var hasBothPlayers = function(pair){
-	return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
-}
-
 Template.alonePairsContainerTemplate.helpers({
 	'getAlonePairs' : function(typeData){
 		category = Session.get('PoolList/Category');

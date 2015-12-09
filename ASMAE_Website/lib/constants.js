@@ -50,6 +50,11 @@ getDistanceFromHQ = function(coords){
     return Math.sqrt(Math.pow(latDist,2) + Math.pow(lngDist,2)); // Pythagore
 }
 
+// Returns true if a pair is full
+hasBothPlayers = function(pair){
+    return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
+}
+
 getTournamentDate = function() {
     var currentYear = GlobalValues.findOne({_id:"currentYear"});
     if (currentYear===undefined || currentYear.value === undefined) {

@@ -43,7 +43,15 @@ Router.route('/historique-tournoi', {
 	name:"tournamentHistory",
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
-	}
+	},
+	waitOn: function(){
+		return [ 	Meteor.subscribe('Pairs'), 
+					Meteor.subscribe('Pools'), 
+					Meteor.subscribe('Types'), 
+					Meteor.subscribe('Years'), 
+					Meteor.subscribe('GlobalValues')
+			  ]
+	},
 });
 
 Router.route('/gagnants', {
