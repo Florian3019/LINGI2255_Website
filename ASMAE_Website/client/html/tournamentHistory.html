@@ -44,18 +44,17 @@
 		</div>
 	</div>
 
+{{#if tournamentStarted}}
 	<div class="page-header">
 	<h5> Pour cette année ({{getCurrentYear}})</h5>
 	</div>
 
     <div class="row">
 		<div class="col-sm-8 col-sm-offset-2">
-		{{#if tournamentStarted}}
 			{{getNumberOfPlayers}} joueurs sont actuellement inscrits pour l'année {{getCurrentYear}} ! 
-		{{/if}}
 		</div>
 	</div>
-
+{{/if}}
 	<div>
 		<div class="row">
 			<div class="col-sm-12">

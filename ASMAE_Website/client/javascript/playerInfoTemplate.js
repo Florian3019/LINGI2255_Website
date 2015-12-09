@@ -327,7 +327,8 @@ Template.playerInfoTemplate.events({
 			}
 		}
 		else {
-			player = Meteor.users.find({"_id": this.id}).fetch()
+			var player = Meteor.users.find({"_id": this.id}).fetch();
+			var userId = this.id;
 			if(false){
 				if (confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
 					Meteor.call('deleteUser',this.id);
@@ -346,23 +347,53 @@ Template.playerInfoTemplate.events({
             		else{
             			var years_in1 = result[0]
             			var max_year1 = result[1]
-            			var bool =true
             			for(i = 0; years_in1 && max_year1 && i < years_in1.length; i++){
 							if(years_in1[i][1] === max_year1){
-								bool = false
-								alert("Veuillez désinscrire le joueur du tournoi de cette année avant de le supprimer.")
-								Router.go('home')
+								swal({
+									title: "Information",
+									text: "Veuillez désinscrire le joueur du tournoi de cette année avant de le supprimer.",
+									type: "warning",
+									showCancelButton: false,
+									cancelButtonText:"Annuler",
+									confirmButtonColor: "#3085d6",
+									confirmButtonText: "Ok",
+									closeOnConfirm: true
+								});
+								return;
 							}
-						}
-            		}
+						}	
+					}
 
-					if(bool && confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
-						Meteor.call('deleteUser',this.id);
-					}
-					else if(bool){
-						alert("Joueur non supprimé.")
-					}
-					Router.go('home')
+            		swal({
+						title: "Êtes-vous sûr ?",
+						text: "Vous êtes sur le point de supprimer définitivement ce joueur. Cette action est irréversible.",
+						type: "warning",
+						showCancelButton: true,
+						cancelButtonText:"Annuler",
+						confirmButtonColor: "#ff0000",
+						confirmButtonText: "Supprimer",
+						closeOnConfirm: false 
+						},
+						function(){
+				      		Meteor.call('deleteUser',userId, function(err, status){
+					      	 	if(err){
+					      	 		console.error(err);
+					      	 		return;
+					      	 	}
+					      	 	swal({
+						          title:"Succès !",
+						          text:"Le joueur a été supprimé.",
+						          type:"success",
+						          confirmButtonText:"Ok",
+						          confirmButtonColor: "#3085d6",
+						          closeOnConfirm:true,
+						          showCancelButton: false
+						        },
+						        function(){
+						        	Router.go('home');
+						        });
+			      	 		});
+			      	});
         		});
 
 			}

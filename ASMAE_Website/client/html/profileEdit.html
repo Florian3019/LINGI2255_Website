@@ -3,7 +3,7 @@
 <template name="profileEdit">
 	<div class="container-fluid">
 		<div class="page-header">
-			<h2>Modification du profil:</h2>
+			<h2>Modification du profil</h2>
 		</div>
 		<form role="form">
 			<div class="well">
@@ -151,13 +151,17 @@
 					<br>
 					<div class="row">
 		          		<div class="col-sm-6 col-sm-offset-3">
-							<button type="submit" class="btn btn-default">Enregistrer</button>
+							<button type="submit" class="btn btn-default btn-success">
+								<span class="glyphicon glyphicon-ok" style="margin-right:15px; "></span>
+							Enregistrer</button>
 						</div>
 						<br>
-						<br>
-						<div class="col-sm-6 col-sm-offset-3">
-							Pour supprimer votre compte il faut envoyer un mail à un membre du staff. Vérifiez au préalable que vous n'êtes pas inscrit au tournoi cette année.
-						</div>
+						{{#unless isAdminOrStaff}}
+							<br>
+							<div class="col-sm-6 col-sm-offset-3">
+								Pour supprimer votre compte il faut envoyer un mail à un membre du staff. Vérifiez au préalable que vous n'êtes pas inscrit au tournoi cette année.
+							</div>
+						{{/unless}}
 					</div>
 				</div>
 			{{/with}}
