@@ -51,12 +51,55 @@ Template.forum.events({
 	},
 
 	'click .thread-delete':function(event){
-		Meteor.call('removeThread', event.currentTarget.dataset.threadid);
+		swal({
+	      title: "Êtes-vous sûr ?",
+	      text: "Cette action supprimera cette catégorie, tout ses sujets et commentaires. Elle est irréversible.",
+	      type: "warning",
+	      showCancelButton: true,
+	      cancelButtonText:"Annuler",
+	      confirmButtonColor: "#DD6B55",
+	      confirmButtonText: "Supprimer",
+	      closeOnConfirm: false 
+	  	},
+	  	function(){
+	  		Meteor.call('removeThread', event.currentTarget.dataset.threadid);
+	  		swal({
+	  			title: "Succès !",
+			      text: "Catégorie supprimée.",
+			      type: "success",
+			      showCancelButton: false,
+			      confirmButtonColor: "#3085d6",
+			      confirmButtonText: "Ok",
+			      closeOnConfirm: true 
+	  		});
+	  	});
 	},
 
 	'click .topic-delete':function(event){
 		var data = event.currentTarget.dataset;
-		Meteor.call('removeTopic', data.threadid, data.topicid);
+
+		swal({
+	      title: "Êtes-vous sûr ?",
+	      text: "Cette action supprimera ce sujet et tous ses commentaires. Elle est irréversible.",
+	      type: "warning",
+	      showCancelButton: true,
+	      cancelButtonText:"Annuler",
+	      confirmButtonColor: "#DD6B55",
+	      confirmButtonText: "Supprimer",
+	      closeOnConfirm: false 
+	  	},
+	  	function(){
+	  		Meteor.call('removeTopic', data.threadid, data.topicid);
+	  		swal({
+	  			title: "Succès !",
+			      text: "Sujet supprimé.",
+			      type: "success",
+			      showCancelButton: false,
+			      confirmButtonColor: "#3085d6",
+			      confirmButtonText: "Ok",
+			      closeOnConfirm: true 
+	  		});
+	  	});
 	}
 });
 
