@@ -133,34 +133,54 @@ Template.courtInfoPage.events({
     'click #deleteCourt': function(event){
       event.preventDefault();
 
-      if (confirm('Etes-vous certain de vouloir supprimer définitivement ce terrain?\nToutes les données concernant ce terrain seront supprimées. Cette action est irréversible.')) {
+      var ownerID = this.court.ownerID;
+      var addressID = this.court.addressID;
+      var courtID = this.court._id;
 
-        var owner = Meteor.users.findOne({"_id":this.court.ownerID},{"profile":1});
-        var address = Addresses.findOne({_id:this.court.addressID});
+      swal({
+      title: "Êtes-vous sûr ?",
+      text: "Vous êtes sur le point de supprimer ce terrain. Cette action est irréversible.",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Supprimer ce terrain",
+      closeOnConfirm: false },
+      function(){
+        var owner = Meteor.users.findOne({"_id":ownerID},{"profile":1});
+        var address = Addresses.findOne({_id:addressID});
 
         // Delete court from pool
-
-        var poolID = Pools.findOne({courtId:this.court._id},{_id:1});
+        var poolID = Pools.findOne({courtId:courtID},{_id:1});
 
         if(poolID){
           Pools.update({_id:poolID},{$unset: {courtId:""}});
         }
 
-        Meteor.call('deleteCourt', this.court._id, function(error, result){
-  	            if(error){
-  	                console.error('deleteCourt error');
-  	                console.error(error);
-  	            }
-  	            alert("Terrain supprimé !");
-
+        Meteor.call('deleteCourt', courtID, function(error, result){
+                if(error){
+                    console.error('deleteCourt error');
+                    console.error(error);
+                    return;
+                }
                 Meteor.call("addToModificationsLog",
                   {"opType":"Effacer un terrain",
                   "details":
                       "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
-                  });
+                });
 
-  				Router.go('home');
-  	    	});
-  		}
+                swal({
+                    title:"Succès !",
+                    text:"Le terrain a été supprimé.",
+                    type:"success",
+                    confirmButtonText:"Ok",
+                    confirmButtonColor: "#3085d6",
+                    closeOnConfirm:true,
+                    showCancelButton: false
+                  },
+                  function(){
+                    Router.go('home');
+                  });
+          });
+      });
     }
 });

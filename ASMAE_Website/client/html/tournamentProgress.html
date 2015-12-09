@@ -115,10 +115,13 @@
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group" id="formGroupDateInput">
-                        <input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" value="{{getPreviousTournamentDate}}" placeholder="Date de début du tournoi" required>
-                        <div id="dateError" hidden>
-                            <span class="help-block" style="color:red">Merci d'entrer la date du tournoi</span>
-                            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="color:red"></span>
+                        <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar indexIcon"></span></span>
+                            <input type="text" name="launchTournamentDate" id="launchTournamentDate" class="form-control" value="{{getPreviousTournamentDate}}" placeholder="Date de début du tournoi" required>
+                            <div id="dateError" hidden>
+                                <span class="help-block" style="color:red">Merci d'entrer la date du tournoi</span>
+                                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="color:red"></span>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -130,15 +133,30 @@
                 </div>
                 <div class="col-sm-2">
                     <div class="form-group" id="formGroupPriceInput">
-                        <input type="number" name="tournamentPrice" min="0" step="0.01" id="tournamentPrice" class="form-control"       value="{{getPreviousTournamentPrice}}" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
-                        <div id="priceError" hidden>
-                            <span class="help-block" style="color:red">Merci d'entrer le prix du tournoi</span>
-                            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="color:red"></span>
+                        <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-euro indexIcon"></span></span>
+                            <input type="number" name="tournamentPrice" min="0" step="0.01" id="tournamentPrice" class="form-control"       value="{{getPreviousTournamentPrice}}" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
+                            <div id="priceError" hidden>
+                                <span class="help-block" style="color:red">Merci d'entrer le prix du tournoi</span>
+                                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="color:red"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-2">
                     <b>euros</b>
+
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div class="form-group" id="formGroupPriceInput">
+                        <div class="input-group">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-euro indexIcon"></span></span>
+                           <input type="number" name="tournamentPrice" min="0" step="0.01" id="tournamentPrice" class="form-control" value="{{getPreviousTournamentPrice}}" placeHolder="Prix de l'inscription au tournoi (&euro;)" required>
+                          <div id="priceError" hidden>
+                            <span class="help-block" style="color:red">Merci d'entrer le prix du tournoi</span>
+                            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="color:red"></span>
+                          </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

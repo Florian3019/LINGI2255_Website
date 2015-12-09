@@ -3,9 +3,16 @@ Template.sendEmailToList.events({
       var subject=document.getElementById("subject").value;
       var texte=document.getElementById("mailContent").value;
       if ($("#subject").val().length === 0 || $("#mailContent").val().length === 0) {
-        alert("Merci de remplir les deux champs");
+        swal({
+        title: "Erreur !",
+        text: "Merci de remplir le sujet et le contenu de l'email.",
+        type: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Ok",
+        closeOnConfirm: true
+        });
+        return;
       }
-      else{
       switch (document.getElementById("mailToList").value) {
         case "allUsers":
           Meteor.call("emailToAllUsers",subject,texte, function(error, result){
@@ -48,7 +55,14 @@ Template.sendEmailToList.events({
       document.getElementById("mails").value="";
       document.getElementById("subject").value="";
       document.getElementById("mailContent").value="";
-    }
+      swal({
+        title: "Succès !",
+        text: "Les emails ont été envoyés !",
+        type: "success",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Ok",
+        closeOnConfirm: true
+      });
   },
   'change select': function(e,t){
       if(document.getElementById("mailToList").value == "email"){

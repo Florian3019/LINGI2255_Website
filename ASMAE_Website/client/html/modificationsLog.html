@@ -2,13 +2,15 @@
 <div class="page-header">
         <h2 id="ModificationLogsHeaderID">Historique des modifications</h2>
 </div>
-
-{{> reactiveTable collection=modificationsLog settings=settings fields=fields}}
-
+{{#if logIsEmpty}}
+	{{>emptyLog}}
+{{else}}
+	{{> reactiveTable collection=modificationsLog settings=settings fields=fields}}
+{{/if}}
 </template>
 
 <template name="emptyLog">
-	<div class="col-sm-6 col-sm-offset-3">
+	<div class="col-sm-8 col-sm-offset-2">
 	  <div id="infoBox" class="alert alert-info" role="alert">
 	    <h4>
 	      <span class="glyphicon glyphicon-info-sign"></span>

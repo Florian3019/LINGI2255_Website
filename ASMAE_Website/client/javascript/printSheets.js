@@ -20,6 +20,20 @@ Template.printSheets.events({
     Meteor.call("getPoolListToPrint", info, function(error, result){
       if(error){
         console.log("error", error);
+        return;
+      }
+      if(result!== undefined && result.length==0){
+        Session.set("printSheets/isWorkingPool",false);
+        swal({
+        title: "Information",
+        text: "Aucune poule trouvée pour cette sélection. ",
+        type: "info",
+        showCancelButton: false,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Ok",
+        closeOnConfirm: true 
+        });
+        return;
       }
       if(result){
         Session.set("printSheets/poolList",result);

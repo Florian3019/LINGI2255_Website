@@ -26,7 +26,7 @@
         </div>
         <hr class="nopadding">
         <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
-          <span class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></span>
+          <i class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></i>
           Statistiques
         </a>
         </li>
@@ -81,7 +81,7 @@
         Forum</a></li>
         <li><a href="{{pathFor route='staffFaq'}}" class="menuItem" id="StaffFAQButtonMenu">
         <span class="glyphicon glyphicon-question-sign indexIcon"></span>
-        Staff FAQ</a></li>
+        FAQ Staff</a></li>
         {{/if}}
       </ul>
     </div>
@@ -116,6 +116,9 @@
       {{#if showNavBar}}
       <div class="sidebar-mobile" id="menu-mobile" style="padding-top: 63px; margin-top: -63px;">
         <ul class="nav nav-sidebar">
+          <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
+            <i class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></i>
+          Statistiques </a></li>
           <hr class="nopadding">
           {{#if isStaffMember}}
           <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">
@@ -176,7 +179,7 @@
           <hr class="nopadding">
           <li><a href="{{pathFor route='staffFaq'}}" class="menuItem">
             <span class="glyphicon glyphicon-question-sign indexIcon"></span>
-          Staff FAQ</a></li>
+          FAQ Staff</a></li>
           {{/if}}
         </ul>
       </div>

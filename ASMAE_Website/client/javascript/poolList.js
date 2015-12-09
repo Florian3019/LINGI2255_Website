@@ -645,12 +645,13 @@ Template.poolList.events({
 	      text: "<ul class='list-group' style='text-align:left'>"+
 	      		"<li class='list-group-item'>Pour afficher les informations relatives à un joueur ou une paire, cliquez dessus.</li>"+
 	      		"<li class='list-group-item'>Pour séparer une paire, déplacez la d'une poule vers la boîte 'Séparer une paire'.</li>"+
-	            "<li class='list-group-item'>Pour créer une paire, déplacez deux joueurs compatibles dans la boîte 'Créer une paire'.</li>"+
+	            "<li class='list-group-item'>Pour créer une paire, déplacez deux joueurs compatibles dans la boîte 'Créer une paire'. La paire sera automatiquement assignée à une poule.</li>"+
 	            "<li class='list-group-item'>Pour modifier une poule, déplacez une(des) paire(s) d'une poule à une autre. Cliquez ensuite sur sauver.</li>"+
 	            "<li class='list-group-item'>Pour afficher la table des scores, cliquez sur le bouton en haut de la poule concernée.</li>"+
 	            "<li class='list-group-item'>Pour changer le chef de poule, cliquez sur sa paire puis ensuite sur le bouton 'Choisir comme chef de poule'.</li>"+
 	            "<li class='list-group-item'>Pour devenir responsable de cette catégorie, cliquez sur 'Devenir responsable'.</li>"+
 	            "<li class='list-group-item'>Pour ajouter une poule, cliquez sur '+Poule' en bas de page.</li>"+
+	            "<li class='list-group-item'>Si les matchs ont déjà commencé, déplacer plusieurs paires à la fois d'une poule à une autre déplacera aussi les matchs qu'on joué ces paires dans la nouvelle poule.</li>"+
 	            "<li class='list-group-item'>La modification d'un terrain se fait sur la page de la table des scores.</li>"+
 	            "\n\n"+
 	            "</ul>"+
@@ -1145,10 +1146,6 @@ Template.alonePairsContainerTemplate.onRendered(function(){
   	drake.containers.push(document.querySelector('#alonepairs'));
 });
 
-var hasBothPlayers = function(pair){
-	return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
-}
-
 Template.alonePairsContainerTemplate.helpers({
 	'getAlonePairs' : function(typeData){
 		category = Session.get('PoolList/Category');
@@ -1597,6 +1594,8 @@ var addNewPool = function(obj){
 	Visually sets the same amount of pairs to each pool
 */
 var equilibrate = function(document){
+	hideSuccessBox(document);
+
 	var table = document.getElementById("poolTable");
 	var poolContainersRow = table.rows; // Table of rows
 

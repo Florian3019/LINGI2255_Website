@@ -43,7 +43,15 @@ Router.route('/historique-tournoi', {
 	name:"tournamentHistory",
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
-	}
+	},
+	waitOn: function(){
+		return [ 	Meteor.subscribe('Pairs'), 
+					Meteor.subscribe('Pools'), 
+					Meteor.subscribe('Types'), 
+					Meteor.subscribe('Years'), 
+					Meteor.subscribe('GlobalValues')
+			  ]
+	},
 });
 
 Router.route('/gagnants', {
@@ -357,7 +365,7 @@ Router.route('/modifier-terrain/:_id', {
 
 	data: function(){
 		if (this.ready()) {
-			var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
+			var court = Courts.findOne({ _id: this.params._id });
 			var owner = Meteor.users.findOne({_id: court.ownerID});
 			var address = Addresses.findOne({_id: court.addressID});
 			var data = {};

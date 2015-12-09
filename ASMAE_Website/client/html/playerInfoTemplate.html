@@ -1,6 +1,12 @@
 <!-- Takes a player id as argument ID-->
 <template name="playerInfoTemplate">
 {{#with getPlayer}}
+  {{#unless ../HidePic}}
+        <div class="page-header">
+          <h2> Information sur le joueur</h2>
+        </div>
+  {{/unless}}
+
  <div class="panel panel-info">
             <div class="panel-heading">
               <h3 class="panel-title">
@@ -67,7 +73,7 @@
                               {{#if isCurrentUser ../id}}
                                 <a href={{pathFor route='tournamentRegistrationSaturday'}} id="modifySaturdayLink">Modifier</a> |
                               {{/if}}
-                                 <a href="#" id="unsubscribeSaturdayLink">Supprimer</a> )
+                                 <a href="#" id="unsubscribeSaturdayLink">Désinscrire</a> )
                                 {{/if}}
                               {{else}}
                               {{#if isCurrentUser ../id}}
@@ -87,7 +93,7 @@
                             {{#if isCurrentUser ../id}}
                               <a href={{pathFor route='tournamentRegistrationSunday'}} id="modifySundayLink">Modifier</a> |
                             {{/if}}
-                               <a href="#" id="unsubscribeSundayLink">Supprimer</a> )
+                               <a href="#" id="unsubscribeSundayLink">Désinscrire</a> )
                               {{/if}}
                               {{else}}
                               {{#if isCurrentUser ../id}}
