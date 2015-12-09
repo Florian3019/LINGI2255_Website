@@ -36,7 +36,6 @@
   </button>
   </center>
   {{else}}
-  <!-- {{#if equals fullPages undefined}} -->
   <div class="row">
     <div class="col-md-2">
       <select class="form-control Year" id="Year" name = "Year">
@@ -88,8 +87,6 @@
   {{/if}}
 
 
-
-  <!-- {{#if equals fullPages undefined}} -->
   {{#if isOnePage}}
   {{>printSheetsV2 POOLS=getOnePool}}
   {{else}}

@@ -42,15 +42,10 @@
   </style>
 </div>
 </head>
-
-
 <body>
-
   <div id="printContent">
-
     {{#each POOLS}}
     <div class="pageContent" media="print">
-
       <h1 style='height:7%' id="pdfHeader">
           <span style="font-size:0.6em;
             display:inline;
@@ -60,12 +55,9 @@
           </span>
           <img src='/charlesLorraine.png' class="pull-right" style="height:80%;display:inline"/>
       </h1>
-
-
       <div style="background:#fff;">
         {{>scorePage _id=this.pool._id isForPdf="true"}}
       </div>
-
       <div>
         <div style="display:inline" class="pull-left">
          <span>
@@ -82,8 +74,6 @@
       </div>
     </div>
     {{/each}}
-
   </div>
-
 </body>
 </template>
