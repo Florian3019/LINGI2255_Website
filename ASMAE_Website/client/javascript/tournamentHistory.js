@@ -296,9 +296,18 @@ var getNumberOfPlayers = function(year){
     return fullPairs*2 + alonePairs;
 }
 
+var anchorBoolean = false;
+
 Template.tournamentHistory.onRendered(function(){
 	makeYearGraph();
 	makeThisYearGraph();
+
+	var $window = $(window);
+	var wWidth  = $window.width();
+	if (wWidth <= 750) { // Only in mobile screen (not 767px cause marge of 17px)
+		// Go mobile menu
+		/*window.location.hash = '#menu-mobile';*/
+	}
 });
 
 Template.tournamentHistory.helpers({
