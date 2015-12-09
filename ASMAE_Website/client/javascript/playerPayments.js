@@ -55,7 +55,7 @@ Template.playerPayments.helpers({
                 else return value+"€";
             }},
             { key:'bankTransferNumber', label:"N° d'identification"},
-            { key: '_id', label: 'Marquer comme payé', tmpl:Template.markAsPaid},
+            { key: '_id', label: 'Paiement', tmpl:Template.markAsPaid},
         ],
             showFilter: false,
         }
@@ -92,12 +92,21 @@ Template.playerPayments.events({
         Session.set("playerPayments/input", event.currentTarget.value);
     },
 
-    'click #sendPaymentReminderEmail': function(event){
+    'click #sendPaymentReminderEmail': function(event){       
       var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
       Meteor.call("emailReminderToPay",currentYear, function(error, result){
         if(error){
           console.log("error", error);
         }
       });
+
+      swal({
+        title:"Succès",
+        text:"Rappels de paiement envoyés!",
+        type:"success",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText:"Super!"
+        }
+        );
     },
 });

@@ -69,14 +69,14 @@ Template.playersInfo.helpers({
                     if(value===undefined) return "/";
                     else return value;
                 }},
-                { key: 'emails', label: 'Email', hidden:true , fn: function(value, object){
+                { key: 'emails', label: 'Email' , fn: function(value, object){
                     return value[0].address;
                 }},
                 { key: 'profile.gender', label:"Sexe"},
                 { key: 'profile.phone', label: "Numéro"},
                 { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "" : value.toLocaleDateString()}},
                 { key: 'profile.AFT', label: "AFT"},
-                { key: 'profile.addressID', label: "Adresse", fn: function(value, object){
+                { key: 'profile.addressID', label: "Adresse", hidden:true,  fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
                     if(addr==undefined) return "";
                     var ret = ""

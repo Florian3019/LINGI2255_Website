@@ -651,6 +651,7 @@ Template.poolList.events({
 	            "<li class='list-group-item'>Pour changer le chef de poule, cliquez sur sa paire puis ensuite sur le bouton 'Choisir comme chef de poule'.</li>"+
 	            "<li class='list-group-item'>Pour devenir responsable de cette catégorie, cliquez sur 'Devenir responsable'.</li>"+
 	            "<li class='list-group-item'>Pour ajouter une poule, cliquez sur '+Poule' en bas de page.</li>"+
+	            "<li class='list-group-item'>Si les matchs ont déjà commencé, déplacer plusieurs paires à la fois d'une poule à une autre déplacera aussi les matchs qu'on joué ces paires dans la nouvelle poule.</li>"+
 	            "<li class='list-group-item'>La modification d'un terrain se fait sur la page de la table des scores.</li>"+
 	            "\n\n"+
 	            "</ul>"+
