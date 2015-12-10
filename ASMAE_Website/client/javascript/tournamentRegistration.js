@@ -168,14 +168,43 @@ function checkAloneErrors(document) {
 
 Template.tournamentRegistration.helpers({
 	'saturdayRegistration' : function() {
-		return this.day=="saturday";
+		var routeName = Router.current().route.getName();
+		return routeName=="tournamentRegistrationSaturday";
 	},
 	'sundayRegistration' : function() {
-		return this.day=="sunday";
+		var routeName = Router.current().route.getName();
+		return routeName=="tournamentRegistrationSunday";
+	},
+	'getSaturdayData' : function() {
+		var parts = location.href.split('/');
+		var id = parts.pop();
+		var user = Meteor.users.findOne({_id:id});
+		user["day"] = "saturday";
+		return {data:user};
+	},
+	'getSundayData' : function() {
+		var parts = location.href.split('/');
+		var id = parts.pop();
+		var user = Meteor.users.findOne({_id:id});
+		user["day"] = "sunday";
+		return {data:user};
 	}
 });
 
 Template.tournamentRegistrationTemplate.helpers({
+
+	'getAddress' : function(addressID) {
+		return Addresses.findOne({_id:addressID});
+	},
+
+	'isSaturday' : function(day) {
+		return day=="saturday";
+	},
+
+	'isSunday' : function(day) {
+		return day=="sunday";
+	},
+
 	'getDay' : function() {
 		var saturday = this.day=="saturday";
 		var sunday = this.day=="sunday";
@@ -186,6 +215,13 @@ Template.tournamentRegistrationTemplate.helpers({
 	'getTournamentPrice':function(){
 		var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
 		return Years.findOne({_id:currentYear}).tournamentPrice;
+	},
+
+	'getTranslatedDay' : function(day) {
+		if (day!=="saturday" && day!=="sunday") {
+			return undefined;
+		}
+		return day=="saturday" ? "samedi" : "dimanche";
 	},
 
     'getPay1' : function() {
@@ -224,18 +260,18 @@ Template.tournamentRegistrationTemplate.helpers({
 		}
 		else if(type=="mixed") {
 			if (gender == "M") {
-				return "Aucune joueuse dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi mixte.";
+				return "Aucune joueuse dans la catégorie "+categoriesTranslate[category]+" n\'est en attente pour le tournoi mixte.";
 			}
 			else {
-				return "Aucun joueur dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi mixte.";
+				return "Aucun joueur dans la catégorie "+categoriesTranslate[category]+" n\'est en attente pour le tournoi mixte.";
 			}
 		}
 		else {
 			if (gender == "M") {
-				return "Aucun joueur dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi des doubles messieurs.";
+				return "Aucun joueur dans la catégorie "+categoriesTranslate[category]+" n\'est en attente pour le tournoi des doubles messieurs.";
 			}
 			else {
-				return "Aucune joueuse dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi des doubles dames.";
+				return "Aucune joueuse dans la catégorie "+categoriesTranslate[category]+" n\'est en attente pour le tournoi des doubles dames.";
 			}
 		}
 	},
@@ -306,47 +342,14 @@ Template.tournamentRegistrationTemplate.helpers({
 			return userData ? userData.profile.phone : "";
 		}
 	},
-	'getDate' : function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-            if (typeof userData.profile.birthDate !== 'undefined') {
-                return userData.profile.birthDate.getDate();
-            }
-            return "";
-    	}
+	'getDate' : function(date){
+		return date.getDate();
   	},
-  	'getMonth' : function(){
-    	var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-			if (typeof userData.profile.birthDate !== 'undefined') {
-                return userData.profile.birthDate.getMonth()+1;
-            }
-            return "";
-    	}
+  	'getMonth' : function(date){
+    	return date.getMonth()+1;
   	},
-  	'getYear' : function(){
-    	var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-			if (typeof userData.profile.birthDate !== 'undefined') {
-                return userData.profile.birthDate.getFullYear();
-            }
-            return "";
-    	}
+  	'getYear' : function(date){
+    	return date.getFullYear();
 	},
 	'street': function(){
 		var user=Meteor.user();
@@ -478,10 +481,6 @@ Template.tournamentRegistrationTemplate.helpers({
 	},
 
 	'extras': function (day) {
-		if (day!=="samedi" && day!="dimanche") {
-			return undefined;
-		}
-		day = day=="samedi" ? "saturday" : "sunday";
      	var extras = Extras.find({day:day}).fetch();
 		if (extras===undefined) {
 			return undefined;
@@ -703,6 +702,9 @@ Template.tournamentRegistrationTemplate.events({
 		var alonePlayers = setAlonePlayers(document); // assigns type and category to session variable
 		var userType = Session.get("tournamentRegistration/type");
 		var userCategory = Session.get("tournamentRegistration/category");
+
+		var parts = location.href.split('/');
+		var userID = parts.pop();
 
 		function getDayFromValue(dateMatchValue) {
 			if (dateMatchValue == "family") {
@@ -933,9 +935,11 @@ Template.tournamentRegistrationTemplate.events({
 			country : country
 		};
 
+		var user = Meteor.users.findOne({_id:userID});
+
 		// If user has already an address, update that one instead of creating a new one
-		var user = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-		if(user){
+		var userWithAddress = Meteor.users.findOne({_id:userID}, {'profile.addressID':1});
+		if(userWithAddress){
 			addressData._id = user.profile.addressID;
 		}
 
@@ -943,7 +947,7 @@ Template.tournamentRegistrationTemplate.events({
 			Create the object with the informations about the user
 		*/
         var curUserData = {
-          _id: Meteor.userId(),
+          _id: userID,
           profile:{
             lastName : lastname,
             firstName : firstname,
@@ -1050,9 +1054,9 @@ Template.tournamentRegistrationTemplate.events({
 		}
 
 		// Delete the current player's pair for that day if any
-		var pair = getDayPairFromPlayerID(Meteor.userId(), day);
+		var pair = getDayPairFromPlayerID(userID, day);
 		if (pair !== undefined) {
-			Meteor.call('unsubscribePairFromTournament', pair._id);
+			Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 		}
 
 		/*
@@ -1096,13 +1100,12 @@ Template.tournamentRegistrationTemplate.events({
 					var firstname = curUserData.firstName;
 					var lastname = curUserData.lastName;
 					if (mailNotifyAloneUser) {
-						// Send mail to Meteor.userId() : "you are registered alone in type and category"
 						var dataMail = {
 							intro:"Bonjour"+firstname+",",
 							important:"Merci pour votre inscription au tournoi.",
 							texte:"Vous êtes bien inscrit dans la catégorie : '"+category+"' du type '"+ type+"'."
 						};
-						Meteor.call("emailFeedback",Meteor.user().emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
+						Meteor.call("emailFeedback",user.emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
 							if(error){
 								console.log("error", error);
 							}

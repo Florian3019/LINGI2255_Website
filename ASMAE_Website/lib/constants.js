@@ -57,6 +57,56 @@ hasBothPlayers = function(pair){
     return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
 }
 
+/*
+  Returns the next power of two that is greater than or equal to number
+*/
+getNextPowerOfTwo = function(number){
+  if(number==0) return 0;
+  var x = 2;
+  while (x<number){
+    x*=2
+  }
+  return x;
+}
+
+/*
+  Returns the order in which to fill the first round of the tournament
+*/
+getOrder = function(size){
+
+  var partial = function(n ,ni,result){
+
+    var half = result.length/2;
+
+    for(var i=0;i<ni;i++){
+      result[ni+i] = result[i]+n;
+      result[half+ni+i] = result[half+i]+n;
+    }
+  }
+
+  var result=[];
+
+  for(var k=0;k<size;k++){
+    if(k==size/2){
+      result.push(1);
+    }
+    else{
+      result.push(0);
+    }
+  }
+
+  var n=size/2;
+  var ni=1;
+
+  while(n>1){
+    partial(n,ni,result);
+    n=n/2;
+    ni=ni*2;
+  }
+
+  return result;
+}
+
 getTournamentDate = function() {
     var currentYear = GlobalValues.findOne({_id:"currentYear"});
     if (currentYear===undefined || currentYear.value === undefined) {

@@ -620,8 +620,133 @@ Meteor.methods({
 			Meteor.call("addPairToTournament", pairID, tournamentYear.toString(), dateMatch);
         } // End createPair
 
+		/*
+		 *	Returns a pair (p1, p2)
+		 *	with points from 0 to 6
+		 *	and p1 != p2
+		 */
+		function getPointsForMatch() {
+			var p1 = getRandomInt(0,6);
+			var p2 = getRandomInt(0,6);
+			while(p1==p2) {
+				p1 = getRandomInt(0,6);
+				p2 = getRandomInt(0,6);
+			}
+			return [p1, p2];
+		}
 
-		function popDBForYear(tournamentData, nPairs, nAlones, nCourtSaturday, nCourtSunday, nCourtBoth) {
+		/*
+		 *	Fill the matches of all the pools
+		 */
+		function fillAllPools() {
+			/*
+			 *	Fill the matches of the pool
+			 */
+			function fillPoolMatches(pool) {
+				var pairList = [];
+				if(!pool){
+					console.log("No POOL with id "+poolId+"(popDB)");
+					return;
+				}
+				var poolId= pool._id;
+				for(var i=0;i<pool.pairs.length;i++){
+					var pair = Pairs.findOne({_id:pool.pairs[i]});
+					if(pair.player1 && pair.player2) pairList.push(pair);
+				}
+
+				var totalMatches = 0;
+				var completedMatches = 0;
+
+				// Create a match for each of these pairs, if it does not yet exist
+				for(var i=0;i<pairList.length;i++){
+					for(var j=0;j<i;j++){
+						pairId1 = pairList[i]._id;
+						pairId2 = pairList[j]._id;
+
+						totalMatches += 1;
+						data = {"poolId":poolId};
+						var points = getPoints();
+						data.pair1 = {"pairId": pairId1, "points":points[0]}; // TODO: points
+						data.pair2 = {"pairId": pairId2, "points":points[1]}; // TODO points
+						Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
+						completedMatches += 1;
+					}
+				}
+
+				var completion = (totalMatches==0) ? 0 : completedMatches/totalMatches;
+				Pools.update({_id:poolId}, {$set:{"completion":completion}},{reactive:false});
+			}
+
+			var pools = Pools.find({reactive:false}).fetch();
+			for (var i=0; i<pools.length; i++) {
+				fillPoolMatches(pools[i]);
+			}
+		}
+
+		/*
+		 *	Fill the knock-off of given year, type and category
+		 */
+		function fillAllRounds(year, type, category) {
+			/*
+			 *	Fill points for the pair with id pairID
+			 *	in the knock-off tournament
+			 */
+			function savePoints(pairIDs, round, year, type, category, finalRound) {
+				var pair0 = Pairs.findOne({_id:pairIDs[0]});
+				var pair1 = Pairs.findOne({_id:pairIDs[1]});
+
+				var points = getPoints();
+				var score0 = points[0];
+				setPoints(pair0, round, score0);
+
+				var score1 = points[1];
+				setPoints(pair1, round, score1);
+
+				/*
+				Save the winner to display in the winner table
+				*/
+				if(finalRound){ //TODO : calculate totalrounds
+					// This is the last round
+					var data = {};
+					data.first = score0 > score1 ? pair0._id : pair1._id;
+					data.second = score0 < score1 ? pair0._id : pair1._id;
+
+					data.year = year;
+					data.type = type;
+					data.category = category;
+
+					Meteor.call("updateWinner",data);
+				}
+				return points[0] > points[1] ? 0 : 1; // returns the winner
+			}
+
+			getFirstRound = function(pairs){
+				var tournamentSize = getNextPowerOfTwo(pairs.length);
+				var toReturn = [];
+				var indexTable = getOrder(tournamentSize);
+
+				var k = 0; // Index in pairs
+				for(var i=0; i< tournamentSize; i++){
+
+					if(k<pairs.length){
+						a = pairs[k];
+						k++;
+					}
+					else{
+						// a = SPECIAL TOKEN representing empty entry
+					}
+					index = indexTable[i];
+					toReturn[index] = a;
+				}
+
+				return toReturn;
+			}
+
+			var pairIDList = getFirstRound(Types.findOne());
+		}
+
+
+		function popDBForYear(tournamentData, nPairs, nAlones, nCourtSaturday, nCourtSunday, nCourtBoth, fill) {
 			var tournamentDate = tournamentData.tournamentDate;
 			var tournamentYear = tournamentDate.getFullYear();
 
@@ -632,12 +757,12 @@ Meteor.methods({
 			var count = 0;
 
 			// Create the pairs
-	        for (var i=0; i<3; i++) {
+			for (var i=0; i<3; i++) {
 				console.log("popDB populates type "+typeKeys[i]);
-	            for (var k=0; k < 7; k++) {
+				for (var k=0; k < 7; k++) {
 					console.log("popDB populates category "+categoriesKeys[k]);
 					for (var j=0; j<nPairs[i][k]; j++) {
-	                	createPair(typeKeys[i],categoriesKeys[k], false, tournamentDate, count);
+						createPair(typeKeys[i],categoriesKeys[k], false, tournamentDate, count);
 						count+=2;
 					}
 					console.log("popDB populates category "+categoriesKeys[k]+" with alone players");
@@ -645,14 +770,14 @@ Meteor.methods({
 						createPair(typeKeys[i],categoriesKeys[k], true, tournamentDate, count);
 						count++;
 					}
-	            }
-	        }
+				}
+			}
 			// Family
 			console.log("popDB populates type family");
-	        for (var j=0; j<nPairs[3]; j++) {
-	            createPair(typeKeys[3],"doesnotmatterwhatiputhere", false, tournamentDate, count);
+			for (var j=0; j<nPairs[3]; j++) {
+				createPair(typeKeys[3],"doesnotmatterwhatiputhere", false, tournamentDate, count);
 				count+=2;
-	        }
+			}
 
 			console.log("popDB populates type family with alone players");
 			for (var j=0; j<nAlones[3]; j++) {
@@ -664,6 +789,30 @@ Meteor.methods({
 			insertCourts(nCourtSaturday, true, false, tournamentYear);
 			insertCourts(nCourtSunday, false, true, tournamentYear);
 			insertCourts(nCourtBoth, true, true, tournamentYear);
+
+			if (fill) {
+				console.log("Tournament for year "+tournamentYear+" will be filled.")
+
+				// Fill pool matches
+
+
+				// Launches knock-off
+				for (var i=0; i<typeKeys.length; i++) {
+					var type = typeKeys[i];
+					for (var j=0; j<categoriesKeys.length; j++) {
+						var category = categoriesKeys[j];
+						Meteor.call("startTournament", tournamentYear.toString(), type, category, 2);
+
+					}
+				}
+				console.log("All tournaments have started");
+
+				// Fill knock-off matches
+				//TODO
+
+				// Assign courts to pools
+				Meteor.call("assignCourts", false);
+			}
 
 			console.log("----- popDB done for year "+tournamentYear+" -----");
 		}
@@ -680,18 +829,17 @@ Meteor.methods({
 		console.log("popDB populates extras");
 		insertExtras();
 
-		for (var i=0; i<tournamentDateTab.length; i++) {
-			popDBForYear(tournamentDateTab[i], nPairsTab[i], nAlonesTab[i], nCourtSaturdayTab[i], nCourtSundayTab[i], nCourtBothTab[i]);
-		}
-
 		console.log("popDB populates staff and admin members");
 		insertStaffAndAdminMembers(nStaff,nAdmin);
 		console.log("popDB populates unregistered accounts");
 		insertUnregisteredAccounts(nUnregistered);
 
-
 		console.log("popDB populates questions");
 		insertQuestions();
+
+		for (var i=0; i<tournamentDateTab.length; i++) {
+			popDBForYear(tournamentDateTab[i], nPairsTab[i], nAlonesTab[i], nCourtSaturdayTab[i], nCourtSundayTab[i], nCourtBothTab[i]);
+		}
 
 		console.log("---------- popDB done ----------");
 	},
