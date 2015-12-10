@@ -102,10 +102,15 @@ Template.courtRegistration.events({
                 };
                 Meteor.call('emailFeedback',Meteor.user().emails[0].address,"Concernant le prêt de votre terrain",data);}
 
+                // Add to Modifications logs
+        		if((Meteor.user().profile.isAdmin || Meteor.user().profile.isStaff) && this.court){
+                    addToLog("Modification terrain", courtData.ownerId, courtData._id);
+        		}
+
                 Router.go('confirmationRegistrationCourt', {_id: result});
             });
         })
-		
+
 
 
     }
