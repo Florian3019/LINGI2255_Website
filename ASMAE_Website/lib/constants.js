@@ -31,7 +31,7 @@ Google_API_KEY_BROWSER = "AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs";
 MAX_FAMILY_AGE = 15;
 MIN_FAMILY_AGE = 25;
 
-LAST_N_LOGS = 3; // Amount of logs to keep for each user/courts. All logs are still kept in the full log table.
+LAST_N_LOGS = 3; // Amount of logs to keep for each user/court. All logs are still kept in the full log table.
 
 /*
     @param birthDate of the player for which we want to know if he is accepted into the family tournament

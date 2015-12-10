@@ -59,7 +59,7 @@ Template.profileEdit.events({
 	    var birthMonth = event.target.birthMonth.value;
 	    var birthYear = event.target.birthYear.value;
 
-	    var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
+	    var birthDate = new Date(birthYear, birthMonth-1, birthDay);
 
 		var userData = {
 			_id: this.ID,
@@ -86,7 +86,15 @@ Template.profileEdit.events({
 			Meteor.call("updateUser", userData);
 		});
 
-		Router.go('home');
+		swal({
+			title: "Succès !",
+			text: "Ce profil a bien été mis à jour.",
+			type: "success",
+			showCancelButton: false,
+			confirmButtonColor: "#3085d6",
+			confirmButtonText: "Ok",
+			closeOnConfirm: true
+		});
 
 	}
 });

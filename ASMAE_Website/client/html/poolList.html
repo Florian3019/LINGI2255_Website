@@ -168,16 +168,16 @@
 <template name="poolContainerTemplate">
   <td>
     <center>
-      <h3>
+      <h3 style="min-height:115px;">
       {{#if and isAdminOrStaff isForCurrentYear}}
         {{#unless moreThanOnePair POOL.pairs}}
-        <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}">
+        <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}" style="margin-top:30px;">
           <span class="glyphicon glyphicon-remove removePoolButton" aria-hidden="true"></span>
         </button>
         {{/unless}}
       {{/if}}
       {{#if moreThanOnePair POOL.pairs}}
-      <button type="button" id="clickOnIt{{POOL._id}}" class="btn btn-default btn-lg scoreButton" data-poolId="{{POOL._id}}">
+      <button type="button" id="clickOnIt{{POOL._id}}" class="btn btn-default btn-lg scoreButton" data-poolId="{{POOL._id}}" style="min-height:115px;">
         <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> <br>
         {{getStreet POOL.courtId}} <br>
         {{getTown POOL.courtId}} <br>
@@ -188,7 +188,7 @@
       {{/if}}
     </h3>
     {{#if displayPool POOL.pairs}}
-      <div class='parent'>
+      <div class='parent scrollbar-style'>
         <div class='PoolWrapper'>
           <div class='poolContainer poule poolColor' id='a{{POOL._id}}'> <!-- _id is here the id of the pool (with css escape a) -->
             {{#each POOL.pairs}} <!-- For each pair id in the pool -->
@@ -205,7 +205,7 @@
 <template name="pairsToSplitContainerTemplate">
   <center>
     <div class="poolLabel"><span class="label label-primary">Séparer une paire</span></div>
-    <div class='parent' id='pairstosplitparent'>
+    <div class='parent scrollbar-style' id='pairstosplitparent'>
       <div class='PoolWrapper'>
         <div class='poolContainer splitColor' id='pairstosplit'>
           <!-- Empty -->
@@ -223,7 +223,7 @@
 <template name="alonePairsContainerTemplate">
  <center>
   <div class="poolLabel"><span class="label label-primary">Joueurs seuls</span></div>
-  <div class='parent' id='alonepairsparent'>
+  <div class='parent scrollbar-style' id='alonepairsparent'>
     <div class='PoolWrapper'>
       <div class='poolContainer aloneColor' id='alonepairs'>
         {{#each getAlonePairs TYPEDATA}}
@@ -244,7 +244,7 @@
 <template name="mergePlayersContainerTemplate">
  <center>
 <div class="poolLabel"><span class="label label-primary">Créer une paire</span></div>
-  <div class='parent' id='mergeplayersparent'>
+  <div class='parent scrollbar-style' id='mergeplayersparent'>
     <div class='PoolWrapper'>
       <div class='poolContainer mergeColor' id='mergeplayers'>
         <!-- Empty -->

@@ -6,6 +6,22 @@ Template.launchTournament.rendered=function() {
 
 
 Template.launchTournament.helpers({
+    'showStep1': function(){
+        if(GlobalValues.findOne({_id: "registrationsON"}).value){
+            return true;
+        }
+        else{
+            var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+            var yearDocument = Years.findOne({_id: currentYear});
+            if(typeof yearDocument !== 'undefined' && yearDocument["step4done"]){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+    },
+
     'registrationsON': function(){
          return GlobalValues.findOne({_id: "registrationsON"}).value;
     },

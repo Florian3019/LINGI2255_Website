@@ -146,7 +146,12 @@ Template.playerInfoTemplate.helpers({
  	},
 
 	'paymentMethod' : function(payment){
-		return paymentTypesTranslate[payment.paymentMethod];
+        if(payment.paymentMethod === paymentTypes[1]){  //BankTransfer: add the identification number
+            return paymentTypesTranslate[payment.paymentMethod] + " (Identifiant: " + payment.bankTransferNumber + ")";
+        }
+        else{
+    		return paymentTypesTranslate[payment.paymentMethod];
+        }
 	},
 
 	'getPayment' : function(userId){
@@ -306,7 +311,7 @@ Template.playerInfoTemplate.events({
 		/*
 			Check if the button was in a popup (modal), if so, close it before going to profileEdit
 		*/
-		if(Session.get('closeModal') != undefined){
+		if(Session.get('closeModal') !== undefined){
 			var modalId = '#'+Session.get('closeModal');
 			Session.set('closeModal', undefined)
 			$(modalId).on('hidden.bs.modal', function() {

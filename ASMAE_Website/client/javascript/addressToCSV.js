@@ -15,15 +15,15 @@ Template.addressToCSV.events({
 			if(addr!==undefined){
 				var userData = "";
 
-				userData += user.profile.firstName+", ";
-				userData += user.profile.lastName+", ";
-				userData += user.emails[0].address+", ";
-				userData += addr.street+", ";
-				userData += addr.number+", ";
-				userData += addr.box+", ";
-				userData += addr.zipCode+", ";
-				userData += addr.city+", ";
-				userData += addr.country+"\n";
+				userData += user.profile.firstName===undefined ? ", " : user.profile.firstName+", ";
+				userData += user.profile.lastName===undefined ? ", " : user.profile.lastName+", ";
+				userData += user.emails[0].address===undefined ? ", " : user.emails[0].address+", ";
+				userData += addr.street===undefined ? ", ": addr.street+", ";
+				userData += addr.number===undefined ? ", ": addr.number+", ";
+				userData += addr.box===undefined ? ", ": addr.box+", ";
+				userData += addr.zipCode===undefined ? ", ":addr.zipCode+", ";
+				userData += addr.city===undefined ? ", ": addr.city+", ";
+				userData += addr.country===undefined ? ", ": addr.country+"\n";
 
 				csvContent += userData;
 			}
