@@ -340,6 +340,7 @@ Template.tournamentRegistrationTemplate.helpers({
 		var playerExtras = getDayExtrasFromPlayerID(Meteor.userId(),day);
 		if (playerExtras === undefined) {
 			for(var j=0; j<extras.length; j++) {
+				var ex = extras[j];
 				ex["quantity"] = 0;
 			}
 			return extras;
