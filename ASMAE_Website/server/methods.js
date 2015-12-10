@@ -51,9 +51,9 @@ Meteor.methods({
 			}
 
 			data.tournamentDate = launchTournamentData.tournamentDate;
-			data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
+			var dataID = ""+data.tournamentDate.getFullYear();	//Must be a string
 
-			var newTournament = typeof Years.findOne({_id:data._id}) === 'undefined';
+			var newTournament = typeof Years.findOne({_id:dataID}) === 'undefined';
 
 			if(typeof launchTournamentData.tournamentPrice === 'undefined') {
 				console.error("launchTournament: No price for the tournament");
@@ -65,7 +65,7 @@ Meteor.methods({
 			//Insert in database
 
 			GlobalValues.update({_id:"currentYear"}, {$set: {
-				value : data._id
+				value : dataID
 			}}, function(err, result){
 				if(err){
 					throw new Meteor.Error("update GlobalValues currentYear in launchTournament error: ", err);
@@ -90,14 +90,15 @@ Meteor.methods({
 				data.step6done = false;
 				data.setp7done = false;
 				data.setp8done = false;
+        data._id = dataID;
 				insertedYearID = Years.insert(data);
-				console.log("Tournament launched for year "+data._id);
+				console.log("Tournament launched for year "+dataID);
 				//Put all the courts ownerOK and staffOK to false for this year's tournament
 				Courts.update({}, {ownerOK: false, staffOK: false});
 			}
 			else {
-				Years.update({_id:data._id}, {$set:data});
-				console.log("Opening the registrations for year "+data._id);
+				Years.update({_id:dataID}, {$set:data});
+				console.log("Opening the registrations for year "+dataID);
 			}
 
 			return insertedYearID;
@@ -747,8 +748,8 @@ Meteor.methods({
 			            typesIDS.push(years[y][typeKeys[j]]);
 			        }
 
-			        for(var d=0; d<typesIDS.length;d++){  
-			            var sub_request=[];   
+			        for(var d=0; d<typesIDS.length;d++){
+			            var sub_request=[];
 			            for(var h=0;h<categoriesKeys.length;h++){
 			                data = {};
 			                data[categoriesKeys[h].concat("Courts")]=courtNumbers[i];
@@ -768,7 +769,7 @@ Meteor.methods({
 			                var listCourts = brackets[m][field];
 
 			                if(listCourts!=undefined){
-			                    
+
 		                        for(var l=0;l<listCourts.length;l++){
 		                            if(listCourts[l]==courtNumbers[i]){
 		                                listCourts[l]="?";
