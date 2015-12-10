@@ -1,6 +1,10 @@
 /*
 	This file defines how extras are modified or created
 */
+function isValidePrice(price) {
+    return (Math.floor(price * 100) === price * 100);
+}
+
 Template.modifyExtras.events({
 	'click #addExtraButton':function(event){
 		// Add new extra
@@ -13,8 +17,11 @@ Template.modifyExtras.events({
 		var day = jour == "Samedi" ? "saturday" : "sunday";
 
 		var infoBox = document.getElementById("infoBoxExtra");
+		var infoBoxMsg = document.getElementById("infoMsg");
+		var bol = isValidePrice(price.value);
+		console.log(bol);
 
-		if(name.value!=="" && typeof name.value !== 'undefined' && price.value!=="" && typeof price.value !== 'undefined'){
+		if(name.value!=="" && typeof name.value !== 'undefined' && (price.value !=="") && typeof (price.value !== 'undefined') && isValidePrice(price.value)){
 			var priceValue = parseFloat(price.value);
 			var data={
 					"name": name.value,
@@ -32,8 +39,13 @@ Template.modifyExtras.events({
 			price.value = "";
 			comment.value = "";
 		}
+		else if (!isValidePrice(price.value) && (price.value !=="") && typeof (price.value !== 'undefined') && name.value!=="" && typeof name.value !== 'undefined' && (price.value !=="")) {
+			infoBox.removeAttribute("hidden");
+			infoBoxMsg.innerHTML = "Attention le prix est incorrect, vous ne pouvez pas avoir plus deux décimales"
+		}
 		else{
 			infoBox.removeAttribute("hidden");
+			infoBoxMsg.innerHTML = "Veuillez remplir le nom et le prix"
 		}
 }
 });
@@ -83,15 +95,25 @@ var getData = function(id){
 }
 
 var modifyExtra=function(id){
+	var infoBox = document.getElementById("infoBoxExtra");
+	var infoBoxMsg = document.getElementById("infoMsg");
 	data = getData(id);
 	var jour = data.day == "saturday" ? "Samedi" : "Dimanche";
+	
+	if(isValidePrice(data.price)) {
+		infoBox.setAttribute("hidden","");
 
-	Meteor.call('updateExtra',data);
+		Meteor.call('updateExtra',data);
 
-	Meteor.call("addToModificationsLog",
-    {"opType":"Modification d'un extra",
-    "details":data.name +": "+data.price+"€ "+jour+" "+ (data.comment!=="" ? "("+data.comment+")" : "")
-    });
+		Meteor.call("addToModificationsLog",
+	    {"opType":"Modification d'un extra",
+	    "details":data.name +": "+data.price+"€ "+jour+" "+ (data.comment!=="" ? "("+data.comment+")" : "")
+	    });
+	}
+	else {
+		infoBox.removeAttribute("hidden");
+		infoBoxMsg.innerHTML = "Attention le prix est incorrect, vous ne pouvez pas avoir plus deux décimales"
+	}
 }
 
 
