@@ -61,19 +61,14 @@ function setAlonePlayers(document){
 	});
 }
 
-function checkAloneErrors(document) {
-	/**
-		This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
-		If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
-	*/
-	function set_error(id,errorVisible) {
+function set_error(id,errorVisible) {
 		const error = "Error";
 		const OK = "OK";
 		const div = "Div";
 		var e = document.getElementById(id.concat(error));
 		if(!errorVisible){
 			e.style.display = 'none';
-			document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
+			document.getElementById(id.concat(div)).className = "form-group AFTOK has-feedback";
 		}else{
 			e.style.display = 'block';
 			document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
@@ -83,8 +78,15 @@ function checkAloneErrors(document) {
 			e.style.display = 'none';
 		else
 			e.style.display = 'block';
-	}
+}
 
+
+function checkAloneErrors(document) {
+	/**
+		This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
+		If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
+	*/
+	
 	var errors = new Array();
 	var hasError = false;
 
@@ -672,6 +674,11 @@ Template.tournamentRegistrationTemplate.events({
 				}
 				document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
 			}else{
+				var e = document.getElementById("AFTcheat");
+				e.style.display = 'none';
+				var e = document.getElementById("AFTDiv")
+				e.className = "form-group has-feedback";
+
 				if(id=='emailPlayer'){
 					document.getElementById("emailPlayerErrorMessage").style.display = 'block';
 				}
@@ -841,13 +848,7 @@ Template.tournamentRegistrationTemplate.events({
 		var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
 
         var AFT = event.target.rank.value;
-		if(!AFT || AFT==""){
-        	errors.push({id:"AFT", error:true});
-        	hasError = true;
-        }
-        else{
-        	errors.push({id:"AFT", error:false});
-        }
+
         var street = event.target.street.value;
         if(!street || street==""){
         	errors.push({id:"street", error:true});
@@ -1058,6 +1059,9 @@ Template.tournamentRegistrationTemplate.events({
 			Check the AFT ranking online
 		*/
 		Meteor.call('checkAFTranking', firstname, lastname, AFT, function(err, result){
+			$('#submit').hide();
+            $('#submit-chargement').show();
+
 			if(err){
 				console.error("Error while checking AFT ranking");
 				console.error(err);
@@ -1133,12 +1137,14 @@ Template.tournamentRegistrationTemplate.events({
 		        Meteor.call('updatePair', pairData, callback);
 			}
 			else {	//The players cheats on the AFT ranking
-				var o = document.getElementById("AFTOK");
-				o.style.display = 'none';
 
 				var e = document.getElementById("AFTcheat");
 				e.style.display = 'block';
-				document.getElementById("AFTcheat").className = "form-group has-error has-feedback";
+				var e = document.getElementById("AFTDiv")
+				e.className = "form-group has-error has-feedback";
+
+				$('#submit-chargement').hide();
+				$('#submit').show();
 			}
 		});
 

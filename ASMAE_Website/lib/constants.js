@@ -9,7 +9,7 @@ paymentTranslate = {"paid":"Payé", "pending":"En attente"};
 paymentKeys = Object.keys(paymentTranslate);
 
 //AFT rankings ordered (ascending)
-AFTrankings = ["C30.5", "C30.4", "C30.3", "C30.2", "C30.1", "C30", "C15.5", "C15.4", "C15.3", "C15.2", "C15.1", "C15", "B+4/6", "B+2/6", "B0"];
+AFTrankings = ["C30.5", "C30.4", "C30.3", "C30.2", "C30.1", "C30", "C15.5", "C15.4", "C15.3", "C15.2", "C15.1", "C15", "B+4/6", "B+2/6", "B0", "B-2/6", "B-4/6", "B-15", "B-15.1", "B-15.2", "B-15.4", "A nat", "A int"];
 
 EMAIL_ENABLED = false; // set to true to enable email feedback
 

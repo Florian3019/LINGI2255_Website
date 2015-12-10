@@ -51,7 +51,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row" style="margin-top:15px;">
         <div class="col-sm-3 col-sm-offset-3">
           <label>Date de naissance: </label> <br>
         </div>
@@ -281,14 +281,6 @@
                       <option value="{{this}}">{{this}}</option>
                       {{/each}}
               </select>
-              <div id="AFTError" hidden>
-                <span class="help-block" >Merci d'entrer votre classement</span>
-                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="margin-right:10px"></span>
-              </div>
-              <div id="AFTOK" hidden>
-                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" style="margin-right:10px"></span>
-                <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-              </div>
               <div id="AFTcheat" hidden>
                   <span class="help-block">Votre classement AFT ne correspond pas à celui sur aftnet.be</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="margin-right:10px"></span>
@@ -403,7 +395,7 @@
 		    </div>
         <div class="form-group has-feedback" id="familyDiv">
 		    <div id="familyError" hidden>
-                 <span class="help-block" > Vous n'avez pas l'âge requis pour participer au tournoi des familles </span>
+                 <span class="help-block"> Vous n'avez pas l'âge requis pour participer au tournoi des familles </span>
 		    </div>
             <div id="familyOK" hidden>
             </div>
@@ -479,6 +471,7 @@
 
               mon inscription
           </button>
+          <button id="submit-chargement" class="btn btn-default" style="display:none"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Chargement...</button>
           </center>
         </div>
         </div>
