@@ -4,6 +4,7 @@
 
 The website always needs some GlobalValues.
 A global value structure is as follows:
+
     {
         _id: <string: key>,
         value: <value>
