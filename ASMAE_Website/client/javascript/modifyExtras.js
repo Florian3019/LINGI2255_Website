@@ -41,7 +41,7 @@ Template.modifyExtras.events({
 		}
 		else if (!isValidePrice(price.value) && (price.value !=="") && typeof (price.value !== 'undefined') && name.value!=="" && typeof name.value !== 'undefined' && (price.value !=="")) {
 			infoBox.removeAttribute("hidden");
-			infoBoxMsg.innerHTML = "Attention le prix est incorrect, vous ne pouvez pas avoir plus deux décimales"
+			infoBoxMsg.innerHTML = "Attention le prix est incorrect, vous ne pouvez pas avoir plus de deux décimales"
 		}
 		else{
 			infoBox.removeAttribute("hidden");
