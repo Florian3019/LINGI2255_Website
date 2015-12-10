@@ -921,7 +921,7 @@ Template.tournamentRegistrationTemplate.events({
 			Check the AFT ranking online
 		*/
 		Meteor.call('checkAFTranking', firstname, lastname, AFT, function(err, result){
-			$('#submit').hide();
+			$('#submitRegistration').hide();
             $('#submit-chargement').show();
 
 			if(err){
@@ -1005,7 +1005,7 @@ Template.tournamentRegistrationTemplate.events({
 				e.className = "form-group has-error has-feedback";
 
 				$('#submit-chargement').hide();
-				$('#submit').show();
+				$('#submitRegistration').show();
 			}
 		});
 
