@@ -15,9 +15,11 @@
           <button type="button" id="scoreTableBack" class="btn btn-default btn-lg toHideForPdf pull-left"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button>
           Matchs de poule {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}
             {{#if isAdminOrStaff}}
-              <button type="button" title="Aide" id="helpScore" class="btn btn-default btn-info" style="margin-left:15px">
-                  <span class="glyphicon glyphicon-question-sign"></span>
-              </button>
+              {{#if isForCurrentYear}}
+                <button type="button" title="Aide" id="helpScore" class="btn btn-default btn-info" style="margin-left:15px">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </button>
+              {{/if}}
             {{/if}}
           </h2>
         </div>
@@ -33,9 +35,11 @@
   {{>scoreTable this}}
 
   {{#if isAdminOrStaff}}
-    <button type="button" id="getPDF" class="btn btn-default btn-lg btn-warning toHideForPdf" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
-      <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-    </button>
+    {{#if isForCurrentYear}}
+      <button type="button" id="getPDF" class="btn btn-default btn-lg btn-warning toHideForPdf" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
+        <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+      </button>
+    {{/if}}
   {{/if}}
 
 </template>
@@ -119,88 +123,90 @@
 <template name="scoreTable">
   <div id="scoreTab">
     <h3 id="ConsignesHeader" class="toHideForPdf">Les paires dans la colonne jouent contre les paires de la ligne.</h3>
-    <div class="panel panel-primary" style="background-color:white">
-      <div class="panel-heading toHideForPdf">Tableaux des résultats</div>
-      <table class="table table-bordered" id="scoreTableElement">
-        {{#with getPairs this._id}}
-        <thead class="{{#if ../isForPdf}} scoreTableFontSize {{/if}}">
-          <tr>
-            <th>
-              <h4><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> VS <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> </h4>
-            </th>
-            {{#each this}}
-            <th>
-              {{#with getPlayer this.player1._id}}
-              {{this.profile.firstName}} {{this.profile.lastName}} <br>
-              {{/with}}
-              {{#with getPlayer this.player2._id}}
-              {{this.profile.firstName}} {{this.profile.lastName}}
-              {{/with}}
-            </th>
-            {{/each}}
-          </tr>
-        </thead>
-
-        <tbody class="{{#if ../isForPdf}} scoreTableFontSize {{/if}}">
-          {{#each this}}
-          <tr>
-            <th>
-              {{#with getPlayer this.player1._id}}
-              {{this.profile.firstName}} {{this.profile.lastName}} <br>
-              {{/with}}
-              {{#with getPlayer this.player2._id}}
-              {{this.profile.firstName}} {{this.profile.lastName}}
-              {{/with}}
-            </th>
-
-            {{#each ..}}
-            {{#if equals this._id ../_id}}
-            <td class="selfMatch" style="background-color:grey"> X </td>
-            {{else}}
-            <td align="center">
-              <div class="input-group inputscore" display="inline">
-                {{#if isToPrint}}
-                <div></div>
-                {{else}}
-                {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
-                  {{#if isAdminOrStaff}}
-                    <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    class="form-control points"
-                    data-matchid="{{this._id}}"
-                    data-otherpairid="{{../_id}}"
-                    data-pairid="{{../../_id}}"
-                    value="{{getPoints this ../../_id}}"
-                    style="text-align:center; width=15%">
-
-                    <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    class="form-control points"
-                    data-matchid="{{this._id}}"
-                    data-otherpairid="{{../../_id}}"
-                    data-pairid="{{../_id}}"
-                    value="{{getPoints this ../_id}}"
-                    style="text-align:center; width=15%">
-                  {{else}}
-                    <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../../_id}}</span>
-                    -
-                    <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../_id}}</span>
-                  {{/if}}
+      <div class="panel panel-primary" style="background-color:white">
+        <div class="panel-heading toHideForPdf">Tableaux des résultats</div>
+    <div class="table-responsive">
+        <table class="table table-bordered" id="scoreTableElement">
+          {{#with getPairs this._id}}
+          <thead class="{{#if ../isForPdf}} scoreTableFontSize {{/if}}">
+            <tr>
+              <th>
+                <h4><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> VS <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> </h4>
+              </th>
+              {{#each this}}
+              <th>
+                {{#with getPlayer this.player1._id}}
+                {{this.profile.firstName}} {{this.profile.lastName}} <br>
                 {{/with}}
-                {{/if}}
-              </div>
-            </td>
-            {{/if}}
+                {{#with getPlayer this.player2._id}}
+                {{this.profile.firstName}} {{this.profile.lastName}}
+                {{/with}}
+              </th>
+              {{/each}}
+            </tr>
+          </thead>
+
+          <tbody class="{{#if ../isForPdf}} scoreTableFontSize {{/if}}">
+            {{#each this}}
+            <tr>
+              <th>
+                {{#with getPlayer this.player1._id}}
+                {{this.profile.firstName}} {{this.profile.lastName}} <br>
+                {{/with}}
+                {{#with getPlayer this.player2._id}}
+                {{this.profile.firstName}} {{this.profile.lastName}}
+                {{/with}}
+              </th>
+
+              {{#each ..}}
+              {{#if equals this._id ../_id}}
+              <td class="selfMatch" style="background-color:grey"> X </td>
+              {{else}}
+              <td align="center">
+                <div class="input-group inputscore" display="inline">
+                  {{#if isToPrint}}
+                  <div></div>
+                  {{else}}
+                  {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
+                    {{#if and isAdminOrStaff isForCurrentYear}}
+                      <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      class="form-control points"
+                      data-matchid="{{this._id}}"
+                      data-otherpairid="{{../_id}}"
+                      data-pairid="{{../../_id}}"
+                      value="{{getPoints this ../../_id}}"
+                      style="text-align:center; width=15%">
+
+                      <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      class="form-control points"
+                      data-matchid="{{this._id}}"
+                      data-otherpairid="{{../../_id}}"
+                      data-pairid="{{../_id}}"
+                      value="{{getPoints this ../_id}}"
+                      style="text-align:center; width=15%">
+                    {{else}}
+                      <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../../_id}}</span>
+                      -
+                      <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../_id}}</span>
+                    {{/if}}
+                  {{/with}}
+                  {{/if}}
+                </div>
+              </td>
+              {{/if}}
+              {{/each}}
+            </tr>
             {{/each}}
-          </tr>
-          {{/each}}
-        </tbody>
-        {{/with}}
-      </table>
+          </tbody>
+          {{/with}}
+        </table>
+      </div>
     </div>
   </div>
 </template>

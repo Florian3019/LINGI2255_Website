@@ -61,19 +61,14 @@ function setAlonePlayers(document){
 	});
 }
 
-function checkAloneErrors(document) {
-	/**
-		This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
-		If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
-	*/
-	function set_error(id,errorVisible) {
+function set_error(id,errorVisible) {
 		const error = "Error";
 		const OK = "OK";
 		const div = "Div";
 		var e = document.getElementById(id.concat(error));
 		if(!errorVisible){
 			e.style.display = 'none';
-			document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
+			document.getElementById(id.concat(div)).className = "form-group AFTOK has-feedback";
 		}else{
 			e.style.display = 'block';
 			document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
@@ -83,8 +78,15 @@ function checkAloneErrors(document) {
 			e.style.display = 'none';
 		else
 			e.style.display = 'block';
-	}
+}
 
+
+function checkAloneErrors(document) {
+	/**
+		This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
+		If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
+	*/
+	
 	var errors = new Array();
 	var hasError = false;
 
@@ -516,8 +518,21 @@ Template.tournamentRegistrationTemplate.helpers({
     	return this.price;
     },
 
-	'getQuantity': function() {
+	'getQuantity': function(){
 		return this.quantity;
+	},
+
+	'okAFTranking': function(){
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+		var maximumAFT = Years.findOne({_id: currentYear}, {fields: {maximumAFT: 1}}).maximumAFT;
+		var AFTarray = [];
+		var i = 0;
+		while(AFTrankings[i] !== maximumAFT){
+			AFTarray.push(AFTrankings[i]);
+			i++;
+		}
+		AFTarray.push(maximumAFT);
+		return AFTarray;
 	}
 
 });
@@ -659,6 +674,11 @@ Template.tournamentRegistrationTemplate.events({
 				}
 				document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
 			}else{
+				var e = document.getElementById("AFTcheat");
+				e.style.display = 'none';
+				var e = document.getElementById("AFTDiv")
+				e.className = "form-group has-feedback";
+
 				if(id=='emailPlayer'){
 					document.getElementById("emailPlayerErrorMessage").style.display = 'block';
 				}
@@ -828,13 +848,7 @@ Template.tournamentRegistrationTemplate.events({
 		var birthDate = new Date(birthYear % 100, birthMonth-1, birthDay);
 
         var AFT = event.target.rank.value;
-		if(!AFT || AFT==""){
-        	errors.push({id:"AFT", error:true});
-        	hasError = true;
-        }
-        else{
-        	errors.push({id:"AFT", error:false});
-        }
+
         var street = event.target.street.value;
         if(!street || street==""){
         	errors.push({id:"street", error:true});
@@ -1045,6 +1059,9 @@ Template.tournamentRegistrationTemplate.events({
 			Check the AFT ranking online
 		*/
 		Meteor.call('checkAFTranking', firstname, lastname, AFT, function(err, result){
+			$('#submit').hide();
+            $('#submit-chargement').show();
+
 			if(err){
 				console.error("Error while checking AFT ranking");
 				console.error(err);
@@ -1120,12 +1137,14 @@ Template.tournamentRegistrationTemplate.events({
 		        Meteor.call('updatePair', pairData, callback);
 			}
 			else {	//The players cheats on the AFT ranking
-				var o = document.getElementById("AFTOK");
-				o.style.display = 'none';
 
 				var e = document.getElementById("AFTcheat");
 				e.style.display = 'block';
-				document.getElementById("AFTcheat").className = "form-group has-error has-feedback";
+				var e = document.getElementById("AFTDiv")
+				e.className = "form-group has-error has-feedback";
+
+				$('#submit-chargement').hide();
+				$('#submit').show();
 			}
 		});
 
@@ -1146,11 +1165,11 @@ Template.tournamentRegistrationTemplate.events({
 	 */
 	Template.tournamentRegistrationTemplate.onRendered(function () {
 		var user=Meteor.user();
-		if (user===undefined) {
+		if(typeof user==='undefined') {
 			console.error("Error, no user defined in registration page, should have been redirected.");
 			return;
 		}
-		if (user.profile===undefined) {
+		if(typeof user.profile==='undefined') {
 			// No info on this user, do nothing
 			return;
 		}
@@ -1158,5 +1177,20 @@ Template.tournamentRegistrationTemplate.events({
 		sexSelect.value = user.profile.gender!==undefined ? user.profile.gender : "default";
 
 		var rankSelect = document.getElementById('rank');
-		rankSelect.value = user.profile.AFT!==undefined ? user.profile.AFT : "NC";
+		if(typeof user.profile.AFT !== 'undefined'){
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			var maximumAFT = Years.findOne({_id: currentYear}, {fields: {maximumAFT: 1}}).maximumAFT;
+			var maxAFTindex = AFTrankings.indexOf(maximumAFT);
+			var userAFTindex = AFTrankings.indexOf(user.profile.AFT);
+			if(userAFTindex > maxAFTindex){
+				rankSelect.value = "NC";
+			}
+			else{
+				rankSelect.value = user.profile.AFT;
+			}
+		}
+		else{
+			rankSelect.value = "NC";
+		}
+
 	});

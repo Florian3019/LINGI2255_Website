@@ -51,7 +51,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row" style="margin-top:15px;">
         <div class="col-sm-3 col-sm-offset-3">
           <label>Date de naissance: </label> <br>
         </div>
@@ -276,32 +276,11 @@
             <div class="input-group" style="display: inline">
               <br>
               <select name="rank" id="rank"  class="form-control" style="display: inline">
-                <option value="" hidden></option>
   				      <option value="NC" selected="selected">NC</option>
-  				      <option value="C30.5 ">C30.5</option>
-  				      <option value="C30.4">C30.4</option>
-  				      <option value="C30.3">C30.3</option>
-  				      <option value="C30.2">C30.2</option>
-  				      <option value="C30.1">C30.1</option>
-  				      <option value="C30">C30</option>
-  				      <option value="C15.5">C15.5</option>
-  				      <option value="C15.4">C15.4</option>
-  				      <option value="C15.3">C15.3</option>
-  				      <option value="C15.2">C15.2</option>
-  				      <option value="C15.1">C15.1</option>
-  				      <option value="C15">C15</option>
-  				      <option value="B+4/6">B+4/6</option>
-  				      <option value="B+2/6">B+2/6</option>
-  				      <option value="B0">B0</option>
+                      {{#each okAFTranking}}
+                      <option value="{{this}}">{{this}}</option>
+                      {{/each}}
               </select>
-              <div id="AFTError" hidden>
-                <span class="help-block" >Merci d'entrer votre classement</span>
-                <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="margin-right:10px"></span>
-              </div>
-              <div id="AFTOK" hidden>
-                <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" style="margin-right:10px"></span>
-                <span id="inputGroupSuccess1Status" class="sr-only">(success)</span>
-              </div>
               <div id="AFTcheat" hidden>
                   <span class="help-block">Votre classement AFT ne correspond pas à celui sur aftnet.be</span>
                   <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" style="margin-right:10px"></span>
@@ -416,7 +395,7 @@
 		    </div>
         <div class="form-group has-feedback" id="familyDiv">
 		    <div id="familyError" hidden>
-                 <span class="help-block" > Vous n'avez pas l'âge requis pour participer au tournoi des familles </span>
+                 <span class="help-block"> Vous n'avez pas l'âge requis pour participer au tournoi des familles </span>
 		    </div>
             <div id="familyOK" hidden>
             </div>
@@ -492,6 +471,7 @@
 
               mon inscription
           </button>
+          <button id="submit-chargement" class="btn btn-default" style="display:none"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Chargement...</button>
           </center>
         </div>
         </div>

@@ -1,17 +1,17 @@
 <template name="modifyExtras">
 		{{#if hasExtras}}
 		<div class="row">
-			<div class="col-md-3 col-sm-offset-1">
-		    	<label for="text"> Nom:</label>
-		  	</div>
-			<div class="col-md-1">
-		    	<label for="text"> Prix:</label>
+			<div class="col-md-3">
+		    	<label> Nom:</label>
 		  	</div>
 			<div class="col-md-2">
-		    	<label for="text"> Jour:</label>
+		    	<label> Prix (&euro;):</label>
+		  	</div>
+			<div class="col-md-3">
+		    	<label> Jour:</label>
 		  	</div>
 		  	<div class="col-md-3">
-		    	<label for="text"> Commentaire:</label>
+		    	<label> Commentaire:</label>
 		  	</div>
 	  	</div>
 	  	{{else}}
@@ -24,13 +24,13 @@
 		<div class="form-group">
 		    {{#each extras}}
 		      	<div class="row">
-					<div class="col-sm-3 col-sm-offset-1">
+					<div class="col-sm-3">
 					    <input type="text" class="form-control extra-name" id="name{{getID}}" value="{{getName}}" data-id="{{getID}}" name="{{getName}}" required>
 					</div>
-					<div class="col-sm-1">
-					    <input type="number" min="0" step="0.01" class="form-control extra-price" id="price{{getID}}" data-id="{{getID}}" name="{{getPrice}}" value="{{getPrice}}" required>
-					</div>
 					<div class="col-sm-2">
+					    <input type="number" min="0" step="0.01" class="form-control extra-price" id="price{{getID}}" data-id="{{getID}}" value="{{getPrice}}" required>
+					</div>
+					<div class="col-sm-3">
 					    <select class="form-control extra-day" id="day{{getID}}" data-id="{{getID}}" name="{{getDay}}" value="{{getDay}}">
 							<option value="saturday">Samedi</option>
 							<option value="sunday">Dimanche</option>
@@ -47,17 +47,17 @@
 		 	</div>
 		 	<!-- Add extra -->
 			<div class="row">
-				<div class="col-sm-3 col-sm-offset-1">
+				<div class="col-sm-3">
 					<div class="form-group">
 						<input type="text" class="form-control" id="nameExtra" name="nameExtra" placeholder="Nom">
 					</div>
 				</div>
-				<div class="col-sm-1">
+				<div class="col-sm-2">
 					<div class="form-group">
 						<input type="number" min="0" step="0.01" class="form-control" id="priceExtra" name="priceExtra" placeholder="Prix">
 					</div>
 				</div>
-				<div class="col-sm-2">
+				<div class="col-sm-3">
 					<select class="form-control" id="dayExtra" name="dayExtra">
 						<option value="saturday">Samedi</option>
 						<option value="sunday">Dimanche</option>

@@ -8,6 +8,8 @@ surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
 paymentTranslate = {"paid":"Payé", "pending":"En attente"};
 paymentKeys = Object.keys(paymentTranslate);
 
+//AFT rankings ordered (ascending)
+AFTrankings = ["C30.5", "C30.4", "C30.3", "C30.2", "C30.1", "C30", "C15.5", "C15.4", "C15.3", "C15.2", "C15.1", "C15", "B+4/6", "B+2/6", "B0", "B-2/6", "B-4/6", "B-15", "B-15.1", "B-15.2", "B-15.4", "A nat", "A int"];
 
 EMAIL_ENABLED = false; // set to true to enable email feedback
 
@@ -31,7 +33,7 @@ Google_API_KEY_BROWSER = "AIzaSyBa8fDkKPINTunoEuj0VznC6kU7PWFRJxs";
 MAX_FAMILY_AGE = 15;
 MIN_FAMILY_AGE = 25;
 
-LAST_N_LOGS = 3; // Amount of logs to keep for each user/courts. All logs are still kept in the full log table.
+LAST_N_LOGS = 3; // Amount of logs to keep for each user/court. All logs are still kept in the full log table.
 
 /*
     @param birthDate of the player for which we want to know if he is accepted into the family tournament

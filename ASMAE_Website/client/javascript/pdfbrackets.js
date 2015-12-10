@@ -235,7 +235,7 @@ Template.PdfBracket.events({
           w.document.open();
           w.document.write(windowContent);
           w.document.close();
-        }, 1000);
+        }, 2000);
 
         setTimeout(function () {
           w.print();

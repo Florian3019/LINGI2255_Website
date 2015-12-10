@@ -5,10 +5,10 @@
   height: 640px;
   width: 250px;
   vertical-align: top;
-  -moz-box-shadow: inset 0px 0px 6px 4px #656565;
-  -webkit-box-shadow: inset 0px 0px 6px 4px #656565;
-  -o-box-shadow: inset 0px 0px 6px 4px #656565;
-  box-shadow: inset 0px 0px 6px 4px #656565;
+  -moz-box-shadow: inset 0px 0px 4px 2px #656565;
+  -webkit-box-shadow: inset 0px 0px 4px 2px #656565;
+  -o-box-shadow: inset 0px 0px 4px 2px #656565;
+  box-shadow: inset 0px 0px 4px 2px #656565;
   filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=NaN, Strength=10);
 }
 
@@ -144,4 +144,9 @@
 
 .btn-padding {
   margin-right: 10px;
+}
+
+/* If screen width higher than 1185px*/
+@media only screen and (min-width: 991px) {
+
 }
