@@ -161,8 +161,6 @@ var getCategoryWinners = function(poolIdList, maxWinners){
     allWinnersPairPoints = allWinnersPairPoints.concat(poolWinners.winnerPairPoints);
   }
 
-  console.log(allWinnersPairPoints);
-
   var comparePoints = function(a,b){
 
   pointDiff = b["points"]-a["points"];

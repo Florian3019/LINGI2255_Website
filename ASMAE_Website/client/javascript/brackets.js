@@ -691,7 +691,7 @@ var makeBrackets = function(document){
         b.data.clickable = false;
       }
 
-      if(b.data.clickable){
+      if(b.data.clickable==true){
         a.data.clickable = true;
       }
 
