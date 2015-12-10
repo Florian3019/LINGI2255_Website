@@ -956,8 +956,8 @@ Template.tournamentRegistrationTemplate.events({
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch, callbackInception);
 					var type = Session.get("tournamentRegistration/type");
 					var category = Session.get("tournamentRegistration/category");
-					var firstname = curUserData.firstName;
-					var lastname = curUserData.lastName;
+					var firstname = curUserData.profile.firstName;
+					var lastname = curUserData.profile.lastName;
 					if (mailNotifyAloneUser) {
 						var dataMail = {
 							intro:"Bonjour"+firstname+",",
