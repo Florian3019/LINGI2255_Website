@@ -10,7 +10,7 @@ Template.selectNewCourt.events({
     'click .courtRow' : function(event){
 		var courts = event.currentTarget.lastElementChild.innerText;
 		Session.set("selectNewCourt/courts",courts);
-	
+
         $('#chooseCourtsModal').modal('show');
      }
 });
