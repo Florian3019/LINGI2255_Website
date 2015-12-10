@@ -411,7 +411,7 @@ Template.playerInfoTemplate.events({
 	},
 
 	'click #markAsPaid': function(event){
-		var userId = this._id;
+		var paymentID = this._id;
 
 		swal({
         title: "Etes vous sûr ?",
@@ -423,7 +423,7 @@ Template.playerInfoTemplate.events({
         closeOnConfirm: true
         },
         function(){
-			Meteor.call('markAsPaid', this._id, function(err, result){
+			Meteor.call('markAsPaid', paymentID, function(err, result){
 				if(err){
 					console.log("Error while calling method markAsPaid");
 					console.log(err);
