@@ -163,7 +163,7 @@ Template.playerInfoTemplate.helpers({
 	'getInscriptions': function(userId){
 		var registrationInfo = getRegistrationInfoFromPlayerID(userId);
 		if (typeof registrationInfo === 'undefined') {
-			return undefined;
+			return {saturday:undefined, sunday:undefined};
 		}
 		return registrationInfo;
 	},
@@ -280,7 +280,6 @@ Template.playerInfoTemplate.events({
 				var pair = getDayPairFromPlayerID(userID, "saturday");
 				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 				swal("Inscription supprimée", "", "success");
-				Router.go('home');
 			});
 	},
 
@@ -301,7 +300,6 @@ Template.playerInfoTemplate.events({
 				var pair = getDayPairFromPlayerID(userID, "sunday");
 				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 				swal("Inscription supprimée", "", "success");
-				Router.go('home');
 			});
 	},
 
@@ -320,7 +318,6 @@ Template.playerInfoTemplate.events({
 		else{
 			/*	Go to profile edit	*/
 			Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
-			console.log("clicked modifier");
 		}
 	},
 	'click #deleteUser' : function(event){

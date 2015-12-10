@@ -48,9 +48,7 @@
               {{else}}
               <li class="dropdown"><a class="dropdown-togglebis" data-toggle="dropdown" href="#" id="Droop">Inscription<span class="caret"></span></a>
                 <ul class="dropdown-menu auto-dropdown-menu">
-                    {{#if registered}}
                   <li><a href="{{pathFor route='myRegistration'}}" class="toToggle">Mon inscription</a></li>
-                  {{/if}}
                   {{#unless isSaturdayRegistered}}
                   <li><a href="{{pathFor route='tournamentRegistrationSaturday' _id=currentUser._id}}" id="RegistrSaturday" class="toToggle">S'inscrire pour le samedi</a></li>
                   {{/unless}}
