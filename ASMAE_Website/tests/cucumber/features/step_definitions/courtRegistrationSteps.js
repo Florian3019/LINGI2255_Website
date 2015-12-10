@@ -4,6 +4,7 @@ module.exports = function () {
     this.Given(/^An admin has been created$/, function(){
           this.server.call('addUserAdmin');
     });
+    
 
     this.When(/^I navigate to the court registration page$/, function() {
         browser.waitForExist('#MesTerrainsMenuButton')

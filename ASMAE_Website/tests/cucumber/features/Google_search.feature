@@ -4,7 +4,7 @@ Feature: Search the Web
   I want to search the web
   So I can find information
 
-  @watch
+  @ignore
   Scenario: Search for Xolv.io
     Given I have visited Google
     When I search for "Xolv.io"

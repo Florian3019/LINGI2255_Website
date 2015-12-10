@@ -27,6 +27,11 @@
   		  });
 
           Meteor.call('turnAdminInsecure', user._id);
+      },
+      'addYear2015Tests' : function(){
+        GlobalValues.update({_id:"currentYear"}, {$set: {
+        value : "2015"
+      }});
       }
 
     });

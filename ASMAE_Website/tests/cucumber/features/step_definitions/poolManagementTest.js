@@ -4,7 +4,14 @@ module.exports = function () {
         client.click('#popdbtest')
         client.click('#tournamentNavigation');
 
+        client.waitForExist('#DeroulementTournoiButton')
+        client.click('#DeroulementTournoiButton')
+        client.pause(100);
+        client.setValue('#launchTournamentDate','12/12/2015');
+        client.setValue('#tournamentPrice','10')
 
+
+        this.server.call('addYear2015Tests');
         client.waitForVisible('#Year')
         client.waitForExist('#Year');
         client.click('#Year')
@@ -16,11 +23,11 @@ module.exports = function () {
         client.click('#btn_men_preminimes')
         client.waitForExist('#Poules')
         client.click('#Poules')
-        client.pause(1000)
+        client.pause(4000)
         // a allows drag and drop
         // b allows to see the pool/poolmanager/...
 
-    });
+    }); 
 
     this.When(/^I click on a poolManagement$/,function(){
         var b = '#'+'clickOnIt'+server.call('getOnePoolId')
