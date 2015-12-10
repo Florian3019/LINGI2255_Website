@@ -86,7 +86,8 @@
         {{#with tournamentData}}
         <p>
             Date: {{tournamentDateFormat tournamentDate}}<br>
-            Prix: {{tournamentPrice}}&euro;
+            Prix: {{tournamentPrice}}&euro;<br>
+            AFT maximum : {{maximumAFT}}
         </p>
         {{/with}}
         <h6>Extras:</h6>
@@ -111,7 +112,7 @@
         <div class="form-group has-feedback">
             <div class="row">
                     <div class="form-group" id="formGroupDateInput">
-                        <div class="col-sm-2">
+                        <div class="col-sm-2" style="padding-top: 5px">
                             <b>Date</b> :
                         </div>
                         <div class="col-sm-4">
@@ -129,7 +130,7 @@
             <br>
             <div class="row">
                 <div class="form-group" id="formGroupPriceInput">
-                    <div class="col-sm-2">
+                    <div class="col-sm-2" style="padding-top: 5px">
                         <b>Prix</b> :
                     </div>
                     <div class="col-sm-4">
@@ -144,6 +145,37 @@
                     </div>
                 </div>
             </div>
+            <br>
+            <div class="row">
+                <div class="form-group" id="formGroupMaxAFT">
+                    <div class="col-sm-2" style="padding-top: 5px">
+                        <b>AFT maximum</b> :
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="input-group">
+                            <select name="AFTranking" id="AFTranking"  class="form-control" style="display: inline">
+                              <option value="" hidden></option>
+                				      <option value="C30.5 ">C30.5</option>
+                				      <option value="C30.4">C30.4</option>
+                				      <option value="C30.3">C30.3</option>
+                				      <option value="C30.2">C30.2</option>
+                				      <option value="C30.1">C30.1</option>
+                				      <option value="C30">C30</option>
+                				      <option value="C15.5">C15.5</option>
+                				      <option value="C15.4">C15.4</option>
+                				      <option value="C15.3">C15.3</option>
+                				      <option value="C15.2">C15.2</option>
+                				      <option value="C15.1">C15.1</option>
+                				      <option value="C15">C15</option>
+                				      <option value="B+4/6">B+4/6</option>
+                				      <option value="B+2/6">B+2/6</option>
+                				      <option value="B0" selected="selected">B0</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-sm-8">
                     <h5>Extras</h5>

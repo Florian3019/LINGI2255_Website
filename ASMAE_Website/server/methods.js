@@ -61,6 +61,7 @@ Meteor.methods({
 			}
 
 			data.tournamentPrice = launchTournamentData.tournamentPrice;
+			data.maximumAFT = launchTournamentData.maximumAFT;
 
 			//Insert in database
 
@@ -88,8 +89,8 @@ Meteor.methods({
 				data.step4done = false;
 				data.step5done = false;
 				data.step6done = false;
-				data.setp7done = false;
-				data.setp8done = false;
+				data.step7done = false;
+				data.step8done = false;
 				data._id = dataID;
 				insertedYearID = Years.insert(data);
 				console.log("Tournament launched for year "+dataID);

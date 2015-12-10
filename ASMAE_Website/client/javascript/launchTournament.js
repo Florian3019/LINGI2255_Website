@@ -75,6 +75,8 @@ Template.launchTournament.events({
         var getDateObject = new Date(getDate[2], getDate[1]-1, getDate[0]);
         var price = parseFloat($('[name=tournamentPrice]').val());
 
+        var maximumAFT = $('[name=AFTranking]').val();
+
         var dateInput = document.getElementById("formGroupDateInput");
         var dateMsg = document.getElementById("dateError");
         var priceInput = document.getElementById("formGroupPriceInput");
@@ -99,12 +101,13 @@ Template.launchTournament.events({
 
         var launchData = {
             tournamentDate: getDateObject,
-            tournamentPrice: price
+            tournamentPrice: price,
+            maximumAFT: maximumAFT
         };
 
         swal({
             title: "Ouverture des inscriptions",
-            text: "Les informations entrées sont-elles correctes ? Après validation, les inscriptions sont ouvertes",
+            text: "Les informations entrées sont-elles correctes ? Après validation, les inscriptions seront ouvertes",
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",

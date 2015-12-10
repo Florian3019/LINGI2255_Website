@@ -516,8 +516,21 @@ Template.tournamentRegistrationTemplate.helpers({
     	return this.price;
     },
 
-	'getQuantity': function() {
+	'getQuantity': function(){
 		return this.quantity;
+	},
+
+	'okAFTranking': function(){
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+		var maximumAFT = Years.findOne({_id: currentYear}).maximumAFT;
+		var AFTarray = [];
+		var i = 0;
+		while(AFTrankings[i] !== maximumAFT){
+			AFTarray.push(AFTrankings[i]);
+			i++;
+		}
+		AFTarray.push(maximumAFT);
+		return AFTarray;
 	}
 
 });

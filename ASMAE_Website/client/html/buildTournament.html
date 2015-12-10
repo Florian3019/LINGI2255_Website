@@ -3,7 +3,7 @@
 		{{resetDrake}}
 
 	<div class="page-header">
-	<h2>Séléction des joueurs pour le knock-off</h2>
+	<h2>Sélection des joueurs pour le knock-off</h2>
 	</div>
 
 
@@ -12,7 +12,7 @@
 	      <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 	      <span class="sr-only">Info:</span>
 	      <span id="infoMsg">
-	      	Choisissez qui passe dans les knock-off. Par défaut, les meilleures paires de chaque poule sont séléctionnées.
+	      	Choisissez qui passe dans les knock-off. Par défaut, les meilleures paires de chaque poule sont sélectionnées.
 	      </span>
 	    </h4>
 	</div>
@@ -20,7 +20,7 @@
 	<div class="row">
   		<div class="col-sm-6">
 			<center>
-				<div class="poolLabel"><span class="label label-primary">Non séléctionés ({{getNotSelectedSize}})</span></div>
+				<div class="poolLabel"><span class="label label-primary">Non sélectionnés ({{getNotSelectedSize}})</span></div>
 				<div class='parent'>
 				  	<div class='PoolWrapper'>
 				  		{{>buildContainer ID="notSelectedForTournament"}}
@@ -30,7 +30,7 @@
 		</div>
 		<div class="col-sm-6">
 			<center>
-				<div class="poolLabel"><span class="label label-primary">Séléctionés ({{getSelectedSize}})</span></div>
+				<div class="poolLabel"><span class="label label-primary">Sélectionnés ({{getSelectedSize}})</span></div>
 				<div class='parent'>
 				  	<div class='PoolWrapper'>
 				    	{{>buildContainer ID="selectedForTournament"}}
@@ -74,7 +74,7 @@ Takes 2 arguments :
   {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
     <div id="{{this._id}}" class="pairs grabbable">
       <ul class="list-group clickablePoolItem" data-id="{{this._id}}" data-poolid="{{../POOLID}}">
-      	<li class="list-group-item pairPlayerHeader bold"> 
+      	<li class="list-group-item pairPlayerHeader bold">
       		Score : {{../SCORE}} <span class="pull-right">T {{../COURT}}</span>
       	</li>
         {{#with getPlayer this.player1._id}}
@@ -84,7 +84,7 @@ Takes 2 arguments :
         {{/with}}
         {{#with getPlayer this.player2._id}}
 	        <li class="list-group-item pairPlayer" style="{{getColor ../player1}}" id="{{this.player2._id}}" >
-	        {{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} 
+	        {{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}
 	        </li>
         {{/with}}
       </ul>
