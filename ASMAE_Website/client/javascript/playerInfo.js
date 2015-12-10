@@ -69,14 +69,14 @@ Template.playersInfo.helpers({
                     if(value===undefined) return "/";
                     else return value;
                 }},
-                { key: 'emails', label: 'Email', hidden:true , fn: function(value, object){
+                { key: 'emails', label: 'Email' , fn: function(value, object){
                     return value[0].address;
                 }},
                 { key: 'profile.gender', label:"Sexe"},
                 { key: 'profile.phone', label: "Numéro"},
                 { key: 'profile.birthDate', label: "Naissance", fn: function(value, object){ return (value==null || typeof value === "undefined") ? "" : value.toLocaleDateString()}},
                 { key: 'profile.AFT', label: "AFT"},
-                { key: 'profile.addressID', label: "Adresse",hidden:true , fn: function(value, object){
+                { key: 'profile.addressID', label: "Adresse", hidden:true,  fn: function(value, object){
                     addr = Addresses.findOne({"_id":value});
                     if(addr==undefined) return "";
                     var ret = ""
@@ -127,15 +127,35 @@ Template.changePermissions.events({
         var user = this;
         var prof = this.profile;
         var nothingChanged = (value === "Normal" && !prof.isAdmin && !prof.isStaff) || (value==="Staff" && prof.isStaff && !prof.isAdmin) || (value==="Admin" && prof.isAdmin);
+        
+        var callBack = function(err, success){
+            if(err){
+                console.error(err);
+                return;
+            }
+            if(!success){
+                swal({
+                title:"Erreur",
+                text:"L'utilisateur n'a pas vérifié son addresse email, ou vous n'êtes pas admin.",
+                type:"error",
+                confirmButtonText:"Ok"
+                }
+                );
+            }
+            else{
+               swal("Permission modifiée !", "L'utilisateur est maintenant "+value.toLowerCase(), "success");
+            }
+
+        }
         if(!nothingChanged){
             if(value==="Normal"){
-                Meteor.call('turnNormal',userId);
+                Meteor.call('turnNormal',userId, callBack);
             }
             else if(value==="Staff"){
-                Meteor.call('turnStaff',userId);
+                Meteor.call('turnStaff',userId, callBack);
             }
             else if(value==="Admin"){
-                Meteor.call('turnAdmin',userId);
+                Meteor.call('turnAdmin',userId, callBack);
             }
 
             Meteor.call("addToModificationsLog",

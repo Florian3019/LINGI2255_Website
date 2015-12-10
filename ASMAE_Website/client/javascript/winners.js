@@ -29,7 +29,8 @@ Template.winners.helpers({
 				}}
 			],
 			showFilter:false,
-			rowsPerPage:30
+			rowsPerPage:30,
+			noDataTmpl:Template.emptyWinners
 		};
 	},
 

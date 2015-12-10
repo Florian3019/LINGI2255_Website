@@ -2,6 +2,7 @@
 	<div id="HomeWrapper">
 		<h1 class="mainTitle" style="font-size: 60px; color:white; font: Helvetica; padding-top: 10px">Le Charles de Lorraine</h1>
 	    <h2 style="font-size: 30px; color:white">Tournoi de tennis</h2>
+		{{#if registrationsON}} <h4 style="font-size: 20px; color:white"> {{getFormattedDate}}</h4> {{/if}}
 
 	    <br>
 	    <br>
@@ -16,8 +17,7 @@
 		{{#if registrationsON}}
 	    <div class="row">
 	    	<div class="col-md-3">
-				<a href="{{pathFor route='tournamentRegistrationSaturday'}}" class="btn btn-lg btn-default">S'inscrire au tournoi : samedi</a>
-				<a href="{{pathFor route='tournamentRegistrationSunday'}}" class="btn btn-lg btn-default">S'inscrire au tournoi : dimanche</a>
+				<a id="tournamentRegistrationButton" href="" class="btn btn-lg btn-default" data-toggle="modal" data-target="#tournamentRegistrationModal">S'inscrire au tournoi</a>
 	      	</div>
 	      	<div class="col-md-3">
 	      		<a id="courtRegistrationButton" href="{{pathFor route='courtRegistration'}}" class="btn btn-lg btn-default">Inscription d'un terrain</a>
@@ -26,10 +26,32 @@
 
 		{{else}}
 		<div>
-    		<p style="color: white; font-size:18px">Les inscriptions au tournoi ne sont pas encore ouvertes.</p>
+    		<p style="color: white; font-size:18px">Les inscriptions au tournoi sont fermées.</p>
 	   		<a id="courtRegistrationButton" href="{{pathFor route='courtRegistration'}}" class="btn btn-lg btn-default">Inscription d'un terrain</a>
 	    </div>
 
 		{{/if}}
 	</div>
+
+
+
+<div class="modal" id="tournamentRegistrationModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">S'inscrire au tournoi</h3>
+            </div>
+            <div class="modal-body">
+				<center>
+                <p>Veuillez choisir le jour:</p>
+				<a id="tournamentRegistrationSundayButton" href="{{pathFor route='tournamentRegistrationSaturday'}}" class="btn btn-lg btn-default">Samedi</a>
+  				<a id="tournamentRegistrationSaterdayButton" href="{{pathFor route='tournamentRegistrationSunday'}}" class="btn btn-lg btn-default">Dimanche</a>
+				</center>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </template>

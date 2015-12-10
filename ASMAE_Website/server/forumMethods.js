@@ -70,7 +70,6 @@ Meteor.methods({
 		Returns the topicId on success, undefined otherwise
 	*/
 	'addTopic':function(topicData){
-		console.log(topicData);
 		if(!isAllowed()){
 			console.error("addTopic : You don't have the required permissions !");
 			return;

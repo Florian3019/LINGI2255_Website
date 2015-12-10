@@ -22,13 +22,33 @@ Template.contacts.events({
             question : $('[name=question]').val(),
         	}
 
-    	if (confirm("Merci pour votre question ! \n\nEtes vous certain de vouloir soumettre ceci ? : \n\n Nom : "+Question.lastname+"\n\n Prénom : "+Question.firstname+"\n\n Email : "+Question.email+"\n\n Question : \n "+ Question.question+"\n\n") == true) {
-    	   	Meteor.call('insertQuestion', Question);
-		Router.go('home');
+        if(Question.question===undefined || Question.question==="" ||Question.firstname==="" || Question.firstname===undefined || Question.lastname==="" || Question.lastname===undefined || Question.email === ""|| Question.email===undefined){
+            swal({
+              title:"Erreur!",
+              text:"Veuillez remplir tous les champs!",
+              type:"error",
+              confirmButtonText:"Ok",
+              confirmButtonColor: "#3085d6",
+              closeOnConfirm:true,
+              showCancelButton: false
+            });
+            return;
+        }
 
-    	} else {
+        Meteor.call('insertQuestion', Question);
 
-    	}
+        swal({
+          title:"Succès!",
+          text:"Email envoyé!",
+          type:"success",
+          confirmButtonText:"Super!",
+          confirmButtonColor: "#3085d6",
+          closeOnConfirm:true,
+          showCancelButton: false
+        },
+        function(){
+            Router.go("home");
+        });
     }
 });
 

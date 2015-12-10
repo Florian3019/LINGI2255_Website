@@ -1,14 +1,23 @@
 Template.closeRegistrationsBlock.events({
     'click #closeRegistrationsButton': function(){
-        if(confirm("Confirmer la fermeture des inscriptions:"))
-        {
-            Meteor.call('stopTournamentRegistrations', function(error, result){
-                if(error){
-                    console.error('stopTournamentRegistrations error');
-                    console.error(error);
-                }
-            });
-        }
+        swal({
+          title:"Confirmer la fermeture des inscriptions",
+          text:"Cette opération est irréversible.",
+          type:"warning",
+          showCancelButton:true,
+          cancelButtonText:"Annuler",
+          confirmButtonText:"Fermer les inscriptions",
+          confirmButtonColor:"#0099ff",
+          },
+          function(){
+              Meteor.call('stopTournamentRegistrations', function(error, result){
+                    if(error){
+                        console.error('stopTournamentRegistrations error');
+                        console.error(error);
+                    }
+                });
+            }
+        );
     }
 
 });
@@ -51,7 +60,7 @@ Template.tournamentProgress.helpers({
             }
             else {
                 console.error("currentYear doesn't exist in Years");
-                throw new Meteor.error("currentYear doesn't exist in Years");
+                return undefined;
             }
         }
 
@@ -221,7 +230,7 @@ Template.tournamentProgress.events({
         else{
             assignCourts(false);
         }
-        
+
     },
     'click #assignIndoorCourts':function(event){
         if(getNumberMissingCourts("Saturday")>0 || getNumberMissingCourts("Sunday")>0){
@@ -269,12 +278,12 @@ var getNumberMissingCourts = function(day){
     if(day==="Saturday"){
        pools = Pools.find({$or: [{type:"mixed"},{type:"family"}]}).fetch();
         courts = Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
-        return Math.max(pools.length-getCourtNumbers(courts).length,0); 
+        return Math.max(pools.length-getCourtNumbers(courts).length,0);
     }
     else{
         pools = Pools.find({$or: [{type:"men"},{type:"women"}]}).fetch();
         courts = Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
-        return Math.max(pools.length-getCourtNumbers(courts).length,0); 
+        return Math.max(pools.length-getCourtNumbers(courts).length,0);
     }
 
 };

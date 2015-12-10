@@ -148,27 +148,30 @@
           //   '</h3>'
           // ].join("");
           var canClick="";
+          var toolTipCourt = "";
+          var toolTipScore = data.clickable ? " title='Changer le score'":"";
 
           if(data.court!==""){
             var c = (isFirst? '<span class="pull-right"  data-pos='+data.pos+' data-courtn='+data.court+' > (T. ' +(data.court===undefined ? '?':data.court)+') </span>' : "");
             canClick = isFirst ? "g_canClick" : "";
+            toolTipCourt = isFirst ? " title='Changer le terrain'":"";
           }
           else{
             var c = "";
           }
           
           if(isNaN(data.score) || data.score===""){
-            s = '<h3 class="changeCourtsBracket '+canClick +'" data-clickable=' + data.clickable +'> '+ data.score + c + ' </h3>';
+            s = '<h3 class="changeCourtsBracket '+canClick +'" data-clickable=' + data.clickable + toolTipCourt + '> '+ data.score + c + ' </h3>';
           }
           else{
-            s = '<h3 class="changeCourtsBracket '+canClick+'" data-clickable=' + data.clickable +'>  Score: ' + data.score + c + '</h3>';
+            s = '<h3 class="changeCourtsBracket '+canClick+'" data-clickable=' + data.clickable + toolTipCourt + '>  Score: ' + data.score + c + '</h3>';
           }
 
           var canEditScore = data.clickable ? "g_canClick" : "";
 
           var html = [
             s,
-            '<ul class="list-group changeScoreBracket '+ canEditScore +'" data-clickable=' + data.clickable + ' data-round=' + data.round +' data-pair1=' +data.pair1 +' data-pair2='+ data.pair2 + ' data-id='+data.id + ' >',
+            '<ul class="list-group changeScoreBracket '+ canEditScore +'" data-clickable=' + data.clickable + ' data-round=' + data.round +' data-pair1=' +data.pair1 +' data-pair2='+ data.pair2 + ' data-id='+data.id + toolTipScore +' >',
               '<li class="list-group-item" align="center">' + data.player1 + ' | ' + data.player2+ '</li>',
               // '<li class="list-group-item">' + data.player2 + '</li>',
             '</ul>'

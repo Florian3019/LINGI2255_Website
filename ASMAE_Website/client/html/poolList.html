@@ -3,92 +3,92 @@
     {{>modalItem}}
     <div id="page-content-wrapper">
       <div class="container-fluid">
-        <div class="col-lg-20">
-          {{#if getChosenCourt}}
-            {{>selectNewCourt}}
-              {{else}}
-              {{#if getChosenScorePool}}
-                {{>scorePage getChosenScorePool}}
-              {{else}}
-                {{#if chosenBrackets}}
-                  {{>brackets}}
+        <div class="row">
+          <div class="col-lg-12">
+            {{#if getChosenCourt}}
+              {{>selectNewCourt}}
                 {{else}}
-              {{#with getYear}} <!-- Returns a yearData -->
-                {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
-                {{#with getType this}}
-                <div class="page-header">
-                  <h2> Poules {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}</h2>
-                </div>
-              {{>responsablesTemplate this}}
+                {{#if getChosenScorePool}}
+                  {{>scorePage getChosenScorePool}}
+                {{else}}
+                  {{#if chosenBrackets}}
+                    {{>brackets}}
+                  {{else}}
+                {{#with getYear}} <!-- Returns a yearData -->
+                  {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
+                  {{#with getType this}}
+                  <div class="page-header">
+                    <h2> Poules {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}
+                      {{#if isAdminOrStaff}}
+                        <button type="button" title="Aide" id="helpPool" class="btn btn-default btn-info" style="margin-left:15px">
+                            <span class="glyphicon glyphicon-question-sign"></span>
+                        </button>
+                      {{/if}}
+                    </h2>
+                  </div>
+                {{>responsablesTemplate this}}
 
-              <!-- Pool Tables -->
-              {{#unless thereIsNoPool this}}
-              <table id='allTables' class='table'>
-                {{#if isAdminOrStaff}}
+                <!-- Pool Tables -->
+                {{#unless thereIsNoPool this}}
+                <table id='allTables' class='table'>
+                  {{#if isAdminOrStaff}}
+                    <tr>
+                      <table id='specialTable' class='table'>
+                        <tr>
+                          <td>{{>pairsToSplitContainerTemplate}}</td>
+                          <td>{{>alonePairsContainerTemplate TYPEDATA=this}}</td>
+                          <td>{{>mergePlayersContainerTemplate}}</td>
+                        </tr>
+                      </table>
+                    </tr>
+                  {{/if}}
                   <tr>
-                    <center>
-                      <b>Légende:</b>
-                      {{#each getColors}}
-                        <br>
-                        <span style="color:{{this.color}}">{{this.label}}</span>
-                      {{/each}}
-                    </center>
-                  </tr>
-                  <tr>
-                    <table id='specialTable' class='table'>
-                      <tr>
-                        <td>{{>pairsToSplitContainerTemplate}}</td>
-                        <td>{{>alonePairsContainerTemplate TYPEDATA=this}}</td>
-                        <td>{{>mergePlayersContainerTemplate}}</td>
-                      </tr>
-                    </table>
-                  </tr>
-                {{/if}}
-                <tr>
-                  <td>
-                    <table id='poolTable' class='table'>
-                      {{#each getPools this}} <!-- Returns a list of lists of poolData, one list by column -->
-                      <tr>
-                        {{#each this}} <!-- For each pool in the column -->
-                        {{>poolContainerTemplate POOL=this}}
+                    <td>
+                      <table id='poolTable' class='table'>
+                        {{#each getPools this}} <!-- Returns a list of lists of poolData, one list by column -->
+                        <tr>
+                          {{#each this}} <!-- For each pool in the column -->
+                          {{>poolContainerTemplate POOL=this}}
+                          {{/each}}
+                        </tr>
                         {{/each}}
-                      </tr>
-                      {{/each}}
-                    </table>
-                  </td>
-                </tr>
-              </table>
-              {{#if isAdminOrStaff}}
-                <button type="button" id="savePools" class="btn btn-default btn-lg btn-padding">
-                  <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauver
-                </button>
-                <button type="button" id="addPool" class="btn btn-default btn-lg btn-padding">
-                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Poule
-                </button>
-                <button type="button" id="equilibrate" class="btn btn-default btn-lg btn-padding">
-                  <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Equilibrer
-                </button>
-              {{/if}}
-              {{/unless}}
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+                {{#if isAdminOrStaff}}
+                  <button type="button" id="savePools" class="btn btn-default btn-lg btn-success btn-padding">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Sauver
+                  </button>
+                  <button type="button" id="addPool" class="btn btn-default btn-lg btn-padding">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Poule
+                  </button>
+                  <button type="button" id="equilibrate" class="btn btn-default btn-lg btn-padding">
+                    <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Equilibrer
+                  </button>
+                {{/if}}
+                {{/unless}}
+              {{/with}}
             {{/with}}
-          {{/with}}
-          <div id="successBox" class="alert alert-success" role="alert" hidden>
-            <h4>
-              <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-              <span class="sr-only">Succès:</span>
-              <span id="infoMsgSuccess">Poules sauvées !</span>
-            </h4>
-          </div>
-          {{/if}}
-          {{/if}}
-          {{/if}}
+            
+            <div id="successBox" class="alert alert-success" role="alert" style="margin-top:15px" hidden>
+              <h4>
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                <span class="sr-only">Succès:</span>
+                <span id="infoMsgSuccess">Poules sauvées !</span>
+              </h4>
+            </div>
+            {{/if}}
+            {{/if}}
+            {{/if}}
 
-          <div id="infoBox" class="alert alert-info" role="alert" hidden>
-            <h4>
-              <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-              <span class="sr-only">Info:</span>
-              <span id="infoMsg"></span>
-            </h4>
+            <div id="infoBox" class="alert alert-info" role="alert" hidden>
+              <h4>
+                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                <span class="sr-only">Info:</span>
+                <span id="infoMsg"></span>
+              </h4>
+            </div>
           </div>
         </div>
       </div>
@@ -405,16 +405,16 @@ Takes 2 arguments :
     {{#if isAdminOrStaff}}
       {{#if isResponsable}}
         <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right toHideForPdf">
-            <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Ne plus être responsable
+            <span class="glyphicon glyphicon-sunglasses" aria-hidden="true"></span> Ne plus être responsable
         </button>
       {{else}}
         <button type="button" id="becomeResponsable" class="btn btn-default btn-lg pull-right toHideForPdf">
-          <span class="glyphicon glyphicon-star" aria-hidden="true"></span>Devenir responsable
+          <span class="glyphicon glyphicon-sunglasses" aria-hidden="true" style="margin-right:15px"></span>Devenir responsable
         </button>
       {{/if}}
     {{/if}}
   </div>
-
+  <center>
   <table class="table">
     <tbody>
       {{#each getResponsables}} <!-- Array of columns -->
@@ -422,8 +422,8 @@ Takes 2 arguments :
         {{#each this}}  <!-- Array of userId -->
           <td align="center">
           {{#with getPlayer this}}
-            <address>
-              <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
+            <address style="margin-top:10px">
+              <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary" style="vertical-align:middle !important;">
                 <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
                 {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
                 {{getEmail this}}<br>
@@ -436,4 +436,5 @@ Takes 2 arguments :
       {{/each}}
     </tbody>
   </table>
+  </center>
 </template>

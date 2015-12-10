@@ -4,3 +4,15 @@
 	</div>
 	{{>reactiveTable collection=getWinners settings=settings fields=fields}}
 </template>
+
+<template name="emptyWinners">
+	<div class="col-sm-8 col-sm-offset-2">
+	  <div id="infoBox" class="alert alert-info" role="alert">
+	    <h4>
+	      <span class="glyphicon glyphicon-info-sign"></span>
+	      <span class="sr-only">Info:</span>
+	      <span id="infoMsg">Aucun gagnant</span>
+	    </h4>
+	  </div>
+	</div>
+</template>

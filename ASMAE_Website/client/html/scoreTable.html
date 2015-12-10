@@ -7,12 +7,19 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"></script>
 
-  <button type="button" id="scoreTableBack" class="btn btn-default btn-lg toHideForPdf"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button>
   <div class="toHideForPdf">
   {{#with getYear}} <!-- Returns a yearData -->
     {{#with getType this}}
         <div class="page-header">
-          <h2> Matchs de poule {{getTranslateType}}{{#unless equals this "all"}} > {{getTranslateCategory}} {{/unless}}</h2>
+          <h2> 
+          <button type="button" id="scoreTableBack" class="btn btn-default btn-lg toHideForPdf pull-left"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button>
+          Matchs de poule {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}
+            {{#if isAdminOrStaff}}
+              <button type="button" title="Aide" id="helpScore" class="btn btn-default btn-info" style="margin-left:15px">
+                  <span class="glyphicon glyphicon-question-sign"></span>
+              </button>
+            {{/if}}
+          </h2>
         </div>
       {{>responsablesTemplate this}}
     {{/with}}
@@ -26,7 +33,7 @@
   {{>scoreTable this}}
 
   {{#if isAdminOrStaff}}
-    <button type="button" id="getPDF" class="btn btn-default btn-lg toHideForPdf" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
+    <button type="button" id="getPDF" class="btn btn-default btn-lg btn-warning toHideForPdf" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
       <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
     </button>
   {{/if}}
@@ -69,43 +76,41 @@
     </div>
 
   {{else}}
-    <table class="table">
-      <tbody>
-        <tr>
-          <td>
-            {{#with getLeader this._id}}
-              <!-- <h3 style="{{#if ../isForPdf}} display:inline; font-size:0.5em; {{/if}}">Chef de poule: </h3> -->
-              <address>
-                <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
-                  <i class="fa fa-user fa-5x"></i><br/>
-                  <b>Chef de poule</b><br>
-                  <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
-                  {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
-                  {{getEmail this}}<br>
-                </a>
-              </address>
+  <div class="row">
+    <div class="col-sm-3 col-sm-offset-2">
+        {{#with getLeader this._id}}
+          <!-- <h3 style="{{#if ../isForPdf}} display:inline; font-size:0.5em; {{/if}}">Chef de poule: </h3> -->
+          <center>
+          <address>
+            <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
+              <i class="fa fa-user fa-5x"></i><br/>
+              <b>Chef de poule</b><br>
+              <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
+              {{#unless equals this.profile.phone undefined}}<abbr title="Phone">Téléphone:</abbr> {{this.profile.phone}} <br>{{/unless}}
+              {{getEmail this}}<br>
+            </a>
+          </address>
+          </center>
+        {{/with}}
+    </div>
+    <div class="col-sm-3 col-sm-offset-2">
+      <center>
+        <div class="btn btn-sq-lg btn-primary" id="changeCourt">
+          <i class="fa fa-home fa-5x"></i><br/>
+           {{#if getCourt this._id}}
+             {{#with getCourt this._id}}
+                <b>Terrain</b><br>
+                <strong> Numéro : {{this.id}} </strong><br>
+                {{this.address.street}} {{this.address.number}} <br>
+                {{this.address.zipCode}} {{this.address.city}}
             {{/with}}
-          </td>
-
-          <td align="center">
-            <!-- <h3 id="TerrainHeader" style="{{#if this.isForPdf}} display:inline; font-size:0.5em;{{/if}}">Terrain :</h3> -->
-            <div class="btn btn-sq-lg btn-primary" id="changeCourt">
-              <i class="fa fa-home fa-5x"></i><br/>
-               {{#if getCourt this._id}}
-                 {{#with getCourt this._id}}
-                    <b>Terrain</b><br>
-                    <strong> Numéro : {{this.id}} </strong><br>
-                    {{this.address.street}} {{this.address.number}} <br>
-                    {{this.address.zipCode}} {{this.address.city}}
-                {{/with}}
-                {{else}}
-                  <h4 style="color:white">Assigner un terrain</h4>
-                {{/if}}
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            {{else}}
+              <h4 style="color:white">Assigner un terrain</h4>
+            {{/if}}
+        </div>
+      </center>
+    </div>
+  </div>
   {{/if}}
 </template>
 

@@ -23,47 +23,100 @@ Template.launchTournament.helpers({
         return Extras.find();
     },
 
+    'getPreviousTournamentDate' : function(){
+        var c = GlobalValues.findOne({_id:"currentYear"});
+        if (c===undefined || c.value === undefined) {
+            return undefined;
+        }
+        var y = Years.findOne({_id:c.value});
+        if (y===undefined || y.tournamentDate===undefined) {
+            return undefined;
+        }
+        var date = y.tournamentDate;
+        return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+    },
+
+    'getPreviousTournamentPrice' : function(){
+        var c = GlobalValues.findOne({_id:"currentYear"});
+        if (c===undefined || c.value === undefined) {
+            return undefined;
+        }
+        var y = Years.findOne({_id:c.value});
+        if (y===undefined) {
+            return undefined;
+        }
+        return y.tournamentPrice;
+    }
+
 });
 
 
 Template.launchTournament.events({
-    'submit form': function(event){
+    'click #launchTournamentButton': function(event){
         event.preventDefault();
 
         var getDate = $('[name=launchTournamentDate]').val().split('/');
         var getDateObject = new Date(getDate[2], getDate[1]-1, getDate[0]);
         var price = parseFloat($('[name=tournamentPrice]').val());
 
+        var dateInput = document.getElementById("formGroupDateInput");
+        var dateMsg = document.getElementById("dateError");
+        var priceInput = document.getElementById("formGroupPriceInput");
+        var errorMsg = document.getElementById("priceError");
+
+        if(getDate.length==1 && getDate[0]===""){
+            dateInput.className = "form-group has-error";
+            dateMsg.style.display = "block";
+            return;
+        }
+
+        if(isNaN(price)){
+            priceInput.className = "form-group has-error";
+            errorMsg.style.display = "block";
+            return;
+        }
+
+        dateInput.className = "form-group has-success";
+        priceInput.className = "form-group has-success";
+        dateMsg.style.display = "none";
+        errorMsg.style.display = "none";
+
         var launchData = {
             tournamentDate: getDateObject,
             tournamentPrice: price
         };
 
-		Meteor.call('launchTournament', launchData, Meteor.userId(), function(error, result){
-            if(error){
-                console.error('launchTournament error');
-                console.error(error);
+        swal({
+            title: "Ouverture des inscriptions",
+            text: "Les informations entrées sont-elles correctes ? Après validation, les inscriptions sont ouvertes",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Confirmer",
+            closeOnConfirm: true
+        },
+            function() {
+                Meteor.call('launchTournament', launchData);
             }
-            else if(result == null){
-                console.error("No result in launchTournament...");
-            }
-	    });
-
+        );
     },
 
     'click #modifyLaunchButton': function(){
-        Meteor.call('deleteCurrentYear', function(err, result){
-            if(err){
-                console.log(err);
+        swal({
+            title:"Confirmer la modification du tournoi",
+            text:"Les inscriptions déjà enregistrées ne seront pas modifiées",
+            type:"warning",
+            showCancelButton:true,
+            cancelButtonText:"Annuler",
+            confirmButtonText:"Modifier le tournoi",
+            confirmButtonColor:"#0099ff",
+            },
+            function(){
+                GlobalValues.update({_id:"registrationsON"}, {$set: {
+    				value : false
+    			}});
             }
-
-            Meteor.call('stopTournamentRegistrations', function(error, result){
-                if(error){
-                    console.error('stopTournamentRegistrations error');
-                    console.error(error);
-                }
-            });
-        });
-    }
+        );
+    },
 
 });

@@ -1,11 +1,14 @@
 <template name="modifyExtras">
 		{{#if hasExtras}}
 		<div class="row">
-			<div class="col-md-3 col-sm-offset-2">
+			<div class="col-md-3 col-sm-offset-1">
 		    	<label for="text"> Nom:</label>
 		  	</div>
-			<div class="col-md-2">
+			<div class="col-md-1">
 		    	<label for="text"> Prix:</label>
+		  	</div>
+			<div class="col-md-2">
+		    	<label for="text"> Jour:</label>
 		  	</div>
 		  	<div class="col-md-3">
 		    	<label for="text"> Commentaire:</label>
@@ -14,18 +17,24 @@
 	  	{{else}}
 	  	<div class="row">
           	<div class="col-sm-8 col-sm-offset-2">
-	  			Aucun extras pour l'instant
+	  			Aucun extra pour l'instant
 	  		</div>
         </div>
         {{/if}}
 		<div class="form-group">
 		    {{#each extras}}
 		      	<div class="row">
-					<div class="col-sm-3 col-sm-offset-2">
-					    <input type="text" class="form-control extra-name" id="name{{getID}}" value="{{getName}}" data-id="{{getID}}" name="{{getName}}">
+					<div class="col-sm-3 col-sm-offset-1">
+					    <input type="text" class="form-control extra-name" id="name{{getID}}" value="{{getName}}" data-id="{{getID}}" name="{{getName}}" required>
+					</div>
+					<div class="col-sm-1">
+					    <input type="number" min="0" step="0.01" class="form-control extra-price" id="price{{getID}}" data-id="{{getID}}" name="{{getPrice}}" value="{{getPrice}}" required>
 					</div>
 					<div class="col-sm-2">
-					    <input type="number" min="0" step="1" class="form-control extra-price" id="price{{getID}}" data-id="{{getID}}" name="{{getPrice}}" value="{{getPrice}}">
+					    <select class="form-control extra-day" id="day{{getID}}" data-id="{{getID}}" name="{{getDay}}" value="{{getDay}}">
+							<option value="saturday">Samedi</option>
+							<option value="sunday">Dimanche</option>
+						</select>
 					</div>
 					<div class="col-sm-3">
 					    <input type="text" class="form-control extra-comment" id="comment{{getID}}" name="{{getComment}}" data-id="{{getID}}" value="{{getComment}}">
@@ -37,31 +46,37 @@
 		        {{/each}}
 		 	</div>
 		 	<!-- Add extra -->
- 			<div class="row">
-				<div class="col-sm-3 col-sm-offset-2">
-			      	<div class="form-group">
-			          	<input type="text" class="form-control" id="nameExtra" name="nameExtra" placeholder="Nom">
-			  		</div>
-			  	</div>
+			<div class="row">
+				<div class="col-sm-3 col-sm-offset-1">
+					<div class="form-group">
+						<input type="text" class="form-control" id="nameExtra" name="nameExtra" placeholder="Nom">
+					</div>
+				</div>
+				<div class="col-sm-1">
+					<div class="form-group">
+						<input type="number" min="0" step="0.01" class="form-control" id="priceExtra" name="priceExtra" placeholder="Prix">
+					</div>
+				</div>
 				<div class="col-sm-2">
-			      	<div class="form-group">
-			         	<input type="number" min="0" step="1" class="form-control" id="priceExtra" name="priceExtra" placeholder="Prix">
-			  		</div>
-			  	</div>
-			  	<div class="col-sm-3">
-			      <div class="form-group">
-			         		 <input type="text" class="form-control" id="commentExtra" name="comment" placeholder="Commentaire">
-			  		</div>
-			  	</div>
-			  	<button  id="addExtraButton" class="btn btn-default" >
+					<select class="form-control" id="dayExtra" name="dayExtra">
+						<option value="saturday">Samedi</option>
+						<option value="sunday">Dimanche</option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<div class="form-group">
+						<input type="text" class="form-control" id="commentExtra" name="comment" placeholder="Commentaire">
+					</div>
+				</div>
+				<button  id="addExtraButton" class="btn btn-default" >
 					<span class="glyphicon glyphicon-plus" style="color:green" aria-hidden="true"></span>
 				</button>
-	  		</div>
-	  		<div class="row">
-          		<div class="col-sm-8 col-sm-offset-2">
-	  				<p>(Les modifications sont instantanées)</p>
-	  			</div>
-        	</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-8 col-sm-offset-3">
+					<p>(Les modifications des extras sont instantanées)</p>
+				</div>
+			</div>
 
 			<div class="row">
 				<div class="col-sm-6 col-sm-offset-3">

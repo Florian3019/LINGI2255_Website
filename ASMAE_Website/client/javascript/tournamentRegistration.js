@@ -449,6 +449,32 @@ Template.tournamentRegistrationTemplate.helpers({
 		}
 	},
 
+	'getFormattedDate' : function(day) {
+		var date = getTournamentDate();
+		if (!date || !day) {
+			return undefined;
+		}
+		var month;
+		var d = date.getDate();
+		d = day=="saturday" ? d : d+1;
+		switch(date.getMonth()) {
+			case 0: month="janvier"; break;
+			case 1: month="février"; break;
+			case 2: month="mars"; break;
+			case 3: month="avril"; break;
+			case 4: month="mai"; break;
+			case 5: month="juin"; break;
+			case 6: month="juillet"; break;
+			case 7: month="août"; break;
+			case 8: month="septembre"; break;
+			case 9: month="octobre"; break;
+			case 10: month="novembre"; break;
+			case 11: month="décembre"; break;
+			default: month="septembre"; break;
+		}
+		return d + " "+month+" "+date.getFullYear();
+	},
+
 	'extras': function (day) {
 		if (day!=="samedi" && day!="dimanche") {
 			return undefined;
@@ -458,7 +484,7 @@ Template.tournamentRegistrationTemplate.helpers({
 		if (extras===undefined) {
 			return undefined;
 		}
-		var playerExtras = getExtrasFromPlayerID(Meteor.userId(),day);
+		var playerExtras = getDayExtrasFromPlayerID(Meteor.userId(),day);
 		if (playerExtras === undefined) {
 			return extras;
 		}
@@ -472,7 +498,6 @@ Template.tournamentRegistrationTemplate.helpers({
 				}
 			}
 		}
-		console.log(extras);
 		return extras;
     },
 
@@ -764,7 +789,7 @@ Template.tournamentRegistrationTemplate.events({
         }
         var phone = event.target.phone.value;
         var sex = event.target.sex.value;
-        if(!sex){
+        if(sex !== "M" && sex !== "F"){
         	errors.push({id:"sex", error:true});
         	hasError = true;
         }
@@ -1039,48 +1064,52 @@ Template.tournamentRegistrationTemplate.events({
 
 
 		        var callback = function(err, pairID){
+					Session.set('aloneSelected',null); // To avoid bugs if trying to register again
 		        	if(err){
 		        		console.log("error callback updatePair");
 		        		console.log(err);
 		        		return;
 		        	}
-					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch);
+					var callbackInception = function (err, result) {
+						Router.go('myRegistration');
+					};
+					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch, callbackInception);
 					var type = Session.get("tournamentRegistration/type");
 					var category = Session.get("tournamentRegistration/category");
 					var firstname = curUserData.firstName;
 					var lastname = curUserData.lastName;
 					if (mailNotifyAloneUser) {
 						// Send mail to Meteor.userId() : "you are registered alone in type and category"
-            var dataMail = {
-              intro:"Bonjour"+firstname+",",
-              important:"Merci pour votre inscription au tournoi.",
-              texte:"Vous êtes bien inscrit dans la catégorie : '"+category+"' du type '"+ type+"'."
-            };
-            Meteor.call("emailFeedback",Meteor.user().emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
-              if(error){
-                console.log("error", error);
-              }
-            });
+						var dataMail = {
+							intro:"Bonjour"+firstname+",",
+							important:"Merci pour votre inscription au tournoi.",
+							texte:"Vous êtes bien inscrit dans la catégorie : '"+category+"' du type '"+ type+"'."
+						};
+						Meteor.call("emailFeedback",Meteor.user().emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
+							if(error){
+								console.log("error", error);
+							}
+						});
 					}
 					else if(mailNotifyUnregisteredPartner) {
-            //TODO secure this with given a pairID which is half-full
+						//TODO secure this with given a pairID which is half-full
 						// Send mail to partnerEmail (this is an email yey yey !) : "Hey ! firstname lastname wants to player with you in type and category at our great tournament"
-            Meteor.call("emailInvitPeople",curUserData._id, partnerEmail, function(error, result){
-              if(error){
-                console.log("error", error);
-              }
-            });
-          }
+						Meteor.call("emailInvitPeople",curUserData._id, partnerEmail, function(error, result){
+							if(error){
+								console.log("error", error);
+							}
+						});
+					}
 					else if(mailNotifyAlreadyRegisteredPartner) {
 						// Send mail to partnerID : "Hey ! firstname lastname wants to player with you ! To register with him, first delete your previous registration for that day, then click on the link in this email, see you love !"
-            Meteor.call("emailToAlreadyRegisteredUser", curUserData._id, partnerID, function(error, result){
-              if(error){
-                console.log("error", error);
-              }
-            });
-          }
+						Meteor.call("emailToAlreadyRegisteredUser", curUserData._id, partnerID, function(error, result){
+							if(error){
+								console.log("error", error);
+							}
+						});
+					}
 					// else : no mail
-		        }
+				}
 
 				//For the payment
 				//Remark: we pass the paymentMethod to pairData but it won't be linked with the Pair in the database)
@@ -1089,11 +1118,10 @@ Template.tournamentRegistrationTemplate.events({
 
 				pairData.year = currentYear;
 		        Meteor.call('updatePair', pairData, callback);
-		        Session.set('aloneSelected',null); // To avoid bugs if trying to register again
-
-		    	Router.go('myRegistration');
 			}
 			else {	//The players cheats on the AFT ranking
+				var o = document.getElementById("AFTOK");
+				o.style.display = 'none';
 
 				var e = document.getElementById("AFTcheat");
 				e.style.display = 'block';
@@ -1128,4 +1156,7 @@ Template.tournamentRegistrationTemplate.events({
 		}
 		var sexSelect = document.getElementById('sex');
 		sexSelect.value = user.profile.gender!==undefined ? user.profile.gender : "default";
+
+		var rankSelect = document.getElementById('rank');
+		rankSelect.value = user.profile.AFT!==undefined ? user.profile.AFT : "NC";
 	});
