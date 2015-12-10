@@ -47,19 +47,19 @@
 		  				<div class="col-sm-2 col-sm-offset-3">
 	     					<div class="form-group" id="birthDayDiv">
 	      						<label for="day">Jour:</label>
-	          					<input type="number" id="birthDay" class="form-control" min="1" value="{{getDate}}" name="jour de naissance">
+	          					<input type="number" id="birthDay" class="form-control" min="1" value="{{getDate}}" name="birthDay">
 	  	  					</div>
 	    				</div>
 						<div class="col-sm-2">
 	      					<div class="form-group" id="birthMonthDiv">
 	      						<label for="month">Mois:</label>
-	          					<input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{getMonth}}" name="mois de naissance">
+	          					<input type="number" id="birthMonth" class="form-control" min="1" max="12" value="{{getMonth}}" name="birthMonth">
 	        				</div>
 	      				</div>
 						<div class="col-sm-2">
 	      					<div class="form-group" id="birthYearDiv">
 	      						<label for="year">Année:</label>
-	          					<input type="number" id="birthYear" class="form-control" min="1950" value="{{getYear}}" name="année de naissance">
+	          					<input type="number" id="birthYear" class="form-control" min="1900" value="{{getYear}}" name="birthYear">
 	    					</div>
 		  				</div>
 	  				</div>
@@ -94,7 +94,7 @@
 						<div class="col-sm-1">
 							<div class="form-group">
 								<label for="text">Boite:</label>
-								<input type="text" class="form-control" id="box"  value="{{address.boxNumber}}" name="boxNumber">
+								<input type="text" class="form-control" id="box"  value="{{address.box}}" name="box">
 							</div>
 						</div>
 					</div>
