@@ -28,7 +28,6 @@ Template.mapForOneCourt.helpers({
       // Make sure the maps API has loaded
       if (GoogleMaps.loaded()) {
         // Map initialization options
-        console.log(this);
         return {
           center: new google.maps.LatLng(this.coords.lat, this.coords.lng),
           zoom: 14

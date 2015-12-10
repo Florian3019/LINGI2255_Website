@@ -1,10 +1,5 @@
 <template name="courtForm">
 	<div class="row">
-		<div class="col-sm-10 col-sm-offset-1">
-			<legend>Addresse du terrain</legend>
-		</div>
-	</div>
-	<div class="row">
 		<div class="col-sm-2 col-sm-offset-3">
 			<label for="street">Rue:</label>
 			<input type="text" name="street" id="street" value="{{DATA.address.street}}" class="form-control" required>
@@ -23,25 +18,25 @@
 		<div class="col-sm-2 col-sm-offset-3">
  		 	<div class="form-group">
 				<label for="zipCode">Code postal:</label>
-				<input type="text" name="zipCode" id="zipCode" value="{{DATA.address.zipCode}}" class="form-control">
+				<input type="text" name="zipCode" id="zipCode" value="{{DATA.address.zipCode}}" class="form-control" required>
  		   	</div>
 		 	</div>
 		 	<div class="col-sm-2">
 			<label for="city">Ville:</label>
-			<input type="text" name="city" id="city" value="{{DATA.address.city}}" class="form-control">
+			<input type="text" name="city" id="city" value="{{DATA.address.city}}" class="form-control" required>
 		</div>
 		<div class="col-sm-2">
 			<label for="text">Pays</label>
-			<input type="text" class="form-control" id="country" value="{{#if DATA.address.country}}{{DATA.address.country}}{{else}}Belgique{{/if}}" name="country">
+			<input type="text" class="form-control" id="country" value="{{#if DATA.address.country}}{{DATA.address.country}}{{else}}Belgique{{/if}}" name="country" required>
 		</div>
 	</div>
-	
+
 	 	<div class="row">
-		<div class="col-sm-12 col-sm-offset-3">
+		<div class="col-sm-9 col-sm-offset-3">
 			<div class="form-group">
 				<label for="surface">Surface:</label>
 				<br>
-				<select name="surface" id="surface" class="form-control custom-inline-radio" style="width: 15%; display: inline">
+				<select name="surface" id="surface" class="form-control custom-inline-radio" style="width: 15%; display: inline" required>
 					<option value="Autre" {{selectedSurface DATA.court.surface "Autre"}}>Autre</option>
 					<option value="Terre Battue" {{selectedSurface court.surface "Terre Battue"}}>Terre Battue</option>
 					<option value="Gazon" {{selectedSurface DATA.court.surface "Gazon"}}>Gazon</option>
@@ -56,7 +51,7 @@
 			<div class="form-group">
 				<h5><b>Type:</b></h5>
 				<div class="radio">
-					<label><input type="radio" name="courtType" value="privé" {{isPrivate DATA.court.courtType}} />Privé</label><br />
+					<label><input type="radio" name="courtType" value="privé" {{isPrivate DATA.court.courtType}} required/>Privé</label><br />
 				</div>
 				<div class="radio">
 					<label><input type="radio" name="courtType" value="club" {{isClub DATA.court.courtType}} />Club</label>
@@ -70,7 +65,7 @@
 		<div class="row">
 			<div class="col-sm-6 col-sm-offset-3">
 				<label for="numberOfCourts">Nombre de terrains:</label>
-				<input type="number" min="1" name="numberOfCourts" id="numberOfCourts" class="form-control" value="{{#if DATA.court}}{{DATA.court.numberOfCourts}}{{else}}1{{/if}}">
+				<input type="number" min="1" name="numberOfCourts" id="numberOfCourts" class="form-control" value="{{#if DATA.court}}{{DATA.court.numberOfCourts}}{{else}}1{{/if}}" required>
 			</div>
 		</div>
 	</div>

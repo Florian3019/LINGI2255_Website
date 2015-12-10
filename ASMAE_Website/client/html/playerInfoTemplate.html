@@ -1,6 +1,12 @@
 <!-- Takes a player id as argument ID-->
 <template name="playerInfoTemplate">
 {{#with getPlayer}}
+  {{#unless ../HidePic}}
+        <div class="page-header">
+          <h2> Information sur le joueur</h2>
+        </div>
+  {{/unless}}
+
  <div class="panel panel-info">
             <div class="panel-heading">
               <h3 class="panel-title">
@@ -17,7 +23,13 @@
                     <tbody>
                         <tr>
                           <td>Addresse email</td>
-                          <td id="Email">{{emails}}</td>
+                          <td id="Email">
+                              {{#if isCurrentUser id}}
+                                {{emails}}
+                              {{else}}
+                                <a href="mailto:{{emails}}">{{emails}} </a>
+                              {{/if}}
+                          </td>
                         </tr>
                     {{#if isStaffOrAdmin}}
                       <tr>
@@ -32,7 +44,7 @@
                         <td>Sexe</td>
                         <td id="sex">{{gender}}</td>
                       </tr>
-                        <tr>
+                      <tr>
                         <td>Adresse</td>
                         <td id="address">{{address}}</td>
                       </tr>
@@ -61,11 +73,11 @@
                               {{#if isCurrentUser ../id}}
                                 <a href={{pathFor route='tournamentRegistrationSaturday'}} id="modifySaturdayLink">Modifier</a> |
                               {{/if}}
-                                 <a href="#" id="unsubscribeSaturdayLink">Supprimer</a> )
+                                 <a href="#" id="unsubscribeSaturdayLink" data-id={{../id}}>Désinscrire</a> )
                                 {{/if}}
                               {{else}}
                               {{#if isCurrentUser ../id}}
-                               (<a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">Inscription</a>)
+                               ( <a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">Inscription</a> )
                                {{/if}}
                               {{/if}}
                           </td>
@@ -81,11 +93,11 @@
                             {{#if isCurrentUser ../id}}
                               <a href={{pathFor route='tournamentRegistrationSunday'}} id="modifySundayLink">Modifier</a> |
                             {{/if}}
-                               <a href="#" id="unsubscribeSundayLink">Supprimer</a> )
+                               <a href="#" id="unsubscribeSundayLink" data-id={{../id}}>Désinscrire</a> )
                               {{/if}}
                               {{else}}
                               {{#if isCurrentUser ../id}}
-                              (<a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">Inscription</a>)
+                              ( <a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">Inscription</a> )
                               {{/if}}
                             {{/if}}
                           </td>
@@ -97,7 +109,7 @@
                         {{#with getPayment id}}
                         {{#each playerExtras ../id}}
                         <tr>
-                            <td>{{extraName}} ({{extraPrice}} euros)</td>
+                            <td>{{extraDay}} : {{extraName}} ({{extraPrice}} euros)</td>
                             <td>{{extraQuantity}}</td>
                         </tr>
                         {{/each}}
@@ -135,22 +147,28 @@
               </div>
 
             </div>
-            {{#if isStaffOrAdmin}}
-            {{#with getPlayerModLog this.log}}
-              <h4> Modifications récentes </h4>
-              {{>reactiveTable collection=this settings=settings fields=fields}}
-            {{/with}}
-            {{/if}}
+
             {{#if canModify}}
               <center>
-                <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>Modifier</button>
+                <button type="button" id="button_edit" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>
+                <span class="glyphicon glyphicon-pencil" style="margin-right:15px"></span>
+                Modifier</button>
                 {{#unless ../hideDelete}}
                   <button type="button" id="deleteUser" class="btn btn-default" data-userid="{{../ID}}" data-modal="{{../MODAL}}" style="margin:10px;" hidden>
+                  <span class="glyphicon glyphicon-remove" style="margin-right:15px; color:red"></span>
                   Supprimer</button>
                 {{/unless}}
               </center>
             {{/if}}
 </div>
+
+{{#if isStaffOrAdmin}}
+    {{#with getPlayerModLog this.log}}
+    <h4> Modifications récentes </h4>
+    {{>reactiveTable collection=this settings=settings fields=fields}}
+    {{/with}}
+{{/if}}
+
 
 <!-- Modal payment -->
 <div class="modal" id="dropinModal">

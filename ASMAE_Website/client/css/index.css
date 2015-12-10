@@ -23,11 +23,13 @@ html {
     background-size: cover;
 }
 
-.btn {
-	text-transform: none !important;
-}
 
-/* Navbar on the top */
+/*
+*
+*  Navbar on the top 
+*
+*/
+
 .navbar {
     background-color: #f3f3f3 !important;
 }
@@ -39,7 +41,12 @@ html {
     height: 64px; */
 }
 
-/* Sidebar on the left */
+/**
+*
+* Sidebar on the left 
+*
+*/
+
 .sidebar {
     padding-top: 64px;
     position: fixed;
@@ -53,11 +60,34 @@ html {
     box-shadow: 4px 0 3px -1px #888;
 }
 
+
 .sidebar-mobile {
     display: none;
     background: white;
 }
 
+/* Headers side bar */
+.nav-sidebar-header {
+    padding: 10px;
+    font-size: 25px;
+    background: rgba(0, 76, 153, 0.6);
+    color: white;
+}
+
+.nav-sidebar-header-mobile {
+    padding: 10px !important;
+    font-size: 25px !important;
+    display: none !important;
+    text-decoration: none !important;
+    background: rgba(0, 76, 153, 0.6) !important;
+    color: white !important;
+}
+
+.nav-sidebar-header-mobile:hover {
+    background-color: rgba(0, 76, 153, 0.4) !important;
+}
+
+/* Element of the sidebar */
 .menuItem {
 	color:black;
 }
@@ -71,26 +101,29 @@ html {
     display: block;
     text-decoration: none;
     cursor: pointer;
-    background-color: rgba(51, 153, 255,0.15);
+    background-color: rgba(51, 153, 255, 0.15);
 }
 
 .sidebar-nav a {
-	color: #fff;
+	color: white;
 }
 
-.nav-sidebar-header {
-	padding: 10px;
-    font-size: 25px;
 
+/* Icon of the sidebar */
+.indexIcon{
+    margin-right: 15px;
 }
 
-.nav-sidebar-header-mobile {
-    padding: 10px;
-    font-size: 25px;
-    display: none;
+/*
+*
+* Content of the web site
+*
+*/
+
+.page-header {
+    text-align: center;
 }
 
-/* Content of the web site */
 .page-content {
     padding-top: 64px;
     margin-left: 240px;
@@ -98,7 +131,6 @@ html {
     /*height: 100%;*/
     overflow: auto;
     z-index: 1;
-
 }
 
 .content {
@@ -109,14 +141,9 @@ html {
   	min-height: 710px;
 }
 
-/* Footer of the web site */
-.footer {
-    background: #f3f3f3;
-}
-
 /* Home page disign */
 .homePage {
-	padding: 30px;
+    padding: 30px;
     background: url(main2.jpg) no-repeat center center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -124,39 +151,76 @@ html {
     background-size: cover;
 }
 
+/*
+*
+* Footer of the web site 
+*
+*/
+
+.footer {
+    background: #f3f3f3;
+}
+
+
 /* Options */
 .nomargin {
-   		margin: 0 !important;
+   	margin: 0 !important;
 }
 
 .nopadding {
-        padding: 0 !important;
-        margin: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Padding ajustement for inner link in the web site */
+.anchor { /* We add some padding to not be stuck on the top (not just 63px like the navbar) */
+    padding-top: 75px; 
+    margin-top: -75px;
+}
+
+/* Avoid underline in button text if href */
+.btn {
+    text-transform: none !important;
 }
 
 /* Permet d'avoir le menu qui s'ouvre quand on passe au dessus avec la souris */
-.dropdown:hover .dropdown-menu {
+.dropdown:hover .auto-dropdown-menu {
 	display: block;
 }
 
-/* Columun same height */
-/* top row */
+/* Permet d'avoir des button chargement */
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+
+/* Columun same height 
+ top row 
 .col .cont{
 	margin-bottom: -99999px;
 	padding-bottom: 99999px;
 }
 
-/* bottom row */
+ bottom row 
 .col-base{
-    margin-top: -15px; /* cut off top portion of bottom wells */
+    margin-top: -15px;  cut off top portion of bottom wells 
 }
 
 .col-wrap {
     overflow: hidden;
-}
+} */
 
 /* Design options content */
-
 .well {
     background: #f3f3f3 !important;
     display: block;
@@ -170,19 +234,30 @@ html {
     border-radius : 15px !important;
 }
 
+/* Title for information box */
 .panel-heading {
     background: rgba(0, 76, 153, 0.6) !important;
     /*background: #f3f3f3 !important;*/
-    color: #000 !important;
+    color: white !important;
+    font-weight: bold;
 }
 
+/* Text to fill can only grow verticaly (no change of the width) */
 textarea {
     resize:vertical !important;
 }
 
+/* Hidde arrow number box */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
 /* Box alert info */
 .alert-info {
-    background-color: #A0522D !important;
+    background-color: rgba(0, 76, 153, 0.6) !important;
 }
 
 
@@ -216,6 +291,7 @@ If screen width smaller than 767 px
 /* Hide navside menu */
 @media only screen and (max-width: 767px) {
 
+    /* No sidebar for mobile mode but a mobile-sidebar */
     .sidebar {
         display: none;
     }
@@ -229,6 +305,15 @@ If screen width smaller than 767 px
     }
 
     .nav-sidebar-header-mobile {
-        display: block;
+        display: block !important;
+    }
+
+    /* No auto dropdown for mobile */
+    .dropdown-menu {
+        display: none !important;
+    }
+
+    .open .dropdown-menu {
+        display: block !important;
     }
 }

@@ -136,8 +136,8 @@ Template.scoreTable.events({
     Meteor.call("addToModificationsLog",
     {"opType":"Modification points match poule",
     "details":
-        playersName1.name[0]+" "+playersName1.name[1] +
-        " VS " + playersName2.name[0]+" "+playersName2.name[1] +
+        playersName1.names[0]+" "+playersName1.names[1] +
+        " VS " + playersName2.names[0]+" "+playersName2.names [1] +
         " Points: "+data.pair1.points+getStringOptions()
     },
       function(err, logId){
@@ -145,10 +145,10 @@ Template.scoreTable.events({
           console.error(err);
           return;
         }
-        Meteor.users.update({_id:playersName1.ids[0]},{$addToSet:{"log":logId}});
-        Meteor.users.update({_id:playersName1.ids[1]},{$addToSet:{"log":logId}});
-        Meteor.users.update({_id:playersName2.ids[0]},{$addToSet:{"log":logId}});
-        Meteor.users.update({_id:playersName2.ids[1]},{$addToSet:{"log":logId}});
+        Meteor.call('addToUserLog', playersName1.ids[0], logId);
+        Meteor.call('addToUserLog', playersName1.ids[1], logId);
+        Meteor.call('addToUserLog', playersName2.ids[0], logId);
+        Meteor.call('addToUserLog', playersName2.ids[1], logId);
       }
     );
   }
@@ -254,21 +254,38 @@ Template.scoreTable.helpers({
 });
 
 var getStringOptions = function(){
-  return "\ncatégorie: "+Session.get("PoolList/Category")+
-      " type: "+Session.get("PoolList/Type") +
-      " année: "+Session.get("PoolList/Year");
+  return " dans "+typesTranslate[Session.get("PoolList/Type")]+" en "+
+      categoriesTranslate[Session.get("PoolList/Category")]+
+      " (" + Session.get("PoolList/Year")+")";
 }
 
 var getPairPlayers = function(pairId){
-  p = Pairs.findOne({_id:pairId},{"player1._id":1, "player2._id":1});
-  info = {"profile.firstName":1, "profile.lastName":1};
-  u1 = Meteor.users.findOne({_id:p.player1._id},info);
-  u2 = Meteor.users.findOne({_id:p.player2._id},info);
+  var p = Pairs.findOne({_id:pairId},{"player1._id":1, "player2._id":1});
+  var info = {"profile.firstName":1, "profile.lastName":1};
+  var u1 = Meteor.users.findOne({_id:p.player1._id},info);
+  var u2 = Meteor.users.findOne({_id:p.player2._id},info);
 
   return {"names":[u1.profile.firstName + " "+u1.profile.lastName, u2.profile.firstName + " "+u2.profile.lastName],"ids":[u1._id, u2._id]};
 }
 
 Template.scorePage.events({
+  'click #helpScore':function(event){
+    swal({
+        title:"<h1>Aide</h1>",
+        text: "<ul class='list-group' style='text-align:left'>"+
+                "<li class='list-group-item'>Pour changer de terrain, cliquez sur 'Assigner un terrain' ou sur le terrain actuel.</li>"+
+                "<li class='list-group-item'>La ligne du dessus dans le tableau correspond au score de la paire dans la colonne.</li>"+
+                "<li class='list-group-item'>Pour devenir responsable de cette catégorie, cliquez sur 'Devenir responsable'.</li>"+
+                "<li class='list-group-item'>Pour imprimer le pdf, cliquez sur le bouton correspondant en bas de page.</li>"+
+              "</ul>",
+        type:"info",
+        customClass:"sweetAlertScroll",
+        confirmButtonText:"Ok",
+        confirmButtonColor:"#0099ff",
+        html:true
+        }
+        );
+  },
   'click #scoreTableBack':function(event){
     Session.set("PoolList/ChosenScorePool","");
   },

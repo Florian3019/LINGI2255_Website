@@ -7,8 +7,7 @@ Router.configure({
 	layoutTemplate: 'index',
 	loadingTemplate:'loading',
 	waitOn: function() {
-    	return [Meteor.subscribe('GlobalValues')
-    	];
+    	return [Meteor.subscribe('GlobalValues'), Meteor.subscribe('users')];
   	}
 });
 
@@ -21,7 +20,7 @@ Router.onBeforeAction(function() {
         else
 			this.next();
 	}
-}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap', 'winners']});
+}, {except: ['home', 'rules', 'login', 'faq', 'poolList', 'courtMap', 'winners', 'tournamentHistory']});
 
 
 // onStop hook is executed whenever we LEAVE a route
@@ -34,19 +33,32 @@ Router.onStop(function(){
 Router.route('/', {
 	template: 'home',
 	name: 'home',
-	waitOn: function(){
-		return [ Meteor.subscribe('Years') ]
-	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
 	}
+});
+
+Router.route('/historique-tournoi', {
+	template:'tournamentHistory',
+	name:"tournamentHistory",
+	onAfterAction: function(){
+		Session.set('showNavBar', true);
+	},
+	waitOn: function(){
+		return [ 	Meteor.subscribe('Pairs'), 
+					Meteor.subscribe('Pools'), 
+					Meteor.subscribe('Types'), 
+					Meteor.subscribe('Years'), 
+					Meteor.subscribe('GlobalValues')
+			  ]
+	},
 });
 
 Router.route('/gagnants', {
 	template:'winners',
 	name:"winners",
 	waitOn: function(){
-		return [ Meteor.subscribe('Winners'), Meteor.subscribe('Pairs'),Meteor.subscribe('users')  ]
+		return [ Meteor.subscribe('Winners'), Meteor.subscribe('Pairs')  ]
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
@@ -81,7 +93,7 @@ Router.route('/modifications-log', {
 	template: 'modificationsLog',
 	name: 'modificationsLog',
 	waitOn: function(){
-		return [ Meteor.subscribe('ModificationsLog'), Meteor.subscribe('users') ]
+		return [ Meteor.subscribe('ModificationsLog') ]
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', true);
@@ -353,7 +365,7 @@ Router.route('/modifier-terrain/:_id', {
 
 	data: function(){
 		if (this.ready()) {
-			var court = Courts.findOne({ _id: this.params._id, ownerID: Meteor.userId() });
+			var court = Courts.findOne({ _id: this.params._id });
 			var owner = Meteor.users.findOne({_id: court.ownerID});
 			var address = Addresses.findOne({_id: court.addressID});
 			var data = {};

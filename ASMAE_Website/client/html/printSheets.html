@@ -30,11 +30,12 @@
     <h2 id="HeaderSheetPrintTestID">Impression feuille de poule</h2>
   </div>
   {{#if isOnePage}}
-  <button id="printPdf" class="btn btn-default btn-lg">
+  <center>
+  <button id="printPdf" class="btn btn-default btn-lg btn-warning">
     <span class="glyphicon glyphicon-print"></span> Imprimer
   </button>
+  </center>
   {{else}}
-  <!-- {{#if equals fullPages undefined}} -->
   <div class="row">
     <div class="col-md-2">
       <select class="form-control Year" id="Year" name = "Year">
@@ -65,27 +66,27 @@
       </select>
     </div>
     <div class="col-md-3 col-md-offset-1">
-      <button type="button" id="Save" class="btn btn-default btn-lg">
+      <button type="button" id="Save" class="btn btn-default btn-lg btn-success">
         {{#if isWorkingPool}}
         <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
         {{else}}
-        <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
         {{/if}}
-        Sauver
+        Enregistrer
       </button>
     </div>
   </div>
   <br>
 
-  <button id="printPdf" style="display:none" class="btn btn-default btn-lg">
-    <span class="glyphicon glyphicon-print"></span> Imprimer
-  </button>
+  <center>
+    <button id="printPdf" style="display:none" class="btn btn-default btn-lg btn-warning">
+      <span class="glyphicon glyphicon-print"></span> Imprimer
+    </button>
+  </center>
   <br>
   {{/if}}
 
 
-
-  <!-- {{#if equals fullPages undefined}} -->
   {{#if isOnePage}}
   {{>printSheetsV2 POOLS=getOnePool}}
   {{else}}

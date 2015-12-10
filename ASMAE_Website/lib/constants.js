@@ -50,6 +50,23 @@ getDistanceFromHQ = function(coords){
     return Math.sqrt(Math.pow(latDist,2) + Math.pow(lngDist,2)); // Pythagore
 }
 
+// Returns true if a pair is full
+hasBothPlayers = function(pair){
+    return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
+}
+
+getTournamentDate = function() {
+    var currentYear = GlobalValues.findOne({_id:"currentYear"});
+    if (currentYear===undefined || currentYear.value === undefined) {
+        return undefined;
+    }
+    var year = Years.findOne({_id:currentYear.value});
+    if (year===undefined || year.tournamentDate===undefined) {
+        return undefined;
+    }
+    return year.tournamentDate;
+}
+
 /*
     Returns the date as a string that can be compared using the classical string compare method,
     such that the comparison is coherent with the ordering of dates.
@@ -101,7 +118,13 @@ getPairsFromPlayerID = function(userId, cursor) {
     if (typeof pairs === 'undefined' || pairs.fetch().length < 1) {
         return undefined;
     }
-    return cursor ? pairs : pairs.fetch();
+    if (!cursor) {
+        pairs = pairs.fetch();
+        if (pairs===undefined || pairs.length < 1){
+            return undefined;
+        }
+    }
+    return pairs;
 }
 
 getDayPairFromPlayerID = function(userId, day) {
@@ -111,7 +134,7 @@ getDayPairFromPlayerID = function(userId, day) {
     }
     for (var i=0; i<pairs.length; i++) {
         var data = getTypeAndCategoryFromPairID(pairs[i]._id);
-        if (getDayFromType(data.playerType) == day) {
+        if (data !== undefined && getDayFromType(data.playerType) == day) {
             return pairs[i];
         }
     }
@@ -125,7 +148,7 @@ getTypeAndCategoryFromPairID = function(pairID) {
     }
     var playerType = pool.type;
     var playerCategory = pool.category;
-    
+
     return {playerType:playerType, playerCategory:playerCategory};
 }
 
@@ -143,7 +166,7 @@ getDayFromType = function(type) {
     }
 }
 
-getExtrasFromPlayerID = function(playerID, day) {
+getDayExtrasFromPlayerID = function(playerID, day) {
     if (playerID===undefined || (day!=="saturday" && day!=="sunday")) {
         return undefined;
     }
@@ -158,9 +181,21 @@ getExtrasFromPlayerID = function(playerID, day) {
         return pair.player2.extras;
     }
     else {
-        console.error("Some weird bug... again ? See getExtrasFromPlayerID");
+        console.error("Some weird bug... again ? See getDayExtrasFromPlayerID");
         return undefined;
     }
+}
+
+getExtrasFromPlayerID = function(playerID) {
+    if (playerID===undefined) {
+        return undefined;
+    }
+    var extras1 = getDayExtrasFromPlayerID(playerID, "saturday");
+    var extras2 = getDayExtrasFromPlayerID(playerID, "sunday");
+    var allExtras = {};
+    for (var extraname in extras1) { allExtras[extraname] = extras1[extraname]};
+    for (var extraname in extras2) { allExtras[extraname] = extras2[extraname]};
+    return allExtras;
 }
 
 getRegistrationInfoFromPlayerID = function(playerID) {
@@ -173,6 +208,9 @@ getRegistrationInfoFromPlayerID = function(playerID) {
     for (var i=0; i<pairs.length; i++) {
         var pairID = pairs[i]._id;
         var data = getTypeAndCategoryFromPairID(pairID);
+        if (data === undefined) {
+            continue;
+        }
         var type = data.playerType;
         var category = data.playerCategory;
         var day = getDayFromType(type);
@@ -210,7 +248,8 @@ isRegistered = function(playerID) {
 }
 
 getPlayerNumber = function(playerID, pairID) {
-    var pair = Pairs.findOne({_id:pairID});
+    var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
+    var pair = Pairs.findOne({_id:pairID, year:currentYear});
     if (pairID === undefined || playerID === undefined || pair === undefined) {
         return undefined;
     }

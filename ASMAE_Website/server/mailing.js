@@ -132,7 +132,7 @@ Meteor.methods({
         Meteor.call('emailFeedback',mails[i],subject,data);
       }
     }
-    console.log("Mails not send due to MAILGUN");
+
 
   },
 
@@ -163,7 +163,7 @@ Meteor.methods({
         var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
         for (var j in allcat){
           var cat = allcat[j];
-          if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+          if(type[cat]!= undefined && type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
             var r= cat.concat("Resp")
             var resplist=type[r];
             if (resplist!=undefined && resplist.length>0){
@@ -185,7 +185,7 @@ Meteor.methods({
       }
       var responsables="";//string
       for (var i = 0; i < responsableList.length; i++) {
-        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
+        if(responsableList[i]!=undefined) responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
       }
 
       var adresse="";//string
@@ -233,7 +233,7 @@ Meteor.methods({
         var type = Types.findOne({$or:[{"preminimes":poolId},{"minimes":poolId},{"cadets":poolId},{"scolars":poolId},{"juniors":poolId},{"seniors":poolId},{"elites":poolId}]});
         for (var j in allcat){
           var cat = allcat[j];
-          if(type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
+          if(type[cat]!=undefined && type[cat].indexOf(poolId)>-1){ //Look if our pool is in a cat
             var r= cat.concat("Resp")
             var resplist=type[r];
             if (resplist!=undefined && resplist.length>0){
@@ -255,7 +255,7 @@ Meteor.methods({
       }
       var responsables="";//string
       for (var i = 0; i < responsableList.length; i++) {
-        responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
+        if(responsableList[i]!=undefined) responsables += responsableList[i].profile.firstName+" "+responsableList[i].profile.lastName+" ("+responsableList[i].profile.phone+")";
       }
       var subject = "[IMPORTANT] Concernant le déroulement du tournoi de tennis Le Charles de Lorraine.";
       var data={

@@ -33,19 +33,6 @@ function initializeBraintree (clientToken) {
   });
 }
 
-function getExtras(userId){
-	var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-	var pair = Pairs.findOne({$or:[{"player1._id":userId},{"player2._id":userId}], "year":currentYear},{"_id":1});
-	if(pair===undefined) return undefined;
-	if(pair.player1!==undefined && userId === pair.player1._id){
-		return pair.player1.extras;
-	}
-	else {
-		if(pair.player2==undefined) return undefined;
-		return pair.player2.extras;
-	}
-}
-
 // Takes a player id as argument
 Template.playerInfoTemplate.helpers({
 
@@ -220,16 +207,19 @@ Template.playerInfoTemplate.helpers({
 	},
 
 	'playerExtras': function(userId){
-		var extras = getExtras(userId);
+		var extras = getExtrasFromPlayerID(userId);
 		if(extras!==undefined)
 		{
 			var extrasArray = [];
 			for(extra in extras){
 				var price = Extras.findOne({name:extra}).price;
+                var day = Extras.findOne({name:extra}).day;
+                day = day == "saturday" ? "Samedi" : "Dimanche";
 				extraObject = {
 					extraName: extra,
 					extraQuantity: extras[extra],
-					extraPrice: price
+					extraPrice: price,
+                    extraDay: day
 				};
 				extrasArray.push(extraObject);
 			}
@@ -270,6 +260,9 @@ Template.playerInfoTemplate.events({
 
 	'click #unsubscribeSaturdayLink' : function(event) {
 		event.preventDefault();
+        var dataSet = event.currentTarget.dataset;
+        var userID = dataSet.id
+        console.log(userID);
 
 		swal({
 			title: "Êtes-vous sûr ?",
@@ -281,7 +274,7 @@ Template.playerInfoTemplate.events({
 			closeOnConfirm: false },
 			function(){
 				var pair = getDayPairFromPlayerID(Meteor.userId(), "saturday");
-				Meteor.call('unsubscribePairFromTournament', pair._id);
+				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 				swal("Inscription supprimée", "", "success");
 				Router.go('home');
 			});
@@ -289,6 +282,9 @@ Template.playerInfoTemplate.events({
 
 	'click #unsubscribeSundayLink' : function(event) {
 		event.preventDefault();
+        var dataSet = event.currentTarget.dataset;
+        var userID = dataSet.id;
+        console.log(userID);
 
 		swal({
 			title: "Êtes-vous sûr ?",
@@ -300,7 +296,7 @@ Template.playerInfoTemplate.events({
 			closeOnConfirm: false },
 			function(){
 				var pair = getDayPairFromPlayerID(Meteor.userId(), "sunday");
-				Meteor.call('unsubscribePairFromTournament', pair._id);
+				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 				swal("Inscription supprimée", "", "success");
 				Router.go('home');
 			});
@@ -337,7 +333,8 @@ Template.playerInfoTemplate.events({
 			}
 		}
 		else {
-			player = Meteor.users.find({"_id": this.id}).fetch()
+			var player = Meteor.users.find({"_id": this.id}).fetch();
+			var userId = this.id;
 			if(false){
 				if (confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
 					Meteor.call('deleteUser',this.id);
@@ -356,23 +353,53 @@ Template.playerInfoTemplate.events({
             		else{
             			var years_in1 = result[0]
             			var max_year1 = result[1]
-            			var bool =true
             			for(i = 0; years_in1 && max_year1 && i < years_in1.length; i++){
 							if(years_in1[i][1] === max_year1){
-								bool = false
-								alert("Veuillez désinscrire le joueur du tournoi de cette année avant de le supprimer.")
-								Router.go('home')
+								swal({
+									title: "Information",
+									text: "Veuillez désinscrire le joueur du tournoi de cette année avant de le supprimer.",
+									type: "warning",
+									showCancelButton: false,
+									cancelButtonText:"Annuler",
+									confirmButtonColor: "#3085d6",
+									confirmButtonText: "Ok",
+									closeOnConfirm: true
+								});
+								return;
 							}
 						}
-            		}
+					}
 
-					if(bool && confirm('Etes-vous certain de vouloir supprimer définitivement ce joueur?\n Cette action est irréversible.')) {
-						Meteor.call('deleteUser',this.id);
-					}
-					else if(bool){
-						alert("Joueur non supprimé.")
-					}
-					Router.go('home')
+            		swal({
+						title: "Êtes-vous sûr ?",
+						text: "Vous êtes sur le point de supprimer définitivement ce joueur. Cette action est irréversible.",
+						type: "warning",
+						showCancelButton: true,
+						cancelButtonText:"Annuler",
+						confirmButtonColor: "#DD6B55",
+						confirmButtonText: "Supprimer",
+						closeOnConfirm: false
+						},
+						function(){
+				      		Meteor.call('deleteUser',userId, function(err, status){
+					      	 	if(err){
+					      	 		console.error(err);
+					      	 		return;
+					      	 	}
+					      	 	swal({
+						          title:"Succès !",
+						          text:"Le joueur a été supprimé.",
+						          type:"success",
+						          confirmButtonText:"Ok",
+						          confirmButtonColor: "#3085d6",
+						          closeOnConfirm:true,
+						          showCancelButton: false
+						        },
+						        function(){
+						        	Router.go('home');
+						        });
+			      	 		});
+			      	});
         		});
 
 			}
@@ -381,12 +408,26 @@ Template.playerInfoTemplate.events({
 	},
 
 	'click #markAsPaid': function(event){
-		Meteor.call('markAsPaid', this._id, function(err, result){
-			if(err){
-				console.log("Error while calling method markAsPaid");
-				console.log(err);
-			}
-		});
+		var userId = this._id;
+
+		swal({
+        title: "Etes vous sûr ?",
+        text: "Cette action est irréversible.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Marquer comme payé",
+        closeOnConfirm: true
+        },
+        function(){
+			Meteor.call('markAsPaid', this._id, function(err, result){
+				if(err){
+					console.log("Error while calling method markAsPaid");
+					console.log(err);
+				}
+			});
+        }
+        );
 	}
 
 });

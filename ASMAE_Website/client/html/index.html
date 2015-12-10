@@ -25,30 +25,63 @@
           Menu
         </div>
         <hr class="nopadding">
+        <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
+          <i class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></i>
+          Statistiques
+        </a>
+        </li>
         {{#if isStaffMember}}
-        <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">Déroulement du tournoi</a></li>
+        <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">
+        <i class="fa fa-tasks indexIcon"></i>
+        Déroulement du tournoi</a></li>
         {{/if}}
         {{#if isStaffMember}}
-        <li><a href="{{pathFor route='poolList'}}" class="menuItem">Gestion du tournoi</a></li>
+        <li><a href="{{pathFor route='poolList'}}" class="menuItem">
+        <i class="fa fa-wrench indexIcon"></i>
+        Gestion du tournoi</a></li>
         {{else}}
-        <li><a href="{{pathFor route='poolList'}}" class="menuItem">Progression du tournoi</a></li>
+        <li><a href="{{pathFor route='poolList'}}" class="menuItem">
+        <i class="fa fa-bar-chart indexIcon"></i>
+        Progression du tournoi</a></li>
         {{/if}}
         {{#if isTournamentPage}}
           {{>poolsSidebarCollapsableMenu MOBILE="desktop"}}
         {{/if}}
         {{#if isStaffMember}}
-        <li><a href="{{pathFor route='playersInfo'}}" class="menuItem" id="PlayerSearchButtonMenu">Rechercher un joueur</a></li>
-        <li><a href="{{pathFor route='playerPayments'}}" class="menuItem" id="PaymentInOrderButtonMenu">Paiements pas en ordre</a></li>
-        <li><a href="{{pathFor route='staffManagement'}}" class="menuItem" id="PlayerQuestionsButtonMenu">Questions des joueurs</a></li>
-        <li><a href="{{pathFor route='sendEmailToList'}}" class="menuItem" id="SendEmailToListButtonMenu">Envoyer un mail</a></li>
+        <li><a href="{{pathFor route='playersInfo'}}" class="menuItem" id="PlayerSearchButtonMenu">
+        <i class="fa fa-users indexIcon"></i>
+        Rechercher un joueur</a></li>
+        <li><a href="{{pathFor route='playerPayments'}}" class="menuItem" id="PaymentInOrderButtonMenu">
+        <span class="glyphicon glyphicon-euro indexIcon"></span>
+        Paiements pas en ordre</a></li>
+        <li><a href="{{pathFor route='staffManagement'}}" class="menuItem" id="PlayerQuestionsButtonMenu">
+          <i class="fa fa-question indexIcon"></i>
+        Questions des joueurs
+        </a></li>
+        <li><a href="{{pathFor route='sendEmailToList'}}" class="menuItem" id="SendEmailToListButtonMenu">
+        <span class="glyphicon glyphicon-envelope indexIcon"></span>
+        Envoyer un mail
+        </a></li>
         <br>
-        <li><a href="{{pathFor route='courtSearchTemplate'}}" class="menuItem" id="CourtSearchButtonMenu">Rechercher un terrain</a></li>
-        <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem" id="AddCourtButtonMenu">Ajouter un terrain</a></li>
+        <li><a href="{{pathFor route='courtSearchTemplate'}}" class="menuItem" id="CourtSearchButtonMenu">
+        <span class="glyphicon glyphicon-home indexIcon"></span>
+        Rechercher un terrain</a></li>
+        <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem" id="AddCourtButtonMenu">
+        <i class="fa fa-plus indexIcon"></i>
+        Ajouter un terrain</a></li>
         <br>
-        <li><a href="{{pathFor route='printSheets'}}" class="menuItem" id="PoolSheetsButtonMenu">Feuille de poule</a></li>
-        <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem" id="LogModificationsButtonMenu">Log des modifications</a></li>
-        <li><a href="{{pathFor route='forum'}}" class="menuItem" id="ForumButtonMenu">Forum</a></li>
-        <li><a href="{{pathFor route='staffFaq'}}" class="menuItem" id="StaffFAQButtonMenu">Staff FAQ</a></li>
+        <li><a href="{{pathFor route='printSheets'}}" class="menuItem" id="PoolSheetsButtonMenu">
+        <span class="glyphicon glyphicon-print indexIcon"></span>
+        Feuille de poule</a></li>
+        <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem" id="LogModificationsButtonMenu">
+        <span class="glyphicon glyphicon-list-alt indexIcon"></span>
+        Log des modifications</a></li>
+        <li><a href="{{pathFor route='forum'}}" class="menuItem" id="ForumButtonMenu">
+        <i class="fa fa-comments indexIcon"></i>
+        Forum</a></li>
+        <li><a href="{{pathFor route='staffFaq'}}" class="menuItem" id="StaffFAQButtonMenu">
+        <span class="glyphicon glyphicon-question-sign indexIcon"></span>
+        FAQ Staff</a></li>
         {{/if}}
       </ul>
     </div>
@@ -58,99 +91,134 @@
 
       <!-- Mobile menu header -->
       {{#if showNavBar}}
-      <a href="#sidebar-Mobile">
-        <div class="nav-sidebar-header-mobile">
-          <span class="glyphicon glyphicon-menu-hamburger"></span>
-          Menu
+      
+      <a class="nav-sidebar-header-mobile btn btn-lg btn-default" id="mobile-menu-button" style="width:100%;">
+        <div>
+          <span class="glyphicon glyphicon-menu-down"></span>
+          Retour menu
         </div>
       </a>
       <hr class="nopadding">
       {{/if}}
 
-    <!-- Content of the website -->
-    <div class="content {{isHomePage}} container-fluid">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-10 col-md-offset-1">
-            {{> yield}}
+      <!-- Content of the website -->
+      <div class="content {{isHomePage}} container-fluid">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+              {{> yield}}
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Mobile menu navigation -->
-    {{#if showNavBar}}
-    <div class="sidebar-mobile" id="sidebar-Mobile" style="padding-top: 63px; margin-top: -63px;">
-      <ul class="nav nav-sidebar">
-        <hr class="nopadding">
-        {{#if isStaffMember}}
-        <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">Déroulement du tournoi</a></li>
-        <hr class="nopadding">
-        {{/if}}
-        {{#if isStaffMember}}
-        <li><a href="{{pathFor route='poolList'}}" class="menuItem">Gestion du tournoi</a></li>
-        {{else}}
-        <li><a href="{{pathFor route='poolList'}}" class="menuItem">Progression du tournoi</a></li>
-        {{/if}}
-        {{#if isTournamentPage}}
-          {{>poolsSidebarCollapsableMenu MOBILE="mobile"}}
-          <br>
+      <!-- Mobile menu navigation -->
+      {{#if showNavBar}}
+      <div class="sidebar-mobile" id="menu-mobile" style="padding-top: 63px; margin-top: -63px;">
+        <ul class="nav nav-sidebar" id="menu-mobile2" style="padding-top: 63px; margin-top: -63px;">
           <hr class="nopadding">
-        {{/if}}
-        {{#if isStaffMember}}
-        <li><a href="{{pathFor route='playersInfo'}}" class="menuItem" id="PlayerSearchButtonMenu">Rechercher un joueur</a></li>
-        <hr class="nopadding">
-        <li><a href="{{pathFor route='playerPayments'}}" class="menuItem" id="PaymentInOrderButtonMenu">Paiements pas en ordre</a></li>
-        <hr class="nopadding">
-        <li><a href="{{pathFor route='staffManagement'}}" class="menuItem" id="PlayerQuestionsButtonMenu">Questions des joueurs</a></li>
-        <hr class="nopadding">
-        <li><a href="{{pathFor route='courtSearchTemplate'}}" class="menuItem">Rechercher un terrain</a></li>
-        <hr class="nopadding">
-        <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem">Ajouter un terrain</a></li>
-        <hr class="nopadding">
-        <li><a href="{{pathFor route='courtEmail'}}" class="menuItem">Envoi de mail aux gestionnaires de terrains</a></li>
-        <hr class="nopadding">            
-        <li><a href="{{pathFor route='printSheets'}}" class="menuItem">Feuille de poule</a></li>
-        <hr class="nopadding">
-        <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem">Log des modifications</a></li>
-        <hr class="nopadding">
-        <li><a href="{{pathFor route='forum'}}" class="menuItem">Forum</a></li>
-        <hr class="nopadding">
-        <li><a href="{{pathFor route='staffFaq'}}" class="menuItem">Staff FAQ</a></li>
-        {{/if}}
-      </ul>
-    </div>
-    {{/if}}
+          <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
+            <i class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></i>
+          Statistiques </a></li>
+          <hr class="nopadding">
+          {{#if isStaffMember}}
+          <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">
+            <i class="fa fa-tasks indexIcon"></i>
+          Déroulement du tournoi</a></li>
+          <hr class="nopadding">
+          {{/if}}
+          {{#if isStaffMember}}
+          <li><a href="{{pathFor route='poolList'}}" class="menuItem">
+            <i class="fa fa-wrench indexIcon"></i>
+          Gestion du tournoi</a></li>
+          {{else}}
+          <li><a href="{{pathFor route='poolList'}}" class="menuItem">
+            <i class="fa fa-bar-chart indexIcon"></i>
+          Progression du tournoi</a></li>
+          {{/if}}
+          {{#if isTournamentPage}}
+            {{>poolsSidebarCollapsableMenu MOBILE="mobile"}}
+            <br>
+            <hr class="nopadding">
+          {{/if}}
+          {{#if isStaffMember}}
+          <li><a href="{{pathFor route='playersInfo'}}" class="menuItem" id="PlayerSearchButtonMenu">
+            <i class="fa fa-users indexIcon"></i>
+          Rechercher un joueur</a></li>
+          <hr class="nopadding">
+          <li><a href="{{pathFor route='playerPayments'}}" class="menuItem" id="PaymentInOrderButtonMenu">
+            <span class="glyphicon glyphicon-euro indexIcon"></span>
+          Paiements pas en ordre</a></li>
+          <hr class="nopadding">
+          <li><a href="{{pathFor route='staffManagement'}}" class="menuItem" id="PlayerQuestionsButtonMenu">
+            <i class="fa fa-question indexIcon"></i>
+          Questions des joueurs</a></li>
+          <hr class="nopadding">
+          <li><a href="{{pathFor route='sendEmailToList'}}" class="menuItem" id="SendEmailToListButtonMenu">
+            <span class="glyphicon glyphicon-envelope indexIcon"></span>
+          Envoyer un mail</a></li>
+          <hr class="nopadding">
+          <li><a href="{{pathFor route='courtSearchTemplate'}}" class="menuItem">
+            <span class="glyphicon glyphicon-home indexIcon"></span>
+          Rechercher un terrain</a></li>
+          <hr class="nopadding">
+          <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem">
+            <i class="fa fa-plus indexIcon"></i>
+          Ajouter un terrain</a></li>
+          <hr class="nopadding">           
+          <li><a href="{{pathFor route='printSheets'}}" class="menuItem">
+            <span class="glyphicon glyphicon-print indexIcon"></span>
+          Feuille de poule</a></li>
+          <hr class="nopadding">
+          <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem">
+            <span class="glyphicon glyphicon-list-alt indexIcon"></span>
+          Log des modifications</a></li>
+          <hr class="nopadding">
+          <li><a href="{{pathFor route='forum'}}" class="menuItem">
+            <i class="fa fa-comments indexIcon"></i>
+          Forum</a></li>
+          <hr class="nopadding">
+          <li><a href="{{pathFor route='staffFaq'}}" class="menuItem">
+            <span class="glyphicon glyphicon-question-sign indexIcon"></span>
+          FAQ Staff</a></li>
+          {{/if}}
+        </ul>
+      </div>
+      {{/if}}
 
-    <div class="footer">
-      <div class="container-fluid">
-        <div class="row" id="footer">
-          <div class="col-md-2 col-md-offset-2">
-           <h3>ASMAE, ASBL.</h3>
-              Place des Carabiniers, 5<br>
-              1030 Bruxelles<br>
-              <abbr title="Phone">P:</abbr> +32 (0)2 742 03 01 <br>
-                    Contact par <a href="http://asmae.org/contact.php" target="_blank">mail</a>
-            </div>
-            <div class="col-md-2 col-md-offset-1">
-              <h3>Suivez-nous</h3>
-              <ul>
-                <li><a href="https://www.facebook.com/Asmae-asbl-officiel-161275587240084/timeline" target="_blank">Facebook</a></li>
-                <li><a href="https://twitter.com/asmae_ong" target="_blank">Twitter</a></li>
-                <li><a href="https://plus.google.com/111823322896172247261/about" target="_blank"> Google+ </a></li>
-              </ul>
-              {{#if currentUser}}
-            <button id="popdb" class="btn btn-lg btn-default" style="margin-left: 20px" type="button"> populateDB</button>
-            <button id="popdbtest" class="btn btn-lg btn-default" style="margin-left: 20px" type="button"> populateDB Tests</button>
-            {{/if}}
-            </div>
-            <div class="col-md-2 col-md-offset-1">
-            <h3>Présentation</h3>
-              <p>Le Charles de Lorraine est un tournoi annuel se déroulant durant le 2ème week-end du mois de septembre, constitué uniquement de doubles. Convivial et accessible à tous !</p>
+      <div class="footer">
+        <div class="container-fluid">
+          <div class="row" id="footer">
+            <div class="row nopadding">
+              <div class="col-md-10 col-md-offset-1">
+                <div class="col-md-4">
+                 <h3>ASMAE, ASBL.</h3>
+                    Place des Carabiniers, 5<br>
+                    1030 Bruxelles<br>
+                    <abbr title="Phone">P:</abbr> +32 (0)2 742 03 01 <br>
+                          Contact par <a href="http://asmae.org/contact.php" target="_blank">mail</a>
+                  </div>
+                  <div class="col-md-4">
+                    <h3>Suivez-nous</h3>
+                    <ul>
+                      <li><a href="https://www.facebook.com/Asmae-asbl-officiel-161275587240084/timeline" target="_blank">Facebook</a></li>
+                      <li><a href="https://twitter.com/asmae_ong" target="_blank">Twitter</a></li>
+                      <li><a href="https://plus.google.com/111823322896172247261/about" target="_blank"> Google+ </a></li>
+                    </ul>
+                    {{#if currentUser}}
+                  <button id="popdb" class="btn btn-lg btn-default" style="margin-left: 20px" type="button"> populateDB</button>
+                  <button id="popdbtest" class="btn btn-lg btn-default" style="margin-left: 20px" type="button"> populateDB Tests</button>
+                  {{/if}}
+                  </div>
+                  <div class="col-md-4">
+                  <h3>Présentation</h3>
+                    <p>Le Charles de Lorraine est un tournoi annuel se déroulant durant le 2ème week-end du mois de septembre, constitué uniquement de doubles. Convivial et accessible à tous !</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   </div>
 </template>

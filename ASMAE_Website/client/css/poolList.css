@@ -5,6 +5,11 @@
   height: 640px;
   width: 250px;
   vertical-align: top;
+  -moz-box-shadow: inset 0px 0px 6px 4px #656565;
+  -webkit-box-shadow: inset 0px 0px 6px 4px #656565;
+  -o-box-shadow: inset 0px 0px 6px 4px #656565;
+  box-shadow: inset 0px 0px 6px 4px #656565;
+  filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=NaN, Strength=10);
 }
 
 .poolLabel{
@@ -16,6 +21,18 @@
 .scoreButton{
   padding: 5px;
   width: 250px;
+  -moz-box-shadow: 0px 0px 6px 2px #656565 !important;
+  -webkit-box-shadow: 0px 0px 6px 2px #656565 !important;
+  -o-box-shadow: 0px 0px 6px 2px #656565 !important;
+  box-shadow: 0px 0px 6px 2px #656565 !important;
+  filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=NaN, Strength=10);
+}
+
+.scoreButton:hover{
+  -moz-box-shadow: 0px 0px 3px 1px #656565;
+  -webkit-box-shadow: 0px 0px 3px 1px #656565;
+  -o-box-shadow: 0px 0px 3px 1px #656565;
+  box-shadow: 0px 0px 3px 1px #656565;
 }
 
 *, *:before, *:after {
@@ -37,15 +54,15 @@
   vertical-align: top;
 }
 
-#poolTable{
+#poolTable {
   background-color: inherit;
 }
 
-#specialTable{
+#specialTable {
   background-color: inherit;
 }
 
-.parent{
+.parent {
   display: inline-block;
   vertical-align: top;
   height:640px;
@@ -109,12 +126,12 @@
   cursor: -webkit-grabbing;
 }
 
-.removePoolButton{
+.removePoolButton {
   font-size:20px;
   color:red;
 }
 
-.pairs.ex-moved >.list-group>.list-group-item{
+.pairs.ex-moved >.list-group>.list-group-item {
   color : green;
 }
 
@@ -125,6 +142,6 @@
   cursor: move;
 }
 
-.btn-padding{
+.btn-padding {
   margin-right: 10px;
 }

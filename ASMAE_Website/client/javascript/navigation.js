@@ -23,13 +23,19 @@ Template.navigation.helpers({
 	}
 });
 
+
 Template.navigation.events({
+
 	'click #tournamentNavigation': function(){
 		Session.set('showNavBar', true);
 	},
 
 	'click .toToggle': function() {
-		$("button.navbar-toggle").click();
+		var $window = $(window);
+		var wWidth  = $window.width();
 		$(window).scrollTop(0);
-	}
+		if (wWidth <= 750) { // Only in mobile screen (not 767px cause marge of 17px)
+			$("button.navbar-toggle").click();
+		}
+	},
 });

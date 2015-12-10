@@ -1,0 +1,25 @@
+.ct-label{
+	font-size:1em;
+}
+
+.rotate {
+	transform-origin:bottom;
+
+	/* Safari */
+	-webkit-transform: rotate(-90.0deg);
+
+	/* Firefox */
+	-moz-transform: rotate(-90.0deg);
+
+	/* IE */
+	-ms-transform: rotate(-90.0deg);
+
+	/* Opera */
+	-o-transform: rotate(-90.0deg);
+
+	/* Internet Explorer */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+
+	 /* Standard */
+  	transform: rotate(-90.0deg);
+}

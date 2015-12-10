@@ -67,10 +67,17 @@ Template.index.helpers({
 
 });
 
+var anchorBool = false;
+
 Template.index.events({
-	
+
 	'click .menuItem': function() {
 		$(window).scrollTop(0);
+	},
+
+	'click #mobile-menu-button': function(){
+			window.location.hash = anchorBool ? '#menu-mobile' : "#menu-mobile2";
+			anchorBool = !anchorBool;
 	},
 
 	'click #popdb' : function(event) {
@@ -129,9 +136,9 @@ Template.index.events({
 		var nCourtSundayTab = [nCourtSunday2014, nCourtSunday2015];
 		var nCourtBothTab = [nCourtBoth2014, nCourtBoth2015];
 
-		Meteor.call("populateDB", tournamentDataTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin);
+		Meteor.call("populateDB", tournamentDataTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin, false);
 	},
-	
+
 	'click #popdbtest' : function(event) {
 		/*
 		 * 2015 data
@@ -169,6 +176,6 @@ Template.index.events({
 		var nCourtSundayTab = [nCourtSunday2015];
 		var nCourtBothTab = [nCourtBoth2015];
 
-		Meteor.call("populateDB", tournamentDataTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin);
+		Meteor.call("populateDB", tournamentDataTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin, true);
 	}
 });
