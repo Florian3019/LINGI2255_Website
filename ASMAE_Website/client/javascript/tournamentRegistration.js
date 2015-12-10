@@ -194,8 +194,13 @@ Template.tournamentRegistration.helpers({
 Template.tournamentRegistrationTemplate.helpers({
 
 	'getAddress' : function(addressID) {
-		return Addresses.findOne({_id:addressID});
+		var add = Addresses.findOne({_id:addressID});
+		if (add===undefined) {
+			return {number:undefined, zipCode:undefined, city:undefined, land:undefined, box:undefined, street:undefined};
+		}
+		return add;
 	},
+
 
 	'isSaturday' : function(day) {
 		return day=="saturday";
@@ -334,18 +339,24 @@ Template.tournamentRegistrationTemplate.helpers({
 		}
 		var playerExtras = getDayExtrasFromPlayerID(Meteor.userId(),day);
 		if (playerExtras === undefined) {
+			for(var j=0; j<extras.length; j++) {
+				ex["quantity"] = 0;
+			}
 			return extras;
 		}
-		for (var i=0; i<playerExtras.length; i++) {
-			var pExtra = playerExtras[i];
+		for (var pExtraName in playerExtras) {
+			var qty = playerExtras[pExtraName]
 			for(var j=0; j<extras.length; j++) {
 				var ex = extras[j];
-				var qty = pExtra[ex.name];
 				if (qty !== undefined) {
-					ex.quantity = qty;
+					ex["quantity"] = qty;
+				}
+				else {
+					ex["quantity"] = qty;
 				}
 			}
 		}
+		console.table(extras);
 		return extras;
     },
 
@@ -829,7 +840,7 @@ Template.tournamentRegistrationTemplate.events({
 		var extrasPlayer = playerData.extras;
 
 		for(var i=0;i<extras.length;i++){
-			extrasPlayer[extras[i].name]=document.getElementById(extras[i]._id).value;
+			extrasPlayer[extras[i].name]=parseInt(document.getElementById(extras[i]._id).value);
 		}
 
 		/*
