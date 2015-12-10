@@ -86,7 +86,7 @@ function checkAloneErrors(document) {
 		This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
 		If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
 	*/
-	
+
 	var errors = new Array();
 	var hasError = false;
 
@@ -1097,13 +1097,13 @@ Template.tournamentRegistrationTemplate.events({
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch, callbackInception);
 					var type = Session.get("tournamentRegistration/type");
 					var category = Session.get("tournamentRegistration/category");
-					var firstname = curUserData.firstName;
-					var lastname = curUserData.lastName;
+					var firstname = curUserData.profile.firstName;
+					var lastname = curUserData.profile.lastName;
 					if (mailNotifyAloneUser) {
 						var dataMail = {
-							intro:"Bonjour"+firstname+",",
+							intro:"Bonjour "+firstname+",",
 							important:"Merci pour votre inscription au tournoi.",
-							texte:"Vous êtes bien inscrit dans la catégorie : '"+category+"' du type '"+ type+"'."
+							texte:"Vous êtes bien inscrit dans la catégorie : '"+categoriesTranslate[category]+"' du type '"+ typesTranslate[type]+"'."
 						};
 						Meteor.call("emailFeedback",user.emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
 							if(error){

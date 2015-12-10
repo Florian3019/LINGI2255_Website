@@ -1148,7 +1148,7 @@ Meteor.methods({
 
 		//Payments: add to the Payments collection
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-	    var amount = Years.findOne({_id: currentYear}).tournamentPrice;
+	    var amount = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
 
 		//Add extras to amount
 		if(check1 && pairData["player1"].extras)
@@ -1184,8 +1184,12 @@ Meteor.methods({
 				}
 			}
 			else {		// The player registers to the second tournament: merge the two payments
-				console.log("The players registers to the second tournament: merge his payments.");
-				paymentData.balance = paymentAlreadyExists.balance + amount;
+				if(paymentAlreadyExists.status === "paid"){
+					paymentData.balance = amount;
+				}
+				else{
+					paymentData.balance = paymentAlreadyExists.balance + amount;
+				}
 			}
 
 			Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
@@ -1971,16 +1975,52 @@ Meteor.methods({
 		}
 
 		var user;
+		var userExtras;
 		if (userPlayer==="player1") {
 			user = Meteor.users.findOne({_id:pair.player1._id});
+			if(pair.player1.extras){
+				userExtras = pair.player1.extras;
+			}
 		}
 		else {
 			user = Meteor.users.findOne({_id:pair.player2._id});
+			if(pair.player2.extras){
+				userExtras = pair.player2.extras;
+			}
 		}
 
 		// Remove payment
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
+		if(Pairs.find({$or: [{'player1._id': userID}, {'player2._id': userID}]}).count() == 2){
+			//Update the payment
+			var amountToReduce = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
+
+			if(userExtras)
+			{
+				var extras = Extras.find().fetch();
+				var extrAmount = 0;
+
+				for(var i=0; i<extras.length; i++){
+
+					if(userExtras[extras[i].name]){
+						var currentExtraNumber = userExtras[extras[i].name]
+						extrAmount += currentExtraNumber * extras[i].price;			// Add number * price to amount
+					}
+				}
+				amountToReduce += extrAmount;
+			}
+
+			var paymentAlreadyExists = Payments.findOne({'userID': userID, 'tournamentYear': currentYear});
+			var newAmount = paymentAlreadyExists.balance - amountToReduce;
+			paymentData = {
+				status : "pending",
+				balance : newAmount
+			};
+			Payments.update(paymentAlreadyExists._id, {$set: paymentData});
+		}
+		else{
+			Payments.remove({'userID': userID, 'tournamentYear': currentYear});
+		}
 
 
 		// No other player
