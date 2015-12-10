@@ -127,14 +127,6 @@ Router.route('/email-verification', {
 Router.route('/mon-inscription', {
 	name: 'myRegistration',
 	template: 'myRegistration',
-	onBeforeAction: function() {
-		if (isRegistered(Meteor.userId())) {
-			this.next();
-		}
-		else {
-			this.render("login");
-		}
-	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
 	}

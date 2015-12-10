@@ -66,6 +66,9 @@ Template.launchTournament.helpers({
 
 });
 
+function isValidePrice(price) {
+    return (Math.floor(price * 100) === price * 100);
+}
 
 Template.launchTournament.events({
     'click #launchTournamentButton': function(event){
@@ -87,10 +90,14 @@ Template.launchTournament.events({
             dateMsg.style.display = "block";
             return;
         }
-
-        if(isNaN(price)){
+ 
+        if(isNaN(price) || !isValidePrice(price)){
             priceInput.className = "form-group has-error";
             errorMsg.style.display = "block";
+            if(!isValidePrice(price)) {
+               document.getElementById("priceError-message").innerHTML = "Attention le prix est incorrect, vous ne pouvez pas avoir plus deux décimales";
+            }
+            
             return;
         }
 

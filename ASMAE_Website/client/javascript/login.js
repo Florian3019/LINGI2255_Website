@@ -149,7 +149,6 @@ Template.login.events({
         }
         else {
             $('#sign-up').hide();
-
             $('#sign-up-chargement').show();
 
             Accounts.createUser({email: email, password: password}, function(error){
@@ -161,6 +160,9 @@ Template.login.events({
                     }
                     else 
                        console.log('We are sorry but something went wrong.');
+                
+                $('#sign-up-chargement').hide();
+                $('#sign-up').show();
                 }
                 else {
                     console.log("test");
