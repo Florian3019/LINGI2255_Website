@@ -584,7 +584,7 @@ getOrder = function(size){
 */
 getNumberMatchesFirstRound = function(nbrPairs){
 
-    var logPairs = Math.log2(nbrPairs);
+    var logPairs = Math.log(nbrPairs)/Math.log(2);
 
     var numMatchesFull = Math.floor(logPairs);
 
