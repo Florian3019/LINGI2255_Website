@@ -15,9 +15,11 @@
           <button type="button" id="scoreTableBack" class="btn btn-default btn-lg toHideForPdf pull-left"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button>
           Matchs de poule {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}
             {{#if isAdminOrStaff}}
-              <button type="button" title="Aide" id="helpScore" class="btn btn-default btn-info" style="margin-left:15px">
-                  <span class="glyphicon glyphicon-question-sign"></span>
-              </button>
+              {{#if isForCurrentYear}}
+                <button type="button" title="Aide" id="helpScore" class="btn btn-default btn-info" style="margin-left:15px">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </button>
+              {{/if}}
             {{/if}}
           </h2>
         </div>
@@ -33,9 +35,11 @@
   {{>scoreTable this}}
 
   {{#if isAdminOrStaff}}
-    <button type="button" id="getPDF" class="btn btn-default btn-lg btn-warning toHideForPdf" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
-      <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
-    </button>
+    {{#if isForCurrentYear}}
+      <button type="button" id="getPDF" class="btn btn-default btn-lg btn-warning toHideForPdf" data-pool="{{this._id}}" data-resp="{{this.resp}}" data-info="{{this.info}}">
+        <span class="glyphicon glyphicon-download" aria-hidden="true"></span> PDF
+      </button>
+    {{/if}}
   {{/if}}
 
 </template>
@@ -163,7 +167,7 @@
                 <div></div>
                 {{else}}
                 {{#with getMatch ../../../_id ../_id this._id}} <!-- Returns the match corresponding to this pair -->
-                  {{#if isAdminOrStaff}}
+                  {{#if and isAdminOrStaff isForCurrentYear}}
                     <input
                     type="number"
                     min="0"
