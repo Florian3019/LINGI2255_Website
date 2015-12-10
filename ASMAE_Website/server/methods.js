@@ -562,12 +562,6 @@ Meteor.methods({
 			return Types.insert(data);
 		}
 
-		if (typeof typeData.typeString != undefined) {
-			if(data.$set===undefined) data['$set'] = {};
-			data.$set["typeString"] = typeData.typeString;
-			hasData = true;
-		}
-
 		if(!hasData){
 			console.warn("Warning : called updateType with no input");
 			return;

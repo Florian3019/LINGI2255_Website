@@ -707,6 +707,11 @@ var makeBrackets = function(document){
         b.data.clickable = false;
       }
 
+      if(a.pair==="empty" && b.pair==="empty"){
+        a.data.clickable = false;
+        b.data.clickable = false;
+      }
+
       if(b.data.clickable==true){
         a.data.clickable = true;
       }
