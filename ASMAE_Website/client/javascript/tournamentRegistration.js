@@ -522,7 +522,7 @@ Template.tournamentRegistrationTemplate.helpers({
 
 	'okAFTranking': function(){
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		var maximumAFT = Years.findOne({_id: currentYear}).maximumAFT;
+		var maximumAFT = Years.findOne({_id: currentYear}, {fields: {maximumAFT: 1}}).maximumAFT;
 		var AFTarray = [];
 		var i = 0;
 		while(AFTrankings[i] !== maximumAFT){
@@ -1159,11 +1159,11 @@ Template.tournamentRegistrationTemplate.events({
 	 */
 	Template.tournamentRegistrationTemplate.onRendered(function () {
 		var user=Meteor.user();
-		if (user===undefined) {
+		if(typeof user==='undefined') {
 			console.error("Error, no user defined in registration page, should have been redirected.");
 			return;
 		}
-		if (user.profile===undefined) {
+		if(typeof user.profile==='undefined') {
 			// No info on this user, do nothing
 			return;
 		}
@@ -1171,5 +1171,20 @@ Template.tournamentRegistrationTemplate.events({
 		sexSelect.value = user.profile.gender!==undefined ? user.profile.gender : "default";
 
 		var rankSelect = document.getElementById('rank');
-		rankSelect.value = user.profile.AFT!==undefined ? user.profile.AFT : "NC";
+		if(typeof user.profile.AFT !== 'undefined'){
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			var maximumAFT = Years.findOne({_id: currentYear}, {fields: {maximumAFT: 1}}).maximumAFT;
+			var maxAFTindex = AFTrankings.indexOf(maximumAFT);
+			var userAFTindex = AFTrankings.indexOf(user.profile.AFT);
+			if(userAFTindex > maxAFTindex){
+				rankSelect.value = "NC";
+			}
+			else{
+				rankSelect.value = user.profile.AFT;
+			}
+		}
+		else{
+			rankSelect.value = "NC";
+		}
+
 	});
