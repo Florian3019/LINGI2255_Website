@@ -245,6 +245,10 @@ input::-webkit-inner-spin-button {
     background-color: rgba(0, 76, 153, 0.6) !important;
 }
 
+.alert-info-error {
+    background-color: #E51C20 !important;
+}
+
 
 /* Scroll bar new style */
 .scrollbar-style::-webkit-scrollbar-track
