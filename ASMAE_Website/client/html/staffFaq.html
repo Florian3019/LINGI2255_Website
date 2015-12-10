@@ -11,12 +11,14 @@
         <ul>
             <li><a href="#gotoLaunchTournament">Comment démarrer le tournoi ?</a></li>
             <li><a href="#gotoCloseRegistrations">Comment fermer les inscriptions au tournoi ?</a></li>
+            <li><a href="#gotoPool">Comment accéder à la page de gestion des poules ?</a></li>
+            <li><a href="#gotoAchieve">Comment voir l'état d'avancement du tournoi ?</a></li>
             <!--gotoCloseRegistrations-->
         </ul>
     </li>
-    <li><a href="#gotoCloseRegistrations">Gestion des poules et des paires</a>
+    <li><a href="#PoolPairs">Gestion des poules et des paires</a>
         <ul>
-            <li><a href="#PoolPairs">Comment séparer une paire ?</a></li>
+            <li><a href="#gotoPairs">Comment séparer une paire ?</a></li>
             <li><a href="#gotoPairs2">Comment créer une paire à partir de deux joueurs seuls ?</a></li>
             <li><a href="#gotoPairs3">Comment créer une poule ?</a></li>
             <li><a href="#gotoPairs4">Comment effacer une poule ?</a></li>
@@ -98,13 +100,12 @@ Depuis cette page, le staff peut également envoyer un mail automatique d'invita
 <p>
 Une fois les inscriptions au tournoi lancées, un administrateur peut les fermer pour empêcher de nouveaux joueurs de s'inscrire. Ceci se fait via la page du déroulement du tournoi (accessible en cliquant sur <a href="{{pathFor route='tournamentProgress'}}">Déroulement du tournoi</a> dans le menu staff) en allant à la quatrième étape.
 </p>
-
-<h5>Comment accéder à la page de gestion des poules?</h5>
+<h5 class="anchor" id="gotoPool">Comment accéder à la page de gestion des poules?</h5>
 <p>
 Cliquez sur <a href="{{pathFor route='poolList'}}">Gestion du tournoi</a> puis séléctionnez l'année qui vous intéresse. Dans le menu qui s'affiche, choisissez parmi homme, femme, mixte ou familles. Cliquez ensuite sur <i>Poules</i>.
 </p>
 
-<h5>Comment voir l'état d'avancement du tournoi?</h5>
+<h5 class="anchor" id="gotoAchieve">Comment voir l'état d'avancement du tournoi?</h5>
 <p>
 L'état d'avancement du tournoi s'affiche entre parenthèses à coté du type ou de la catégorie concernée.
 </p>
@@ -243,7 +244,7 @@ En cliquant sur le menu "Envoyer un mail", le staff a la possibilité d'envoyer 
 </ul>
 </p>
 <br>
-<h4 class="anchor" id="History">Accès à l'historique</h4>
+<h4 class="anchor" id="history">Accès à l'historique</h4>
 <h5 class="anchor" id="gotoLogHistory">Comment afficher l'historique des modifications ?</h5>
 <p>
 Dans le menu staff, cliquez sur <a href="{{pathFor route='modificationsLog'}}">Log des modifications</a>. Toutes les modifications sont affichées là. L'historique des 3 dernières modifications s'affiche également en bas de la page d'information sur un terrain ou un joueur.
