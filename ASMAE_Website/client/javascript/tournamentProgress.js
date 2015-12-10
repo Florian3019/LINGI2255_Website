@@ -2,7 +2,6 @@ Template.closeRegistrationsBlock.events({
     'click #closeRegistrationsButton': function(){
         swal({
           title:"Confirmer la fermeture des inscriptions",
-          text:"Cette opération est irréversible.",
           type:"warning",
           showCancelButton:true,
           cancelButtonText:"Annuler",
@@ -18,6 +17,14 @@ Template.closeRegistrationsBlock.events({
                 });
             }
         );
+    },
+
+    'click #reopenRegistrationsButton': function(){
+        Meteor.call('reopenRegistrations', function(error, result){
+            if(error){
+                 console.error(error);
+            }
+        });
     }
 
 });
@@ -25,7 +32,14 @@ Template.closeRegistrationsBlock.events({
 Template.closeRegistrationsBlock.helpers({
     'registrationsON': function(){
         return GlobalValues.findOne({_id: "registrationsON"}).value;
+    },
+
+    'step4IsDone': function(){
+        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+        var yearDocument = Years.findOne({_id: currentYear});
+        return yearDocument["step4done"];
     }
+
 });
 
 Template.tournamentProgress.helpers({
@@ -39,32 +53,35 @@ Template.tournamentProgress.helpers({
 
     'stepIsDoneClass': function(stepNumber){
         var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-        if(currentYear == ""){ //Tournament didn't launch yet
-            return "notokBlock";
-        }
-        else {
-            var yearDocument = Years.findOne({_id: currentYear});
-            if(typeof yearDocument !== 'undefined'){
-                if(stepNumber == 1){
+        var yearDocument = Years.findOne({_id: currentYear});
+        if(typeof yearDocument !== 'undefined'){
+            if(stepNumber == 1){
+                if(GlobalValues.findOne({_id: "registrationsON"}).value){
+                    return "okBlock";
+                }
+                else if(yearDocument["step4done"]){   //If step 4 is done (registrations are OFF)
+                    return "okBlock";
+                }
+                else {
+                    return "notokBlock";
+                }
+            }
+            else{
+                var stepField = "step"+stepNumber+"done";
+                if(yearDocument[stepField]){
                     return "okBlock";
                 }
                 else{
-                    var stepField = "step"+stepNumber+"done";
-                    if(yearDocument[stepField]){
-                        return "okBlock";
-                    }
-                    else{
-                        return "notokBlock";
-                    }
+                    return "notokBlock";
                 }
             }
-            else {
-                console.error("currentYear doesn't exist in Years");
-                return undefined;
-            }
+        }
+        else {
+            return "notokBlock";
         }
 
     }
+
 });
 
 Template.tournamentProgress.events({

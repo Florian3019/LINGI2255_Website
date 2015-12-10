@@ -61,6 +61,7 @@ Meteor.methods({
 			}
 
 			data.tournamentPrice = launchTournamentData.tournamentPrice;
+			data.maximumAFT = launchTournamentData.maximumAFT;
 
 			//Insert in database
 
@@ -88,8 +89,9 @@ Meteor.methods({
 				data.step4done = false;
 				data.step5done = false;
 				data.step6done = false;
-				data.setp7done = false;
-				data.setp8done = false;
+				data.step7done = false;
+				data.step8done = false;
+				data._id = dataID;
 				insertedYearID = Years.insert(data);
 				console.log("Tournament launched for year "+dataID);
 				//Put all the courts ownerOK and staffOK to false for this year's tournament
@@ -152,6 +154,28 @@ Meteor.methods({
 		else{
 			console.error("You don't have the permission to do that.");
 			throw new Meteor.Error("stopTournamentRegistrations: ", err);
+		}
+	},
+
+	'reopenRegistrations': function(){
+		if(Meteor.call('isAdmin')){
+
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			Years.update({_id: currentYear}, {$set: {
+				step4done: false
+			}});
+
+			GlobalValues.update({_id:"registrationsON"}, {$set: {
+				value : true
+			}}, function(err, result){
+				if(err){
+					throw new Meteor.Error("update GlobalValues registrationsON in reopenRegistrations error: ", err);
+				}
+			});
+		}
+		else{
+			console.error("You don't have the permission to do that.");
+			throw new Meteor.Error("reopenRegistrations: You don't have the permission to do that.");
 		}
 	},
 
@@ -539,12 +563,6 @@ Meteor.methods({
 			return Types.insert(data);
 		}
 
-		if (typeof typeData.typeString != undefined) {
-			if(data.$set===undefined) data['$set'] = {};
-			data.$set["typeString"] = typeData.typeString;
-			hasData = true;
-		}
-
 		if(!hasData){
 			console.warn("Warning : called updateType with no input");
 			return;
@@ -726,6 +744,62 @@ Meteor.methods({
 					throw new Meteor.Error("deleteCourt: error while deleting court", err);
 				}
 			});
+
+			courtNumbers = court.courtNumber;
+
+			for(var i=0;i<courtNumbers.length;i++){
+				var pools = Pools.find({"courtId":courtNumbers[i]}).fetch();
+
+				for(var k=0; k<pools.length;k++){
+					Pools.update({_id:pools[k]._id},{$unset: {"courtId":""}});
+				}
+
+				var years = Years.find({}).fetch();
+
+				for(var y=0;y<years.length;y++){
+					var request = {$or:[]};
+
+			        var typesIDS = [];
+
+			        for(var j=0; j<typeKeys.length;j++){
+			            typesIDS.push(years[y][typeKeys[j]]);
+			        }
+
+			        for(var d=0; d<typesIDS.length;d++){
+			            var sub_request=[];
+			            for(var h=0;h<categoriesKeys.length;h++){
+			                data = {};
+			                data[categoriesKeys[h].concat("Courts")]=courtNumbers[i];
+			                sub_request.push(data);
+			            }
+			            request["$or"].push({$and: [{_id:typesIDS[d]},{$or:sub_request}]});
+			        }
+
+			        brackets = Types.find(request).fetch();
+			        console.log(brackets);
+
+			        for(var m=0;m<brackets.length;m++){
+
+			            for(var n=0;n<categoriesKeys.length;n++){
+			                var field = categoriesKeys[n]+"Courts";
+
+			                var listCourts = brackets[m][field];
+
+			                if(listCourts!=undefined){
+
+		                        for(var l=0;l<listCourts.length;l++){
+		                            if(listCourts[l]==courtNumbers[i]){
+		                                listCourts[l]="?";
+		                            }
+		                        }
+			                }
+
+			            }
+			            Meteor.call('updateType',brackets[m]);
+			        }
+
+				}
+			}
 
 		}
 		else
@@ -2000,6 +2074,8 @@ Meteor.methods({
 			console.error("You don't have the permissions to do that");
 			throw new Meteor.error("You don't have the permissions to restart a tournament");
 		}
+
+		GlobalValues.update({_id: "registrationsON"}, {$set: {value: false}});
 
 		return GlobalValues.update({_id: "currentYear"}, {$set: {
 			value: ""

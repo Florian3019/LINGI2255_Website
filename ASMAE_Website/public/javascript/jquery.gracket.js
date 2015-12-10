@@ -154,7 +154,7 @@
           if(data.court!==""){
             var c = (isFirst? '<span class="pull-right"  data-pos='+data.pos+' data-courtn='+data.court+' > (T. ' +(data.court===undefined ? '?':data.court)+') </span>' : "");
             canClick = isFirst ? "g_canClick" : "";
-            toolTipCourt = isFirst ? " title='Changer le terrain'":"";
+            toolTipCourt = isFirst ? (data.clickable ? " title='Changer le terrain'":" title='Voir le terrain'"):"";
           }
           else{
             var c = "";
