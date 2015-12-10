@@ -1156,6 +1156,10 @@ Template.alonePairsContainerTemplate.onRendered(function(){
 });
 
 Template.alonePairsContainerTemplate.helpers({
+	'isForCurrentYear':function(){
+		return isForCurrentYear();
+	},
+	
 	'getAlonePairs' : function(typeData){
 		category = Session.get('PoolList/Category');
 		poolIdList = typeData[category];
@@ -1192,6 +1196,10 @@ Template.alonePairsContainerTemplate.helpers({
 	This defines the item that will actually be draggable
 */
 Template.poolItem.helpers({
+	'isForCurrentYear':function(){
+		return isForCurrentYear();
+	},
+
 	'getPlayer' : function(playerId){
 		return Meteor.users.findOne({_id:playerId});
 	},
@@ -1236,6 +1244,10 @@ var moreThanOnePairFunct = function(pairs){
 }
 
 Template.poolContainerTemplate.helpers({
+	'isForCurrentYear':function(){
+		return isForCurrentYear();
+	},
+
 	'moreThanOnePair' : function(pairs){
 		return moreThanOnePairFunct(pairs);
 	},
