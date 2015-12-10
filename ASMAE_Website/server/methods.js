@@ -156,6 +156,28 @@ Meteor.methods({
 		}
 	},
 
+	'reopenRegistrations': function(){
+		if(Meteor.call('isAdmin')){
+
+			var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+			Years.update({_id: currentYear}, {$set: {
+				step4done: false
+			}});
+
+			GlobalValues.update({_id:"registrationsON"}, {$set: {
+				value : true
+			}}, function(err, result){
+				if(err){
+					throw new Meteor.Error("update GlobalValues registrationsON in reopenRegistrations error: ", err);
+				}
+			});
+		}
+		else{
+			console.error("You don't have the permission to do that.");
+			throw new Meteor.Error("reopenRegistrations: You don't have the permission to do that.");
+		}
+	},
+
 	'getAllYears': function(){
 		allYears = Years.find({}).fetch();
 

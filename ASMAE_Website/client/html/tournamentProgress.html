@@ -176,7 +176,12 @@
             <p>Cliquez sur ce bouton pour fermer les inscriptions au tournoi de cette année</p>
             <center><button id="closeRegistrationsButton" type="button" class="btn btn-default btn-sm">Fermer les inscriptions</button></center>
         {{else}}
-            <p>Vous devez d'abord ouvrir les inscriptions avant de pouvoir les clôturer.</p>
+            {{#if step4IsDone}}
+                <p>Les inscriptions sont fermées.</p>
+                <center><button id="reopenRegistrationsButton" type="button" class="btn btn-default btn-sm">Ouvrir les inscriptions</button></center>
+            {{else}}
+                <p>Les inscriptions ne sont pas ouvertes.</p>
+            {{/if}}
         {{/if}}
     {{else}}
         <p>Seul un administrateur peut clôturer les inscriptions.</p>

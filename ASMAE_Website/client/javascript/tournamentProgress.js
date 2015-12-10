@@ -2,7 +2,6 @@ Template.closeRegistrationsBlock.events({
     'click #closeRegistrationsButton': function(){
         swal({
           title:"Confirmer la fermeture des inscriptions",
-          text:"Cette opération est irréversible.",
           type:"warning",
           showCancelButton:true,
           cancelButtonText:"Annuler",
@@ -18,6 +17,14 @@ Template.closeRegistrationsBlock.events({
                 });
             }
         );
+    },
+
+    'click #reopenRegistrationsButton': function(){
+        Meteor.call('reopenRegistrations', function(error, result){
+            if(error){
+                 console.error(error);
+            }
+        });
     }
 
 });
@@ -25,7 +32,14 @@ Template.closeRegistrationsBlock.events({
 Template.closeRegistrationsBlock.helpers({
     'registrationsON': function(){
         return GlobalValues.findOne({_id: "registrationsON"}).value;
+    },
+
+    'step4IsDone': function(){
+        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+        var yearDocument = Years.findOne({_id: currentYear});
+        return yearDocument["step4done"];
     }
+
 });
 
 Template.tournamentProgress.helpers({
@@ -67,6 +81,7 @@ Template.tournamentProgress.helpers({
         }
 
     }
+
 });
 
 Template.tournamentProgress.events({
