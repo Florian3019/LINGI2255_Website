@@ -123,11 +123,13 @@ Template.index.events({
 
 		var tournamentData2014 = {
 			tournamentDate : new Date(2014,8,11),
-			tournamentPrice : 8
+			tournamentPrice : 8,
+			maximumAFT : "B0"
 		}
 		var tournamentData2015 = {
 			tournamentDate : new Date(2015,8,12),
-			tournamentPrice : 10
+			tournamentPrice : 10,
+			maximumAFT : "B0"
 		}
 		var tournamentDataTab = [tournamentData2014, tournamentData2015];
 		var nPairsTab = [nPairs2014, nPairs2015];

@@ -300,7 +300,7 @@
             {{#each extras day}}
             <div class="form-group">
               <label for="number">{{getName}} ({{getPrice}}&euro;)</label>
-              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" data-price="{{getPrice}}" value={{getQuantity}} class="form-control extraItem" style="width: 15%; display: inline; text-align:center">
+              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" data-price="{{getPrice}}" value="{{getQuantity}}" class="form-control extraItem" style="width: 15%; display: inline; text-align:center">
               <p style="font-size:100%">{{getComment}}</p>
             </div>
             {{/each}}

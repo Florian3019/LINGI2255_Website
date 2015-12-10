@@ -2291,6 +2291,22 @@ Meteor.methods({
 	},
 
 	'assignCourts' : function(rain) {
+
+		var getCourtNumbers = function(courts){
+		    var result = [];
+
+		    for(var k=0; k<courts.length;k++){
+		        var courtsList = courts[k].courtNumber;
+
+		        for(var t=0;t<courtsList.length;t++){
+		            result.push(courtsList[t]);
+		        }
+		    }
+
+		    return result;
+		}
+
+
 		/*
 	        Return N courts, starting at index start and using a modulo to loop through the array
 	        nextNumber is the next number to assign to the court if it hasn't a number yet
@@ -2307,7 +2323,7 @@ Meteor.methods({
 	        var result = [];
 	        var next=0;
 
-	        var logPairs = Math.log2(listPairs.length);
+	        var logPairs = Math.log(listPairs.length)/Math.log(2);
 	        var numMatchesFull = Math.pow(2,Math.ceil(logPairs))/2;
 	        var index=getOrder(numMatchesFull);
 	        var round=0;
@@ -2349,9 +2365,17 @@ Meteor.methods({
 	            round++;
 	        }
 
+	        var inter = [];
+
 	        for(var j=0;j<result.length;j++){
 	            if(result[j]!=-1){
-	                final_result.push(result[j]);
+	                inter.push(result[j]);
+	            }
+	        }
+
+	        for(var j=0;j<result.length;j++){
+	            if(final_result[j]==="?"){
+	                final_result[j] = inter[j];
 	            }
 	        }
 
@@ -2391,22 +2415,24 @@ Meteor.methods({
 
 	            var pool = pools[i];
 
-	            if(courts.length==0){
-	                Pools.update({_id:pool._id},{$unset: {"courtId":""}});
-	            }
-	            else{
-	                var j=(i % courts.length);
-	                pool.courtId = courts[j];
-	                Meteor.call('updatePool',pool);
-	            }
+	            if(pool["courtId"]==undefined || pool["courtId"]==null){
+	            	if(courts.length==0){
+		                Pools.update({_id:pool._id},{$unset: {"courtId":""}});
+		            }
+		            else{
+		                var j=(i % courts.length);
+		                pool.courtId = courts[j];
+		                Meteor.call('updatePool',pool);
+		            }
 
-	            // add court to all the matches in the pool
+		            // add court to all the matches in the pool
 
-	            var matches = Matches.find({"poolId" : pool._id}).fetch();
+		            var matches = Matches.find({"poolId" : pool._id}).fetch();
 
-	            for(var f=0;f<matches.length;f++){
-	                matches[f].courtId = courts[i];
-	                Meteor.call('updateMatch',matches[f]);
+		            for(var f=0;f<matches.length;f++){
+		                matches[f].courtId = courts[i];
+		                Meteor.call('updateMatch',matches[f]);
+		            }
 	            }
 	        }
 
@@ -2437,7 +2463,6 @@ Meteor.methods({
 	                if(typeDoc[categoriesKeys[t]]!=null && typeDoc[temp]!=null){
 
 	                    var nameField = categoriesKeys[t]+"Courts";
-	                    typeDoc[nameField] = [];
 
 	                    var next = setCourts(typeDoc[temp], courtsTable[g],start,typeDoc[nameField]);
 

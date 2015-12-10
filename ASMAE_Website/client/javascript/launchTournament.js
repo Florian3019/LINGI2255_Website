@@ -95,7 +95,7 @@ Template.launchTournament.events({
             priceInput.className = "form-group has-error";
             errorMsg.style.display = "block";
             if(!isValidePrice(price)) {
-               document.getElementById("priceError-message").innerHTML = "Attention le prix est incorrect, vous ne pouvez pas avoir plus deux décimales";
+               document.getElementById("priceError-message").innerHTML = "Attention le prix est incorrect, vous ne pouvez pas avoir plus de deux décimales";
             }
             
             return;

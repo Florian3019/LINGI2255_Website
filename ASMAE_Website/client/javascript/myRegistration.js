@@ -26,7 +26,7 @@ function hasPairPlayer(status, userId, day) {
     if(!partner){
       if(status == "true") {
 		  if (partnerEmail) {
-			  return "En attente d'un partenaire, son email : "+partnerEmail;
+			  return "En attente d'un partenaire dont l'email est "+partnerEmail;
 		  }
 		  else {
 			  return "En attente d'un partenaire";

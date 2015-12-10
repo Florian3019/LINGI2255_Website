@@ -1,31 +1,31 @@
 <template name="myRegistration">
-    <div>
-        <h3 id="MyInscriptionHeader"> Votre inscription </h3>
-        <p> Voici le résumé de votre inscription pour le tournoi de l'année {{currentYear}}</p>
+    <div class="page-header">
+        <h2 id="MyInscriptionHeader"> Votre inscription </h2>
     </div>
+<h5> Voici le résumé de votre inscription pour le tournoi de l'année {{currentYear}}</h5>
 <div>
     {{>playerInfoTemplate ID=setCurrentPlayer}}
 </div>
-<div>
-	<h4 id="Status"> Statut de l'inscription du samedi : {{hasSaturdayPairPlayer "true"}} </h4>
+<div class="jumbotron">
+  <div>
+  	<h4 id="Status"> Statut de l'inscription du samedi : {{hasSaturdayPairPlayer "true"}} </h4>
+  </div>
+  <div>
+  	{{#if hasSaturdayPairPlayer "false"}}
+    		<h4> Votre coéquipier : </h4>
+    		{{>playerInfoTemplate ID=setSaturdayPairPlayer}}
+  	{{/if}}
+  </div>
+  <div>
+  	<h4 id="Status"> Statut de l'inscription du dimanche : {{hasSundayPairPlayer "true"}} </h4>
+  </div>
+  <div>
+  	{{#if hasSundayPairPlayer "false"}}
+    		<h4> Votre coéquipier : </h4>
+    		{{>playerInfoTemplate ID=setSundayPairPlayer}}
+  	{{/if}}
+  </div>
 </div>
-<div>
-	{{#if hasSaturdayPairPlayer "false"}}
-  		<h4> Votre coéquipier : </h4>
-  		{{>playerInfoTemplate ID=setSaturdayPairPlayer}}
-	{{/if}}
-</div>
-<div>
-	<h4 id="Status"> Statut de l'inscription du dimanche : {{hasSundayPairPlayer "true"}} </h4>
-</div>
-<div>
-	{{#if hasSundayPairPlayer "false"}}
-  		<h4> Votre coéquipier : </h4>
-  		{{>playerInfoTemplate ID=setSundayPairPlayer}}
-	{{/if}}
-</div>
-<br/>
-<br/>
 <br/>
 <br/>
 <br/>
