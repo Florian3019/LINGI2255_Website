@@ -90,6 +90,7 @@ Meteor.methods({
 				data.step6done = false;
 				data.setp7done = false;
 				data.setp8done = false;
+				data._id = dataID;
 				insertedYearID = Years.insert(data);
 				console.log("Tournament launched for year "+data._id);
 				//Put all the courts ownerOK and staffOK to false for this year's tournament
@@ -747,8 +748,8 @@ Meteor.methods({
 			            typesIDS.push(years[y][typeKeys[j]]);
 			        }
 
-			        for(var d=0; d<typesIDS.length;d++){  
-			            var sub_request=[];   
+			        for(var d=0; d<typesIDS.length;d++){
+			            var sub_request=[];
 			            for(var h=0;h<categoriesKeys.length;h++){
 			                data = {};
 			                data[categoriesKeys[h].concat("Courts")]=courtNumbers[i];
@@ -768,7 +769,7 @@ Meteor.methods({
 			                var listCourts = brackets[m][field];
 
 			                if(listCourts!=undefined){
-			                    
+
 		                        for(var l=0;l<listCourts.length;l++){
 		                            if(listCourts[l]==courtNumbers[i]){
 		                                listCourts[l]="?";

@@ -146,7 +146,12 @@ Template.playerInfoTemplate.helpers({
  	},
 
 	'paymentMethod' : function(payment){
-		return paymentTypesTranslate[payment.paymentMethod];
+        if(payment.paymentMethod === paymentTypes[1]){  //BankTransfer: add the identification number
+            return paymentTypesTranslate[payment.paymentMethod] + " (Identifiant: " + payment.bankTransferNumber + ")";
+        }
+        else{
+    		return paymentTypesTranslate[payment.paymentMethod];
+        }
 	},
 
 	'getPayment' : function(userId){
