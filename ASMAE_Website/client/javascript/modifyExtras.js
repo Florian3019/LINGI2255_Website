@@ -7,17 +7,18 @@ Template.modifyExtras.events({
 		event.preventDefault();
 
 		var name = document.getElementById("nameExtra");
-		var price = parseFloat(document.getElementById("priceExtra"));
+		var price = document.getElementById("priceExtra");
 		var comment =  document.getElementById("commentExtra");
 		var jour = document.getElementById("dayExtra").value;
 		var day = jour == "Samedi" ? "saturday" : "sunday";
 
 		var infoBox = document.getElementById("infoBoxExtra");
 
-		if(name.value!=="" && name.value!==undefined && price.value!=="" && price.value!==undefined){
+		if(name.value!=="" && typeof name.value !== 'undefined' && price.value!=="" && typeof price.value !== 'undefined'){
+			var priceValue = parseFloat(price.value);
 			var data={
 					"name": name.value,
-					"price": price.value,
+					"price": priceValue,
 					"comment": comment.value,
 					"day": day
 			};

@@ -39,29 +39,31 @@ Template.tournamentProgress.helpers({
 
     'stepIsDoneClass': function(stepNumber){
         var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-        if(currentYear == ""){ //Tournament didn't launch yet
-            return "notokBlock";
-        }
-        else {
-            var yearDocument = Years.findOne({_id: currentYear});
-            if(typeof yearDocument !== 'undefined'){
-                if(stepNumber == 1){
+        var yearDocument = Years.findOne({_id: currentYear});
+        if(typeof yearDocument !== 'undefined'){
+            if(stepNumber == 1){
+                if(GlobalValues.findOne({_id: "registrationsON"}).value){
+                    return "okBlock";
+                }
+                else if(yearDocument["step4done"]){   //If step 4 is done (registrations are OFF)
+                    return "okBlock";
+                }
+                else {
+                    return "notokBlock";
+                }
+            }
+            else{
+                var stepField = "step"+stepNumber+"done";
+                if(yearDocument[stepField]){
                     return "okBlock";
                 }
                 else{
-                    var stepField = "step"+stepNumber+"done";
-                    if(yearDocument[stepField]){
-                        return "okBlock";
-                    }
-                    else{
-                        return "notokBlock";
-                    }
+                    return "notokBlock";
                 }
             }
-            else {
-                console.error("currentYear doesn't exist in Years");
-                return undefined;
-            }
+        }
+        else {
+            return "notokBlock";
         }
 
     }

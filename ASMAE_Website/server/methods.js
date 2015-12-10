@@ -2001,6 +2001,8 @@ Meteor.methods({
 			throw new Meteor.error("You don't have the permissions to restart a tournament");
 		}
 
+		GlobalValues.update({_id: "registrationsON"}, {$set: {value: false}});
+
 		return GlobalValues.update({_id: "currentYear"}, {$set: {
 			value: ""
 		}});
