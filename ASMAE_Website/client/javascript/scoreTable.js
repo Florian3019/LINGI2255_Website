@@ -25,7 +25,23 @@ Template.scoreTable.onRendered(function(){
   }
 })
 
+var isForCurrentYear = function(){
+  var year = Session.get("PoolList/Year");
+  if (year === "" || year===undefined){
+    return false;
+  }
+
+  var c = GlobalValues.findOne({_id:"currentYear"});
+    if(c===undefined) return false;
+    var currentYear = c.value;
+  return currentYear===year;
+}
+
 Template.scorePage.helpers({
+    'isForCurrentYear':function(){
+      return isForCurrentYear();
+    },
+
     'getTranslateType':function(){
       return typesTranslate[Session.get("PoolList/Type")];
     },
@@ -155,6 +171,10 @@ Template.scoreTable.events({
 })
 
 Template.scoreTable.helpers({
+  'isForCurrentYear':function(){
+    return isForCurrentYear();
+  },
+
   // Returns a list of pairs that are in this pool
   'getPairs' : function(poolId){
     var pairList = [];
@@ -171,7 +191,7 @@ Template.scoreTable.helpers({
     var completedMatches = 0;
 
     var user = Meteor.user();
-    if(user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin)){
+    if(user!==undefined && user!==null && ((user.profile.isStaff || user.profile.isAdmin) && isForCurrentYear())){
       // Create a match for each of these pairs, if it does not yet exist
       for(var i=0;i<pairList.length;i++){
         for(var j=0;j<i;j++){
@@ -297,7 +317,7 @@ Template.scorePage.events({
 
   'click #changeCourt':function(event){
     var user = Meteor.user();
-    if(user!==undefined && user!==null && (user.profile.isStaff || user.profile.isAdmin)){
+    if(user!==undefined && user!==null && ((user.profile.isStaff || user.profile.isAdmin) && isForCurrentYear())){
         var poolID = Session.get("PoolList/poolID");
         var pool = Pools.findOne({_id:poolId});
         if(pool.courtId==undefined){

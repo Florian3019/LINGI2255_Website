@@ -32,3 +32,7 @@ Template.registerHelper('isSaturdayRegistered', function(){
 Template.registerHelper('isSundayRegistered', function(){
 	return isSundayRegistered(Meteor.userId());
 });
+
+Template.registerHelper('and', function(a, b){
+	return a && b;
+});

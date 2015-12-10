@@ -10,7 +10,7 @@
 						<div class="page-header">
 							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} en {{translateCategory this}} {{/unless}}
 							
-							{{#if isAdminOrStaff}}
+							{{#if and isAdminOrStaff isForCurrentYear}}
 								<button type="button" title="Aide" id="helpBrackets" class="btn btn-default btn-info" style="margin-left:15px">
 							  		<span class="glyphicon glyphicon-question-sign"></span>
 								</button>
@@ -18,7 +18,7 @@
 							</h2>
 							
 						</div>
-						{{#if isAdminOrStaff}}
+						{{#if and isAdminOrStaff isForCurrentYear}}
 				 			{{#if isLoading}}
 				 				{{>loading}}
 				 			{{else}}
@@ -140,9 +140,8 @@
 
     </div>
   </div>
-<!-- <<<<<<< HEAD
-======= -->
-{{#if isAdminOrStaff}}
+  
+{{#if and isAdminOrStaff isForCurrentYear}}
 	{{#unless buildingTournament}}
 	<center>
 		<button type="button" id="getPDF" class="btn btn-default btn-lg btn-warning hideIfNotStarted hideIfEmpty" data-pool="{{this._id}}" style="display:none; margin:20px" >
@@ -152,7 +151,6 @@
 	</center>
 	{{/unless}}
 {{/if}}
-<!-- >>>>>>> c759ce91a75c1f574ca157d599ee44bd506dee6e -->
 
 {{CourtInfoModal}}
 

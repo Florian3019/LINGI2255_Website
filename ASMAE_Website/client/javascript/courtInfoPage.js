@@ -6,11 +6,11 @@ Template.courtInfoPage.helpers({
 
   	'checked': function(value){
   		if(value){
-  			return "glyphicon-ok lendOk"
+  			return "glyphicon-ok green"
   		}
   		else
   		{
-  			return "glyphicon-remove lendNot"
+  			return "glyphicon-remove red"
   		}
   	},
 
@@ -49,6 +49,11 @@ Template.courtInfoPage.helpers({
             }
             return addr.street + ", "+addr.number;
         }
+    },
+
+    'isOwner':function(ownerId){
+      if(ownerId===undefined) return false;
+      return ownerId===Meteor.userId();
     },
 
     'isAdminOrStaffOrOwner':function(ownerId){
