@@ -299,7 +299,6 @@ Meteor.methods({
           if(error) {console.error("Error: " + error)}
         }
         Meteor.http.post(postURL, options, onError);
-        console.log("Email sent");
       }else{
         console.error("Vous n'avez pas les permissions requises");
       }
@@ -337,9 +336,6 @@ Meteor.methods({
                 }
               });
             }
-          }
-          else{
-            console.log("cash");
           }
         });
 
