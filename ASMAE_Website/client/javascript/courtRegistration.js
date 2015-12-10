@@ -94,18 +94,28 @@ Template.courtRegistration.events({
                 }
                 if(!Meteor.user().profile.isStaff){
                     var data = {
-                    intro:"Bonjour "+Meteor.user().username+",",
-                    important:"Merci pour le prêt de votre terrain !",
-                    texte:"Si vous recevez ce mail, c'est que vous venez d'inscrire votre terrain ou que vous venez de modifier certaines informations par rapport à celui-ci.",
-                    encadre:"Si jamais les informations par rapport à votre terrain sont erronées, n'hésitez pas à nous envoyer un email ou de modifier vous-même les informations !\n Pour toutes questions notre staff sera ravi de vour répondre via l'onglet \"contact\"/.",
+                        intro:"Bonjour "+Meteor.user().username+",",
+                        important:"Merci pour le prêt de votre terrain !",
+                        texte:"Si vous recevez ce mail, c'est que vous venez d'inscrire votre terrain ou que vous venez de modifier certaines informations par rapport à celui-ci.",
+                        encadre:"Si jamais les informations par rapport à votre terrain sont erronées, n'hésitez pas à nous envoyer un email ou de modifier vous-même les informations !\n Pour toutes questions notre staff sera ravi de vour répondre via l'onglet \"contact\"/.",
 
-                };
-                Meteor.call('emailFeedback',Meteor.user().emails[0].address,"Concernant le prêt de votre terrain",data);}
+                    };
+                    Meteor.call('emailFeedback',Meteor.user().emails[0].address,"Concernant le prêt de votre terrain",data, function(err, res){
+                        if(err){
+                            console.error(err);
+                        }
+                    });
+                }
+
+                // Add to Modifications logs
+        		if((Meteor.user().profile.isAdmin || Meteor.user().profile.isStaff) && courtData._id){
+                    addToLog("Modification terrain", courtData.ownerID, courtData._id);
+        		}
 
                 Router.go('confirmationRegistrationCourt', {_id: result});
             });
         })
-		
+
 
 
     }

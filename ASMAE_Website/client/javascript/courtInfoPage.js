@@ -90,27 +90,6 @@ Template.courtInfoPage.helpers({
 
 });
 
-var addToLog = function(opType, ownerId, courtId){
-    var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
-    var court = Courts.findOne({_id:courtId}, {"addressID":1});
-    var address = Addresses.findOne({_id:court.addressID});
-    console.log(opType);
-    Meteor.call("addToModificationsLog",
-      {"opType":opType,
-      "details":
-          "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
-      },
-      function(err, logId){
-        if(err){
-          console.log(err);
-          return;
-        }
-        Meteor.call('addToUserLog', ownerId._id, logId);
-        Meteor.call('addToCourtLog', courtId, logId);
-      }
-    );
-}
-
 Template.courtInfoPage.events({
 
     'click #button_ownerOK':function(event){

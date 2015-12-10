@@ -612,7 +612,6 @@ Meteor.methods({
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 
 		var data = {};
-
 		data.ownerID = courtData.ownerID;
 
 		// Fill in court info
@@ -705,6 +704,7 @@ Meteor.methods({
 				throw new Meteor.Error("updateCourt error : during Courts.update", err);
 			}
 		});
+
 		return courtId;
 	},
 
@@ -2185,17 +2185,17 @@ Meteor.methods({
 		var payment = Payments.findOne({_id: paymentID});
 		var user = Meteor.users.findOne({_id: payment.userID});
 
+		// Add to Modifications logs
 		Meteor.call("addToModificationsLog",
 		{"opType":"Marquer comme payé",
 		"details": user.profile.firstName + " " + user.profile.lastName + " a été marqué comme ayant payé le tournoi"
-	}, function(err, logId){
-		if(err){
-			console.log(err);
-			return;
-		}
-		Meteor.call('addToUserLog', user._id, logId);
-	});
-
+		}, function(err, logId){
+			if(err){
+				console.log(err);
+				return;
+			}
+			Meteor.call('addToUserLog', user._id, logId);
+		});
 
 		return true;
 	},

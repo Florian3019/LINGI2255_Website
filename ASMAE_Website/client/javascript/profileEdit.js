@@ -83,7 +83,6 @@ Template.profileEdit.events({
 
 		var lastName = $('[name=lastname]').val();
 		var firstName = $('[name=firstname]').val();
-		//var email TODO
 		var sex = $('[name=sex]').val();
 		var rank = $('[name=rank]').val();
 

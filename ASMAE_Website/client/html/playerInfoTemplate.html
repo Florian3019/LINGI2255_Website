@@ -2,9 +2,11 @@
 <template name="playerInfoTemplate">
 {{#with getPlayer}}
   {{#unless ../HidePic}}
+    {{#unless isCurrentUser id}}
         <div class="page-header">
           <h2>Informations sur le joueur</h2>
         </div>
+    {{/unless}}
   {{/unless}}
 
  <div class="panel panel-info">
@@ -18,7 +20,7 @@
               {{#unless ../HidePic}}
                 <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://www.saintemesme.fr/medias/images/balle-rigolote-2.gif" class="img-circle img-responsive"> </div>
               {{/unless}}
-                <div class="{{#if ../HidePic}} col-sm-12 col-md-12 {{else}} col-md-9 col-lg-9 {{/if}}" > 
+                <div class="{{#if ../HidePic}} col-sm-12 col-md-12 {{else}} col-md-9 col-lg-9 {{/if}}" >
                   <table class="table table-user-information">
                     <tbody>
                         <tr>
