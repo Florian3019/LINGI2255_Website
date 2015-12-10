@@ -1495,6 +1495,9 @@ Template.modalItem.events({
 */
 
 Template.responsablesTemplate.helpers({
+	'isForCurrentYear':function(){
+		return isForCurrentYear();
+	},
 
 	'getPlayer' : function(playerId){
 		if(playerId==undefined) return undefined;
