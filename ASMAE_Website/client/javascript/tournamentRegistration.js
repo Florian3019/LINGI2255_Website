@@ -86,7 +86,7 @@ function checkAloneErrors(document) {
 		This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
 		If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
 	*/
-	
+
 	var errors = new Array();
 	var hasError = false;
 
@@ -291,169 +291,16 @@ Template.tournamentRegistrationTemplate.helpers({
 		return res.city;
 	},
 
-	/*
-	* @param birthDate is of type Date
-	* @param todayDate give an optional today date (e. g. date of the tournament)
-	*/
-	'getAge' : function(birthDate){
-        var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
-        var tournamentDate = (Years.findOne({_id:currentYear})).tournamentDate;
-	    var age = tournamentDate.getFullYear() - birthDate.getFullYear();
-	    var m = tournamentDate.getMonth() - birthDate.getMonth();
-	    if (m < 0 || (m === 0 && tournamentDate.getDate() < birthDate.getDate())) {
-	        age--;
-	    }
-	    return age;
-	},
 
-	'lastname': function(){
-
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.lastName':1});
-			return userData ? userData.profile.lastName : "";
-		}
-	},
-	'firstname': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.firstName':1});
-			return userData ? userData.profile.firstName : "";
-		}
-	},
-
-	'phone': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.phone':1});
-			return userData ? userData.profile.phone : "";
-		}
-	},
 	'getDate' : function(date){
-		return date.getDate();
+		return date!==undefined ? date.getDate() : undefined;
   	},
   	'getMonth' : function(date){
-    	return date.getMonth()+1;
+    	return date!==undefined ? date.getMonth()+1 : undefined;;
   	},
   	'getYear' : function(date){
-    	return date.getFullYear();
+    	return date!==undefined ? date.getFullYear() : undefined;
 	},
-	'street': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID}, {'street':1});
-				return addressData ? addressData.street : "";
-			}
-		}
-	},
-	'addressNumber': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID}, {'number':1});
-				return addressData ? addressData.number : "";
-			}
-		}
-	},
-	'boxNumber': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID},{'box':1});
-				return addressData ? addressData.box : "";
-			}
-		}
-	},
-	'zipcode': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID},{'zipCode':1});
-				return addressData ? addressData.zipCode : "";
-			}
-		}
-	},
-	'city': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID},{'city':1});
-				return addressData ? addressData.city : "";
-			}
-		}
-	},
-	'country': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID},{'country':1});
-				return addressData ? addressData.country : "";
-			}
-		}
-	},
-
 	'getFormattedDate' : function(day) {
 		var date = getTournamentDate();
 		if (!date || !day) {
