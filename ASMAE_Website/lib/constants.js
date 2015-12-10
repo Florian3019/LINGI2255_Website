@@ -584,7 +584,7 @@ getOrder = function(size){
 */
 getNumberMatchesFirstRound = function(nbrPairs){
 
-    var logPairs = Math.log2(nbrPairs);
+    var logPairs = Math.log(nbrPairs)/Math.log(2);
 
     var numMatchesFull = Math.floor(logPairs);
 
@@ -594,4 +594,27 @@ getNumberMatchesFirstRound = function(nbrPairs){
     else{
         return nbrPairs/2; // the nbr of pairs is a multiple of 2
     }
+}
+
+/*
+*   Add court to modifications logs
+*/
+addToLog = function(opType, ownerId, courtId){
+    var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
+    var court = Courts.findOne({_id:courtId}, {"addressID":1});
+    var address = Addresses.findOne({_id:court.addressID});
+    Meteor.call("addToModificationsLog",
+      {"opType":opType,
+      "details":
+          "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
+      },
+      function(err, logId){
+        if(err){
+          console.log(err);
+          return;
+        }
+        Meteor.call('addToUserLog', ownerId, logId);
+        Meteor.call('addToCourtLog', courtId, logId);
+      }
+    );
 }

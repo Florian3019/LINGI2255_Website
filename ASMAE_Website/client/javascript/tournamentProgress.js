@@ -321,6 +321,9 @@ var getCourtNumbers = function(courts){
 
 var assignCourts = function(rain){
     Meteor.call('assignCourts', rain, function(err, result) {
-        console.error("Error assignCourts : "+err);
+        if(err!=undefined){
+            console.error("Error assignCourts : "+err);    
+        }
+        
     });
 };
