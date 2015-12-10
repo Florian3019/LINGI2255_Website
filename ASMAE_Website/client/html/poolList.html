@@ -19,7 +19,7 @@
                   {{#with getType this}}
                   <div class="page-header">
                     <h2> Poules {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}
-                      {{#if isAdminOrStaff}}
+                      {{#if and isAdminOrStaff isForCurrentYear}}
                         <button type="button" title="Aide" id="helpPool" class="btn btn-default btn-info" style="margin-left:15px">
                             <span class="glyphicon glyphicon-question-sign"></span>
                         </button>
@@ -30,43 +30,43 @@
 
                 <!-- Pool Tables -->
                 {{#unless thereIsNoPool this}}
-                <table id='allTables' class='table'>
-                  {{#if isAdminOrStaff}}
+                  <table id='allTables' class='table'>
+                    {{#if and isAdminOrStaff isForCurrentYear}}
+                      <tr>
+                        <table id='specialTable' class='table'>
+                          <tr>
+                            <td>{{>pairsToSplitContainerTemplate}}</td>
+                            <td>{{>alonePairsContainerTemplate TYPEDATA=this}}</td>
+                            <td>{{>mergePlayersContainerTemplate}}</td>
+                          </tr>
+                        </table>
+                      </tr>
+                    {{/if}}
                     <tr>
-                      <table id='specialTable' class='table'>
-                        <tr>
-                          <td>{{>pairsToSplitContainerTemplate}}</td>
-                          <td>{{>alonePairsContainerTemplate TYPEDATA=this}}</td>
-                          <td>{{>mergePlayersContainerTemplate}}</td>
-                        </tr>
-                      </table>
-                    </tr>
-                  {{/if}}
-                  <tr>
-                    <td>
-                      <table id='poolTable' class='table'>
-                        {{#each getPools this}} <!-- Returns a list of lists of poolData, one list by column -->
-                        <tr>
-                          {{#each this}} <!-- For each pool in the column -->
-                          {{>poolContainerTemplate POOL=this}}
+                      <td>
+                        <table id='poolTable' class='table'>
+                          {{#each getPools this}} <!-- Returns a list of lists of poolData, one list by column -->
+                          <tr>
+                            {{#each this}} <!-- For each pool in the column -->
+                            {{>poolContainerTemplate POOL=this}}
+                            {{/each}}
+                          </tr>
                           {{/each}}
-                        </tr>
-                        {{/each}}
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-                {{#if isAdminOrStaff}}
-                  <button type="button" id="savePools" class="btn btn-default btn-lg btn-success btn-padding">
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Sauver
-                  </button>
-                  <button type="button" id="addPool" class="btn btn-default btn-lg btn-padding">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Poule
-                  </button>
-                  <button type="button" id="equilibrate" class="btn btn-default btn-lg btn-padding">
-                    <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Equilibrer
-                  </button>
-                {{/if}}
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  {{#if and isAdminOrStaff isForCurrentYear}}
+                    <button type="button" id="savePools" class="btn btn-default btn-lg btn-success btn-padding">
+                      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Sauver
+                    </button>
+                    <button type="button" id="addPool" class="btn btn-default btn-lg btn-padding">
+                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Poule
+                    </button>
+                    <button type="button" id="equilibrate" class="btn btn-default btn-lg btn-padding">
+                      <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Equilibrer
+                    </button>
+                  {{/if}}
                 {{/unless}}
               {{/with}}
             {{/with}}
@@ -169,7 +169,7 @@
   <td>
     <center>
       <h3>
-      {{#if isAdminOrStaff}}
+      {{#if and isAdminOrStaff isForCurrentYear}}
         {{#unless moreThanOnePair POOL.pairs}}
         <button type="button" id="removePool" class="btn btn-default btn-lg" data-poolid="{{POOL._id}}">
           <span class="glyphicon glyphicon-remove removePoolButton" aria-hidden="true"></span>
@@ -228,7 +228,7 @@
       <div class='poolContainer aloneColor' id='alonepairs'>
         {{#each getAlonePairs TYPEDATA}}
         {{#with getPlayer this.pair.player1._id}}
-          <div id="{{../pair._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}} alonePair" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}">
+          <div id="{{../pair._id}}" class="pairs {{#if and isAdminOrStaff isForCurrentYear}} grabbable {{/if}} alonePair" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}">
             <ul class="list-group clickablePoolItem clickablePoolItemAlone" data-id="{{../pair._id}}" data-startingPoolId="{{../startingPoolId}}" data-playerid="{{this._id}}">
               <li class="list-group-item pairPlayer" style="color:{{getColor ../pair.player1}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}}</li>
             </ul>
@@ -377,13 +377,13 @@ Takes 2 arguments :
 -->
 <template name="poolItem">
   {{#with getPair PAIRID POOLID}} <!-- get the pair data using its id -->
-    <div id="{{this._id}}" class="pairs {{#if isAdminOrStaff}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
+    <div id="{{this._id}}" class="pairs {{#if and isAdminOrStaff isForCurrentYear}} grabbable {{/if}}" data-startingPoolId="{{../POOLID}}">
       <ul class="list-group clickablePoolItem fullPair" data-id="{{this._id}}" data-poolid="{{../POOLID}}">
         {{#with getPlayer this.player1._id}}
-        <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}color:{{getColor ../player1}}{{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
+        <li class="list-group-item pairPlayer" style="{{#if and isAdminOrStaff isForCurrentYear}}color:{{getColor ../player1}} {{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player1._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
         {{#with getPlayer this.player2._id}}
-        <li class="list-group-item pairPlayer" style="{{#if isAdminOrStaff}}color:{{getColor ../player2}}{{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player2._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
+        <li class="list-group-item pairPlayer" style="{{#if and isAdminOrStaff isForCurrentYear}}color:{{getColor ../player2}} {{/if}}" id="{{this._id}}" >{{profile.firstName}} {{profile.lastName}} {{>genderSymbol profile.gender}} {{#if equals ../player2._id ../../LEADER}}<span class="glyphicon glyphicon-star leaderStar" aria-hidden="true"></span>{{/if}}</li>
         {{/with}}
       </ul>
     </div>
@@ -402,7 +402,7 @@ Takes 2 arguments :
         Pas de responsable pour cette catégorie.
       {{/if}}
     </h3>
-    {{#if isAdminOrStaff}}
+    {{#if and isAdminOrStaff isForCurrentYear}}
       {{#if isResponsable}}
         <button type="button" id="unbecomeResponsable" class="btn btn-default btn-lg pull-right toHideForPdf">
             <span class="glyphicon glyphicon-sunglasses" aria-hidden="true"></span> Ne plus être responsable

@@ -31,6 +31,18 @@ const playerPlaceHolderScore = "Score: --";
 const waiting = "En attente";
 
 
+var isForCurrentYear = function(){
+  var year = Session.get("PoolList/Year");
+  if (year === "" || year===undefined){
+    return false;
+  }
+
+  var c = GlobalValues.findOne({_id:"currentYear"});
+    if(c===undefined) return false;
+    var currentYear = c.value;
+  return currentYear===year;
+}
+
 var canModifyCourt = function(pair, round){
   var ret = (pair.tournamentCourts==undefined && round==0) || (pair.tournamentCourts!=undefined && round==pair.tournamentCourts.length)
   return ret;
@@ -289,6 +301,10 @@ var hideInfo = function(document){
 }
 
 Template.brackets.helpers({
+  'isForCurrentYear':function(){
+    return isForCurrentYear();
+  },
+
   'translateType':function(type){
     return typesTranslate[type];
   },
@@ -440,7 +456,7 @@ var handleBracketErrors = function(document){
 
 
       var user = Meteor.user();
-      if(user===undefined || user===null || !(user.profile.isStaff || user.profile.isAdmin)){
+      if(user===undefined || user===null || !((user.profile.isStaff || user.profile.isAdmin) && isForCurrentYear())){
         setInfo(document, "Les knock-off n'ont pas encore commencés pour cette catégorie!");
       }
       else{
@@ -456,7 +472,7 @@ var handleBracketErrors = function(document){
     if(allWinners.length==0){
       console.info("There are no matches for that year, type and category, did you create any ?");
       var user = Meteor.user();
-      if(user===undefined || user===null || !(user.profile.isStaff || user.profile.isAdmin)){
+      if(user===undefined || user===null || !((user.profile.isStaff || user.profile.isAdmin) && isForCurrentYear())){
         setInfo(document, "Les knock-off n'ont pas encore commencés pour cette catégorie!");
       }
       else{
@@ -480,7 +496,7 @@ var handleBracketErrors = function(document){
 
 var setCompletion = function(completion){
   var user = Meteor.user();
-  if(user===undefined || user==null || !(user.profile.isStaff || user.profile.isAdmin)){
+  if(user===undefined || user==null || !((user.profile.isStaff || user.profile.isAdmin) && isForCurrentYear())){
     return;
   }
   var year = Session.get("PoolList/Year");
@@ -615,7 +631,7 @@ var makeBrackets = function(document){
   var nextMatchNum = 0;
 
   var user = Meteor.user();
-  var canEditScore = user!==undefined && user!==null && (user.profile.isAdmin || user.profile.isStaff);
+  var canEditScore = user!==undefined && user!==null && ((user.profile.isStaff || user.profile.isAdmin) && isForCurrentYear());
 
   var pairData = [];
   for(var i=0; i<allWinners.length;i++){
@@ -661,7 +677,7 @@ var makeBrackets = function(document){
       b = newRound[i+1];
 
       if(a.pair!=="placeHolder" && b.pair!=="placeHolder"){
-        b.data.clickable = true;
+        b.data.clickable = canEditScore;
         setCourt(a, b,courts,nextMatchNum); // Define which court to use for that match
         nextMatchNum++;
       }
@@ -691,7 +707,7 @@ var makeBrackets = function(document){
         b.data.clickable = false;
       }
 
-      if(b.data.clickable){
+      if(b.data.clickable==true){
         a.data.clickable = true;
       }
 
@@ -791,7 +807,7 @@ Template.brackets.events({
 
     var user = Meteor.user();
 
-    if(user!==undefined && user!==null && (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin)){
+    if(user!==undefined && user!==null && (Meteor.user().profile.isStaff || Meteor.user().profile.isAdmin) && isForCurrentYear()){
 
       if(event.currentTarget.firstElementChild==null){
         return;
@@ -826,7 +842,7 @@ Template.brackets.events({
 	// Do something when the user clicks on a player
   "click .changeScoreBracket":function(event, template){
     var user = Meteor.user();
-    if(user==null || user===undefined || !(user.profile.isAdmin || user.profile.isStaff)){
+    if(user==null || user===undefined || !((user.profile.isStaff || user.profile.isAdmin) && isForCurrentYear())){
       return; // No action must be done
     }
 

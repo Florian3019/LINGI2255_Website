@@ -140,7 +140,7 @@ var changeCourtPool = function(listDouble,newCourtNumber,oldCourtNumber,behavior
         Meteor.call('updatePool',pool);
         return;
     }
-    else{
+    else if(oldCourtData!=undefined){
         var oldCourtAddress = Addresses.findOne({_id:oldCourtData.addressID});
         var details = "Le terrain N°"+ pool.courtId + " " + formatAddress(oldCourtAddress) + " de la poule "+pool._id+" est maintenant le terrain N°"+newCourtNumber+ " "+ formatAddress(newCourtAddress)+ getStringOptions();
         addToLog("Changement de terrain",details,newCourtData,oldCourtData);

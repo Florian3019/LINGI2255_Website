@@ -727,6 +727,62 @@ Meteor.methods({
 				}
 			});
 
+			courtNumbers = court.courtNumber;
+
+			for(var i=0;i<courtNumbers.length;i++){
+				var pools = Pools.find({"courtId":courtNumbers[i]}).fetch();
+
+				for(var k=0; k<pools.length;k++){
+					Pools.update({_id:pools[k]._id},{$unset: {"courtId":""}});
+				}
+
+				var years = Years.find({}).fetch();
+
+				for(var y=0;y<years.length;y++){
+					var request = {$or:[]};
+
+			        var typesIDS = [];
+
+			        for(var j=0; j<typeKeys.length;j++){
+			            typesIDS.push(years[y][typeKeys[j]]);
+			        }
+
+			        for(var d=0; d<typesIDS.length;d++){  
+			            var sub_request=[];   
+			            for(var h=0;h<categoriesKeys.length;h++){
+			                data = {};
+			                data[categoriesKeys[h].concat("Courts")]=courtNumbers[i];
+			                sub_request.push(data);
+			            }
+			            request["$or"].push({$and: [{_id:typesIDS[d]},{$or:sub_request}]});
+			        }
+
+			        brackets = Types.find(request).fetch();
+			        console.log(brackets);
+
+			        for(var m=0;m<brackets.length;m++){
+
+			            for(var n=0;n<categoriesKeys.length;n++){
+			                var field = categoriesKeys[n]+"Courts";
+
+			                var listCourts = brackets[m][field];
+
+			                if(listCourts!=undefined){
+			                    
+		                        for(var l=0;l<listCourts.length;l++){
+		                            if(listCourts[l]==courtNumbers[i]){
+		                                listCourts[l]="?";
+		                            }
+		                        }
+			                }
+
+			            }
+			            Meteor.call('updateType',brackets[m]);
+			        }
+
+				}
+			}
+
 		}
 		else
 		{

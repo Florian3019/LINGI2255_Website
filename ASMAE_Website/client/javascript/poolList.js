@@ -845,7 +845,23 @@ var getYearFunct = function(document){
 	return y;
 }
 
+var isForCurrentYear = function(){
+	var year = Session.get("PoolList/Year");
+	if (year === "" || year===undefined){
+		return false;
+	}
+
+	var c = GlobalValues.findOne({_id:"currentYear"});
+    if(c===undefined) return false;
+    var currentYear = c.value;
+	return currentYear===year;
+}
+
 Template.poolList.helpers({
+	'isForCurrentYear':function(){
+		return isForCurrentYear();
+	},
+
 	'getTranslateType':function(){
 		return typesTranslate[Session.get("PoolList/Type")];
 	},
@@ -1011,7 +1027,7 @@ Template.poolList.helpers({
 				/*	Defines what can be moved/dragged	*/
 				moves : function(el, source, handle, sibling) {
 					var user = Meteor.user();
-					if(user!==undefined && user!==null && (user.profile.isStaff===true || user.profile.isAdmin===true)){
+					if(user!==undefined && user!==null && (user.profile.isStaff===true || user.profile.isAdmin===true) && isForCurrentYear()){
 						var isPairModal = (' ' + el.className + ' ').indexOf(' modal ') > -1;
 			    		if(isPairModal){
 			    			// The modal must not be draggable
@@ -1227,7 +1243,8 @@ Template.poolContainerTemplate.helpers({
 	'displayPool':function(pairs){
 		var user = Meteor.user();
 		if(user===undefined || user===null) return moreThanOnePairFunct(pairs);
-		return (user.profile.isAdmin || user.profile.isStaff || moreThanOnePairFunct(pairs));
+		var canEdit = (user.profile.isAdmin || user.profile.isStaff) && isForCurrentYear();
+		return (canEdit || moreThanOnePairFunct(pairs));
 	},
 
   'getStreet' : function(courtId){
@@ -1478,6 +1495,9 @@ Template.modalItem.events({
 */
 
 Template.responsablesTemplate.helpers({
+	'isForCurrentYear':function(){
+		return isForCurrentYear();
+	},
 
 	'getPlayer' : function(playerId){
 		if(playerId==undefined) return undefined;
