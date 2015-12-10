@@ -956,13 +956,11 @@ Template.tournamentRegistrationTemplate.events({
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch, callbackInception);
 					var type = Session.get("tournamentRegistration/type");
 					var category = Session.get("tournamentRegistration/category");
-					var firstname = curUserData.profile.firstName;
-					var lastname = curUserData.profile.lastName;
 					if (mailNotifyAloneUser) {
 						var dataMail = {
-							intro:"Bonjour"+firstname+",",
-							important:"Merci pour votre inscription au tournoi.",
-							texte:"Vous êtes bien inscrit dans la catégorie : '"+category+"' du type '"+ type+"'."
+							intro:"Bonjour "+firstname+" "+lastname+",",
+							important:"Merci pour votre inscription à notre tournoi annuel.",
+							texte:"Vous êtes bien inscrit dans la catégorie : '"+categoriesTranslate[category]+"' du type '"+ typesTranslate[type]+"'."
 						};
 						Meteor.call("emailFeedback",user.emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
 							if(error){
