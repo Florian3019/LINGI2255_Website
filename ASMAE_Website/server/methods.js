@@ -51,9 +51,9 @@ Meteor.methods({
 			}
 
 			data.tournamentDate = launchTournamentData.tournamentDate;
-			data._id = ""+data.tournamentDate.getFullYear();	//Must be a string
+			var dataID = ""+data.tournamentDate.getFullYear();	//Must be a string
 
-			var newTournament = typeof Years.findOne({_id:data._id}) === 'undefined';
+			var newTournament = typeof Years.findOne({_id:dataID}) === 'undefined';
 
 			if(typeof launchTournamentData.tournamentPrice === 'undefined') {
 				console.error("launchTournament: No price for the tournament");
@@ -65,7 +65,7 @@ Meteor.methods({
 			//Insert in database
 
 			GlobalValues.update({_id:"currentYear"}, {$set: {
-				value : data._id
+				value : dataID
 			}}, function(err, result){
 				if(err){
 					throw new Meteor.Error("update GlobalValues currentYear in launchTournament error: ", err);
@@ -91,13 +91,13 @@ Meteor.methods({
 				data.setp7done = false;
 				data.setp8done = false;
 				insertedYearID = Years.insert(data);
-				console.log("Tournament launched for year "+data._id);
+				console.log("Tournament launched for year "+dataID);
 				//Put all the courts ownerOK and staffOK to false for this year's tournament
 				Courts.update({}, {ownerOK: false, staffOK: false});
 			}
 			else {
-				Years.update({_id:data._id}, {$set:data});
-				console.log("Opening the registrations for year "+data._id);
+				Years.update({_id:dataID}, {$set:data});
+				console.log("Opening the registrations for year "+dataID);
 			}
 
 			return insertedYearID;
@@ -1102,7 +1102,7 @@ Meteor.methods({
 			if(pairData._id){	//If it is an update: update the data
 				if(paymentAlreadyExists.status === "paid"){
 					if(paymentAlreadyExists.balance > amount){		// He paid to much
-						paymentData.balance = 0
+						paymentData.balance = 0;
 					}
 					else{		// He didn't paid enough
 						paymentData.balance = amount - paymentAlreadyExists.balance;
@@ -2173,6 +2173,177 @@ Meteor.methods({
 
 		return Winners.insert(data);
 	},
+
+	'assignCourts' : function(rain) {
+		/*
+	        Return N courts, starting at index start and using a modulo to loop through the array
+	        nextNumber is the next number to assign to the court if it hasn't a number yet
+	    */
+	    var setCourts = function(listPairs, courts, start,final_result){
+
+	        if(courts.length==0){
+	            newcourts = ["?"];
+	        }
+	        else{
+	            newcourts=courts;
+	        }
+
+	        var result = [];
+	        var next=0;
+
+	        var logPairs = Math.log2(listPairs.length);
+	        var numMatchesFull = Math.pow(2,Math.ceil(logPairs))/2;
+	        var index=getOrder(numMatchesFull);
+	        var round=0;
+
+	        for(var k=0;k<numMatchesFull;k++){
+	            result.push(-1);
+	        }
+
+	        var num = getNumberMatchesFirstRound(listPairs.length);
+
+	        for(var m=0;m<num;m++){
+	            result[index[m]]=newcourts[(start+next) % newcourts.length];
+	            next++;
+	        }
+
+	        round++;
+
+	        var max=numMatchesFull;
+
+	        var begin_previous=0;
+	        var size_previous=result.length;
+
+	        while(result.length<(2*max-1)){
+
+	            var inter_result=[];
+	            var count=0;
+
+	            for(var m=0;m<size_previous;m=m+2){
+	                if(result[begin_previous+m]==-1){
+	                    result.push(newcourts[(start+next) % newcourts.length]);
+	                    next++;
+	                }
+	                else{
+	                    result.push(result[begin_previous+m]);
+	                }
+	            }
+	            begin_previous+=size_previous;
+	            size_previous=size_previous/2;
+	            round++;
+	        }
+
+	        for(var j=0;j<result.length;j++){
+	            if(result[j]!=-1){
+	                final_result.push(result[j]);
+	            }
+	        }
+
+	        return next;
+	    };
+
+	    var numberDays = 2;
+
+	    var listCourtsSat;
+	    var listCourtsSun;
+
+	    if(rain){
+	        listCourtsSat=Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true},{isOutdoor:false}]},{$sort :{"HQDist":1} }).fetch();
+	        listCourtsSun=Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true},{isOutdoor:false}]},{$sort :{"HQDist":1} }).fetch();
+	    }
+	    else{
+	        listCourtsSat=Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
+	        listCourtsSun=Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
+	    }
+
+	    var courtsSat = getCourtNumbers(listCourtsSat);
+	    var courtsSun = getCourtNumbers(listCourtsSun);
+	    var courtsTable = [courtsSat,courtsSun];
+
+	    var poolsSat = Pools.find({$or: [{type:"mixed"},{type:"family"}]}).fetch();
+	    var poolsSun = Pools.find({$or: [{type:"men"},{type:"women"}]}).fetch();
+	    var poolsTable = [poolsSat,poolsSun];
+
+	    ////////// Assign courts to pools \\\\\\\\\\
+
+	    for(var g=0;g<numberDays;g++){
+
+	        var pools = poolsTable[g];
+	        var courts = courtsTable[g];
+
+	        for(var i=0;i<pools.length;i++){
+
+	            var pool = pools[i];
+
+	            if(courts.length==0){
+	                Pools.update({_id:pool._id},{$unset: {"courtId":""}});
+	            }
+	            else{
+	                var j=(i % courts.length);
+	                pool.courtId = courts[j];
+	                Meteor.call('updatePool',pool);
+	            }
+
+	            // add court to all the matches in the pool
+
+	            var matches = Matches.find({"poolId" : pool._id}).fetch();
+
+	            for(var f=0;f<matches.length;f++){
+	                matches[f].courtId = courts[i];
+	                Meteor.call('updateMatch',matches[f]);
+	            }
+	        }
+
+	    }
+
+	    ////////// KnockOff Tournament \\\\\\\\\\
+
+	    var typesSaturday = ["mixed","family"];
+	    var typesSunday = ["men","women"];
+	    var typesTable = [typesSaturday,typesSunday];
+	    var year = Years.findOne({_id:""+new Date().getFullYear()});
+	    var start = 0;
+
+	    ////////// Saturday and Sunday \\\\\\\\\\
+
+	    for(var g=0;g<numberDays;g++){ // loop through the days
+
+	        var typesDay = typesTable[g];
+
+	        for(var k=0;k<typesDay.length;k++){ // loop through the types
+
+	            var typeDoc = Types.findOne({_id:year[typesDay[k]]});
+
+	            for(var t=0;t<categoriesKeys.length;t++){ // loop through the categories
+
+	                var temp = categoriesKeys[t]+"Bracket";
+
+	                if(typeDoc[categoriesKeys[t]]!=null && typeDoc[temp]!=null){
+
+	                    var nameField = categoriesKeys[t]+"Courts";
+	                    typeDoc[nameField] = [];
+
+	                    var next = setCourts(typeDoc[temp], courtsTable[g],start,typeDoc[nameField]);
+
+	                    if(courtsTable[g].length==0){
+	                        start=0;
+	                    }
+	                    else{
+	                        start=(start+next) % courtsTable[g].length;
+	                    }
+	                }
+	            }
+
+	            Meteor.call('updateType',typeDoc);
+	        }
+	    }
+
+	    Meteor.call('updateDoneYears', 6, true, function(err, result){
+	        if(err){
+	            console.error("Error while calling updateDoneYears for step 6");
+	        }
+	    });
+	}
 
 
 

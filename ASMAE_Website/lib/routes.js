@@ -45,10 +45,10 @@ Router.route('/historique-tournoi', {
 		Session.set('showNavBar', true);
 	},
 	waitOn: function(){
-		return [ 	Meteor.subscribe('Pairs'), 
-					Meteor.subscribe('Pools'), 
-					Meteor.subscribe('Types'), 
-					Meteor.subscribe('Years'), 
+		return [ 	Meteor.subscribe('Pairs'),
+					Meteor.subscribe('Pools'),
+					Meteor.subscribe('Types'),
+					Meteor.subscribe('Years'),
 					Meteor.subscribe('GlobalValues')
 			  ]
 	},
@@ -139,7 +139,7 @@ Router.route('/mon-inscription', {
 		Session.set('showNavBar', false);
 	}
 });
-Router.route('/inscription-tournoi-samedi',  {
+Router.route('/inscription-tournoi-samedi/:_id',  {
 	name: 'tournamentRegistrationSaturday',
 	template: 'tournamentRegistration',
 	waitOn: function(){
@@ -150,15 +150,10 @@ Router.route('/inscription-tournoi-samedi',  {
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
-	},
-	data : function() {
-		if (this.ready()) {
-			return {day:"saturday"};
-		}
 	}
 });
 
-Router.route('/inscription-tournoi-dimanche',  {
+Router.route('/inscription-tournoi-dimanche/:_id',  {
 	name: 'tournamentRegistrationSunday',
 	template: 'tournamentRegistration',
 	waitOn: function(){
@@ -169,11 +164,6 @@ Router.route('/inscription-tournoi-dimanche',  {
 	},
 	onAfterAction: function(){
 		Session.set('showNavBar', false);
-	},
-	data : function() {
-		if (this.ready()) {
-			return {day:"sunday"};
-		}
 	}
 });
 

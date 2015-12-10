@@ -262,7 +262,6 @@ Template.playerInfoTemplate.events({
 		event.preventDefault();
         var dataSet = event.currentTarget.dataset;
         var userID = dataSet.id
-        console.log(userID);
 
 		swal({
 			title: "Êtes-vous sûr ?",
@@ -273,7 +272,7 @@ Template.playerInfoTemplate.events({
 			confirmButtonText: "Supprimer cette inscription",
 			closeOnConfirm: false },
 			function(){
-				var pair = getDayPairFromPlayerID(Meteor.userId(), "saturday");
+				var pair = getDayPairFromPlayerID(userID, "saturday");
 				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 				swal("Inscription supprimée", "", "success");
 				Router.go('home');
@@ -284,7 +283,6 @@ Template.playerInfoTemplate.events({
 		event.preventDefault();
         var dataSet = event.currentTarget.dataset;
         var userID = dataSet.id;
-        console.log(userID);
 
 		swal({
 			title: "Êtes-vous sûr ?",
@@ -295,7 +293,7 @@ Template.playerInfoTemplate.events({
 			confirmButtonText: "Supprimer cette inscription",
 			closeOnConfirm: false },
 			function(){
-				var pair = getDayPairFromPlayerID(Meteor.userId(), "sunday");
+				var pair = getDayPairFromPlayerID(userID, "sunday");
 				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 				swal("Inscription supprimée", "", "success");
 				Router.go('home');

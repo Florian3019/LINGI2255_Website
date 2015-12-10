@@ -67,18 +67,14 @@
                           <td> Inscription samedi {{#if showOption ../id}} ({{tournamentPrice}} euros) {{/if}}</td>
                           <td>
                             {{displayRegistration saturday}}
+                            {{#if showOption ../id}}
                               {{#if isRegistered saturday}}
-                              {{#if showOption ../id}}
                               (
-                              {{#if isCurrentUser ../id}}
-                                <a href={{pathFor route='tournamentRegistrationSaturday'}} id="modifySaturdayLink">Modifier</a> |
-                              {{/if}}
+                                <a href="{{pathFor route='tournamentRegistrationSaturday' _id=../id}}" id="modifySaturdayLink">Modifier</a> |
                                  <a href="#" id="unsubscribeSaturdayLink" data-id={{../id}}>Désinscrire</a> )
-                                {{/if}}
                               {{else}}
-                              {{#if isCurrentUser ../id}}
-                               ( <a href={{pathFor route='tournamentRegistrationSaturday'}} id="registerSaturdayLink">Inscription</a> )
-                               {{/if}}
+                               ( <a href="{{pathFor route='tournamentRegistrationSaturday' _id=../id}}" id="registerSaturdayLink">Inscription</a> )
+                              {{/if}}
                               {{/if}}
                           </td>
                         </tr>
@@ -87,18 +83,14 @@
 
                           <td>
                             {{displayRegistration sunday}}
-                            {{#if isRegistered sunday}}
                             {{#if showOption ../id}}
+                            {{#if isRegistered sunday}}
                             (
-                            {{#if isCurrentUser ../id}}
-                              <a href={{pathFor route='tournamentRegistrationSunday'}} id="modifySundayLink">Modifier</a> |
-                            {{/if}}
+                              <a href="{{pathFor route='tournamentRegistrationSunday' _id=../id}}" id="modifySundayLink">Modifier</a> |
                                <a href="#" id="unsubscribeSundayLink" data-id={{../id}}>Désinscrire</a> )
-                              {{/if}}
-                              {{else}}
-                              {{#if isCurrentUser ../id}}
-                              ( <a href={{pathFor route='tournamentRegistrationSunday'}} id="registerSundayLink">Inscription</a> )
-                              {{/if}}
+                            {{else}}
+                              ( <a href="{{pathFor route='tournamentRegistrationSunday' _id=../id}}" id="registerSundayLink">Inscription</a> )
+                            {{/if}}
                             {{/if}}
                           </td>
                         </tr>

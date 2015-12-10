@@ -45,8 +45,8 @@
             <div class="modal-body">
 				<center>
                 <p>Veuillez choisir le jour:</p>
-				<a id="tournamentRegistrationSundayButton" href="{{pathFor route='tournamentRegistrationSaturday'}}" class="btn btn-lg btn-default">Samedi</a>
-  				<a id="tournamentRegistrationSaterdayButton" href="{{pathFor route='tournamentRegistrationSunday'}}" class="btn btn-lg btn-default">Dimanche</a>
+				<a id="tournamentRegistrationSundayButton" href="{{pathFor route='tournamentRegistrationSaturday' _id=currentUser._id}}" class="btn btn-lg btn-default">Samedi</a>
+  				<a id="tournamentRegistrationSaterdayButton" href="{{pathFor route='tournamentRegistrationSunday' _id=currentUser._id}}" class="btn btn-lg btn-default">Dimanche</a>
 				</center>
             </div>
         </div>
