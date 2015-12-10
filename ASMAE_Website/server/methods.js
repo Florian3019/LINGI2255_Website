@@ -90,7 +90,7 @@ Meteor.methods({
 				data.step6done = false;
 				data.setp7done = false;
 				data.setp8done = false;
-        data._id = dataID;
+				data._id = dataID;
 				insertedYearID = Years.insert(data);
 				console.log("Tournament launched for year "+dataID);
 				//Put all the courts ownerOK and staffOK to false for this year's tournament
