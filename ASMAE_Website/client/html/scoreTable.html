@@ -115,6 +115,7 @@
       </center>
     </div>
   </div>
+  <br>
   {{/if}}
 </template>
 
@@ -122,9 +123,8 @@
 <!-- Takes 1 parameter : the poolId for this score table under the format {_id:POOLID}-->
 <template name="scoreTable">
   <div id="scoreTab">
-    <h3 id="ConsignesHeader" class="toHideForPdf">Les paires dans la colonne jouent contre les paires de la ligne.</h3>
       <div class="panel panel-primary" style="background-color:white">
-        <div class="panel-heading toHideForPdf">Tableaux des résultats</div>
+        <div class="panel-heading toHideForPdf">Tableau des résultats</div>
     <div class="table-responsive">
         <table class="table table-bordered" id="scoreTableElement">
           {{#with getPairs this._id}}
