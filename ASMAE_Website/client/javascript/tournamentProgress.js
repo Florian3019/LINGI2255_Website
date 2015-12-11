@@ -185,11 +185,13 @@ Template.tournamentProgress.events({
                 Meteor.call('restartTournament', function(err, result){
                     if(err){
                         console.error("Error while calling restartTournamentButton");
+                        swal("Erreur !", "Une erreur c'est produite lors de la fermeture du tournois", "error"); 
+                    }
+                    else {
+                        swal("Succès !", "Tournois clôturé", "success"); 
                     }
                 });
-                swal("Succès !", "Tournois clôturé", "success");
             });
-
 
     },
 
@@ -215,10 +217,12 @@ Template.tournamentProgress.events({
                 Meteor.call('emailLaunchTournament', function(err, result){
                     if(err){
                         console.error("Error while calling emailLaunchTournament");
-                         swal("Erreur !", "Une erreur c'est produite lors de l'envoie des emails", "error");
+                        swal("Erreur !", "Une erreur c'est produite lors de l'envoie des emails", "error"); 
                     }
-                });
-                swal("Succès !", "Les terrains ont bien été assignés aux poules", "success");
+                    else {
+                        swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
+                    }
+                });  
             });
     },
 
@@ -388,8 +392,14 @@ var getCourtNumbers = function(courts){
 
 var assignCourts = function(rain){
     Meteor.call('assignCourts', rain, function(err, result) {
-        if(err!=undefined){
-            console.error("Error assignCourts : "+err);
+        if(result) {
+            if(err!=undefined){
+                console.error("Error assignCourts : "+err);
+                swal("Erreur !", "Une erreur s'est produite lors de l'assignement des terrains", "error");
+            }
+        }
+        else {
+            swal("Erreur !", "Il n'y a aucun terrain à assigner !", "error");
         }
 
     });
