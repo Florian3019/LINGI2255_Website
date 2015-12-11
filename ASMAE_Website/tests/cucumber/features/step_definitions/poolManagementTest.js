@@ -3,15 +3,12 @@ module.exports = function () {
         client.waitForExist('#popdbtest')
         client.click('#popdbtest')
         client.click('#tournamentNavigation');
-
-        client.waitForExist('#DeroulementTournoiButton')
-        client.click('#DeroulementTournoiButton')
-        client.pause(100);
-        client.setValue('#launchTournamentDate','12/12/2015');
-        client.setValue('#tournamentPrice','10')
-
-
         this.server.call('addYear2015Tests');
+
+        client.pause(5000);
+	
+	client.waitForExist('#GestionDuTournoiButtonMenu')
+        client.click('#GestionDuTournoiButtonMenu')
         client.waitForVisible('#Year')
         client.waitForExist('#Year');
         client.click('#Year')
