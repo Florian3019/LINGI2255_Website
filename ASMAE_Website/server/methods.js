@@ -1713,15 +1713,15 @@ Meteor.methods({
 	},
 
 	'insertQuestion' : function(Question){
-		var data ={
+		var data = {
 			lastname : Question.lastname,
 			firstname: Question.firstname,
 			email : Question.email,
 			question : Question.question,
 			date : Question.date,
 			processed : false
-		}
-		return Questions.insert(data)
+		};
+		return Questions.insert(data);
 	},
 
 	'removeExtra' : function(extraId){

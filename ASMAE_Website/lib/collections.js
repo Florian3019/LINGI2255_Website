@@ -1,4 +1,4 @@
-// UserList = new Mongo.Collection('userlist'); // Not needed
+GlobalValues = new Mongo.Collection('GlobalValues');
 Courts = new Mongo.Collection('Courts');
 Addresses = new Mongo.Collection('Addresses');
 Questions = new Mongo.Collection('Questions');
@@ -10,7 +10,6 @@ Types = new Mongo.Collection('Types');
 Pools = new Mongo.Collection('Pools');
 Extras = new Mongo.Collection('Extras');
 ModificationsLog = new Mongo.Collection('ModificationsLog');
-GlobalValues = new Mongo.Collection('GlobalValues');
 Threads = new Mongo.Collection('Threads');
 Topics = new Mongo.Collection('Topics');
 Winners = new Mongo.Collection('Winners');
