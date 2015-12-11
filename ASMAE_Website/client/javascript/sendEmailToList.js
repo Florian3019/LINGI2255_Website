@@ -4,7 +4,7 @@ Template.sendEmailToList.events({
       var texte=document.getElementById("mailContent").value;
       if ($("#subject").val().length === 0 || $("#mailContent").val().length === 0) {
         swal({
-        title: "Erreur !",
+        title: "Attention !",
         text: "Merci de remplir le sujet et le contenu de l'email.",
         type: "error",
         confirmButtonColor: "#3085d6",

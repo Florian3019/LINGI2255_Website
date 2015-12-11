@@ -29,6 +29,7 @@ const placeHolderCourt = "";
 const inGame = "En jeu";
 const playerPlaceHolderScore = "Score: --";
 const waiting = "En attente";
+const winnerString = "Gagnants";
 
 
 var isForCurrentYear = function(){
@@ -671,7 +672,7 @@ var makeBrackets = function(document){
     if(thisRound.length==2){
       a = getBestFrom2(thisRound[0], thisRound[1], round,canEditScore);
       if(getPoints(a.pair, round)!==undefined){
-        a.data.score = 'Gagnant';
+        a.data.score = winnerString;
       }
       else{
         a.data.score = emptyScore;
