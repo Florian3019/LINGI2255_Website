@@ -439,13 +439,27 @@ Template.playerInfoTemplate.events({
 
 
 //For payments
-Template.myRegistration.onRendered(function () {
-  Meteor.call('getClientToken', function (err, clientToken) {
-    if (err) {
-      console.error('There was an error', err);
-      return;
+Template.playerInfoTemplate.onRendered(function () {
+    var loadBraintree = false;
+    if(Router.current().route.getName() == "myRegistration"){
+        loadBraintree = true;
+    }
+    else{
+        var parts = location.href.split('/');
+        var id = parts.pop();
+        if(id === Meteor.userId()){
+            loadBraintree = true;
+        }
+    }
+    if(loadBraintree){
+        Meteor.call('getClientToken', function (err, clientToken) {
+          if (err) {
+            console.error('There was an error', err);
+            return;
+          }
+
+          initializeBraintree(clientToken);
+        });
     }
 
-    initializeBraintree(clientToken);
-  });
 });

@@ -177,7 +177,6 @@ Template.tournamentRegistration.helpers({
 	},
 	'getSaturdayData' : function() {
 		var parts = location.href.split('/');
-		console.log(parts);
 		var id = parts.pop();
 		var user = Meteor.users.findOne({_id:id});
 		user["day"] = "saturday";
