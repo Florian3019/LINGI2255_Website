@@ -28,13 +28,13 @@
               Menu
             </div>
             <hr class="nopadding">
-            <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
+            <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="historyButton" selected="selected">
               <i class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></i>
               Statistiques
             </a>
             </li>
             {{#if isStaffMember}}
-            <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">
+            <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="historyButton">
             <i class="fa fa-tasks indexIcon"></i>
             Déroulement du tournoi</a></li>
             {{/if}}
@@ -122,7 +122,7 @@
       <div class="sidebar-mobile" id="menu-mobile" style="padding-top: 63px; margin-top: -63px;">
         <ul class="nav nav-sidebar" id="menu-mobile2" style="padding-top: 63px; margin-top: -63px;">
           <hr class="nopadding">
-          <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
+          <li id="historyButton"><a href="{{pathFor route='tournamentHistory'}}" class="menuItem">
             <i class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></i>
           Statistiques </a></li>
           <hr class="nopadding">
