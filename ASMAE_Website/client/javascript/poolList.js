@@ -1316,6 +1316,9 @@ Template.poolContainerTemplate.events({
 											CategorySelect
 *******************************************************************************************************************/
 
+/*
+	Computes the completion percentage for that type
+*/
 var typeCompletion = function(type){
 	var year = Session.get("PoolList/Year");
 	var yearSearchData = {};
