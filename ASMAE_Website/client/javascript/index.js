@@ -81,10 +81,10 @@ Template.index.events({
 	},
 
 'click #popdbtest' : function(event) {
-		/*
+		
 		 * 2015 data
 		 */
-		var nMen2015 = [30, 0, 0, 0, 0, 0, 0];
+		var nMen2015 = [60, 0, 0, 0, 0, 0, 0];
 		var nWomen2015 = [0, 0, 0, 0, 0, 0, 0];
 		var nMixed2015 = [0, 0, 0, 0, 0, 0, 0];
 		var nFamily2015 = 0;
