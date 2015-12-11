@@ -185,6 +185,7 @@ var makeThisYearGraph = function(){
 	var series = [];
 
 	var c = GlobalValues.findOne({_id:"currentYear"});
+	if(c===undefined) return;
     var currentYear = c.value;
 
 	var data = getPlayersInYear(currentYear);
