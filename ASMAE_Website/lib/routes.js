@@ -278,7 +278,7 @@ Router.route('/page-info-joueur/:_id', {
 	}
 });
 
-Router.route('/gestion-staff', {
+Router.route('/repondre-aux-questions', {
 	name: 'staffManagement',
 	template: 'staffManagement',
 	waitOn: function() {
