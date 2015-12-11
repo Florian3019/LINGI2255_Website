@@ -5,7 +5,14 @@ var ison = false;
 Template.staffManagement.events({
 	'click #questionButton':function(){
 		if(this.processed) {
-            swal("Votre response", this.answer);
+            swal({title:"Votre réponse", 
+            	 text: this.answer,
+            	 type:"info",
+            	 confirmButtonColor: "#3085d6",
+            	 closeOnConfirm:true,
+            	 confirmButtonText:"Ok",
+            	 showCancelButton:false
+            });
         }
 		else{
 			var val = comment.value.trim();
