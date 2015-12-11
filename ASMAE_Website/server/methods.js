@@ -522,6 +522,11 @@ Meteor.methods({
 
 			NOTE : for the family tournament, only one list of pools :
 			all:<list of poolIDs>
+
+			completion:{
+				pools: {minimes:<percentage>, ...}	// NOTE: 0 <= <percentage> <= 1
+				brackets: {minimes:<percentage>, ...}
+			}
 		}
 	*/
 	'updateType' : function(typeData) {

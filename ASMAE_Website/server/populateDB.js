@@ -4,6 +4,75 @@
 
 Meteor.methods({
 
+	'launchPopulateDB' : function() {
+		/*
+		 * 2014 data
+		 */
+		var nMen2014 = [10, 20, 20, 20, 10, 20, 20];
+		var nWomen2014 = [10, 10, 20, 20, 10, 10, 20];
+		var nMixed2014 = [10, 20, 40, 20, 10, 10, 20];
+		var nFamily2014 = 30;
+		var nPairs2014 = [nMen2014,nWomen2014,nMixed2014,nFamily2014];
+		var nAloneMen2014 = [0, 0, 0, 0, 0, 0, 0]; //[0, 10, 5, 0, 2, 9, 0];
+		var nAloneWomen2014 = [0, 0, 0, 0, 0, 0, 0]; //[10, 10, 5, 0, 2, 9, 0];
+		var nAloneMixed2014 = [0, 0, 0, 0, 0, 0, 0]; // [10, 10, 5, 0, 2, 9, 0];
+		var nAloneFamily2014 = 0; //10;
+		var nAlones2014 = [nAloneMen2014,nAloneWomen2014,nAloneMixed2014,nAloneFamily2014];
+
+		var nCourtSaturday2014 = 20;
+		var nCourtSunday2014 = 20;
+		var nCourtBoth2014 = 10;
+
+		var nUnregistered = 50;
+		var nStaff = 10;
+		var nAdmin = 3;
+
+		var tournamentData2014 = {
+			tournamentDate : new Date(2014,8,11),
+			tournamentPrice : 8,
+			maximumAFT : "B0"
+		}
+		var fill2014 = false;
+
+		/*
+		 * 2015 data
+		 */
+		var nMen2015 = [20, 20, 20, 0, 10, 0, 20];
+		var nWomen2015 = [10, 0, 20, 20, 10, 30];
+		var nMixed2015 = [30, 20, 40, 0, 0, 30, 0];
+		var nFamily2015 = 30;
+		var nPairs2015 = [nMen2015,nWomen2015,nMixed2015,nFamily2015];
+		var nAloneMen2015 = [10, 10, 5, 0, 2, 9, 0];
+		var nAloneWomen2015 = [10, 10, 5, 0, 2, 9, 0];
+		var nAloneMixed2015 = [10, 10, 5, 0, 2, 9, 0];
+		var nAloneFamily2015 = 10;
+		var nAlones2015 = [nAloneMen2015,nAloneWomen2015,nAloneMixed2015,nAloneFamily2015];
+
+		var nCourtSaturday2015 = 40;
+		var nCourtSunday2015 = 40;
+		var nCourtBoth2015 = 60;
+
+		var tournamentData2015 = {
+			tournamentDate : new Date(2015,8,12),
+			tournamentPrice : 10,
+			maximumAFT : "B0"
+		}
+		var fill2015 = false;
+
+		/*
+		 *	Global data
+		 */
+		var tournamentDataTab = [tournamentData2014, tournamentData2015];
+		var nPairsTab = [nPairs2014, nPairs2015];
+		var nAlonesTab = [nAlones2014, nAlones2015];
+		var nCourtSaturdayTab = [nCourtSaturday2014, nCourtSaturday2015];
+		var nCourtSundayTab = [nCourtSunday2014, nCourtSunday2015];
+		var nCourtBothTab = [nCourtBoth2014, nCourtBoth2015];
+		var fillTab = [fill2014, fill2015];
+
+		Meteor.call("populateDB", tournamentDataTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin, fillTab, false);
+	},
+
 	'activateDB' : function(isTest) {
 		console.log("Activation of the DB");
 		console.log("activateDB grants you ADMIN access !");
@@ -24,7 +93,7 @@ Meteor.methods({
 	 * Insert some users in the DB for the tournament specified as the first argument
 	 * This is magic
 	 */
-	'populateDB': function(tournamentDateTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin, isTest) {
+	'populateDB': function(tournamentDateTab, nPairsTab, nAlonesTab, nUnregistered, nCourtSaturdayTab, nCourtSundayTab, nCourtBothTab, nStaff, nAdmin, fillTab, isTest) {
 
 		var firstnamesM = [ "Youssef", "Zakaria", "Yannick", "Zachary", "Younès", "Yannis", "Yani", "Ylan", "Yoni", "Julian", "Kilian", "Jules", "Kaïs", "Karim", "Pierre-antoine", "Oumar", "Noam", "Paco", "Bryan", "Anthony", "Arsène", "Auguste", "Aurèle", "Arnaud", "Angelo", "Esteban", "Eliott", "Elliot", "Elouan", "Constantin", "Damien", "Alexis", "Ahmed", "Alban", "Amara", "Adam", "Amaury", "Amir", "Andy", "Benjamin", "Baptiste", "Brayan", "Brieuc", "Ayman", "Briac", "Brian", "Bruno", "Avi", "Dimitri", "Eliot", "Flavio", "Florent", "Franck", "Hugues", "Gabin", "Henri", "Gad", "Mathurin", "Maxime", "Mayeul", "Mateo", "Mahe", "Jarod", "Jason", "Karim", "Ivan", "Joey", "Leonard", "Kyllian", "Lilian", "Kevin", "Nassim", "Noah", "Noam", "Neil", "Mohamed", "Nadir", "Nael", "Luca", "Lino", "Ibrahim", "Idriss", "Ilyès", "Ilan", "Igor", "Nathanaël", "Noe", "Paulin", "Oumar", "Oren", "Paco", "Souleymane", "Titouan", "Tristan", "Ulysse", "Xavier", "Tiago", "Timeo", "Tony", "Tao", "Chahine", "Bruno", "Guillaume", "Ibrahima", "Hector", "Henry", "Constantin", "Clement", "Colin", "Antoine", "Anthony", "Arnaud", "Anton", "Ange", "Balthazar", "Benjamin", "Aurelien", "Aviel", "Aymen", "Badis", "Alexandre", "Adame", "Abel", "Adel", "Adem", "Edouard", "Dan", "Jordan", "Isaac", "Issam", "Jimmy", "Kamil", "Jack", "Killian", "Kevin", "Erwann", "Eytan", "Elie", "Florian", "Georges", "Germain", "Farès", "Lirone", "Loan", "Balthazar", "Benjamin", "Aymeric", "Bakary", "Djibril", "Ambroise", "Anatole", "Alone", "Andy", "Armand", "Arthus", "Aubin", "Ayman", "Aymen", "Gaspard", "Gaspar", "Gianni", "Giulio", "Constantin", "François", "Esteban", "Florian", "Eugène", "Farès", "Ibrahim", "Harold", "Idriss", "Ian", "Sofiane", "Sidney", "Tanguy", "Simon", "Olivier", "Nathan", "Octave", "Noam", "Rodrigue", "Pierre", "Romain", "Oscar", "Sacha", "Mahamadou", "Maël", "Maceo", "Luca", "Sebastien", "Shaï", "Samy", "Youssouf", "Zakaria", "Wesley", "Wissem", "Younes", "Willy", "Michaël", "Moussa", "Alexandre", "Ambroise", "Amadou", "Alan", "Antoine", "Arthur", "Anas", "Ari", "Balthazar", "Aymeric", "Aymane", "Benoit", "Elias", "Elio", "Brandon", "Bilel", "Cyriaque", "Cyprien", "Djibril", "Dorian", "Darius", "Corto", "Dany", "Emmanuel", "Emile", "Enzo", "Eloi", "Christopher", "Corentin", "Chris", "Colin", "Esteban", "Ethan", "Erwan", "Evann", "Fares", "Ewan", "Geoffrey", "Giovanni", "Gautier", "Georges", "Gustave", "Germain", "Vladimir", "Thierry", "Timothe", "Yanni", "Jean-Baptiste", "Jean-Marc", "Ismaël", "Jacques", "Jeremy", "Ilyes", "Jean", "Mahamadou", "Lucien", "Louis", "Luc", "Mathis", "Marwan", "Marko", "Richard", "Romain", "Robin", "Stephane", "Sylvain", "Samuel", "Tanguy", "Simon", "Teddy", "Jonathan", "Johann", "Joël", "Kaïs", "Joris", "John", "Melchior", "Matteo", "Moussa", "Mathys", "Moïse", "Max", "Killian", "Laurent", "Lazare", "Kenny", "Lior", "Ibrahima", "Ilyass", "Hakim", "Idris", "Ilias", "Ilyas", "Hugo", "Guy", "Ian", "Philippe", "Olivier", "Octave", "Paul", "Khalil", "Kevin", "Karl", "Marwane", "Matteo", "Matthieu", "Max", "Maxim", "Melvin", "Melvyn", "Mickael", "Mickaël", "Morgan", "Moussa", "Moustapha", "Nino", "Nolhan", "Octave", "Oren", "Oscar", "Rafaël", "Reda", "Remi", "Riyad", "Rodrigue", "Roman", "Romeo", "Ryad", "Samba", "Stephane", "Steve", "Swan", "Theo", "Thibault", "Timothee", "Tomas", "Tommy", "Virgile", "Wandrille", "Wissem", "Yassin", "Yves", "Zacharie", "Zachary", "Abdallah", "Abdoulaye", "Adama", "Adel", "Adem", "Adil", "Alessandro", "Alfred", "Ali", "Amaury", "Ambroise", "Anis", "Anton", "Aristide", "Armand", "Arsène", "Arthur", "Bilel", "Boubacar", "Charles", "Charly", "Christian", "Denis", "Dimitri", "Djibril", "Dorian", "Elian", "Elias", "Elio", "Elliott", "Emile", "Eric", "Ernest", "Erwan", "Ethan", "Eugène", "Gaspard", "Gauthier", "Guillaume", "Hadrien", "Harry", "Henry", "Hippolyte", "Idriss", "Ilhan", "Ilyan", "Issa", "Issam", "Iyed", "Jacques", "Jad", "Jaden", "Jan", "Jason", "Jimmy", "Joaquim", "Robinson", "Ruben", "Ronan", "Sabri", "Ryad", "Baudouin", "Celestin", "Calvin", "Celian", "Ben", "Baptiste", "Aurèle", "Ariel", "Raphaël", "Pierre", "Riyad", "Rami", "Robinson", "Rudy", "Sean", "Olivier", "Ousmane", "Patrick", "Nolan", "Owen", "Anatole", "Amaury", "Amadou", "Allan", "Andre", "Amir", "Ludovic", "Louka", "Loup", "Christopher", "Christian", "Clarence", "Cesar", "Chris", "Corentin", "Djibril", "Elijah", "Côme", "Frederic", "Giovanni", "Gustave", "Gaëtan", "Flavien", "Franck", "Eliot", "Elyas", "Enzo", "Elio", "Luigi", "Luka", "Mohamed-amine", "Mohammed", "Nicolas", "Mohamed", "Michel", "Noe", "Lorenzo", "Lior", "Souleymane", "Theophile", "Theophane", "Stephane", "Terence", "Thibaud", "Leopold", "Kylian", "Lamine", "Leo", "Mathieu", "Martin", "Matheo", "Alessandro", "Timothe", "Achille", "Abdoul", "Timeo", "Alex", "Jean-baptiste", "Ismaïl", "Jawad", "Jalil", "Issa", "Jad", "Jonathan", "Julien", "Julian", "Justin", "Jules", "John", "Joan", "Erwan", "Felix", "Evan", "Ewan", "Ilyès", "Teo", "Sebastien", "Robinson", "Ronan", "Shaï", "Jeremie", "Joseph", "Joris", "Leonard", "Laurent", "Leon", "Lino", "Luca", "Luka", "Raphael", "Samba", "Samy", "Sam", "Mathurin", "Matisse", "Maxime", "Marvin", "Mayeul", "Mario", "Matys", "Melvin", "Morgan", "Niels", "Nil", "Mamadou", "Malik", "Malo", "Marc", "Mahe", "Selim", "Thibaut", "Solal", "Theo", "Teo", "Valerie", "Victor", "Wissem", "Tiago", "Vadim", "Zakarya", "Achille", "Adrian", "Aaron", "Yaya", "Ylan", "Yoni", "Florentin", "Foucauld", "Florent", "Flavio", "Eyal", "Elliott", "Eliott", "Elio", "Cyprien", "Cheick", "Côme", "Cyril", "Dany", "Andreas", "Angelo", "Amir", "Anas", "Augustin", "Barnabe", "Arthur", "Blaise", "Alexis", "Allan", "Alpha", "Alan", "Alec", "Celestin", "Brahim", "Brieuc", "Celian", "Boris", "Bryan", "Guillaume", "Gregoire", "Isaac", "Aaron", "Hamed", "Henry", "James", "Hugo", "Augustin", "Bastien", "Benoît", "Ayman", "Bilel", "Artus", "Alexander", "Ambroise", "Alexis", "Merlin", "Morgan", "Milan", "Mattheo", "Marius", "Marwan", "Marko", "Mahe", "Vladimir", "Titouan", "Tristan", "Virgile", "Viktor", "Warren", "Tommy", "Tim", "Ugo", "Paul-Antoine", "Patrick", "Raphael", "Rafaël", "Rafael", "Rayan", "Rami", "Ramy", "Moustapha", "Nathan", "Niels", "Milan", "Mory", "Sebastian", "Seydou", "Roman", "Remi", "Sami", "Samy", "Reda", "Rudy", "Timothee", "Vianney", "Virgile", "Wassim", "Vadim", "Tom", "Stanislas", "Simeon", "Stefan", "Solal", "Yanis", "Alban", "Adame", "Ali", "Joaquim", "Killian", "Justin", "Kevin", "Jimmy", "John", "Jude", "Karl", "Ilyas", "Jawad", "Ilan", "Leopold", "Joachim", "Lassana", "Lamine", "Liam", "Matthieu", "Matteo", "Merlin", "Matis", "Matt", "Valentin", "Yacouba", "Youcef", "Younes", "Yoann", "Tony", "Mahamadou", "Lucien", "Maël", "Lukas", "Lyes", "Lilian", "Loïc", "Louis", "Louka", "Moustapha", "Mickaël", "Mouhamed", "Nassim", "Marc-antoine", "Massinissa", "Marouane", "Mathias", "Martin", "Matheo", "Marwan", "Nathan", "Alexandre", "Abdoulaye", "Aboubakar", "Abdel", "Alex", "Christopher", "Christophe", "Baptiste", "Cedric", "Cesar", "Corentin", "Constant", "Damien", "Daouda", "Clovis", "Dan", "Aloïs", "Amine", "Ange", "Dorian", "Dylan", "Eddy", "Elie", "Aurelien", "Antonin", "Aymane", "Ayoub", "Anis", "Giovanni", "Hadrien", "Georges", "Hector", "Gaston", "Helios", "Henri", "Hedi", "Gabriel", "Francis", "Gaëtan", "Eythan", "Felix", "Gabin", "Fabio", "Ismaël", "Ismaïl", "Jason", "Hippolyte", "Hubert", "Ilian", "Elliot", "Emile", "Enzo", "Eric", "Jean-baptiste", "Jonathan", "Julien", "Joan", "Marcel", "Lucas", "Loan", "Luc", "Marwane", "Matthis", "Matteo", "Matias", "Mateo", "Marin", "Sebastien", "Santiago", "Sylvain", "Steven", "Shaï", "Swann", "Moussa", "Naël", "Noah", "Rodrigue", "Ricardo", "Samuel", "Ruben", "Ronan", "Salim", "Ryan", "Phileas", "Pascal", "Pablo", "Paolo", "Paul", "Omar", "Remy", "Maxence", "Melvyn", "Mehdi", "Milan", "Max", "Zakaria", "Wandrille", "Tristan", "Titouan", "Terence", "Jonathan", "Joris", "Justin", "Khalil", "Kilian", "Kilyan", "Lazare", "Loup", "Lucas", "Lukas", "Maceo", "Mahdi", "Malo", "Mamadou", "Marvin", "Adame", "Adem", "Albert", "Alessandro", "Allan", "Alone", "Aly", "Amin", "Amine", "Anatole", "Anthony", "Anton", "Antonin", "Ayman", "Benjamin", "Boubacar", "Brieuc", "Bruno", "Calixte", "Chahine", "Charles", "Christian", "Christophe", "Christopher", "Clarence", "Colin", "Constantin", "Corentin", "Curtis", "Damien", "Diego", "Elie", "Eliot", "Elyas", "Emir", "Eric", "Evann", "Gabin", "Gabriel", "Georges", "Gustave", "Haron", "Ibrahim", "Ilyan", "Jeremy", "Jerôme", "Jibril", "Joey", "Joseph", "Josue", "Julien", "Karamba", "Karl", "Kenzi", "Kilian", "Kyllian", "Lassana", "Liam", "Mael", "Maksim", "Malo", "Marko", "Marouane", "Marvin", "Marwan", "Marwane", "Matteo", "Matteo", "Maxim", "Michael", "Mohamed-amine", "Nael", "Nahel", "Naïm", "Nikola", "Nil", "Nils", "Nino", "Noah", "Oscar", "Oumar", "Ousmane", "Paolo", "Philemon", "Quentin", "Hugues", "Henri", "Ilian", "Ilyes", "Ilias", "Ilyas", "Kilian", "Kevin", "Kaïs", "Malik", "Matisse", "Mathys", "Matias", "Mayeul", "Mehdi", "Mohamed", "Merwan", "Moïse", "Naël", "Sebastian", "Simeon", "Samba", "Raphaël", "Rafaël", "Patrick", "Paul", "Reda", "Remy", "Nathanaël", "Ousmane", "Nelson", "Noah", "Nils", "Owen", "Thibault", "Thierry", "Tidiane", "Thomas", "Vincent", "Yassine", "Victor", "Wassim", "Yanis", "Yoann", "Tony", "Zachary", "Younès", "Yohann", "Youcef", "Yvan", "Jean-baptiste", "Jeremie", "Isidore", "Jeremy", "Jordan", "Jacob", "Issam", "John", "Barthelemy", "Benjamin", "Benoît", "Cedric", "Bryan", "Ben", "Killian", "Joseph", "Joshua", "Kilian", "Kilyan", "Kevin", "Guillaume", "Hector", "Ilyes", "Henry", "Ilias", "Damien", "Dylan", "Cyril", "Demba", "Dany", "Elio", "Leon", "Lior", "Marwan", "Mateo", "Christophe", "Clarence", "Cyprien", "Clovis", "Cesar", "Colin", "Aristide", "Anatole", "Antonin", "Armand", "Armel", "Andy", "Ambroise", "Alexis", "Amadou" ];
 
@@ -644,14 +713,14 @@ Meteor.methods({
 		/*
 		 *	Fill the matches of all the pools
 		 */
-		function fillAllPools() {
+		function fillAllPools(year) {
 			/*
 			 *	Fill the matches of the pool
 			 */
 			function fillPoolMatches(pool) {
 				var pairList = [];
-				if(!pool){
-					console.log("No POOL with id "+poolId+"(popDB)");
+				if(pool === undefined){
+					console.log("No POOL "+pool+"(popDB)");
 					return;
 				}
 				var poolId= pool._id;
@@ -671,7 +740,7 @@ Meteor.methods({
 
 						totalMatches += 1;
 						data = {"poolId":poolId};
-						var points = getPoints();
+						var points = getPointsForMatch();
 						data.pair1 = {"pairId": pairId1, "points":points[0]};
 						data.pair2 = {"pairId": pairId2, "points":points[1]};
 						Meteor.call("updateMatch", data); // This will create a new match and link it to the pool
@@ -683,9 +752,27 @@ Meteor.methods({
 				Pools.update({_id:poolId}, {$set:{"completion":completion}},{reactive:false});
 			}
 
-			var pools = Pools.find({reactive:false}).fetch();
-			for (var i=0; i<pools.length; i++) {
-				fillPoolMatches(pools[i]);
+			var yearTable = Years.findOne({_id:year.toString()});
+			var typeTable;
+			var poolIDList;
+
+			for (var i=0; i<typeKeys.length; i++) {
+				typeTable = Types.findOne({_id:yearTable[typeKeys[i]]});
+				if (typeTable !== undefined) {
+					for (var j=0; j<categoriesKeys.length; j++) {
+						poolIDList = typeTable[categoriesKeys[j]];
+						if (poolIDList !== undefined) {
+							for (var k=0; k<poolIDList.length; k++) {
+								var pool = Pools.findOne({_id:poolIDList[k]});
+								fillPoolMatches(pool);
+							}
+						}
+						var data = {};
+						data["pools"] = {};
+						data["pools"][categoriesKeys[j]] = 1;
+						Types.update({_id:typeTable._id}, data);
+					}
+				}
 			}
 		}
 
@@ -698,16 +785,30 @@ Meteor.methods({
 			 *	in the knock-off tournament
 			 */
 			function savePoints(pairIDs, round, year, type, category, finalRound) {
-				var pair0 = Pairs.findOne({_id:pairIDs[0]});
-				var pair1 = Pairs.findOne({_id:pairIDs[1]});
-
-				var points = getPoints();
+				var pair0;
+				var pair1;
+				var points = getPointsForMatch();
 				var score0 = points[0];
-				setPoints(pair0, round, score0);
-
 				var score1 = points[1];
-				setPoints(pair1, round, score1);
+				var winner;
 
+				if (pairIDs[0]==="EMPTY") {
+					pair1 = Pairs.findOne({_id:pairIDs[1]});
+					setPoints(pair1, round, score1);
+					winner = 1;
+				}
+				else if(pairIDs[1]==="EMPTY"){
+					pair0 = Pairs.findOne({_id:pairIDs[0]});
+					setPoints(pair0, round, score0);
+					winner = 0;
+				}
+				else {
+					pair0 = Pairs.findOne({_id:pairIDs[0]});
+					pair1 = Pairs.findOne({_id:pairIDs[1]});
+					setPoints(pair0, round, score0);
+					setPoints(pair1, round, score1);
+					winner = points[0] > points[1] ? 0 : 1;
+				}
 				/*
 				Save the winner to display in the winner table
 				*/
@@ -720,26 +821,26 @@ Meteor.methods({
 					data.year = year;
 					data.type = type;
 					data.category = category;
-
+					console.log("Final round for "+type+" "+category+", winnersData : ");
+					console.log(data);
 					Meteor.call("updateWinner",data);
 				}
-				return points[0] > points[1] ? 0 : 1; // returns the winner
+				return  winner;
 			}
 
-			getFirstRound = function(pairs){
+			function getFirstRound(pairs){
 				var tournamentSize = getNextPowerOfTwo(pairs.length);
 				var toReturn = [];
 				var indexTable = getOrder(tournamentSize);
 
 				var k = 0; // Index in pairs
 				for(var i=0; i< tournamentSize; i++){
-
 					if(k<pairs.length){
 						a = pairs[k];
 						k++;
 					}
 					else{
-						// a = SPECIAL TOKEN representing empty entry
+						a = "EMPTY";
 					}
 					index = indexTable[i];
 					toReturn[index] = a;
@@ -748,7 +849,52 @@ Meteor.methods({
 				return toReturn;
 			}
 
-			var pairIDList = getFirstRound(Types.findOne());
+			var yearTable = Years.findOne({_id:year.toString()});
+			var typeTable = Types.findOne({_id:yearTable[type]});
+
+			var key = category+"Bracket";
+			var pairIDList = getFirstRound(typeTable[key]); // This list contains ID's of pairs.
+			// This list contains a power of two of elements. Pairs play 2 by 2
+
+			// Fill first round
+			var winners = [];
+			var round = 0;
+			console.log("LIST : ");
+			console.log(pairIDList);
+			for (var i=0; i<pairIDList.length; i+=2) {
+				var pairID1 = pairIDList[i];
+				var pairID2 = pairIDList[i+1];
+				var winner = savePoints([pairID1, pairID2], round, year, type, category, false);
+				winners.push(pairIDList[i+winner]);
+			}
+
+			console.log("Round "+round+" is over");
+			console.log(winners);
+			round++;
+			// Fill next rounds
+			while (winners.length > 1) {
+				nextWinners = [];
+				var finalRound = winners.length==2;
+				for (var i=0; i<winners.length; i+=2) {
+					var pairID1 = winners[i];
+					var pairID2 = winners[i+1];
+					var winner = savePoints([pairID1, pairID2], round, year, type, category, finalRound);
+					nextWinners.push(pairIDList[i+winner]);
+				}
+				// Copy nextWinners to winners
+				winners = [];
+				for (var i=0; i<nextWinners.length; i++) {
+					winners.push(nextWinners[i]);
+				}
+				console.log("Round "+round+" is over");
+				console.log(winners);
+				round++;
+			}
+			var data = {};
+			data["brackets"] = {};
+			data["brackets"][category] = 1;
+			Types.update({_id:typeTable._id}, data);
+
 		}
 
 
@@ -797,30 +943,82 @@ Meteor.methods({
 			insertCourts(nCourtBoth, true, true, tournamentYear);
 
 			if (fill) {
-				console.log("Tournament for year "+tournamentYear+" will be filled.")
+				console.log("\n----- Tournament for year "+tournamentYear+" will be filled -----");
 
-				// Fill pool matches
+				// POOLS
+				console.log("Fill all pools of year "+tournamentYear+" with matches");
+				fillAllPools(tournamentYear);
+				console.log("End of filling pool matches");
 
+				// KNOCK-OFFS
+				var type;
+				var category;
+				for (var i=0; i<typeKeys.length-1; i++) {
+					type = typeKeys[i];
+					console.log("\n***** KNOCK-OFF "+type+" *****");
+					for (var j=0; j<categoriesKeys.length-1; j++) {
+						category = categoriesKeys[j];
+						if (Winners.findOne({year:tournamentYear, type:type, category:category}) === undefined) {
+							console.log("Begin fill of knock-off "+type+" "+category);
+							var pairPoints = Meteor.call("startTournament", tournamentYear.toString(), type, category, 2);
+							var winnerPairPoints = pairPoints.winnerPairPoints;
+							var courts = [];
 
-				// Launches knock-off
-				for (var i=0; i<typeKeys.length; i++) {
-					var type = typeKeys[i];
-					for (var j=0; j<categoriesKeys.length; j++) {
-						var category = categoriesKeys[j];
-						Meteor.call("startTournament", tournamentYear.toString(), type, category, 2);
+							var winners = [];  // list of pairIDs
+							for(var k=0;k<(winnerPairPoints.length-1);k++){
+								winners.push(winnerPairPoints[k].pairId);
+								courts.push("?");
+							}
 
+							var data = {};
+							data._id = Years.findOne({_id:tournamentYear.toString()})[type];
+							data[category.concat("Bracket")] = winners;
+						    data[category.concat("Courts")] = courts;
+						    Meteor.call("updateType", data);
+
+							fillAllRounds(tournamentYear, type, category);
+							console.log("End fill of knock-off "+type+" "+category);
+						}
+						else {
+							console.log("Knock-off "+type+" "+category+" is already filled");
+						}
 					}
 				}
-				console.log("All tournaments have started");
+				// Fill family tournament
+				type = "family";
+				category = "all";
+				if (Winners.findOne({year:tournamentYear, type:"family", category:"all"}) === undefined) {
+					console.log("Begin fill of knock-off "+type+" "+category);
+					var pairPoints = Meteor.call("startTournament", tournamentYear.toString(), type, category, 2);
+					var winnerPairPoints = pairPoints.winnerPairPoints;
+					var courts = [];
 
-				// Fill knock-off matches
-				//TODO
+					var winners = [];  // list of pairIDs
+					for(var k=0;k<(winnerPairPoints.length-1);k++){
+						winners.push(winnerPairPoints[k].pairId);
+						courts.push("?");
+					}
 
-				// Assign courts to pools
+					var data = {};
+					data._id = Years.findOne({_id:tournamentYear.toString()})[type];
+					data[category.concat("Bracket")] = winners;
+					data[category.concat("Courts")] = courts;
+					Meteor.call("updateType", data);
+
+					fillAllRounds(tournamentYear, type, category);
+					console.log("End fill of knock-off "+type+" "+category);
+				}
+				else {
+					console.log("Knock-off "+type+" "+category+" is already filled");
+				}
+
+				console.log("All tournaments for year "+tournamentYear+" have been filled");
+
+				console.log("Assign courts");
 				Meteor.call("assignCourts", false);
 			}
 
-			console.log("----- popDB done for year "+tournamentYear+" -----");
+			console.log("\n----- popDB done for year "+tournamentYear+" -----\n");
 		}
 
 		/*
@@ -844,7 +1042,7 @@ Meteor.methods({
 		insertQuestions();
 
 		for (var i=0; i<tournamentDateTab.length; i++) {
-			popDBForYear(tournamentDateTab[i], nPairsTab[i], nAlonesTab[i], nCourtSaturdayTab[i], nCourtSundayTab[i], nCourtBothTab[i]);
+			popDBForYear(tournamentDateTab[i], nPairsTab[i], nAlonesTab[i], nCourtSaturdayTab[i], nCourtSundayTab[i], nCourtBothTab[i], fillTab[i]);
 		}
 
 		console.log("---------- popDB done ----------");

@@ -201,7 +201,6 @@ Template.tournamentRegistrationTemplate.helpers({
 		return add;
 	},
 
-
 	'isSaturday' : function(day) {
 		return day=="saturday";
 	},
@@ -332,27 +331,24 @@ Template.tournamentRegistrationTemplate.helpers({
 		return d + " "+month+" "+date.getFullYear();
 	},
 
-	'extras': function (day) {
+	'extras': function (day, userID) {
      	var extras = Extras.find({day:day}).fetch();
 		if (extras===undefined) {
 			return undefined;
 		}
-		var playerExtras = getDayExtrasFromPlayerID(Meteor.userId(),day);
+		for(var j=0; j<extras.length; j++) {
+			var ex = extras[j];
+			ex["quantity"] = 0;
+		}
+		var playerExtras = getDayExtrasFromPlayerID(userID,day);
 		if (playerExtras === undefined) {
-			for(var j=0; j<extras.length; j++) {
-				var ex = extras[j];
-				ex["quantity"] = 0;
-			}
 			return extras;
 		}
 		for (var pExtraName in playerExtras) {
 			var qty = playerExtras[pExtraName]
 			for(var j=0; j<extras.length; j++) {
 				var ex = extras[j];
-				if (qty !== undefined) {
-					ex["quantity"] = qty;
-				}
-				else {
+				if (ex["name"]==pExtraName) {
 					ex["quantity"] = qty;
 				}
 			}
@@ -830,7 +826,7 @@ Template.tournamentRegistrationTemplate.events({
 			Create the object containing the player specific informations
 		*/
 		var playerData = {
-			_id:Meteor.userId(),
+			_id:userID,
 			extras : {},
 			"playerWish":playerWish,
 			"courtWish":courtWish,
@@ -951,7 +947,10 @@ Template.tournamentRegistrationTemplate.events({
 		        		return;
 		        	}
 					var callbackInception = function (err, result) {
-						Router.go('myRegistration');
+						if (userID===Meteor.userId()) {
+							Router.go('myRegistration');
+						}
+						Router.go('playerInfoTemplate', {_id:userID});
 					};
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch, callbackInception);
 					var type = Session.get("tournamentRegistration/type");

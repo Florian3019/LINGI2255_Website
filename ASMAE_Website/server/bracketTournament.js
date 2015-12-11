@@ -51,7 +51,7 @@ var getPoolWinners = function(poolId, MAXWINNERS){
   for(var i=0; i<pool.pairs.length;i++){
     data = {"poolId":poolId};
     pairId = pool.pairs[i];
-    
+
     resetPairTournament(pairId); // Remove any previous tournament data
 
     data[pairId] = {$exists:true};
@@ -126,7 +126,7 @@ var getPoolWinners = function(poolId, MAXWINNERS){
         oneTimeWarning = true;
         // Can't have equalities...
         console.warn("pointComparator : There are equalities in the matches, selection of the pairs will be random for those equalities ...");
-      }  
+      }
       return 1;
     }
 };
@@ -148,13 +148,13 @@ var getPoolWinners = function(poolId, MAXWINNERS){
 };
 
 /*
-  Give this function a category from Years->Types->Category = list of pool ids 
+  Give this function a category from Years->Types->Category = list of pool ids
   and it will return a list of pairs that were winners in their pool
 */
 var getCategoryWinners = function(poolIdList, maxWinners){
   allWinnersPairPoints = [];
   allLosersPairPoints = [];
-  
+
   for(var i=0; i<poolIdList.length;i++){
     poolWinners = getPoolWinners(poolIdList[i], maxWinners);
     allLosersPairPoints = allLosersPairPoints.concat(poolWinners.loserPairPoints);
@@ -202,7 +202,7 @@ var getCategoryWinners = function(poolIdList, maxWinners){
         oneTimeWarning = true;
         // Can't have equalities...
         console.warn("pointComparator : There are equalities in the matches, selection of the pairs will be random for those equalities ...");
-      }  
+      }
       return 1;
     }
 };
@@ -232,19 +232,30 @@ Meteor.methods({
       return;
     }
 
-    console.log("startTournament");
     typ = {};
     typ[type] = 1;
     yearData = Years.findOne({"_id":year}, typ);
-    if(yearData==undefined) return;
+    if(yearData==undefined) {
+        console.error("StartTournament : No yearData for year "+year);
+        return;
+    }
     typeId = yearData[type];
-    if(typeId==undefined) return;
+    if(typeId==undefined) {
+        console.error("StartTournament : No typeId for type "+type);
+        return;
+    }
     cat = {};
     cat[category] = 1;
     typeData = Types.findOne({"_id":typeId},cat);
-    if(typeData==undefined) return;
+    if(typeData==undefined) {
+        console.error("StartTournament : No typeData for typeId "+typeId+" and category "+category);
+        return;
+    }
     poolIdList = typeData[category];
-    if(poolIdList==undefined) return;
+    if(poolIdList==undefined) {
+        console.error("StartTournament : No poolIdList for category "+category);
+        return;
+    }
 
     var andQuery = [{"type":type},{"year":year},{"category":category}];
     Winners.remove({$and:andQuery}); // Remove any previous winner
