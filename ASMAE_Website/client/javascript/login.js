@@ -48,9 +48,11 @@
     }
 });
 
-var beforeUserCreationFunction = function(){
-    // Do stuff
-    console.log("hi");
+var beforeUserCreationFunction = function(email){
+    
+    document.getElementById("e-mail-registration").href="mailto:"+email;
+    document.getElementById("e-mail-registration").innerHTML=email;
+    $('#signModal').modal('show');
 }
 
 Accounts.createUser = _.wrap(Accounts.createUser, function(createUser) {
@@ -62,9 +64,13 @@ Accounts.createUser = _.wrap(Accounts.createUser, function(createUser) {
 
     var newCallback = function(error) {
         // do my stuff
-        beforeUserCreationFunction();
-
-        origCallback.call(this, error);
+        if(error) {
+            origCallback.call(this, error);
+        }
+        else {
+            beforeUserCreationFunction(user.email);
+            origCallback.call(this, error);
+        }        
     };
 
     createUser(user, newCallback);
@@ -194,11 +200,7 @@ Template.login.events({
                     }
                     
                     // Show pop up.
-                    $('#sign-up-success').show();
-                    document.getElementById("e-mail-registration").href="mailto:"+email;
-                    document.getElementById("e-mail-registration").innerHTML=email;
-                    $('#signModal').modal('show');
-                    
+                    $('#sign-up-success').show();                    
                 }
             });
         }
