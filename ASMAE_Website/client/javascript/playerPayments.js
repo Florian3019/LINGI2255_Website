@@ -94,8 +94,8 @@ Template.playerPayments.events({
 
   'click #sendPaymentReminderEmail': function(event){
     swal({
-      title:"Attention",
-      text: "Etes-vous sur de vouloir envoyer un email à toutes les personnes qui ne sont pas en ordre de paiement ?",
+      title:"Attention !",
+      text: "Etes-vous sur de vouloir envoyer un email de rappel à toutes les personnes qui ne sont pas en ordre de paiement ?",
       type: "warning",
       showCancelButton: true,
       cancelButtonText:"Annuler",

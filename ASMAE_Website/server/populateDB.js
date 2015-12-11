@@ -19,9 +19,9 @@ Meteor.methods({
 		var nAloneFamily2014 = 0; //10;
 		var nAlones2014 = [nAloneMen2014,nAloneWomen2014,nAloneMixed2014,nAloneFamily2014];
 
-		var nCourtSaturday2014 = 20;
-		var nCourtSunday2014 = 20;
-		var nCourtBoth2014 = 10;
+		var nCourtSaturday2014 = 10;
+		var nCourtSunday2014 = 10;
+		var nCourtBoth2014 = 50;
 
 		var nUnregistered = 50;
 		var nStaff = 10;
@@ -431,7 +431,7 @@ Meteor.methods({
 			return array[getRandomInt(0,array.length)];
 		}
 
-		function insertCourts(nbr, saturdayAvailable, sundayAvailable, tournamentYear) {
+		function insertCourts(nbr, saturdayAvailable, sundayAvailable, tournamentYear, fill) {
 			if (Courts.find().fetch().length > nbr - 1) {
 				return false;
 			}
@@ -468,8 +468,8 @@ Meteor.methods({
 				var courtArray = getCourtArray();
 				var owner = getRandomElement(users);
 
-				var ownerOK = tournamentYear.toString() === "2015";
-				var staffOK = ownerOK ? flipCoin() : false;
+				var ownerOK = tournamentYear.toString() === "2015" || fill;
+				var staffOK = ownerOK ? (flipCoin() || fill) : false;
 
 				if (courtAddresses.length < 1) {
 					console.log("Not enough addresses");
@@ -939,9 +939,9 @@ Meteor.methods({
 			}
 
 			console.log("popDB populates courts");
-			insertCourts(nCourtSaturday, true, false, tournamentYear);
-			insertCourts(nCourtSunday, false, true, tournamentYear);
-			insertCourts(nCourtBoth, true, true, tournamentYear);
+			insertCourts(nCourtSaturday, true, false, tournamentYear, fill);
+			insertCourts(nCourtSunday, false, true, tournamentYear, fill);
+			insertCourts(nCourtBoth, true, true, tournamentYear, fill);
 
 			if (fill) {
 				console.log("\n----- Tournament for year "+tournamentYear+" will be filled -----");
