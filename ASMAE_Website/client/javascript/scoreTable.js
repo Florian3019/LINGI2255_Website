@@ -297,6 +297,7 @@ Template.scorePage.events({
                 "<li class='list-group-item'>La ligne du dessus dans le tableau correspond au score de la paire dans la colonne.</li>"+
                 "<li class='list-group-item'>Pour devenir responsable de cette catégorie, cliquez sur 'Devenir responsable'.</li>"+
                 "<li class='list-group-item'>Pour imprimer le pdf, cliquez sur le bouton correspondant en bas de page.</li>"+
+                "<li class='list-group-item'>Le score qui est en haut est pour la paire qui est à gauche. Le score qui est en bas est pour la paire qui est au dessus.</li>"+
               "</ul>",
         type:"info",
         customClass:"sweetAlertScroll",

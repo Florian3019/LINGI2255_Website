@@ -1,4 +1,6 @@
 /*
+	Draggable plugin : https://github.com/bevacqua/dragula
+
 	This file defines how the pools can be managed.
 	It defines helpers for:
 		-> The pairs to split container
@@ -1476,6 +1478,10 @@ Template.modalItem.helpers({
 
 	'getModalInfo':function(){
 		return Session.get("PoolList/ModalData");
+	},
+
+	'hasAWish':function(player){
+		return player.playerWish!==undefined || player.courtWish!==undefined || player.otherWish!==undefined;
 	}
 });
 
@@ -1536,7 +1542,6 @@ Template.modalItem.events({
 		}
 	}
 });
-
 
 /******************************************************************************************************************
 											reponsablesTemplate

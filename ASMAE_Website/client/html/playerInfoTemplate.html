@@ -72,10 +72,10 @@
                             {{#if showOption ../id}}
                               {{#if isRegistered saturday}}
                               (
-                                <a href="{{pathFor route='tournamentRegistrationSaturday' _id=../id}}" id="modifySaturdayLink">Modifier</a> |
+                                <a href="#" class="saturdayRegistrationEdit" data-id="{{../id}}" id="modifySaturdayLink">Modifier</a> |
                                  <a href="#" id="unsubscribeSaturdayLink" data-id={{../id}}>Désinscrire</a> )
                               {{else}}
-                               ( <a href="{{pathFor route='tournamentRegistrationSaturday' _id=../id}}" id="registerSaturdayLink">Inscription</a> )
+                               ( <a class="saturdayRegistrationEdit" data-id="{{../id}}" href="#" id="registerSaturdayLink">Inscription</a> )
                               {{/if}}
                               {{/if}}
                           </td>
@@ -104,10 +104,10 @@
                             {{#if showOption ../id}}
                             {{#if isRegistered sunday}}
                             (
-                              <a href="{{pathFor route='tournamentRegistrationSunday' _id=../id}}" id="modifySundayLink">Modifier</a> |
+                              <a class="sundayRegistrationEdit" href="#" data-id="{{../id}}" id="modifySundayLink">Modifier</a> |
                                <a href="#" id="unsubscribeSundayLink" data-id={{../id}}>Désinscrire</a> )
                             {{else}}
-                              ( <a href="{{pathFor route='tournamentRegistrationSunday' _id=../id}}" id="registerSundayLink">Inscription</a> )
+                              ( <a class="sundayRegistrationEdit" href="#" data-id="{{../id}}" id="registerSundayLink">Inscription</a> )
                             {{/if}}
                             {{/if}}
                           </td>
