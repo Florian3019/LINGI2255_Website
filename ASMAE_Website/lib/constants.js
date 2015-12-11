@@ -279,12 +279,12 @@ getRegistrationInfoFromPlayerID = function(playerID) {
         var day = getDayFromType(type);
         var partner;
         if(pair.player1._id === playerID){
-            if(typeof pair.player2 !== 'undefined'){
+            if(typeof pair.player2 !== 'undefined' && pair.player2 !== null){
                 partner = pair.player2._id;
             }
         }
         else {
-            if(typeof pair.player1 !== 'undefined'){
+            if(typeof pair.player1 !== 'undefined' && pair.player1 !== null){
                 partner = pair.player1._id;
             }
         }

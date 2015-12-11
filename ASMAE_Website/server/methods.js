@@ -2032,12 +2032,8 @@ Meteor.methods({
 			Payments.remove({'userID': userID, 'tournamentYear': currentYear});
 		}
 
-		console.log(pair);
-
 		// No other player
-		if (typeof pair.partnerPlayer === 'undefined') {
-
-				console.log("victor: this is NOT expected !!!!!!!!!");
+		if (typeof pair[partnerPlayer] === 'undefined') {
 
 			// Remove the pair from the pool and from the Pairs table
 			var pairs = pool.pairs;
@@ -2061,12 +2057,20 @@ Meteor.methods({
 			Meteor.call('emailFeedback', user.emails[0].address, "Suppression de votre inscription", dataEmail);
 		}
 		else {
-			console.log("victor: this is expected :D");
 			// Remove only the current player, leaving the other player alone in the pair
-			pair.userPlayer = undefined;
+			pair[userPlayer] = undefined;
 			// Put the partner in player1 position --> partner can now be matched with another player
-			pair.player1 = pair.partnerPlayer;
-			Meteor.call("updatePair", pair);
+			pair.player1 = pair[partnerPlayer];
+
+			var idToUpdate = pair._id;
+			delete pair._id;
+			Pairs.update({_id: idToUpdate} , {$set: pair}, function(err, result){
+				if(err){
+					console.error('updatePair error');
+					console.error(err);
+				}
+			});
+
 			// The pair stays in the right pool
 
 			var partner = Meteor.users.findOne({_id:pair.player1._id});
