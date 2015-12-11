@@ -143,7 +143,7 @@ Dans la page de gestion des poules, cliquez sur le dessus d'une poule. Ce bouton
 
 <h5 class="anchor" id="gotoPairs7">Comment inscrire les scores d'une poule ?</h5>
 <p>
-Dans le menu de gestion des poules, cliquez sur le dessus d'une poule. Ce bouton ne s'affiche que si des joueurs sont présent dans la poule. Dans la page qui s'affiche, insérez les scores des matchs.
+Dans la page de gestion des poules, cliquez sur le dessus d'une poule. Ce bouton ne s'affiche que si des joueurs sont présent dans la poule. Dans la page qui s'affiche, insérez les scores des matchs.
 </p>
 <br>
 <h4 class="anchor" id="infoPlayers">Information sur les joueurs</h4>
@@ -161,7 +161,7 @@ Dans le menu <a href="{{pathFor route='playersInfo'}}">Rechercher un joueur</a>,
 Le staff peut marquer les joueurs comme ayant payé de plusieurs façons:
 <ul>
     <li>Depuis la page d'un joueur (en y accédant via la recherche sur un joueur par exemple).</li>
-    <li>En cliquant sur le menu <i>Paiements pas en ordre</i>, vous arriverez sur la page des joueurs pas en ordre de paiement. Sur cette page vous pouvez marquer les joueurs en ordre de paiement et envoyer un rappel de paiement aux joueurs pas en ordre.</li>
+    <li>En cliquant sur le menu <a href="{{pathFor route='playerPayments'}}">Paiements pas en ordre</a>, vous arriverez sur la page des joueurs pas en ordre de paiement. Sur cette page vous pouvez marquer les joueurs en ordre de paiement et envoyer un rappel de paiement aux joueurs pas en ordre.</li>
 </ul>
 </p>
 
@@ -173,7 +173,7 @@ Pour simplifier la recherche d'un joueur lorsque celui-ci a choisi d'effectuer s
 <h4 class="anchor" id="infoKnockOffs">Gestion du tournoi à élimination directe</h4>
 <h5 class="anchor" id="gotoKnockOffs">Comment accéder à la page de gestion des knock-offs ?</h5>
 <p>
-Cliquez sur Gestion du tournoi puis séléctionnez l'année qui vous intéresse. Dans le menu qui s'affiche, choisissez parmi homme, femme, mixte ou familles. Cliquez ensuite sur <i>Knock-offs</i>
+Cliquez sur <a href="{{pathFor route='poolList'}}">Gestion du tournoi</a> puis séléctionnez l'année qui vous intéresse. Dans le menu qui s'affiche, choisissez parmi homme, femme, mixte ou familles. Cliquez ensuite sur <i>Knock-offs</i>
 </p>
 
 <h5 class="anchor" id="gotoKnockOffs2">Comment créer les knock-offs ?</h5>
@@ -224,7 +224,7 @@ Depuis le menu staff, allez dans <a href="{{pathFor route='courtSearchTemplate'}
 <h5 class="anchor" id="gotoCourts5">Comment accepter un terrain au tournoi de cette année ?</h5>
 <p>
 A chaque tournoi, les terrains doivent être acceptés d'une part par le propriétaire et d'une part par le staff. Lorsqu'un terrain a été accepté par les 2 parties, alors il est utilisé pour le tournoi.<br>
-En se rendant sur la page d'un terrain (pour le staff, via la recherche d'un terrain par exemple), le staff peut marquer s'il est d'accord d'utiliser ce terrain. Le staff peut aussi marquer à la place du propriétaire si ce dernier est d'accord que son terrain soit utilisé.
+En se rendant sur la page d'un terrain (pour le staff, via la <a href="{{pathFor route='courtSearchTemplate'}}">recherche d'un terrain</a> par exemple), le staff peut marquer s'il est d'accord d'utiliser ce terrain. Le staff peut aussi marquer à la place du propriétaire si ce dernier est d'accord que son terrain soit utilisé.
 </p>
 <br>
 <h4 class="anchor" id="GestionPlayers">Gestion des droits d'utilisateur</h4>
@@ -236,7 +236,7 @@ Dans le menu staff, cliquez sur <a href="{{pathFor route='playersInfo'}}">Recher
 <h4 class="anchor" id="infoMails">Gestion de l'envois des mails</h4>
 <h5 class="anchor" id="gotoSendEmailToList">Comment envoyer des emails ?</h5>
 <p>
-En cliquant sur le menu "Envoyer un mail", le staff a la possibilité d'envoyer un email d'un seul coup à toutes les personnes appartenant à une de ces catégories:
+En cliquant sur le menu <a href="{{pathFor route='sendEmailToList'}}">Envoyer un mail</a>, le staff a la possibilité d'envoyer un email d'un seul coup à toutes les personnes appartenant à une de ces catégories:
 <ul>
     <li>Tous les utilisateurs du site</li>
     <li>Tous les joueurs inscrits au tournoi de cette année</li>
@@ -263,7 +263,7 @@ Dans le menu staff, cliquez sur <a href="{{pathFor route='forum'}}">Forum</a> in
 
 <h5 class="anchor" id="gotoForum3">Comment ajouter un commentaire au forum ?</h5>
 <p>
-Dans le menu staff, cliquez sur <i>+</i>. Cliquez ensuite sur un sujet et insérez votre commentaire.
+Dans le menu staff, cliquez sur <a href="{{pathFor route='forum'}}">Forum</a>. Cliquez ensuite sur un sujet et insérez votre commentaire.
 </p>
 
 </div>
