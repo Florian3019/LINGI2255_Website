@@ -279,7 +279,12 @@ Template.playerInfoTemplate.events({
 			function(){
 				var pair = getDayPairFromPlayerID(userID, "saturday");
 				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
-				swal("Inscription supprimée", "", "success");
+				swal({
+					title: "Inscription supprimée",
+					text: "",
+					type: "success",
+					confirmButtonText:"Ok",
+     				 confirmButtonColor:"#0099ff"});
 			});
 	},
 
