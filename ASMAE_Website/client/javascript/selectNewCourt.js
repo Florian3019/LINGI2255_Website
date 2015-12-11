@@ -65,7 +65,7 @@ Template.chooseCourtsModal.helpers({
   });
 
 var getStringOptions = function(){
-    return " dans "+typesTranslate[Session.get("PoolList/Type")]+" en"+
+    return " dans "+typesTranslate[Session.get("PoolList/Type")]+" en "+
             categoriesTranslate[Session.get("PoolList/Category")]+
             " (" + Session.get("PoolList/Year")+")";
 }
