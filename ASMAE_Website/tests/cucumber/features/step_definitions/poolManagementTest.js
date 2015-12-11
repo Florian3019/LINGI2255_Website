@@ -5,7 +5,7 @@ module.exports = function () {
         client.click('#tournamentNavigation');
         this.server.call('addYear2015Tests');
 
-        client.pause(5000);
+        client.pause(8000);
 	
 	client.waitForExist('#GestionDuTournoiButtonMenu')
         client.click('#GestionDuTournoiButtonMenu')
