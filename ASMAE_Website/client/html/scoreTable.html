@@ -86,7 +86,7 @@
           <!-- <h3 style="{{#if ../isForPdf}} display:inline; font-size:0.5em; {{/if}}">Chef de poule: </h3> -->
           <center>
           <address>
-            <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
+            <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary" style="min-height:170px;">
               <i class="fa fa-user fa-5x"></i><br/>
               <b>Chef de poule</b><br>
               <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
@@ -99,7 +99,7 @@
     </div>
     <div class="col-sm-3 col-sm-offset-2">
       <center>
-        <div class="btn btn-sq-lg btn-primary" id="changeCourt">
+        <div class="btn btn-sq-lg btn-primary" id="changeCourt" style="min-height:170px;">
           <i class="fa fa-home fa-5x"></i><br/>
            {{#if getCourt this._id}}
              {{#with getCourt this._id}}

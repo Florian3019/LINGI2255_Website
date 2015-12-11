@@ -32,7 +32,7 @@ Meteor.methods({
 			tournamentPrice : 8,
 			maximumAFT : "B0"
 		}
-		var fill2014 = false;
+		var fill2014 = true;
 
 		/*
 		 * 2015 data
@@ -755,22 +755,31 @@ Meteor.methods({
 			var yearTable = Years.findOne({_id:year.toString()});
 			var typeTable;
 			var poolIDList;
+			var type;
+			var category;
 
 			for (var i=0; i<typeKeys.length; i++) {
-				typeTable = Types.findOne({_id:yearTable[typeKeys[i]]});
+				type = typeKeys[i];
+				typeTable = Types.findOne({_id:yearTable[type]});
 				if (typeTable !== undefined) {
 					for (var j=0; j<categoriesKeys.length; j++) {
-						poolIDList = typeTable[categoriesKeys[j]];
+						category = categoriesKeys[j];
+						poolIDList = typeTable[category];
 						if (poolIDList !== undefined) {
-							for (var k=0; k<poolIDList.length; k++) {
-								var pool = Pools.findOne({_id:poolIDList[k]});
-								fillPoolMatches(pool);
+							if (Winners.findOne({year:year, type:type, category:category}) === undefined) {
+								for (var k=0; k<poolIDList.length; k++) {
+									var pool = Pools.findOne({_id:poolIDList[k]});
+									fillPoolMatches(pool);
+								}
+								console.log("Matches of pools "+type+" "+category+" filled");
+							}
+							else {
+								console.log("Matches of pools "+type+" "+category+" already filled");
 							}
 						}
 						var data = {};
-						data["pools"] = {};
-						data["pools"][categoriesKeys[j]] = 1;
-						Types.update({_id:typeTable._id}, data);
+						data["completion.pools.".concat(category)] = 1;
+						Types.update({_id:typeTable._id}, {$set:data});
 					}
 				}
 			}
@@ -859,8 +868,6 @@ Meteor.methods({
 			// Fill first round
 			var winners = [];
 			var round = 0;
-			console.log("LIST : ");
-			console.log(pairIDList);
 			for (var i=0; i<pairIDList.length; i+=2) {
 				var pairID1 = pairIDList[i];
 				var pairID2 = pairIDList[i+1];
@@ -868,8 +875,6 @@ Meteor.methods({
 				winners.push(pairIDList[i+winner]);
 			}
 
-			console.log("Round "+round+" is over");
-			console.log(winners);
 			round++;
 			// Fill next rounds
 			while (winners.length > 1) {
@@ -879,22 +884,18 @@ Meteor.methods({
 					var pairID1 = winners[i];
 					var pairID2 = winners[i+1];
 					var winner = savePoints([pairID1, pairID2], round, year, type, category, finalRound);
-					nextWinners.push(pairIDList[i+winner]);
+					nextWinners.push(winners[i+winner]);
 				}
 				// Copy nextWinners to winners
 				winners = [];
 				for (var i=0; i<nextWinners.length; i++) {
 					winners.push(nextWinners[i]);
 				}
-				console.log("Round "+round+" is over");
-				console.log(winners);
 				round++;
 			}
 			var data = {};
-			data["brackets"] = {};
-			data["brackets"][category] = 1;
-			Types.update({_id:typeTable._id}, data);
-
+			data["completion.brackets.".concat(category)] = 1;
+			Types.update({_id:typeTable._id}, {$set:data});
 		}
 
 
