@@ -353,7 +353,6 @@ Template.tournamentRegistrationTemplate.helpers({
 				}
 			}
 		}
-		console.log(extras);
 		return extras;
     },
 
