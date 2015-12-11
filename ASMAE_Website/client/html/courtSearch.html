@@ -10,7 +10,7 @@
 <template name="courtSearch">
 
 <div class="row">
-  <div class="col-sm-3">
+  <div class="col-sm-4">
     {{> mySpecialFilterCourt}}
   </div>
   <div class="col-sm-3">
@@ -31,7 +31,7 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-3 col-sm-offset-3">
+  <div class="col-sm-3 col-sm-offset-4">
     <label for="sundaySelect" class="courtLabel">Dimanche </label>
     <select id="sundaySelect" class="form-control" style="width: 50%; display: inline; text-align:center">
                   <option value="Ignore" {{setSelect Sunday "Ignore"}}>Ignorer</option>
@@ -103,5 +103,5 @@
     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
     <input class="form-control courtFilter" type="text" placeholder="Rechercher"/>
   </div>
-  
+
 </template>

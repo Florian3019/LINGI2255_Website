@@ -8,7 +8,7 @@
                 <h3 class="modal-title" id="lineModalLabel">Inscription au site bien enregistrée </h3>
             </div>
             <div class="modal-body">
-                  <p id="welcom-message"> Bienvenue sur le site du Tournoi Charles de Lorraine, </p>
+                  <p id="welcom-message"> Bienvenue sur le site du Tournoi le Charles de Lorraine, </p>
                   <p> Votre compte a correctement été créé ! </p>
                   <p> Un e-mail de confirmation automatique vient d'être envoyé à votre adresse e-mail :</p>
                   <a id="e-mail-registration" href="mailto:someone@example.com">someone@example.com</a>
@@ -48,14 +48,12 @@
               {{else}}
               <li class="dropdown"><a class="dropdown-togglebis" data-toggle="dropdown" href="#" id="Droop">Inscription<span class="caret"></span></a>
                 <ul class="dropdown-menu auto-dropdown-menu">
-                    {{#if registered}}
                   <li><a href="{{pathFor route='myRegistration'}}" class="toToggle">Mon inscription</a></li>
-                  {{/if}}
                   {{#unless isSaturdayRegistered}}
-                  <li><a href="{{pathFor route='tournamentRegistrationSaturday'}}" id="RegistrSaturday" class="toToggle">S'inscrire pour le samedi</a></li>
+                  <li><a href="{{pathFor route='tournamentRegistrationSaturday' _id=currentUser._id}}" id="RegistrSaturday" class="toToggle">S'inscrire pour le samedi</a></li>
                   {{/unless}}
                   {{#unless isSundayRegistered}}
-                  <li><a href="{{pathFor route='tournamentRegistrationSunday'}}" id="RegistrSunday" class="toToggle">S'inscrire pour le dimanche</a></li>
+                  <li><a href="{{pathFor route='tournamentRegistrationSunday' _id=currentUser._id}}" id="RegistrSunday" class="toToggle">S'inscrire pour le dimanche</a></li>
                   {{/unless}}
                 </ul>
               </li>

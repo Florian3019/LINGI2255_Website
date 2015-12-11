@@ -92,23 +92,19 @@ var makeYearGraph = function(){
 
 	/* Set some base options (settings will override the default settings in Chartist.js *see default settings*). We are adding a basic label interpolation function for the xAxis labels. */
 	var options = {
-	  // axisX: {
-	  //   labelInterpolationFnc: function(value) {
-	  //     return value;
-	  //   }
-	  // },
+	  // Default mobile configuration
 	  height:"200px",
-	  classNames:{
-	  	horizontal: 'rotate',
-	  },
+	  // classNames:{
+	  // 	horizontal: 'rotate',
+	  // },
   	  axisY: {
-	    offset: 100
+	    offset: 50
 	  },
 	  chartPadding: {
 		top: 20,
-		right: 0,
+		right: 20,
 		bottom: 30,
-		left: 0
+		left: 20
 	  },
 	  plugins: [
         Chartist.plugins.ctAxisTitle({
@@ -123,15 +119,60 @@ var makeYearGraph = function(){
             }
         }),
         Chartist.plugins.tooltip()
-    ]
+    ],
+    axisX: {
+	    labelInterpolationFnc: function(value, index) {
+	    	if(index==years.length-1) return value;
+	       	if(index>=years.length-5) return '';
+	       	return index % 5 === 0 ? value : ''; // Display every 4rth label
+	    }
+	  },
 	};
 
 	var responsiveOptions = [
+		// Screen width between 641px and 1024px
 	  ['screen and (min-width: 641px) and (max-width: 1024px)', {
 	    showPoint: false,
+	    axisX: {
+		    labelInterpolationFnc: function(value, index) {
+		    	if(index==years.length-1) return value;
+		    	if(index>=years.length-8) return '';
+		       return index % 8 === 0 ? value : ''; // Display every 4rth label
+		    }
+	  	},
 	  }],
+	  // Screen up to 640px
 	  ['screen and (max-width: 640px)', {
-	    showLine: false,
+	  	chartPadding: {
+			top: 20,
+			right: 30,
+			bottom: 30,
+			left: 20
+	  	},
+	  	showPoint: false,
+		axisX: {
+		    labelInterpolationFnc: function(value, index) {
+		    	if(index==years.length-1) return value;
+		    	if(index>=years.length-10) return '';
+		       return index % 10 === 0 ? value : ''; // Display every 4rth label
+		    }
+	  	},
+	  }],
+  	  ['screen and (max-width: 400px)', {
+  	  	chartPadding: {
+			top: 20,
+			right: 40,
+			bottom: 30,
+			left: 20
+	  	},
+  	  	showPoint: false,
+		axisX: {
+		    labelInterpolationFnc: function(value, index) {
+		    	if(index==years.length-1) return value;
+		    	if(index>=years.length-15) return '';
+		       return index % 15 === 0 ? value : ''; // Display every 4rth label
+		    }
+	  	},
 	  }]
 	];
 
@@ -144,6 +185,7 @@ var makeThisYearGraph = function(){
 	var series = [];
 
 	var c = GlobalValues.findOne({_id:"currentYear"});
+	if(c===undefined) return;
     var currentYear = c.value;
 
 	var data = getPlayersInYear(currentYear);
@@ -203,10 +245,22 @@ var makeThisYearGraph = function(){
 	    offset: 20
 	  },
 	  height:"200px",
-	  plugins:pluginOptions
+	  plugins:pluginOptions,
+	  chartPadding: {
+			top: 20,
+			right: 20,
+			bottom: 30,
+			left: 40
+  		},
 	}, [
 	  // Options override for media > 400px
 	  ['screen and (min-width: 400px)', {
+	  	chartPadding: {
+			top: 20,
+			right: 20,
+			bottom: 30,
+			left: 30
+  		},
 	    reverseData: true,
 	    horizontalBars: true,
 	    axisX: {
@@ -218,6 +272,12 @@ var makeThisYearGraph = function(){
 	  }],
 	  // Options override for media > 1000px
 	  ['screen and (min-width: 1000px)', {
+	  	chartPadding: {
+			top: 20,
+			right: 20,
+			bottom: 30,
+			left: 20
+  		},
 	  	stackBars: false,
 	    reverseData: false,
 	    horizontalBars: false,

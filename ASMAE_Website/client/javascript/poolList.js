@@ -1316,34 +1316,56 @@ Template.poolContainerTemplate.events({
 											CategorySelect
 *******************************************************************************************************************/
 
+/*
+	Computes the completion percentage for that type
+*/
 var typeCompletion = function(type){
-	year = Session.get("PoolList/Year");
-	yearSearchData = {};
+	var year = Session.get("PoolList/Year");
+	var yearSearchData = {};
 	yearSearchData[type] = 1;
-	yearData = Years.findOne({"_id":year}, yearSearchData);
-	typeId = yearData[type];
-	typeData = Types.findOne({"_id":typeId},{"completion":1});
+	var yearData = Years.findOne({"_id":year}, yearSearchData);
+	var typeId = yearData[type];
+	var typeData = Types.findOne({"_id":typeId},{"completion":1});
 	if(typeData==undefined || typeData.completion==undefined) return "(?)";
 
-	typeCompletionValue = 0;
-	nonEmptyCat = 0;
+	var typeCompletionValue = 0;
+	var nonEmptyCat = 0;
 
 	var completionData = typeData["completion"];
 	if(completionData==undefined) return "(?)";
 
-	for(var i=0; i<categoriesKeys.length;i++){
-		var cPools = completionData["pools"][categoriesKeys[i]];
+	if(type==="family"){
+		var cPools = completionData["pools"]["all"];
 		if(cPools!=undefined){
 			nonEmptyCat+=2;
 			typeCompletionValue += cPools;
 		}
 		if(completionData["brackets"]!=undefined){
-			var cBrackets = completionData["brackets"][categoriesKeys[i]];
+			var cBrackets = completionData["brackets"]["all"];
 			if(cBrackets!=undefined){
 				typeCompletionValue += cBrackets;
 			}
 		}
 	}
+	else{
+		for(var i=0; i<categoriesKeys.length;i++){
+			if(categoriesKeys[i]==="all"){
+				continue; // Skip family category
+			}
+			var cPools = completionData["pools"][categoriesKeys[i]];
+			if(cPools!=undefined){
+				nonEmptyCat+=2;
+				typeCompletionValue += cPools;
+			}
+			if(completionData["brackets"]!=undefined){
+				var cBrackets = completionData["brackets"][categoriesKeys[i]];
+				if(cBrackets!=undefined){
+					typeCompletionValue += cBrackets;
+				}
+			}
+		}	
+	}
+	
 
 	completion = (nonEmptyCat==0) ? 0 : typeCompletionValue/nonEmptyCat;
 

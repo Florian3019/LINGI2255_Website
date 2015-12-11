@@ -5,24 +5,41 @@ var ison = false;
 Template.staffManagement.events({
 	'click #questionButton':function(){
 		if(this.processed) {
-			document.getElementById("pop-up-message-title").innerHTML="Votre response";
-			document.getElementById("message").innerHTML=this.answer;
-             $('#pop-up-message').modal('show');
+            swal({title:"Votre réponse", 
+            	 text: this.answer,
+            	 type:"info",
+            	 confirmButtonColor: "#3085d6",
+            	 closeOnConfirm:true,
+            	 confirmButtonText:"Ok",
+            	 showCancelButton:false
+            });
         }
 		else{
 			var val = comment.value.trim();
 			if(val == ""){
-				document.getElementById("pop-up-message-title").innerHTML="Attention !";
-                document.getElementById("message").innerHTML="Veuillez remplir le champ de réponse avant d'envoyer un mail";
-                $('#pop-up-message').modal('show');
+				swal({
+			        title: "Attention !",
+			        text: "Veuillez remplir le champ de réponse avant d'envoyer un mail",
+			        type: "error",
+			        confirmButtonColor: "#3085d6",
+			        confirmButtonText: "Ok",
+			        closeOnConfirm: true
+       			});
 			}
 			else{
+				swal({
+        			title: "Email envoyé !",
+        			text: "Votre message a bien été envoyé",
+			        type: "success",
+			        confirmButtonColor: "#3085d6",
+			        confirmButtonText: "Ok",
+			        closeOnConfirm: true
+      			});
+
 				Meteor.call('emailFeedback',this.email,"Reponse à votre question",comment.value);
 				Meteor.call('updateQuestionStatus',this.email,this.question,this.date,comment.value);
-                document.getElementById("pop-up-message-title").innerHTML="Email envoyé";
-				document.getElementById("message").innerHTML="Votre message a bien été envoyé";
-				Router.go('home');
-                $('#pop-up-message').modal('show');
+
+				comment.value = '';
 			}
 		}
 	}

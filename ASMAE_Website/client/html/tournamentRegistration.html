@@ -1,17 +1,20 @@
 <template name="tournamentRegistration">
     {{#if saturdayRegistration}}
-        {{>tournamentRegistrationTemplate day="saturday"}}
+    {{#with getSaturdayData}}
+        {{>tournamentRegistrationTemplate data}}
+    {{/with}}
     {{/if}}
     {{#if sundayRegistration}}
-        {{>tournamentRegistrationTemplate day="sunday"}}
+    {{#with getSundayData}}
+        {{>tournamentRegistrationTemplate data}}
+    {{/with}}
     {{/if}}
 </template>
 
 
 <template name="tournamentRegistrationTemplate">
-    {{#with getDay}}
   <div class="page-header">
-        <h2>Inscription au tournoi de {{day}}</h2>
+        <h2>Inscription au tournoi de {{getTranslatedDay day}}</h2>
   </div>
   <h4> Date du tournoi : {{getFormattedDate day}}</h4>
   <form role="form">
@@ -22,7 +25,7 @@
           <div class="form-group has-feedback" id="lastnameDiv">
             <label for="text">Nom:</label>
             <div class="input-group" style="display: inline">
-              <input type="text" class="form-control" id="lastname" name="lastname" value="{{lastname}}" ><br>
+              <input type="text" class="form-control" id="lastname" name="lastname" value="{{profile.lastName}}" ><br>
               <div id="lastnameError" hidden>
                 <span class="help-block" id="lastNameError">Merci d'entrer votre nom</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -38,7 +41,7 @@
           <div class="form-group has-feedback" id="firstnameDiv">
             <label for="text">Prénom:</label>
             <div class="input-group" style="display: inline">
-              <input type="text" class="form-control" id="firstname" value="{{firstname}}" name="firstname">
+              <input type="text" class="form-control" id="firstname" value="{{profile.firstName}}" name="firstname">
               <div id="firstnameError" hidden>
                 <span class="help-block" id="firstNameError">Merci d'entrer votre prénom</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -61,7 +64,7 @@
      	    <div class="form-group has-feedback" id="birthDayDiv">
             <label for="day">Jour:</label>
             <div class="input-group" style="display: inline">
-              <input type="number" id="birthDay" class="form-control alonePlayerChangeListener" min="1" max="31" value="{{getDate}}" name="jour de naissance">
+              <input type="number" id="birthDay" class="form-control alonePlayerChangeListener" min="1" max="31" value="{{getDate profile.birthDate}}" name="jour de naissance">
               <div id="birthDayError" hidden>
                 <span class="help-block" id="dayError">Merci d'entrer le jour</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -77,7 +80,7 @@
           <div class="form-group has-feedback" id="birthMonthDiv">
             <label for="month">Mois:</label>
             <div class="input-group" style="display: inline">
-              <input type="number" id="birthMonth" class="form-control alonePlayerChangeListener" min="1" max="12" value="{{getMonth}}" name="mois de naissance">
+              <input type="number" id="birthMonth" class="form-control alonePlayerChangeListener" min="1" max="12" value="{{getMonth profile.birthDate}}" name="mois de naissance">
               <div id="birthMonthError" hidden>
                 <span class="help-block" id="monthError">Merci d'entrer le mois</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -93,7 +96,7 @@
           <div class="form-group has-feedback" id="birthYearDiv">
             <label for="year">Année:</label>
             <div class="input-group" style="display: inline">
-              <input type="number" id="birthYear" class="form-control alonePlayerChangeListener" min="1900" value="{{getYear}}" name="année de naissance">
+              <input type="number" id="birthYear" class="form-control alonePlayerChangeListener" min="1900" value="{{getYear profile.birthDate}}" name="année de naissance">
               <div id="birthYearError" hidden>
                 <span class="help-block" id="yearError">Merci d'entrer l'année</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -132,7 +135,7 @@
             <label for="phone"> </label><br>
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-earphone"></span></span>
-		          <input type="number" class="form-control" id="phone" min="0" value="{{phone}}" name="phone" placeholder="Numéro de téléphone" required>
+		          <input type="number" class="form-control" id="phone" min="0" value="{{profile.phone}}" name="phone" placeholder="Numéro de téléphone" required>
             </div>
           </div>
         </div>
@@ -144,6 +147,7 @@
         </div>
       </div>
 
+      {{#with getAddress profile.addressID}}
     	<div class="row">
       	<div class="col-sm-2 col-sm-offset-3">
    	  		<div class="form-group has-feedback" id="streetDiv">
@@ -165,7 +169,7 @@
        	  <div class="form-group has-feedback" id="numberDiv">
             <label for="text">Numéro:</label>
             <div class="input-group">
-              <input type="number" class="form-control" id="addressnumber" min="0" value="{{addressNumber}}" name="addressNumber">
+              <input type="number" class="form-control" id="addressnumber" min="0" value="{{number}}" name="addressNumber">
               <div id="numberError" hidden>
                 <span class="help-block" id="numberErrorText">Merci d'entrer votre numéro</span>
                 <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -180,7 +184,7 @@
         <div class="col-sm-2">
      			<div class="form-group">
        			<label for="text">Boite:</label>
-      			<input type="text" class="form-control" id="box" min="0" value="{{boxNumber}}" name="boxNumber">
+      			<input type="text" class="form-control" id="box" min="0" value="{{box}}" name="boxNumber">
        	 	</div>
       	</div>
     	</div>
@@ -190,7 +194,7 @@
           		<div class="form-group has-feedback" id="zipcodeDiv">
           		  <label for="text">Code postal:</label>
           		 	<div class="input-group">
-                  <input type="number" min="0" step="1" class="form-control" id="zipcode" value="{{zipcode}}" name="zipcode">
+                  <input type="number" min="0" step="1" class="form-control" id="zipcode" value="{{zipCode}}" name="zipcode">
                   <div id="zipcodeError" hidden>
                     <span class="help-block" id="zipcodeErrorText">Merci d'entrer votre code postal</span>
                     <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -236,6 +240,7 @@
         </div>
 
      	</div>
+        {{/with}}
 
       <div class="row">
         <div class="col-sm-2 col-sm-offset-3">
@@ -251,11 +256,11 @@
               <br>
               <select name="dateMatch" id="dateMatchSelect"  class="form-control dateMatch" style="display: inline">
                 <option value="" hidden></option>
-                {{#if saturday}}
+                {{#if isSaturday day}}
                 <option value="saturday" selected="selected">Mixtes (Samedi)</option>
                 <option value="family" >Tournoi des familles (Samedi)</option>
                 {{/if}}
-                {{#if sunday}}
+                {{#if isSunday day}}
                 <option value="sunday" selected="selected">Doubles (Dimanche)</option>
                 {{/if}}
               </select>
@@ -292,10 +297,10 @@
       <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
           <h5><b>Extras:</b></h5>
-            {{#each extras day}}
+            {{#each extras day _id}}
             <div class="form-group">
               <label for="number">{{getName}} ({{getPrice}}&euro;)</label>
-              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" data-price="{{getPrice}}" value={{getQuantity}} class="form-control extraItem" style="width: 15%; display: inline; text-align:center">
+              <input type="number" id="{{getID}}" name="{{getID}}" min="0" step="1" data-price="{{getPrice}}" value="{{getQuantity}}" class="form-control extraItem" style="width: 15%; display: inline; text-align:center">
               <p style="font-size:100%">{{getComment}}</p>
             </div>
             {{/each}}
@@ -453,16 +458,16 @@
       <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
         <center>
-        <button type="submit" class="btn btn-default" id="submit">
-              {{#if saturday}}
-              {{#if isSaturdayRegistered}}
+        <button class="btn btn-default" id="submitRegistration" data-id={{id}}>
+              {{#if isSaturday day}}
+              {{#if isSaturdayRegistered id}}
               Modifier
               {{else}}
               Soumettre
               {{/if}}
               {{/if}}
-              {{#if sunday}}
-              {{#if isSundayRegistered}}
+              {{#if isSunday day}}
+              {{#if isSundayRegistered id}}
               Modifier
               {{else}}
               Soumettre
@@ -490,6 +495,5 @@
 
     </div>
     </div>
-	</form>
-    {{/with}}
+    </form>
 </template>

@@ -83,7 +83,6 @@ Template.profileEdit.events({
 
 		var lastName = $('[name=lastname]').val();
 		var firstName = $('[name=firstname]').val();
-		//var email TODO
 		var sex = $('[name=sex]').val();
 		var rank = $('[name=rank]').val();
 
@@ -101,7 +100,7 @@ Template.profileEdit.events({
 				phone : $('[name=phone]').val(),
 				gender : sex,
 				birthDate : birthDate,
-				AFT : rank,
+				AFT : rank
 			}
 		};
 
@@ -117,6 +116,12 @@ Template.profileEdit.events({
 			userData.profile.addressID = result;// Link the address
 			Meteor.call("updateUser", userData);
 		});
+
+		// Add to Modifications logs
+		if(Meteor.user().profile.isAdmin || Meteor.user().profile.isStaff){
+			var details = "Le profil du joueur a été édité";
+			addToLogUser("Editer profil", details, this.ID);
+		}
 
 		swal({
 			title: "Succès !",

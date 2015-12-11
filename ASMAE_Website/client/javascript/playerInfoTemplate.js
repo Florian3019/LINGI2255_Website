@@ -163,7 +163,7 @@ Template.playerInfoTemplate.helpers({
 	'getInscriptions': function(userId){
 		var registrationInfo = getRegistrationInfoFromPlayerID(userId);
 		if (typeof registrationInfo === 'undefined') {
-			return undefined;
+			return {saturday:undefined, sunday:undefined};
 		}
 		return registrationInfo;
 	},
@@ -174,7 +174,7 @@ Template.playerInfoTemplate.helpers({
 		}
 		var type = dayData.playerType;
 		var category = dayData.playerCategory;
-		return "Tournoi "+typesTranslate[type] + ", catégorie "+category;
+		return "Tournoi "+typesTranslate[type] + ", catégorie "+categoriesTranslate[category];
 	},
 
 	'isRegistered' : function(dayData) {
@@ -267,7 +267,6 @@ Template.playerInfoTemplate.events({
 		event.preventDefault();
         var dataSet = event.currentTarget.dataset;
         var userID = dataSet.id
-        console.log(userID);
 
 		swal({
 			title: "Êtes-vous sûr ?",
@@ -278,10 +277,14 @@ Template.playerInfoTemplate.events({
 			confirmButtonText: "Supprimer cette inscription",
 			closeOnConfirm: false },
 			function(){
-				var pair = getDayPairFromPlayerID(Meteor.userId(), "saturday");
+				var pair = getDayPairFromPlayerID(userID, "saturday");
 				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
-				swal("Inscription supprimée", "", "success");
-				Router.go('home');
+				swal({
+					title: "Inscription supprimée",
+					text: "",
+					type: "success",
+					confirmButtonText:"Ok",
+     				 confirmButtonColor:"#0099ff"});
 			});
 	},
 
@@ -289,7 +292,6 @@ Template.playerInfoTemplate.events({
 		event.preventDefault();
         var dataSet = event.currentTarget.dataset;
         var userID = dataSet.id;
-        console.log(userID);
 
 		swal({
 			title: "Êtes-vous sûr ?",
@@ -300,10 +302,9 @@ Template.playerInfoTemplate.events({
 			confirmButtonText: "Supprimer cette inscription",
 			closeOnConfirm: false },
 			function(){
-				var pair = getDayPairFromPlayerID(Meteor.userId(), "sunday");
+				var pair = getDayPairFromPlayerID(userID, "sunday");
 				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 				swal("Inscription supprimée", "", "success");
-				Router.go('home');
 			});
 	},
 
@@ -322,7 +323,6 @@ Template.playerInfoTemplate.events({
 		else{
 			/*	Go to profile edit	*/
 			Router.go('profileEdit',{_id:event.currentTarget.dataset.userid});
-			console.log("clicked modifier");
 		}
 	},
 	'click #deleteUser' : function(event){
@@ -413,7 +413,7 @@ Template.playerInfoTemplate.events({
 	},
 
 	'click #markAsPaid': function(event){
-		var userId = this._id;
+		var paymentID = this._id;
 
 		swal({
         title: "Etes vous sûr ?",
@@ -425,7 +425,7 @@ Template.playerInfoTemplate.events({
         closeOnConfirm: true
         },
         function(){
-			Meteor.call('markAsPaid', this._id, function(err, result){
+			Meteor.call('markAsPaid', paymentID, function(err, result){
 				if(err){
 					console.log("Error while calling method markAsPaid");
 					console.log(err);

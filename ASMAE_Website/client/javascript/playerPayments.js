@@ -88,25 +88,37 @@ Template.markAsPaid.events({
 });
 
 Template.playerPayments.events({
-    'keyup #paymentInput':function(event){
-        Session.set("playerPayments/input", event.currentTarget.value);
-    },
+  'keyup #paymentInput':function(event){
+    Session.set("playerPayments/input", event.currentTarget.value);
+  },
 
-    'click #sendPaymentReminderEmail': function(event){       
-      var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-      Meteor.call("emailReminderToPay",currentYear, function(error, result){
-        if(error){
-          console.log("error", error);
-        }
-      });
+  'click #sendPaymentReminderEmail': function(event){
+    swal({
+      title:"Attention !",
+      text: "Etes-vous sur de vouloir envoyer un email de rappel à toutes les personnes qui ne sont pas en ordre de paiement ?",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonText:"Annuler",
+      confirmButtonColor: "#3085d6",
+      confirmButtonText: "Continuer",
+      closeOnConfirm: false},
+      function(){
+        var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+        Meteor.call("emailReminderToPay",currentYear, function(error, result){
+          if(error){
+            console.log("error", error);
+          }
+        });
 
-      swal({
-        title:"Succès",
-        text:"Rappels de paiement envoyés!",
-        type:"success",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText:"Super!"
-        }
-        );
-    },
+        swal({
+          title:"Succès",
+          text:"Rappels de paiement envoyés!",
+          type:"success",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText:"Super!"
+        });
+      }
+    );
+
+  },
 });

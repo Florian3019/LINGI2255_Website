@@ -86,7 +86,7 @@
           <!-- <h3 style="{{#if ../isForPdf}} display:inline; font-size:0.5em; {{/if}}">Chef de poule: </h3> -->
           <center>
           <address>
-            <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary">
+            <a href="mailto:{{getEmail this}}" class="btn btn-sq-lg btn-primary" style="min-height:170px;">
               <i class="fa fa-user fa-5x"></i><br/>
               <b>Chef de poule</b><br>
               <strong>{{this.profile.firstName}} {{this.profile.lastName}}</strong><br>
@@ -99,7 +99,7 @@
     </div>
     <div class="col-sm-3 col-sm-offset-2">
       <center>
-        <div class="btn btn-sq-lg btn-primary" id="changeCourt">
+        <div class="btn btn-sq-lg btn-primary" id="changeCourt" style="min-height:170px;">
           <i class="fa fa-home fa-5x"></i><br/>
            {{#if getCourt this._id}}
              {{#with getCourt this._id}}
@@ -115,6 +115,7 @@
       </center>
     </div>
   </div>
+  <br>
   {{/if}}
 </template>
 
@@ -122,9 +123,8 @@
 <!-- Takes 1 parameter : the poolId for this score table under the format {_id:POOLID}-->
 <template name="scoreTable">
   <div id="scoreTab">
-    <h3 id="ConsignesHeader" class="toHideForPdf">Les paires dans la colonne jouent contre les paires de la ligne.</h3>
       <div class="panel panel-primary" style="background-color:white">
-        <div class="panel-heading toHideForPdf">Tableaux des résultats</div>
+        <div class="panel-heading toHideForPdf">Tableau des résultats</div>
     <div class="table-responsive">
         <table class="table table-bordered" id="scoreTableElement">
           {{#with getPairs this._id}}
@@ -192,7 +192,7 @@
                       style="text-align:center; width=15%">
                     {{else}}
                       <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../../_id}}</span>
-                      -
+                      <span style="font-size:200%"> - </span>
                       <span style="align:center; position: relative; top: 50%; transform: translateY(-50%); font-size:200%;">{{getPoints this ../_id}}</span>
                     {{/if}}
                   {{/with}}

@@ -57,6 +57,66 @@ hasBothPlayers = function(pair){
     return (pair!=undefined) && pair.player1!=undefined && pair.player2 !=undefined;
 }
 
+/*
+  Returns the next power of two that is greater than or equal to number
+*/
+getNextPowerOfTwo = function(number){
+  if(number==0) return 0;
+  var x = 2;
+  while (x<number){
+    x*=2
+  }
+  return x;
+}
+
+/*
+  Returns the order in which to fill the first round of the tournament
+*/
+getOrder = function(size){
+
+  var partial = function(n ,ni,result){
+
+    var half = result.length/2;
+
+    for(var i=0;i<ni;i++){
+      result[ni+i] = result[i]+n;
+      result[half+ni+i] = result[half+i]+n;
+    }
+  }
+
+  var result=[];
+
+  for(var k=0;k<size;k++){
+    if(k==size/2){
+      result.push(1);
+    }
+    else{
+      result.push(0);
+    }
+  }
+
+  var n=size/2;
+  var ni=1;
+
+  while(n>1){
+    partial(n,ni,result);
+    n=n/2;
+    ni=ni*2;
+  }
+
+  return result;
+}
+
+setPoints = function(pair, round, score){
+  if(pair==undefined) return;
+  if(pair.tournament==undefined){
+    pair.tournament = [];
+  }
+
+  pair.tournament[round] = score;
+  Pairs.update({"_id":pair._id}, {$set: {"tournament":pair.tournament}});
+}
+
 getTournamentDate = function() {
     var currentYear = GlobalValues.findOne({_id:"currentYear"});
     if (currentYear===undefined || currentYear.value === undefined) {
@@ -534,7 +594,7 @@ getOrder = function(size){
 */
 getNumberMatchesFirstRound = function(nbrPairs){
 
-    var logPairs = Math.log2(nbrPairs);
+    var logPairs = Math.log(nbrPairs)/Math.log(2);
 
     var numMatchesFull = Math.floor(logPairs);
 
@@ -544,4 +604,45 @@ getNumberMatchesFirstRound = function(nbrPairs){
     else{
         return nbrPairs/2; // the nbr of pairs is a multiple of 2
     }
+}
+
+/*
+*   Add court to modifications logs
+*/
+addToLog = function(opType, ownerId, courtId){
+    var owner = Meteor.users.findOne({"_id":ownerId},{"profile":1});
+    var court = Courts.findOne({_id:courtId}, {"addressID":1});
+    var address = Addresses.findOne({_id:court.addressID});
+    Meteor.call("addToModificationsLog",
+      {"opType":opType,
+      "details":
+          "Terrain "+ formatAddress(address) +" du propriétaire "+owner.profile.lastName + " "+owner.profile.firstName
+      },
+      function(err, logId){
+        if(err){
+          console.log(err);
+          return;
+        }
+        Meteor.call('addToUserLog', ownerId, logId);
+        Meteor.call('addToCourtLog', courtId, logId);
+      }
+    );
+}
+
+/*
+*   Add court to modifications logs
+*/
+addToLogUser = function(opType, details, userId){
+    Meteor.call("addToModificationsLog",
+      {"opType":opType,
+      "details": details
+      },
+      function(err, logId){
+        if(err){
+          console.log(err);
+          return;
+        }
+        Meteor.call('addToUserLog', userId, logId);
+      }
+    );
 }

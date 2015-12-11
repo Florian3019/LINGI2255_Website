@@ -86,7 +86,7 @@ function checkAloneErrors(document) {
 		This function sets an error for the element id, provided that elements with id+Error, id+OK and id+Div are set in the html.
 		If errorVisible is true, this displays the error corresponding to id. Else, sets the field to success.
 	*/
-	
+
 	var errors = new Array();
 	var hasError = false;
 
@@ -168,14 +168,48 @@ function checkAloneErrors(document) {
 
 Template.tournamentRegistration.helpers({
 	'saturdayRegistration' : function() {
-		return this.day=="saturday";
+		var routeName = Router.current().route.getName();
+		return routeName=="tournamentRegistrationSaturday";
 	},
 	'sundayRegistration' : function() {
-		return this.day=="sunday";
+		var routeName = Router.current().route.getName();
+		return routeName=="tournamentRegistrationSunday";
+	},
+	'getSaturdayData' : function() {
+		var parts = location.href.split('/');
+		console.log(parts);
+		var id = parts.pop();
+		var user = Meteor.users.findOne({_id:id});
+		user["day"] = "saturday";
+		return {data:user};
+	},
+	'getSundayData' : function() {
+		var parts = location.href.split('/');
+		var id = parts.pop();
+		var user = Meteor.users.findOne({_id:id});
+		user["day"] = "sunday";
+		return {data:user};
 	}
 });
 
 Template.tournamentRegistrationTemplate.helpers({
+
+	'getAddress' : function(addressID) {
+		var add = Addresses.findOne({_id:addressID});
+		if (add===undefined) {
+			return {number:undefined, zipCode:undefined, city:undefined, land:undefined, box:undefined, street:undefined};
+		}
+		return add;
+	},
+
+	'isSaturday' : function(day) {
+		return day=="saturday";
+	},
+
+	'isSunday' : function(day) {
+		return day=="sunday";
+	},
+
 	'getDay' : function() {
 		var saturday = this.day=="saturday";
 		var sunday = this.day=="sunday";
@@ -186,6 +220,13 @@ Template.tournamentRegistrationTemplate.helpers({
 	'getTournamentPrice':function(){
 		var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
 		return Years.findOne({_id:currentYear}).tournamentPrice;
+	},
+
+	'getTranslatedDay' : function(day) {
+		if (day!=="saturday" && day!=="sunday") {
+			return undefined;
+		}
+		return day=="saturday" ? "samedi" : "dimanche";
 	},
 
     'getPay1' : function() {
@@ -224,18 +265,18 @@ Template.tournamentRegistrationTemplate.helpers({
 		}
 		else if(type=="mixed") {
 			if (gender == "M") {
-				return "Aucune joueuse dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi mixte.";
+				return "Aucune joueuse dans la catégorie "+categoriesTranslate[category]+" n\'est en attente pour le tournoi mixte.";
 			}
 			else {
-				return "Aucun joueur dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi mixte.";
+				return "Aucun joueur dans la catégorie "+categoriesTranslate[category]+" n\'est en attente pour le tournoi mixte.";
 			}
 		}
 		else {
 			if (gender == "M") {
-				return "Aucun joueur dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi des doubles messieurs.";
+				return "Aucun joueur dans la catégorie "+categoriesTranslate[category]+" n\'est en attente pour le tournoi des doubles messieurs.";
 			}
 			else {
-				return "Aucune joueuse dans la catégorie "+categoriesTranslate[categoriesKeys[2]]+" n\'est en attente pour le tournoi des doubles dames.";
+				return "Aucune joueuse dans la catégorie "+categoriesTranslate[category]+" n\'est en attente pour le tournoi des doubles dames.";
 			}
 		}
 	},
@@ -255,202 +296,16 @@ Template.tournamentRegistrationTemplate.helpers({
 		return res.city;
 	},
 
-	/*
-	* @param birthDate is of type Date
-	* @param todayDate give an optional today date (e. g. date of the tournament)
-	*/
-	'getAge' : function(birthDate){
-        var currentYear = (GlobalValues.findOne({_id:"currentYear"})).value;
-        var tournamentDate = (Years.findOne({_id:currentYear})).tournamentDate;
-	    var age = tournamentDate.getFullYear() - birthDate.getFullYear();
-	    var m = tournamentDate.getMonth() - birthDate.getMonth();
-	    if (m < 0 || (m === 0 && tournamentDate.getDate() < birthDate.getDate())) {
-	        age--;
-	    }
-	    return age;
-	},
 
-	'lastname': function(){
-
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.lastName':1});
-			return userData ? userData.profile.lastName : "";
-		}
-	},
-	'firstname': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.firstName':1});
-			return userData ? userData.profile.firstName : "";
-		}
-	},
-
-	'phone': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.phone':1});
-			return userData ? userData.profile.phone : "";
-		}
-	},
-	'getDate' : function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-            if (typeof userData.profile.birthDate !== 'undefined') {
-                return userData.profile.birthDate.getDate();
-            }
-            return "";
-    	}
+	'getDate' : function(date){
+		return date!==undefined ? date.getDate() : undefined;
   	},
-  	'getMonth' : function(){
-    	var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-			if (typeof userData.profile.birthDate !== 'undefined') {
-                return userData.profile.birthDate.getMonth()+1;
-            }
-            return "";
-    	}
+  	'getMonth' : function(date){
+    	return date!==undefined ? date.getMonth()+1 : undefined;;
   	},
-  	'getYear' : function(){
-    	var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.birthDate':1});
-			if (typeof userData.profile.birthDate !== 'undefined') {
-                return userData.profile.birthDate.getFullYear();
-            }
-            return "";
-    	}
+  	'getYear' : function(date){
+    	return date!==undefined ? date.getFullYear() : undefined;
 	},
-	'street': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID}, {'street':1});
-				return addressData ? addressData.street : "";
-			}
-		}
-	},
-	'addressNumber': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID}, {'number':1});
-				return addressData ? addressData.number : "";
-			}
-		}
-	},
-	'boxNumber': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID},{'box':1});
-				return addressData ? addressData.box : "";
-			}
-		}
-	},
-	'zipcode': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID},{'zipCode':1});
-				return addressData ? addressData.zipCode : "";
-			}
-		}
-	},
-	'city': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID},{'city':1});
-				return addressData ? addressData.city : "";
-			}
-		}
-	},
-	'country': function(){
-		var user=Meteor.user();
-
-		if(user==null){
-			return "";
-		}
-		else{
-			var userData = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-			if (!userData){
-				return "";
-			}
-			else{
-				addressData = Addresses.findOne({_id:userData.profile.addressID},{'country':1});
-				return addressData ? addressData.country : "";
-			}
-		}
-	},
-
 	'getFormattedDate' : function(day) {
 		var date = getTournamentDate();
 		if (!date || !day) {
@@ -477,29 +332,29 @@ Template.tournamentRegistrationTemplate.helpers({
 		return d + " "+month+" "+date.getFullYear();
 	},
 
-	'extras': function (day) {
-		if (day!=="samedi" && day!="dimanche") {
-			return undefined;
-		}
-		day = day=="samedi" ? "saturday" : "sunday";
+	'extras': function (day, userID) {
      	var extras = Extras.find({day:day}).fetch();
 		if (extras===undefined) {
 			return undefined;
 		}
-		var playerExtras = getDayExtrasFromPlayerID(Meteor.userId(),day);
+		for(var j=0; j<extras.length; j++) {
+			var ex = extras[j];
+			ex["quantity"] = 0;
+		}
+		var playerExtras = getDayExtrasFromPlayerID(userID,day);
 		if (playerExtras === undefined) {
 			return extras;
 		}
-		for (var i=0; i<playerExtras.length; i++) {
-			var pExtra = playerExtras[i];
+		for (var pExtraName in playerExtras) {
+			var qty = playerExtras[pExtraName];
 			for(var j=0; j<extras.length; j++) {
 				var ex = extras[j];
-				var qty = pExtra[ex.name];
-				if (qty !== undefined) {
-					ex.quantity = qty;
+				if (ex["name"]==pExtraName) {
+					ex["quantity"] = qty;
 				}
 			}
 		}
+		console.log(extras);
 		return extras;
     },
 
@@ -703,6 +558,9 @@ Template.tournamentRegistrationTemplate.events({
 		var alonePlayers = setAlonePlayers(document); // assigns type and category to session variable
 		var userType = Session.get("tournamentRegistration/type");
 		var userCategory = Session.get("tournamentRegistration/category");
+
+		var parts = location.href.split('/');
+		var userID = parts.pop();
 
 		function getDayFromValue(dateMatchValue) {
 			if (dateMatchValue == "family") {
@@ -933,9 +791,11 @@ Template.tournamentRegistrationTemplate.events({
 			country : country
 		};
 
+		var user = Meteor.users.findOne({_id:userID});
+
 		// If user has already an address, update that one instead of creating a new one
-		var user = Meteor.users.findOne({_id:Meteor.userId()}, {'profile.addressID':1});
-		if(user){
+		var userWithAddress = Meteor.users.findOne({_id:userID}, {'profile.addressID':1});
+		if(userWithAddress){
 			addressData._id = user.profile.addressID;
 		}
 
@@ -943,7 +803,7 @@ Template.tournamentRegistrationTemplate.events({
 			Create the object with the informations about the user
 		*/
         var curUserData = {
-          _id: Meteor.userId(),
+          _id: userID,
           profile:{
             lastName : lastname,
             firstName : firstname,
@@ -967,7 +827,7 @@ Template.tournamentRegistrationTemplate.events({
 			Create the object containing the player specific informations
 		*/
 		var playerData = {
-			_id:Meteor.userId(),
+			_id: userID,
 			extras : {},
 			"playerWish":playerWish,
 			"courtWish":courtWish,
@@ -978,7 +838,7 @@ Template.tournamentRegistrationTemplate.events({
 		var extrasPlayer = playerData.extras;
 
 		for(var i=0;i<extras.length;i++){
-			extrasPlayer[extras[i].name]=document.getElementById(extras[i]._id).value;
+			extrasPlayer[extras[i].name]=parseInt(document.getElementById(extras[i]._id).value);
 		}
 
 		/*
@@ -1050,16 +910,16 @@ Template.tournamentRegistrationTemplate.events({
 		}
 
 		// Delete the current player's pair for that day if any
-		var pair = getDayPairFromPlayerID(Meteor.userId(), day);
+		var pair = getDayPairFromPlayerID(userID, day);
 		if (pair !== undefined) {
-			Meteor.call('unsubscribePairFromTournament', pair._id);
+			Meteor.call('unsubscribePairFromTournament', pair._id, userID);
 		}
 
 		/*
 			Check the AFT ranking online
 		*/
 		Meteor.call('checkAFTranking', firstname, lastname, AFT, function(err, result){
-			$('#submit').hide();
+			$('#submitRegistration').hide();
             $('#submit-chargement').show();
 
 			if(err){
@@ -1088,21 +948,26 @@ Template.tournamentRegistrationTemplate.events({
 		        		return;
 		        	}
 					var callbackInception = function (err, result) {
-						Router.go('myRegistration');
+						if (userID===Meteor.userId()) {
+							Router.go('myRegistration');
+						}
+						// Add to Modifications logs
+						if(Meteor.user().profile.isAdmin || Meteor.user().profile.isStaff){
+							var details = "L'inscription du joueur a été modifiée";
+							addToLogUser("Modification inscription", details, userID);
+						}
+						Router.go('playerInfoTemplate', {_id:userID});
 					};
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch, callbackInception);
 					var type = Session.get("tournamentRegistration/type");
 					var category = Session.get("tournamentRegistration/category");
-					var firstname = curUserData.firstName;
-					var lastname = curUserData.lastName;
 					if (mailNotifyAloneUser) {
-						// Send mail to Meteor.userId() : "you are registered alone in type and category"
 						var dataMail = {
-							intro:"Bonjour"+firstname+",",
-							important:"Merci pour votre inscription au tournoi.",
-							texte:"Vous êtes bien inscrit dans la catégorie : '"+category+"' du type '"+ type+"'."
+							intro:"Bonjour "+firstname+" "+lastname+",",
+							important:"Merci pour votre inscription à notre tournoi annuel.",
+							texte:"Vous êtes bien inscrit dans la catégorie : '"+categoriesTranslate[category]+"' du type '"+ typesTranslate[type]+"'."
 						};
-						Meteor.call("emailFeedback",Meteor.user().emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
+						Meteor.call("emailFeedback",user.emails[0].address,"Concernant votre inscription au tournoi",dataMail, function(error, result){
 							if(error){
 								console.log("error", error);
 							}
@@ -1144,7 +1009,7 @@ Template.tournamentRegistrationTemplate.events({
 				e.className = "form-group has-error has-feedback";
 
 				$('#submit-chargement').hide();
-				$('#submit').show();
+				$('#submitRegistration').show();
 			}
 		});
 

@@ -29,6 +29,7 @@ const placeHolderCourt = "";
 const inGame = "En jeu";
 const playerPlaceHolderScore = "Score: --";
 const waiting = "En attente";
+const winnerString = "Gagnants";
 
 
 var isForCurrentYear = function(){
@@ -74,16 +75,6 @@ var setCourt = function(roundData1, roundData2,courts, num){
 var getPoints = function(pair, round){
   if(pair.tournament==undefined) return undefined;
   return pair.tournament[round];
-}
-
-var setPoints = function(pair, round, score){
-  if(pair==undefined) return;
-  if(pair.tournament==undefined){
-    pair.tournament = [];
-  }
-
-  pair.tournament[round] = score;
-  Pairs.update({"_id":pair._id}, {$set: {"tournament":pair.tournament}});
 }
 
 var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 /!\
@@ -532,56 +523,6 @@ var getCourts = function(field){
 }
 
 /*
-  Returns the next power of two that is greater than or equal to number
-*/
-var getNextPowerOfTwo = function(number){
-  if(number==0) return 0;
-  var x = 2;
-  while (x<number){
-    x*=2
-  }
-  return x;
-}
-
-/*
-  Returns the order in which to fill the first round of the tournament
-*/
-var getOrder = function(size){
-
-  var partial = function(n ,ni,result){
-
-    var half = result.length/2;
-
-    for(var i=0;i<ni;i++){
-      result[ni+i] = result[i]+n;
-      result[half+ni+i] = result[half+i]+n;
-    }
-  }
-
-  var result=[];
-
-  for(var k=0;k<size;k++){
-    if(k==size/2){
-      result.push(1);
-    }
-    else{
-      result.push(0);
-    }
-  }
-
-  var n=size/2;
-  var ni=1;
-
-  while(n>1){
-    partial(n,ni,result);
-    n=n/2;
-    ni=ni*2;
-  }
-
-  return result;
-}
-
-/*
   Takes an array of roundData and puts it into a nicely spread out round array
 */
 var getTournamentFirstRound = function(pairs){
@@ -731,7 +672,7 @@ var makeBrackets = function(document){
     if(thisRound.length==2){
       a = getBestFrom2(thisRound[0], thisRound[1], round,canEditScore);
       if(getPoints(a.pair, round)!==undefined){
-        a.data.score = 'Gagnant';
+        a.data.score = winnerString;
       }
       else{
         a.data.score = emptyScore;
@@ -748,7 +689,7 @@ var makeBrackets = function(document){
   }
 
   Session.set("brackets/rounds",round+1);
-  
+
   totalRounds = brackets.length-2; // Global variable
 
   completionPercentage = (nextMatchNum==0) ? 0 : matchesCompleted/nextMatchNum;
@@ -935,7 +876,7 @@ Template.brackets.events({
           confirmButtonColor: "#3085d6",
           closeOnConfirm:false,
           showCancelButton: true
-        }, 
+        },
         function(inputValue){
           if(!(inputValue>0)){
             swal.showInputError("Le nombre de gagnants doit être plus grand que 0");
@@ -962,7 +903,7 @@ Template.brackets.events({
     var score1 = document.getElementById("scoreInput1").value;
     var score1 = parseInt(score1);
     setPoints(pair1, round, score1);
-  
+
     /*
       Save the winner to display in the winner table
     */
@@ -993,7 +934,7 @@ Template.brackets.events({
         Meteor.call('addToUserLog', pair0.player1._id, logId);
         Meteor.call('addToUserLog', pair0.player2._id, logId);
         Meteor.call('addToUserLog', pair1.player1._id, logId);
-        Meteor.call('addToUserLog', pair1.player2._id, logId);        
+        Meteor.call('addToUserLog', pair1.player2._id, logId);
     }
 
     Meteor.call("addToModificationsLog",

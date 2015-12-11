@@ -26,6 +26,10 @@ Meteor.methods({
 
 	},
 
+	'getUserEmail' : function(email) {
+		return Accounts.findUserByEmail(email);
+	},
+
 	'activateGlobalValuesDB' : function() {
 		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
@@ -522,6 +526,11 @@ Meteor.methods({
 
 			NOTE : for the family tournament, only one list of pools :
 			all:<list of poolIDs>
+
+			completion:{
+				pools: {minimes:<percentage>, ...}	// NOTE: 0 <= <percentage> <= 1
+				brackets: {minimes:<percentage>, ...}
+			}
 		}
 	*/
 	'updateType' : function(typeData) {
@@ -612,7 +621,6 @@ Meteor.methods({
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 
 		var data = {};
-
 		data.ownerID = courtData.ownerID;
 
 		// Fill in court info
@@ -705,6 +713,7 @@ Meteor.methods({
 				throw new Meteor.Error("updateCourt error : during Courts.update", err);
 			}
 		});
+
 		return courtId;
 	},
 
@@ -1049,7 +1058,7 @@ Meteor.methods({
 		}
 		@return : the pair id if successful, otherwise returns false
 	*/
-	'updatePair' : function(pairData, silentMail){
+		'updatePair' : function(pairData, silentMail){
 		if(typeof pairData === undefined){
 			console.error("updatePair : pairData is undefined");
 			return;
@@ -1145,164 +1154,162 @@ Meteor.methods({
 			console.warn("Warning : No data about any player was provided to updatePair. Ignore if intended.");
 		}
 
-
-		//Payments: add to the Payments collection
-		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-	    var amount = Years.findOne({_id: currentYear}).tournamentPrice;
-
-		//Add extras to amount
-		if(check1 && pairData["player1"].extras)
-		{
-			amount += extrasAmount["player1"];
-		}
-		else if(check2 && pairData["player2"].extras)
-		{
-			amount += extrasAmount["player2"];
-		}
-
-
-		var paymentUser = Meteor.userId();
-		paymentData = {
-			userID : paymentUser,
-			tournamentYear : currentYear,
-			status : "pending",
-			paymentMethod : pairData.paymentMethod,
-			balance : amount
-		};
-
-		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentYear': currentYear});
-		if(paymentAlreadyExists){
-			if(pairData._id){	//If it is an update: update the data
-				if(paymentAlreadyExists.status === "paid"){
-					if(paymentAlreadyExists.balance > amount){		// He paid to much
-						paymentData.balance = 0
-					}
-					else{		// He didn't paid enough
-						paymentData.balance = amount - paymentAlreadyExists.balance;
-					}
-				}
-			}
-			else {		// The player registers to the second tournament: merge the two payments
-				console.log("The players registers to the second tournament: merge his payments.");
-				paymentData.balance = paymentAlreadyExists.balance + amount;
-			}
-
-			Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
-				if(err){
-					console.error('insert payment error');
-					console.error(err);
-				}
-			});
-
-		}
-		else {
-
-			//Send emails if the payment method is by cash or by bank transfer
-			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
-        		var user = Meteor.users.findOne({_id:paymentData.userID});
-        		var dataEmail = {
-					intro:"Bonjour "+user.profile.firstName+",",
-					important:"Nous avons bien reçu votre inscription",
-					texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
-					encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
-				};
-				if (!silentMail) {
-					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
-				}
-				/*
-
-					Envoyer un mail contenant les informations pour payer par cash:
-					- addresse du QG : on peut l'hardcoder ici?
-					- montant à payer: accessible via la variable amount
-
-				*/
-			}
-			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
-
-				// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
-				paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
-
-				var newValue = paymentData.bankTransferNumber + 1;
-				GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
-					value: newValue
-				}});
-
-
-        		var bank = "BE33 3753 3397 1254"; //TODO: hardcoded here
-        		var user = Meteor.users.findOne({_id:paymentData.userID});
-        		var dataEmail = {
-          			intro:"Bonjour "+user.profile.firstName+",",
-          			important:"Nous avons bien reçu votre inscription",
-          			texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
-          			encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) avec comme communication le numéro d'identification suivant: " +paymentData.bankTransferNumber
-        		};
-				if (!silentMail) {
-					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
-				}
-
-			}
-
-			if(userIsOwner){
-				Payments.insert(paymentData, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
-					}
-				});
-			}
-			else { 		//Only used for popDB: insert a payment for both players
-				paymentData.userID = ID['player1'];
-				if(typeof paymentData.userID !== 'undefined'){
-					Payments.insert(paymentData, function(err, paymId){
-						if(err){
-							console.error('insert payment error');
-							console.error(err);
-						}
-					});
-				}
-
-				paymentData.userID = ID['player2'];
-
-				if(pairData.paymentMethod === paymentTypes[1]){		// Bank transfer
-					paymentData.bankTransferNumber = paymentData.bankTransferNumber + 1;
-					var newValue2 = paymentData.bankTransferNumber + 1;
-					GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
-						value: newValue2
-					}});
-				}
-
-				if(typeof paymentData.userID !== 'undefined'){
-					Payments.insert(paymentData, function(err, paymId){
-						if(err){
-							console.error('insert payment error');
-							console.error(err);
-						}
-					});
-				}
-
-			}
-
-		}
-
-
+		var pairNewID;
 		if(!pairData._id){ 		// New Pair
-			return Pairs.insert(data, function(err, res){
+			pairNewID = Pairs.insert(data, function(err, res){
 				if(err){
 					console.error("updatePair error");
 					console.error(err);
 				}
 			});
 		}
-		Pairs.update({_id: pairData['_id']} , {$set: data}, function(err, count, status){
-			if(err){
-				console.error('updatePair error');
-				console.error(err);
-			}
-		});
+		else{
+			pairNewID = pairData['_id'];
+			Pairs.update({_id: pairData['_id']} , {$set: data}, function(err, count, status){
+				if(err){
+					console.error('updatePair error');
+					console.error(err);
+				}
+			});
+		}
 
-		return pairData['_id'];
+
+		/*
+		* 		PAYMENTS
+		*/
+
+		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
+	    var tournamentPrice = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
+		var extras = Extras.find().fetch();
+
+		//Update payment for each player of the Pair
+		var players = ["player1", "player2"];
+		for(var x=0; x < 2; x++){
+			var currentPlayer = players[x];
+			if(typeof pairData[currentPlayer] !== 'undefined'){
+
+				var totalAmount = 0;
+				var userPairs = Pairs.find({$or: [{'player1._id': pairData[currentPlayer]._id, 'year': currentYear}, {'player2._id': pairData[currentPlayer]._id, 'year': currentYear}]}).fetch();
+				for(var pairI = 0; pairI < userPairs.length; pairI++){
+					var currentPair = userPairs[pairI];
+					var amountOneDay = tournamentPrice;
+					var userExtras = currentPair[currentPlayer].extras;
+					if(userExtras)
+					{
+						var extrAmount = 0;
+						for(var i=0; i<extras.length; i++){
+
+							if(userExtras[extras[i].name]){
+								var currentExtraNumber = userExtras[extras[i].name]
+								extrAmount += currentExtraNumber * extras[i].price;			// Add number * price to amount
+							}
+						}
+						amountOneDay += extrAmount;
+					}
+					totalAmount += amountOneDay;
+				}
+
+				var paymentUserId = pairData[currentPlayer]._id;
+				var paymentData = {
+					userID : paymentUserId,
+					tournamentYear : currentYear,
+					status : "pending",
+					paymentMethod : pairData.paymentMethod,
+					balance : totalAmount
+				};
+
+				/*
+				*	Send emails if the payment method is by cash or by bank transfer
+				*/
+				if(pairData.paymentMethod === paymentTypes[2]){		//Cash
+					var user = Meteor.users.findOne({_id:paymentData.userID});
+					var dataEmail = {
+						intro:"Bonjour "+user.profile.firstName+",",
+						important:"Nous avons bien reçu votre inscription",
+						texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
+						encadre:"Le montant de votre inscription s'élève à "+ totalAmount +" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
+					};
+					if (!silentMail) {
+						Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
+					}
+					/*
+
+						Envoyer un mail contenant les informations pour payer par cash:
+						- addresse du QG : on peut l'hardcoder ici?
+						- montant à payer: accessible via la variable totalAmount
+
+					*/
+				}
+				else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
+
+					// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
+					paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
+
+					var newValue = paymentData.bankTransferNumber + 1;
+					GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
+						value: newValue
+					}});
+
+
+					var bank = "BE33 3753 3397 1254"; //TODO: hardcoded here
+					var user = Meteor.users.findOne({_id:paymentData.userID});
+					var dataEmail = {
+						intro:"Bonjour "+user.profile.firstName+",",
+						important:"Nous avons bien reçu votre inscription",
+						texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
+						encadre:"Le montant de votre inscription s'élève à "+ totalAmount +" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) avec comme communication le numéro d'identification suivant: " +paymentData.bankTransferNumber
+					};
+					if (!silentMail) {
+						Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
+					}
+
+				}
+
+				/*
+				*	Update payment
+				*/
+
+				var paymentAlreadyExists = Payments.findOne({'userID': paymentUserId, 'tournamentYear': currentYear});
+				if(paymentAlreadyExists){	// Update the payment
+					if(paymentAlreadyExists.status === "paid"){
+						if(paymentAlreadyExists.balance >= paymentData.balance){		// He paid to much
+							paymentData.status = "paid";
+							paymentData.balance = 0;
+						}
+						else{		// He didn't paid enough
+							paymentData.balance = paymentData.balance - paymentAlreadyExists.balance;
+						}
+					}
+
+					Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
+						if(err){
+							console.error('insert payment error');
+							console.error(err);
+						}
+					});
+
+				}
+				else{	// No payment exists: insert
+					Payments.insert(paymentData, function(err, paymId){
+						if(err){
+							console.error('insert payment error');
+							console.error(err);
+						}
+					});
+				}
+
+			}
+
+		}
+
+		/*
+		* 		END OF PAYMENTS
+		*/
+
+
+		return pairNewID;
 	},
+
 
 	/*
 		/!\  IF changes are made to the structure of a match, don't forget to update the method getOtherPair in bracketTournament.js !!!			/!\
@@ -1709,15 +1716,15 @@ Meteor.methods({
 	},
 
 	'insertQuestion' : function(Question){
-		var data ={
+		var data = {
 			lastname : Question.lastname,
 			firstname: Question.firstname,
 			email : Question.email,
 			question : Question.question,
 			date : Question.date,
 			processed : false
-		}
-		return Questions.insert(data)
+		};
+		return Questions.insert(data);
 	},
 
 	'removeExtra' : function(extraId){
@@ -1971,16 +1978,52 @@ Meteor.methods({
 		}
 
 		var user;
+		var userExtras;
 		if (userPlayer==="player1") {
 			user = Meteor.users.findOne({_id:pair.player1._id});
+			if(pair.player1.extras){
+				userExtras = pair.player1.extras;
+			}
 		}
 		else {
 			user = Meteor.users.findOne({_id:pair.player2._id});
+			if(pair.player2.extras){
+				userExtras = pair.player2.extras;
+			}
 		}
 
 		// Remove payment
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		Payments.remove({'userID': userID, 'tournamentYear': currentYear});
+		if(Pairs.find({$or: [{'player1._id': userID, 'year': currentYear}, {'player2._id': userID, 'year': currentYear}]}).count() == 2){
+			//Update the payment
+			var amountToReduce = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
+
+			if(userExtras)
+			{
+				var extras = Extras.find().fetch();
+				var extrAmount = 0;
+
+				for(var i=0; i<extras.length; i++){
+
+					if(userExtras[extras[i].name]){
+						var currentExtraNumber = userExtras[extras[i].name]
+						extrAmount += currentExtraNumber * extras[i].price;			// Add number * price to amount
+					}
+				}
+				amountToReduce += extrAmount;
+			}
+
+			var paymentAlreadyExists = Payments.findOne({'userID': userID, 'tournamentYear': currentYear});
+			var newAmount = paymentAlreadyExists.balance - amountToReduce;
+			paymentData = {
+				status : "pending",
+				balance : newAmount
+			};
+			Payments.update(paymentAlreadyExists._id, {$set: paymentData});
+		}
+		else{
+			Payments.remove({'userID': userID, 'tournamentYear': currentYear});
+		}
 
 
 		// No other player
@@ -2185,17 +2228,17 @@ Meteor.methods({
 		var payment = Payments.findOne({_id: paymentID});
 		var user = Meteor.users.findOne({_id: payment.userID});
 
+		// Add to Modifications logs
 		Meteor.call("addToModificationsLog",
 		{"opType":"Marquer comme payé",
 		"details": user.profile.firstName + " " + user.profile.lastName + " a été marqué comme ayant payé le tournoi"
-	}, function(err, logId){
-		if(err){
-			console.log(err);
-			return;
-		}
-		Meteor.call('addToUserLog', user._id, logId);
-	});
-
+		}, function(err, logId){
+			if(err){
+				console.log(err);
+				return;
+			}
+			Meteor.call('addToUserLog', user._id, logId);
+		});
 
 		return true;
 	},
@@ -2249,6 +2292,203 @@ Meteor.methods({
 
 		return Winners.insert(data);
 	},
+
+	'assignCourts' : function(rain) {
+
+		var getCourtNumbers = function(courts){
+		    var result = [];
+
+		    for(var k=0; k<courts.length;k++){
+		        var courtsList = courts[k].courtNumber;
+
+		        for(var t=0;t<courtsList.length;t++){
+		            result.push(courtsList[t]);
+		        }
+		    }
+
+		    return result;
+		}
+
+
+		/*
+	        Return N courts, starting at index start and using a modulo to loop through the array
+	        nextNumber is the next number to assign to the court if it hasn't a number yet
+	    */
+	    var setCourts = function(listPairs, courts, start,final_result){
+
+	        if(courts.length==0){
+	            newcourts = ["?"];
+	        }
+	        else{
+	            newcourts=courts;
+	        }
+
+	        var result = [];
+	        var next=0;
+
+	        var logPairs = Math.log(listPairs.length)/Math.log(2);
+	        var numMatchesFull = Math.pow(2,Math.ceil(logPairs))/2;
+	        var index=getOrder(numMatchesFull);
+	        var round=0;
+
+	        for(var k=0;k<numMatchesFull;k++){
+	            result.push(-1);
+	        }
+
+	        var num = getNumberMatchesFirstRound(listPairs.length);
+
+	        for(var m=0;m<num;m++){
+	            result[index[m]]=newcourts[(start+next) % newcourts.length];
+	            next++;
+	        }
+
+	        round++;
+
+	        var max=numMatchesFull;
+
+	        var begin_previous=0;
+	        var size_previous=result.length;
+
+	        while(result.length<(2*max-1)){
+
+	            var inter_result=[];
+	            var count=0;
+
+	            for(var m=0;m<size_previous;m=m+2){
+	                if(result[begin_previous+m]==-1){
+	                    result.push(newcourts[(start+next) % newcourts.length]);
+	                    next++;
+	                }
+	                else{
+	                    result.push(result[begin_previous+m]);
+	                }
+	            }
+	            begin_previous+=size_previous;
+	            size_previous=size_previous/2;
+	            round++;
+	        }
+
+	        var inter = [];
+
+	        for(var j=0;j<result.length;j++){
+	            if(result[j]!=-1){
+	                inter.push(result[j]);
+	            }
+	        }
+
+	        for(var j=0;j<result.length;j++){
+	            if(final_result[j]==="?"){
+	                final_result[j] = inter[j];
+	            }
+	        }
+
+	        return next;
+	    };
+
+	    var numberDays = 2;
+
+	    var listCourtsSat;
+	    var listCourtsSun;
+
+	    if(rain){
+	        listCourtsSat=Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true},{isOutdoor:false}]},{$sort :{"HQDist":1} }).fetch();
+	        listCourtsSun=Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true},{isOutdoor:false}]},{$sort :{"HQDist":1} }).fetch();
+	    }
+	    else{
+	        listCourtsSat=Courts.find({$and:[{dispoSamedi: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
+	        listCourtsSun=Courts.find({$and:[{dispoDimanche: true},{staffOK:true},{ownerOK:true}]},{$sort :{"HQDist":1} }).fetch();
+	    }
+
+	    var courtsSat = getCourtNumbers(listCourtsSat);
+	    var courtsSun = getCourtNumbers(listCourtsSun);
+	    var courtsTable = [courtsSat,courtsSun];
+
+	    var poolsSat = Pools.find({$or: [{type:"mixed"},{type:"family"}]}).fetch();
+	    var poolsSun = Pools.find({$or: [{type:"men"},{type:"women"}]}).fetch();
+	    var poolsTable = [poolsSat,poolsSun];
+
+	    ////////// Assign courts to pools \\\\\\\\\\
+
+	    for(var g=0;g<numberDays;g++){
+
+	        var pools = poolsTable[g];
+	        var courts = courtsTable[g];
+
+	        for(var i=0;i<pools.length;i++){
+
+	            var pool = pools[i];
+
+	            if(pool["courtId"]==undefined || pool["courtId"]==null){
+	            	if(courts.length==0){
+		                Pools.update({_id:pool._id},{$unset: {"courtId":""}});
+		            }
+		            else{
+		                var j=(i % courts.length);
+		                pool.courtId = courts[j];
+		                Meteor.call('updatePool',pool);
+		            }
+
+		            // add court to all the matches in the pool
+
+		            var matches = Matches.find({"poolId" : pool._id}).fetch();
+
+		            for(var f=0;f<matches.length;f++){
+		                matches[f].courtId = courts[i];
+		                Meteor.call('updateMatch',matches[f]);
+		            }
+	            }
+	        }
+
+	    }
+
+	    ////////// KnockOff Tournament \\\\\\\\\\
+
+	    var typesSaturday = ["mixed","family"];
+	    var typesSunday = ["men","women"];
+	    var typesTable = [typesSaturday,typesSunday];
+	    var currentYear = GlobalValues.findOne({_id:"currentYear"});
+	    var year = Years.findOne({_id:currentYear.value});
+	    var start = 0;
+
+	    ////////// Saturday and Sunday \\\\\\\\\\
+
+	    for(var g=0;g<numberDays;g++){ // loop through the days
+
+	        var typesDay = typesTable[g];
+
+	        for(var k=0;k<typesDay.length;k++){ // loop through the types
+
+	            var typeDoc = Types.findOne({_id:year[typesDay[k]]});
+
+	            for(var t=0;t<categoriesKeys.length;t++){ // loop through the categories
+
+	                var temp = categoriesKeys[t]+"Bracket";
+
+	                if(typeDoc[categoriesKeys[t]]!=null && typeDoc[temp]!=null){
+
+	                    var nameField = categoriesKeys[t]+"Courts";
+
+	                    var next = setCourts(typeDoc[temp], courtsTable[g],start,typeDoc[nameField]);
+
+	                    if(courtsTable[g].length==0){
+	                        start=0;
+	                    }
+	                    else{
+	                        start=(start+next) % courtsTable[g].length;
+	                    }
+	                }
+	            }
+
+	            Meteor.call('updateType',typeDoc);
+	        }
+	    }
+
+	    Meteor.call('updateDoneYears', 6, true, function(err, result){
+	        if(err){
+	            console.error("Error while calling updateDoneYears for step 6");
+	        }
+	    });
+	}
 
 
 
