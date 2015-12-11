@@ -121,7 +121,7 @@ Template.launchTournament.events({
             text: "Les informations entrées sont-elles correctes ? Après validation, les inscriptions seront ouvertes",
             type: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
+            confirmButtonColor: "#3085d6",
             confirmButtonText: "Confirmer",
             closeOnConfirm: true
         },
@@ -139,7 +139,7 @@ Template.launchTournament.events({
             showCancelButton:true,
             cancelButtonText:"Annuler",
             confirmButtonText:"Modifier le tournoi",
-            confirmButtonColor:"#0099ff",
+            confirmButtonColor: "#3085d6",
             },
             function(){
                 GlobalValues.update({_id:"registrationsON"}, {$set: {

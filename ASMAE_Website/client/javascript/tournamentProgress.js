@@ -6,7 +6,7 @@ Template.closeRegistrationsBlock.events({
           showCancelButton:true,
           cancelButtonText:"Annuler",
           confirmButtonText:"Fermer les inscriptions",
-          confirmButtonColor:"#0099ff",
+          confirmButtonColor: "#3085d6",
           },
           function(){
               Meteor.call('stopTournamentRegistrations', function(error, result){
