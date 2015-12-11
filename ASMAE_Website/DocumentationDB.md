@@ -10,11 +10,20 @@ A global value structure is as follows:
         value: <value>
     }
 
-## Year
+These GlobalValues documents should be initialized when launching the website on a new platform:
+
+    _id: "currentYear" --> value: <string: year>
+    _id: "nextCourtNumber" --> value: <
+    _id: "registrationsON" --> value: <boolean>
+    _id: "nextBankTransferNumber" --> value: <integer>
+
+## Years
 
     {
         _id:<string: year>,
+        tournamentDate: <date>,
         tournamentPrice: <number>,
+        maximumAFT: <string: AFT ranking>,  // Registrations to the tournament are only allowed if the AFT ranking is smaller than maximumAFT
         mixed:<typeID>,
         men:<typeID>,
         women:<typeID>,
@@ -25,11 +34,13 @@ A global value structure is as follows:
         step3done:<boolean>,
         step4done:<boolean>,
         step5done:<boolean>,
-        step6done:<boolean>
+        step6done:<boolean>,
+        step7done:<boolean>,
+        step8done:<boolean>
     }
 
 
-## Type
+## Types
 
     {
         // Can only $addToSet
@@ -68,11 +79,10 @@ A global value structure is as follows:
     }
 
 
-## Pool
+## Pools
 
     {
         _id:<id>,
-        court:<court>, --> To remove
         pairs:[<pairID>, <pairID>, ...], // Will append pairs to existing array (no duplicates possible)
         leader:<pairId>, // Leader is the player1 from the pair
         courtId:<courtID>,
@@ -80,7 +90,7 @@ A global value structure is as follows:
         category:<category>
     }
 
-## Court
+## Courts
 
     {
         _id:<courtId>,
@@ -106,7 +116,7 @@ A global value structure is as follows:
     }
 
 
-## Meteor.user
+## Meteor.users
 
     {
         createdAt:<createdAt>,
@@ -114,7 +124,6 @@ A global value structure is as follows:
         emails:[{ "address" : "<email1>", "verified" : false } , ...],
         profile:{
             name:<name>,
-            title:<title>,
             firstName:<firstName>,
             lastName:<lastName>,
             addressID:<addressID>,
@@ -137,21 +146,21 @@ A global value structure is as follows:
     }
 
 
-## Address
+## Addresses
 
     {
         _id:<id>, // Omit this if you want to create a new address, this will be auto-generated
-        street:<street>,
-        number:<number>,
-        box:<box>,
-        city:<city>,
-        zipCode:<zipCode>,
-        country:<country>,
+        street:<string: street>,
+        number:<integer: number>,
+        box:<string: box>,
+        city:<string: city>,
+        zipCode:<integer: zipCode>,
+        country:<string: country>,
         isCourtAddress:<boolean>
     }
 
 
-## Pair
+## Pairs
 
     {
         _id:<id>,
@@ -178,33 +187,33 @@ A global value structure is as follows:
         year:<year>
     }
 
-## Extra
+## Extras
 
     {
-        _id:<id>,
-        name:<extra name>,
-        price:<price>,
-        comment:<comment>
+        _id: <id>,
+        name: <string: extra name>,
+        price: <double: price>,
+        comment: <string: comment>
     }
 
-## Payment
+## Payments
 
     {
-        _id:<id>,
+        _id: <id>,
         userID: <user id>,
         tournamentYear: <tournament year>,
-        day: <saturday or sunday>,
-        status:<string: status>, // paid or pending
-        balance:<number: balance>,
-        date:<date>,
-        paymentMethod:<string: method>, // Cash, CreditCard or BankTransfer
+        status: <string: status>, // "paid" or "pending"
+        balance:< number: balance>,
+        date: <date>,
+        paymentMethod: <string: method>, // "Cash", "CreditCard" or "BankTransfer"
+        bankTransferNumber: <integer> // Only present when paymentMethod=="BankTransfer". A number (> 1000) used for the communication field of a bank transfer.
     }
 
 
-## Match
+## Matches
 
     {
-        _id:<id>,
+        _id:<id>, // Automatically set
         poolId:<poolId>,
         <pairID>:<points>,
         <pairID>:<points>,
@@ -220,14 +229,46 @@ matchData is expected to be formated like this :
         pair2: {pairId: <pairID>, points:<points>}
     }
 
+## Winners
+
+    {
+        _id: <id>, // Automatically set
+        year: <year>,
+        type: <type>,
+        category: <category>,
+        first: <pairId>,
+        second: <pairId>
+    }
+
+## Questions
+
+    {
+        _id: <id>, // Automatically set
+        lastname : <user lastname>,
+        firstname: <user firstname>,
+        email : <user email>,
+        question : <string: question>,
+        date : <date>,
+        processed : <boolean>
+    }
+
+## ModificationsLog
+
+    {
+        _id: <id>, // Automatically set
+        userId : <userId> // Automatically generated
+        opType : <string: operationType> // String describing the type of the operation (mandatory)
+        details : <string: all usefull informations about the operation> // short String describing the operation (optional)
+        createdAt : <date> // automatically generated
+    }
 
 ## FORUM
 
 Thread structure:
 
     {
-        _id:<threadId>,
-        name:<threadName>,
+        _id: <threadId>, // Automatically set
+        name: <threadName>,
         topics:[
             <topicId1>, ...
         ]
@@ -236,7 +277,7 @@ Thread structure:
 Topic structure:
 
     {
-        _id:<topicId>,
+        _id: <topicId>, // Automatically set
         name:<topic name>,
         lastUpdatedTime:<Date>,
         lastUpdatedUser:<userId>,
@@ -246,6 +287,7 @@ Topic structure:
 Post structure:
 
     {
+        _id: <postId>, // Automatically set
         time:<Date>,
         author:<userId>,
         postText:<post text>
