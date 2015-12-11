@@ -5,7 +5,7 @@ Feature: As An admin, I want to be able to see the pdf of all the pools
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @watch
+    @ignore
     Scenario: 
         Given I am logged in
         And The database has been populated

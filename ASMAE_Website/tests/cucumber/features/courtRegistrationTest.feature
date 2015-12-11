@@ -7,7 +7,7 @@ Feature: Register a court
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @watch
+    @ignore
     Scenario: 
         Given I am logged in
         And The tournament inscriptions were launched

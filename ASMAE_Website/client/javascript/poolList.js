@@ -524,7 +524,7 @@ var movePairs = function(document){
 				{"opType":"Mouvement paire",
 				"details":
 					player1.profile.firstName + " "+ player1.profile.lastName +
-			 		" et " + player2.profile.firstName +" " + player2.profile.lastName + " de poule " + previousPoolId + " vers poule "+newPoolId +getStringOptions()
+			 		" et " + player2.profile.firstName +" " + player2.profile.lastName +getStringOptions()
 				},
 				function(err, logId){
 					if(err){
@@ -772,7 +772,7 @@ Template.poolList.events({
 		Meteor.call("addToModificationsLog",
 		{"opType":"Retirer poule",
 		"details":
-			"Poule retirée : "+poolId+getStringOptions()
+			"Poule retirée "+getStringOptions()
 		});
 	},
 
@@ -1488,8 +1488,8 @@ Template.modalItem.events({
 		// Remove this pair from the pool (pair is alone)
 		Pools.update({"_id":this.poolId},{"$pull":{"pairs":this.pairId}});
 
-		type = this.key;
-		dateMatch = undefined;
+		var type = this.key;
+		var dateMatch = undefined;
 		if(type==="women" || type==="men"){
 			dateMatch="sunday";
 		}
@@ -1500,11 +1500,28 @@ Template.modalItem.events({
 			dateMatch = "family";
 		}
 
-		year = Session.get("PoolList/Year");
+		var year = Session.get("PoolList/Year");
 
 		// Add the pair to the new type:
 		Meteor.call("addPairToTournament",this.pairId, year, dateMatch);
 		$('#pairModal'+this.pairId).modal('hide');
+
+		// Log
+		var pair = Pairs.findOne({_id:this.pairId});
+		var player1 = Meteor.users.findOne({"_id":pair.player1._id},{"profile":1});
+
+		Meteor.call("addToModificationsLog",
+			{"opType":"Changement de type",
+			"details":
+				player1.profile.firstName + " "+ player1.profile.lastName + getStringOptions() +' a été déplacé dans le type '+typesTranslate[type]
+			},
+			function(err, logId){
+				if(err){
+					console.log(err);
+					return;
+				}
+				Meteor.call('addToUserLog', player1._id, logId);
+			});
 	},
 
 	'click .setLeader':function(event){
@@ -1632,7 +1649,7 @@ var addNewPool = function(obj){
 	Meteor.call("addToModificationsLog",
 	{"opType":"Ajouter poule",
 	"details":
-		"Poule ajoutée : "+newPoolId+getStringOptions()
+		"Poule ajoutée "+getStringOptions()
 	});
 	return newPoolId;
 }

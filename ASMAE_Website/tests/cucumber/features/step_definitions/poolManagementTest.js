@@ -3,8 +3,12 @@ module.exports = function () {
         client.waitForExist('#popdbtest')
         client.click('#popdbtest')
         client.click('#tournamentNavigation');
+        this.server.call('addYear2015Tests');
 
-
+        client.pause(8000);
+	
+	client.waitForExist('#GestionDuTournoiButtonMenu')
+        client.click('#GestionDuTournoiButtonMenu')
         client.waitForVisible('#Year')
         client.waitForExist('#Year');
         client.click('#Year')
@@ -16,11 +20,11 @@ module.exports = function () {
         client.click('#btn_men_preminimes')
         client.waitForExist('#Poules')
         client.click('#Poules')
-        client.pause(1000)
+        client.pause(4000)
         // a allows drag and drop
         // b allows to see the pool/poolmanager/...
 
-    });
+    }); 
 
     this.When(/^I click on a poolManagement$/,function(){
         var b = '#'+'clickOnIt'+server.call('getOnePoolId')
