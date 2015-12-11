@@ -392,8 +392,14 @@ var getCourtNumbers = function(courts){
 
 var assignCourts = function(rain){
     Meteor.call('assignCourts', rain, function(err, result) {
-        if(err!=undefined){
-            console.error("Error assignCourts : "+err);
+        if(result) {
+            if(err!=undefined){
+                console.error("Error assignCourts : "+err);
+                swal("Erreur !", "Une erreur s'est produite lors de l'assignement des terrains", "error");
+            }
+        }
+        else {
+            swal("Erreur !", "Il n'y a aucun terrain à assigner !", "error");
         }
 
     });
