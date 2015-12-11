@@ -68,7 +68,7 @@ function set_error(id,errorVisible) {
 		var e = document.getElementById(id.concat(error));
 		if(!errorVisible){
 			e.style.display = 'none';
-			document.getElementById(id.concat(div)).className = "form-group AFTOK has-feedback";
+			document.getElementById(id.concat(div)).className = "form-group AFTOK has-success has-feedback";
 		}else{
 			e.style.display = 'block';
 			document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
