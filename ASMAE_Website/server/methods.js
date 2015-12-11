@@ -1193,7 +1193,13 @@ Meteor.methods({
 				for(var pairI = 0; pairI < userPairs.length; pairI++){
 					var currentPair = userPairs[pairI];
 					var amountOneDay = tournamentPrice;
-					var userExtras = currentPair[currentPlayer].extras;
+					if(currentPair.player1._id === pairData[currentPlayer]._id){ //Player1
+						var userExtras = currentPair.player1.extras;
+					}
+					else{	//Player 2
+						var userExtras = currentPair.player2.extras;
+					}
+
 					if(userExtras)
 					{
 						var extrAmount = 0;
