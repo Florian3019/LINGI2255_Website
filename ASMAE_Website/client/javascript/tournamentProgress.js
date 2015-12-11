@@ -179,6 +179,7 @@ Template.tournamentProgress.events({
     },
 
     'click #sendRegistrationsEmail': function(){
+
         Meteor.call('updateDoneYears', 2, true, function(err, result){
             if(err){
                 console.error("Error while calling updateDoneYears for step 2");
@@ -247,17 +248,46 @@ Template.tournamentProgress.events({
 
         if(getNumberMissingCourts("Saturday")>0 || getNumberMissingCourts("Sunday")>0){
             Session.set("rain",false);
-            $('#notEnoughCourtsModal').modal('show');
+            var day = findDay();
+            swal({
+                title: "Attention, il n'y a pas assez de terrains pour le "+ day, 
+                text: "Que voulez vous faire ?", 
+                type:"warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Assigner quand même",
+                cancelButtonText:"Annuler",
+                closeOnConfirm: false, 
+            }, 
+            function() {
+                assignCourts(false);
+                swal("Assigner les terrains aux poules", "Les terrains ont bien été assignés aux poules", "success"); 
+            });
         }
         else{
             assignCourts(false);
         }
-
     },
+
     'click #assignIndoorCourts':function(event){
         if(getNumberMissingCourts("Saturday")>0 || getNumberMissingCourts("Sunday")>0){
             Session.set("rain",true);
-            $('#notEnoughCourtsModal').modal('show');
+            var day = findDay();
+            swal({
+                title: "Attention, il n'y a pas assez de terrains pour le "+ day, 
+                text: "Que voulez vous faire ?", 
+                type:"warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Assigner quand même",
+                cancelButtonText:"Annuler",
+                closeOnConfirm: false, 
+            }, 
+            function() {            
+                assignCourts(true);
+                swal("Succès !", "Les terrains ont bien été assignés aux poules", "success");
+                
+            });
         }
         else{
             assignCourts(false);
@@ -266,8 +296,7 @@ Template.tournamentProgress.events({
 
 });
 
-Template.notEnoughCourtsModal.helpers({
-    'findDay': function(){
+var findDay = function() {
         if(getNumberMissingCourts("Saturday")>0 && getNumberMissingCourts("Sunday")>0){
             return "samedi et dimanche";
         }
@@ -280,19 +309,7 @@ Template.notEnoughCourtsModal.helpers({
         else{
             return "";
         }
-    }
-});
-
-Template.notEnoughCourtsModal.events({
-    'click .valid': function(event){
-        if(Session.get("rain")){
-            assignCourts(true);
-        }
-        else{
-            assignCourts(false);
-        }
-    }
-});
+};
 
 
 var getNumberMissingCourts = function(day){
