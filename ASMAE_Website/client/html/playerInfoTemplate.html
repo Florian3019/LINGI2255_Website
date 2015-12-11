@@ -72,29 +72,28 @@
                             {{#if showOption ../id}}
                               {{#if isRegistered saturday}}
                               (
-                                <a href="#" class="saturdayRegistrationEdit" data-id="{{../id}}" id="modifySaturdayLink">Modifier</a> |
+                                <a style="cursor:pointer"><span data-id="{{../id}}" class="saturdayRegistrationEdit" id="modifySaturdayLink">Modifier</span></a> |
                                  <a href="#" id="unsubscribeSaturdayLink" data-id={{../id}}>Désinscrire</a> )
                               {{else}}
-                               ( <a class="saturdayRegistrationEdit" data-id="{{../id}}" href="#" id="registerSaturdayLink">Inscription</a> )
+                               ( <a style="cursor:pointer"><span data-id="{{../id}}" class="saturdayRegistrationEdit" id="registerSaturdayLink">Inscription</span></a> )
                               {{/if}}
                               {{/if}}
                           </td>
                         </tr>
                         {{#if isRegistered saturday}}
-                            {{#if hasPartner saturday}}
-                                {{#with dayPartner saturday}}
-                                <tr>
-                                    <td>Partenaire samedi</td>
-                                    <td><a href="{{pathFor route='playerInfoTemplate' _id=this._id}}">{{showPartnerEmail}}</a></td>
-                                </tr>
-                                {{/with}}
-                            {{else}}
-                                <tr>
-                                    <td>Partenaire samedi</td>
-                                    <td>Aucun</td>
-                                </tr>
-                            {{/if}}
-
+                           {{#if hasPartner saturday}}
+                               {{#with dayPartner saturday}}
+                               <tr>
+                                   <td>Partenaire samedi</td>
+                                   <td><a style="cursor:pointer" class="goToPartner">{{showPartnerEmail}}</a></td>
+                               </tr>
+                               {{/with}}
+                           {{else}}
+                               <tr>
+                                   <td>Partenaire samedi</td>
+                                   <td>Aucun</td>
+                               </tr>
+                           {{/if}}
                         {{/if}}
                         <tr>
                           <td> Inscription dimanche {{#if showOption ../id}} ({{tournamentPrice}}&euro;) {{/if}}</td>
@@ -104,20 +103,21 @@
                             {{#if showOption ../id}}
                             {{#if isRegistered sunday}}
                             (
-                              <a class="sundayRegistrationEdit" href="#" data-id="{{../id}}" id="modifySundayLink">Modifier</a> |
+                              <a style="cursor:pointer"> <span data-id="{{../id}}" class="sundayRegistrationEdit" id="modifySundayLink">Modifier</span></a> |
                                <a href="#" id="unsubscribeSundayLink" data-id={{../id}}>Désinscrire</a> )
                             {{else}}
-                              ( <a class="sundayRegistrationEdit" href="#" data-id="{{../id}}" id="registerSundayLink">Inscription</a> )
+                              ( <a style="cursor:pointer"><span data-id="{{../id}}" class="sundayRegistrationEdit" id="modifySundayLink">Inscription</span></a> )
                             {{/if}}
                             {{/if}}
                           </td>
                         </tr>
+
                         {{#if isRegistered sunday}}
                             {{#if hasPartner sunday}}
                                 {{#with dayPartner sunday}}
                                 <tr>
                                     <td>Partenaire dimanche</td>
-                                    <td><a href="{{pathFor route='playerInfoTemplate' _id=this._id}}">{{showPartnerEmail}}</a></td>
+                                    <td><a style="cursor:pointer" class="goToPartner">{{showPartnerEmail}}</a></td>
                                 </tr>
                                 {{/with}}
                             {{else}}
