@@ -171,74 +171,119 @@ Template.tournamentProgress.events({
     },
 
     'click #restartTournamentButton': function(){
-        Meteor.call('restartTournament', function(err, result){
-            if(err){
-                console.error("Error while calling restartTournamentButton");
-            }
-        });
+         swal({
+                title: "Attention !", 
+                text: "Vous allez terminer de manière définitive le tournois en cours", 
+                type:"warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Terminer",
+                cancelButtonText:"Annuler",
+                closeOnConfirm: false, 
+            }, 
+            function() {
+                Meteor.call('restartTournament', function(err, result){
+                    if(err){
+                        console.error("Error while calling restartTournamentButton");
+                    }
+                });
+                swal("Succès !", "Tournois clôturé", "success"); 
+            });
+
+        
     },
 
     'click #sendRegistrationsEmail': function(){
 
-        Meteor.call('updateDoneYears', 2, true, function(err, result){
-            if(err){
-                console.error("Error while calling updateDoneYears for step 2");
-            }
-        });
+        swal({
+                title: "Attention !", 
+                text: "Vous allez envoyer un email d'invitation à tous les utilisateurs", 
+                type:"warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Envoyer",
+                cancelButtonText:"Annuler",
+                closeOnConfirm: false, 
+            }, 
+            function() {
+                Meteor.call('updateDoneYears', 2, true, function(err, result){
+                    if(err){
+                        console.error("Error while calling updateDoneYears for step 2");
+                    }
+                });
 
-        Meteor.call('emailLaunchTournament', function(err, result){
-            if(err){
-                console.error("Error while calling emailLaunchTournament");
-            }
-        });
+                Meteor.call('emailLaunchTournament', function(err, result){
+                    if(err){
+                        console.error("Error while calling emailLaunchTournament");
+                         swal("Erreur !", "Une erreur c'est produite lors de l'envoie des emails", "error"); 
+                    }
+                });
+                swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
+            });
     },
 
     'click #sendPoolsEmail':function(){
-        Meteor.call('updateDoneYears', 7, true, function(err, result){
-            if(err){
-                console.error("Error while calling updateDoneYears for step 7");
-            }
-        });
 
-      var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
-      var poolList = new Array();
-      var alltypes = ["men","women","mixed"];
-      var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
-      var year = Years.findOne({_id:currentYear});
-      console.log(year);
-      console.log(currentYear);
+        swal({
+                title: "Attention !", 
+                text: "Vous allez envoyer un email aux joueurs et aux chefs de poules", 
+                type:"warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Envoyer",
+                cancelButtonText:"Annuler",
+                closeOnConfirm: false, 
+            }, 
+            function() {
+                    Meteor.call('updateDoneYears', 7, true, function(err, result){
+                        if(err){
+                            console.error("Error while calling updateDoneYears for step 7");
+                        }
+                    });
 
-      if(year!=undefined){
-        for(var k in alltypes){
-          var type = Types.findOne({_id:year[alltypes[k]]});
-          for (var i in allcat) {
-            for (var j in type[allcat[i]]) {
-              poolList.push(type[allcat[i]][j]);
-            }
-          }
-        }
+                  var allcat = ["preminimes","minimes","cadets","scolars","juniors","seniors","elites"];
+                  var poolList = new Array();
+                  var alltypes = ["men","women","mixed"];
+                  var currentYear = GlobalValues.findOne({_id:"currentYear"}).value;
+                  var year = Years.findOne({_id:currentYear});
 
-        var fam = Types.findOne({_id:year["family"]});
-        for (var f in fam["all"]) {
-          poolList.push(fam["all"][f]);
-        }
-      }
+                  if(year!=undefined){
+                    for(var k in alltypes){
+                      var type = Types.findOne({_id:year[alltypes[k]]});
+                      for (var i in allcat) {
+                        for (var j in type[allcat[i]]) {
+                          poolList.push(type[allcat[i]][j]);
+                        }
+                      }
+                    }
 
-      for (var i in poolList) {
+                    var fam = Types.findOne({_id:year["family"]});
+                    for (var f in fam["all"]) {
+                      poolList.push(fam["all"][f]);
+                    }
+                  }
 
-        Meteor.call("emailtoPoolPlayers", poolList[i], function(error, result){
-          if(error){
-            console.log("emailToPlayer error", error);
-          }
-        });
+                  for (var i in poolList) {
 
-        Meteor.call("emailtoLeader", poolList[i], function(error, result){
-          if(error){
-            console.error("emailToLeader error", error);
-          }
-        });
+                    Meteor.call("emailtoPoolPlayers", poolList[i], function(error, result){
+                      if(error){
+                        console.log("emailToPlayer error", error);
+                      }
+                    });
 
-      }
+                    Meteor.call("emailtoLeader", poolList[i], function(error, result){
+                      if(error){
+                        console.error("emailToLeader error", error);
+                      }
+                    });
+
+                  }
+                  swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
+            });
+
+
+
+        
     },
     /*
         Assign courts
@@ -261,7 +306,7 @@ Template.tournamentProgress.events({
             }, 
             function() {
                 assignCourts(false);
-                swal("Assigner les terrains aux poules", "Les terrains ont bien été assignés aux poules", "success"); 
+                swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
             });
         }
         else{
