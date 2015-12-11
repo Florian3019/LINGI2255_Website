@@ -617,7 +617,7 @@ var makeBrackets = function(document){
       a = newRound[i];
       b = newRound[i+1];
 
-      if(a.pair!=="placeHolder" && b.pair!=="placeHolder"){
+      if(a.pair!=="placeHolder" && b.pair!=="placeHolder" && b.pair!=="empty" && a.pair!=="empty"){
         b.data.clickable = canEditScore;
         setCourt(a, b,courts,nextMatchNum); // Define which court to use for that match
         nextMatchNum++;
