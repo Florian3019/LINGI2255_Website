@@ -830,8 +830,6 @@ Meteor.methods({
 					data.year = year;
 					data.type = type;
 					data.category = category;
-					console.log("Final round for "+type+" "+category+", winnersData : ");
-					console.log(data);
 					Meteor.call("updateWinner",data);
 				}
 				return  winner;
@@ -962,23 +960,28 @@ Meteor.methods({
 						if (Winners.findOne({year:tournamentYear, type:type, category:category}) === undefined) {
 							console.log("Begin fill of knock-off "+type+" "+category);
 							var pairPoints = Meteor.call("startTournament", tournamentYear.toString(), type, category, 2);
-							var winnerPairPoints = pairPoints.winnerPairPoints;
-							var courts = [];
+							if (pairPoints !==undefined) {
+								var winnerPairPoints = pairPoints.winnerPairPoints;
+								var courts = [];
 
-							var winners = [];  // list of pairIDs
-							for(var k=0;k<(winnerPairPoints.length-1);k++){
-								winners.push(winnerPairPoints[k].pairId);
-								courts.push("?");
+								var winners = [];  // list of pairIDs
+								for(var k=0;k<(winnerPairPoints.length-1);k++){
+									winners.push(winnerPairPoints[k].pairId);
+									courts.push("?");
+								}
+
+								var data = {};
+								data._id = Years.findOne({_id:tournamentYear.toString()})[type];
+								data[category.concat("Bracket")] = winners;
+							    data[category.concat("Courts")] = courts;
+							    Meteor.call("updateType", data);
+
+								fillAllRounds(tournamentYear, type, category);
+								console.log("End fill of knock-off "+type+" "+category);
 							}
-
-							var data = {};
-							data._id = Years.findOne({_id:tournamentYear.toString()})[type];
-							data[category.concat("Bracket")] = winners;
-						    data[category.concat("Courts")] = courts;
-						    Meteor.call("updateType", data);
-
-							fillAllRounds(tournamentYear, type, category);
-							console.log("End fill of knock-off "+type+" "+category);
+							else {
+								console.log("No data found for "+type+" "+category+", no tournament to start.");
+							}
 						}
 						else {
 							console.log("Knock-off "+type+" "+category+" is already filled");
@@ -991,23 +994,28 @@ Meteor.methods({
 				if (Winners.findOne({year:tournamentYear, type:"family", category:"all"}) === undefined) {
 					console.log("Begin fill of knock-off "+type+" "+category);
 					var pairPoints = Meteor.call("startTournament", tournamentYear.toString(), type, category, 2);
-					var winnerPairPoints = pairPoints.winnerPairPoints;
-					var courts = [];
+					if (pairPoints !== undefined) {
+						var winnerPairPoints = pairPoints.winnerPairPoints;
+						var courts = [];
 
-					var winners = [];  // list of pairIDs
-					for(var k=0;k<(winnerPairPoints.length-1);k++){
-						winners.push(winnerPairPoints[k].pairId);
-						courts.push("?");
+						var winners = [];  // list of pairIDs
+						for(var k=0;k<(winnerPairPoints.length-1);k++){
+							winners.push(winnerPairPoints[k].pairId);
+							courts.push("?");
+						}
+
+						var data = {};
+						data._id = Years.findOne({_id:tournamentYear.toString()})[type];
+						data[category.concat("Bracket")] = winners;
+						data[category.concat("Courts")] = courts;
+						Meteor.call("updateType", data);
+
+						fillAllRounds(tournamentYear, type, category);
+						console.log("End fill of knock-off "+type+" "+category);
 					}
-
-					var data = {};
-					data._id = Years.findOne({_id:tournamentYear.toString()})[type];
-					data[category.concat("Bracket")] = winners;
-					data[category.concat("Courts")] = courts;
-					Meteor.call("updateType", data);
-
-					fillAllRounds(tournamentYear, type, category);
-					console.log("End fill of knock-off "+type+" "+category);
+					else {
+						console.log("No data found for "+type+" "+category+", no tournament to start.");
+					}
 				}
 				else {
 					console.log("Knock-off "+type+" "+category+" is already filled");
