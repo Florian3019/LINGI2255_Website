@@ -1146,7 +1146,10 @@ Meteor.methods({
 		}
 
 
-		//Payments: add to the Payments collection
+		/*
+		* 		PAYMENTS
+		*/
+
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
 	    var amount = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
 
@@ -1174,14 +1177,60 @@ Meteor.methods({
 		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentYear': currentYear});
 		if(paymentAlreadyExists){
 			if(pairData._id){	//If it is an update: update the data
-				if(paymentAlreadyExists.status === "paid"){
-					if(paymentAlreadyExists.balance > amount){		// He paid to much
-						paymentData.balance = 0;
+
+				var userPairs = Pairs.find({$or: [{'player1._id': userID}, {'player2._id': userID}]}).fetch();
+				if(userPairs.length == 2){		// He is already registered to the other day: keep the amount to pay for that day
+					var amountToKeep = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
+					var otherPair;
+
+					if(userPairs[0]._id === pairData._id){
+						//Add the amount from userPairs[1]
+						otherPair = userPairs[1];
 					}
-					else{		// He didn't paid enough
-						paymentData.balance = amount - paymentAlreadyExists.balance;
+					else if(userPairs[1]._id === pairData._id){
+						//Add the amount from userPairs[0]
+						otherPair = userPairs[0];
+					}
+					else{
+						console.error("Error: can't find pair with pairData._id.");
+					}
+
+					var userExtras;
+					if(otherPair.player1._id === userID){
+						userExtras = otherPair.player1.extras;
+					}
+					else {
+						userExtras = otherPair.player2.extras;
+					}
+
+					if(userExtras)
+					{
+						var extras = Extras.find().fetch();
+						var extrAmount = 0;
+						for(var i=0; i<extras.length; i++){
+
+							if(userExtras[extras[i].name]){
+								var currentExtraNumber = userExtras[extras[i].name]
+								extrAmount += currentExtraNumber * extras[i].price;			// Add number * price to amount
+							}
+						}
+						amountToKeep += extrAmount;
+					}
+
+					paymentData.balance = amountToKeep + amount;
+				}
+				else{ //He has only one registration: update it
+					if(paymentAlreadyExists.status === "paid"){
+						if(paymentAlreadyExists.balance > amount){		// He paid to much
+							paymentData.status = "paid";
+							paymentData.balance = 0;
+						}
+						else{		// He didn't paid enough
+							paymentData.balance = amount - paymentAlreadyExists.balance;
+						}
 					}
 				}
+
 			}
 			else {		// The player registers to the second tournament: merge the two payments
 				if(paymentAlreadyExists.status === "paid"){
@@ -1289,6 +1338,10 @@ Meteor.methods({
 
 		}
 
+		/*
+		* 		END OF PAYMENTS
+		*/
+
 
 		if(!pairData._id){ 		// New Pair
 			return Pairs.insert(data, function(err, res){
@@ -1307,6 +1360,7 @@ Meteor.methods({
 
 		return pairData['_id'];
 	},
+
 
 	/*
 		/!\  IF changes are made to the structure of a match, don't forget to update the method getOtherPair in bracketTournament.js !!!			/!\

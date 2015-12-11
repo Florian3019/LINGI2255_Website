@@ -36,8 +36,13 @@ Template.closeRegistrationsBlock.helpers({
 
     'step4IsDone': function(){
         var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-        var yearDocument = Years.findOne({_id: currentYear});
-        return yearDocument["step4done"];
+        if(currentYear !== ""){
+            var yearDocument = Years.findOne({_id: currentYear});
+            return yearDocument["step4done"];
+        }
+        else {
+            return false;
+        }
     }
 
 });
@@ -322,8 +327,8 @@ var getCourtNumbers = function(courts){
 var assignCourts = function(rain){
     Meteor.call('assignCourts', rain, function(err, result) {
         if(err!=undefined){
-            console.error("Error assignCourts : "+err);    
+            console.error("Error assignCourts : "+err);
         }
-        
+
     });
 };
