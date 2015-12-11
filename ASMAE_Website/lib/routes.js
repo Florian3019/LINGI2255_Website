@@ -136,7 +136,10 @@ Router.route('/inscription-tournoi-samedi/:_id',  {
 	template: 'tournamentRegistration',
 	waitOn: function(){
 		var res = [
-			Meteor.subscribe('users')
+			Meteor.subscribe('Extras'),
+			Meteor.subscribe('Pairs'),
+			Meteor.subscribe('Addresses'),
+			Meteor.subscribe('Years'),
 		];
 		return res;
 	},
@@ -150,7 +153,10 @@ Router.route('/inscription-tournoi-dimanche/:_id',  {
 	template: 'tournamentRegistration',
 	waitOn: function(){
 		var res = [
-			Meteor.subscribe('users')
+			Meteor.subscribe('Extras'),
+			Meteor.subscribe('Pairs'),
+			Meteor.subscribe('Addresses'),
+			Meteor.subscribe('Years'),
 		];
 		return res;
 	},

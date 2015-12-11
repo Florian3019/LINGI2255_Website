@@ -26,6 +26,10 @@ Meteor.methods({
 
 	},
 
+	'getUserEmail' : function(email) {
+		return Accounts.findUserByEmail(email);
+	},
+
 	'activateGlobalValuesDB' : function() {
 		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
@@ -522,6 +526,11 @@ Meteor.methods({
 
 			NOTE : for the family tournament, only one list of pools :
 			all:<list of poolIDs>
+
+			completion:{
+				pools: {minimes:<percentage>, ...}	// NOTE: 0 <= <percentage> <= 1
+				brackets: {minimes:<percentage>, ...}
+			}
 		}
 	*/
 	'updateType' : function(typeData) {
@@ -1049,7 +1058,7 @@ Meteor.methods({
 		}
 		@return : the pair id if successful, otherwise returns false
 	*/
-	'updatePair' : function(pairData, updatedUserID, silentMail){
+		'updatePair' : function(pairData, silentMail){
 		if(typeof pairData === undefined){
 			console.error("updatePair : pairData is undefined");
 			return;
@@ -1170,70 +1179,23 @@ Meteor.methods({
 		*/
 
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-	    var amount = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
+	    var tournamentPrice = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
+		var extras = Extras.find().fetch();
 
-		//Add extras to amount
-		if(check1 && updatedUserID===pairData["player1"]._id && pairData["player1"].extras)
-		{
-			amount += extrasAmount["player1"];
-		}
-		else if(check2 && updatedUserID===pairData["player2"]._id && pairData["player2"].extras)
-		{
-			amount += extrasAmount["player2"];
-		}
+		//Update payment for each player of the Pair
+		var players = ["player1", "player2"];
+		for(var x=0; x < 2; x++){
+			var currentPlayer = players[x];
+			if(typeof pairData[currentPlayer] !== 'undefined'){
 
-
-		var paymentUser = updatedUserID;
-		paymentData = {
-			userID : paymentUser,
-			tournamentYear : currentYear,
-			status : "pending",
-			paymentMethod : pairData.paymentMethod,
-			balance : amount
-		};
-
-		//Check if payment already exists for this player
-		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentYear': currentYear});
-		if(paymentAlreadyExists){
-
-			console.log("victor: yes 0");
-			console.log(pairData._id);
-
-			var userPairs = Pairs.find({$or: [{'player1._id': paymentUser, 'year': currentYear}, {'player2._id': paymentUser, 'year': currentYear}]}).fetch();
-			console.log(userPairs.length);
-
-			if(typeof pairData._id !== 'undefined'){	//If it is an update: update the data
-
-				console.log("victor: yes 1");
-				if(userPairs.length == 2){		// He is already registered to the other day: keep the amount to pay for that day
-
-					console.log("Victor: yes 2");
-					var amountToKeep = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
-					var otherPair;
-
-					if(userPairs[0]._id === pairData._id){
-						//Add the amount from userPairs[1]
-						otherPair = userPairs[1];
-					}
-					else if(userPairs[1]._id === pairData._id){
-						//Add the amount from userPairs[0]
-						otherPair = userPairs[0];
-					}
-					else{
-						console.error("Error: can't find pair with pairData._id.");
-					}
-
-					var userExtras;
-					if(otherPair.player1._id === userID){
-						userExtras = otherPair.player1.extras;
-					}
-					else {
-						userExtras = otherPair.player2.extras;
-					}
-
+				var totalAmount = 0;
+				var userPairs = Pairs.find({$or: [{'player1._id': pairData[currentPlayer]._id, 'year': currentYear}, {'player2._id': pairData[currentPlayer]._id, 'year': currentYear}]}).fetch();
+				for(var pairI = 0; pairI < userPairs.length; pairI++){
+					var currentPair = userPairs[pairI];
+					var amountOneDay = tournamentPrice;
+					var userExtras = currentPair[currentPlayer].extras;
 					if(userExtras)
 					{
-						var extras = Extras.find().fetch();
 						var extrAmount = 0;
 						for(var i=0; i<extras.length; i++){
 
@@ -1242,128 +1204,94 @@ Meteor.methods({
 								extrAmount += currentExtraNumber * extras[i].price;			// Add number * price to amount
 							}
 						}
-						amountToKeep += extrAmount;
+						amountOneDay += extrAmount;
 					}
+					totalAmount += amountOneDay;
+				}
 
-					paymentData.balance = amountToKeep + amount;
-					console.log(paymentAlreadyExists.balance);
-					if(paymentAlreadyExists.status === "paid"){
-						if(paymentAlreadyExists.balance >= paymentData.balance){		// He paid to much
-							paymentData.status = "paid";
-						}
-						else{		// He didn't paid enough
-							paymentData.balance = paymentData.balance - paymentAlreadyExists.balance;
-						}
+				var paymentUserId = pairData[currentPlayer]._id;
+				var paymentData = {
+					userID : paymentUserId,
+					tournamentYear : currentYear,
+					status : "pending",
+					paymentMethod : pairData.paymentMethod,
+					balance : totalAmount
+				};
+
+				/*
+				*	Send emails if the payment method is by cash or by bank transfer
+				*/
+				if(pairData.paymentMethod === paymentTypes[2]){		//Cash
+					var user = Meteor.users.findOne({_id:paymentData.userID});
+					var dataEmail = {
+						intro:"Bonjour "+user.profile.firstName+",",
+						important:"Nous avons bien reçu votre inscription",
+						texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
+						encadre:"Le montant de votre inscription s'élève à "+ totalAmount +" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
+					};
+					if (!silentMail) {
+						Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
+					}
+					/*
+
+						Envoyer un mail contenant les informations pour payer par cash:
+						- addresse du QG : on peut l'hardcoder ici?
+						- montant à payer: accessible via la variable totalAmount
+
+					*/
+				}
+				else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
+
+					// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
+					paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
+
+					var newValue = paymentData.bankTransferNumber + 1;
+					GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
+						value: newValue
+					}});
+
+
+					var bank = "BE33 3753 3397 1254"; //TODO: hardcoded here
+					var user = Meteor.users.findOne({_id:paymentData.userID});
+					var dataEmail = {
+						intro:"Bonjour "+user.profile.firstName+",",
+						important:"Nous avons bien reçu votre inscription",
+						texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
+						encadre:"Le montant de votre inscription s'élève à "+ totalAmount +" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) avec comme communication le numéro d'identification suivant: " +paymentData.bankTransferNumber
+					};
+					if (!silentMail) {
+						Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
 					}
 
 				}
-				else{ //He has only one registration: update it
+
+				/*
+				*	Update payment
+				*/
+
+				var paymentAlreadyExists = Payments.findOne({'userID': paymentUserId, 'tournamentYear': currentYear});
+				if(paymentAlreadyExists){	// Update the payment
 					if(paymentAlreadyExists.status === "paid"){
-						if(paymentAlreadyExists.balance > amount){		// He paid to much
+						console.log("victor: ok");
+						if(paymentAlreadyExists.balance >= paymentData.balance){		// He paid to much
 							paymentData.status = "paid";
 							paymentData.balance = 0;
 						}
 						else{		// He didn't paid enough
-							paymentData.balance = amount - paymentAlreadyExists.balance;
+						console.log("victor: on devrait etre ici...");
+							paymentData.balance = paymentData.balance - paymentAlreadyExists.balance;
 						}
 					}
-				}
 
-			}
-			else {		// The player registers to the second tournament: merge the two payments
-				if(paymentAlreadyExists.status === "paid"){
-					paymentData.balance = amount;
-				}
-				else{
-					paymentData.balance = paymentAlreadyExists.balance + amount;
-				}
-			}
-
-			Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
-				if(err){
-					console.error('insert payment error');
-					console.error(err);
-				}
-			});
-
-		}
-		else {
-
-			//Send emails if the payment method is by cash or by bank transfer
-			if(pairData.paymentMethod === paymentTypes[2]){		//Cash
-        		var user = Meteor.users.findOne({_id:paymentData.userID});
-        		var dataEmail = {
-					intro:"Bonjour "+user.profile.firstName+",",
-					important:"Nous avons bien reçu votre inscription",
-					texte:"Lors de celle-ci vous avez choisi de payer par cash. Ceci devra se faire le jour du tournoi directement au quartier général. L'adresse de celui-ci et le montant du votre inscription sont repis dans l'encadré suivant.",
-					encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de prendre cette somme le jour du tournoi au quartier général qui se trouve à l'adresse : Place des Carabiniers, 5 à 1030 Bruxelles."
-				};
-				if (!silentMail) {
-					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
-				}
-				/*
-
-					Envoyer un mail contenant les informations pour payer par cash:
-					- addresse du QG : on peut l'hardcoder ici?
-					- montant à payer: accessible via la variable amount
-
-				*/
-			}
-			else if(pairData.paymentMethod === paymentTypes[1]){ 	//BankTransfer
-
-				// If the paymentMethod is "BankTransfer", then assign a number to put in the communication field
-				paymentData.bankTransferNumber = GlobalValues.findOne({_id: "nextBankTransferNumber"}).value;
-
-				var newValue = paymentData.bankTransferNumber + 1;
-				GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
-					value: newValue
-				}});
-
-
-        		var bank = "BE33 3753 3397 1254"; //TODO: hardcoded here
-        		var user = Meteor.users.findOne({_id:paymentData.userID});
-        		var dataEmail = {
-          			intro:"Bonjour "+user.profile.firstName+",",
-          			important:"Nous avons bien reçu votre inscription",
-          			texte:"Lors de celle-ci vous avez choisi de payer par virement bancaire. Merci de faire celui-ci au plus vite afin que l'on puisse considérer votre inscription comme finalisée. Vous retrouverez les informations utiles dans l'encadré suivant.",
-          			encadre:"Le montant de votre inscription s'élève à "+ amount+" €.\n Merci de nous faire parvenir cette somme sur le compte bancaire suivant : "+ bank+ " au nom de ASBL ASMAE (Place des Carabiniers 5 à 1030 Bruxelles) avec comme communication le numéro d'identification suivant: " +paymentData.bankTransferNumber
-        		};
-				if (!silentMail) {
-					Meteor.call('emailFeedback',user.emails[0].address,"Concernant votre inscription au tournoi",dataEmail);
-				}
-
-			}
-
-			if(userIsOwner){
-				Payments.insert(paymentData, function(err, paymId){
-					if(err){
-						console.error('insert payment error');
-						console.error(err);
-					}
-				});
-			}
-			else { 		//Only used for popDB: insert a payment for both players
-				paymentData.userID = ID['player1'];
-				if(typeof paymentData.userID !== 'undefined'){
-					Payments.insert(paymentData, function(err, paymId){
+					Payments.update({_id: paymentAlreadyExists._id}, {$set: paymentData}, function(err, paymId){
 						if(err){
 							console.error('insert payment error');
 							console.error(err);
 						}
 					});
+
 				}
-
-				paymentData.userID = ID['player2'];
-
-				if(pairData.paymentMethod === paymentTypes[1]){		// Bank transfer
-					paymentData.bankTransferNumber = paymentData.bankTransferNumber + 1;
-					var newValue2 = paymentData.bankTransferNumber + 1;
-					GlobalValues.update({_id: "nextBankTransferNumber"}, {$set: {
-						value: newValue2
-					}});
-				}
-
-				if(typeof paymentData.userID !== 'undefined'){
+				else{	// No payment exists: insert
 					Payments.insert(paymentData, function(err, paymId){
 						if(err){
 							console.error('insert payment error');
@@ -2128,7 +2056,7 @@ Meteor.methods({
 			pair.userPlayer = undefined;
 			// Put the partner in player1 position --> partner can now be matched with another player
 			pair.player1 = pairs.partnerPlayer;
-			Meteor.call("updatePair", pair, pair.player1._id);
+			Meteor.call("updatePair", pair);
 			// The pair stays in the right pool
 
 			var partner = Meteor.users.findOne({_id:pair.player1._id});

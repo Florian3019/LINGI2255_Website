@@ -76,16 +76,6 @@ var getPoints = function(pair, round){
   return pair.tournament[round];
 }
 
-var setPoints = function(pair, round, score){
-  if(pair==undefined) return;
-  if(pair.tournament==undefined){
-    pair.tournament = [];
-  }
-
-  pair.tournament[round] = score;
-  Pairs.update({"_id":pair._id}, {$set: {"tournament":pair.tournament}});
-}
-
 var getBracketData = function(pair, round, clickable){ // /!\ Round starts at 0 /!\
     /*
       Number of characters allowed for display.

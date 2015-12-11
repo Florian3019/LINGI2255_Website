@@ -202,7 +202,6 @@ Template.tournamentRegistrationTemplate.helpers({
 		return add;
 	},
 
-
 	'isSaturday' : function(day) {
 		return day=="saturday";
 	},
@@ -333,27 +332,24 @@ Template.tournamentRegistrationTemplate.helpers({
 		return d + " "+month+" "+date.getFullYear();
 	},
 
-	'extras': function (day) {
+	'extras': function (day, userID) {
      	var extras = Extras.find({day:day}).fetch();
 		if (extras===undefined) {
 			return undefined;
 		}
-		var playerExtras = getDayExtrasFromPlayerID(Meteor.userId(),day);
+		for(var j=0; j<extras.length; j++) {
+			var ex = extras[j];
+			ex["quantity"] = 0;
+		}
+		var playerExtras = getDayExtrasFromPlayerID(userID,day);
 		if (playerExtras === undefined) {
-			for(var j=0; j<extras.length; j++) {
-				var ex = extras[j];
-				ex["quantity"] = 0;
-			}
 			return extras;
 		}
 		for (var pExtraName in playerExtras) {
 			var qty = playerExtras[pExtraName];
 			for(var j=0; j<extras.length; j++) {
 				var ex = extras[j];
-				if (qty !== undefined) {
-					ex["quantity"] = qty;
-				}
-				else {
+				if (ex["name"]==pExtraName) {
 					ex["quantity"] = qty;
 				}
 			}
@@ -952,14 +948,15 @@ Template.tournamentRegistrationTemplate.events({
 		        		return;
 		        	}
 					var callbackInception = function (err, result) {
-
+						if (userID===Meteor.userId()) {
+							Router.go('myRegistration');
+						}
 						// Add to Modifications logs
 						if(Meteor.user().profile.isAdmin || Meteor.user().profile.isStaff){
 							var details = "L'inscription du joueur a été modifiée";
 							addToLogUser("Modification inscription", details, userID);
 						}
-
-						Router.go('myRegistration');
+						Router.go('playerInfoTemplate', {_id:userID});
 					};
 					Meteor.call('addPairToTournament', pairID, currentYear, dateMatch, callbackInception);
 					var type = Session.get("tournamentRegistration/type");
@@ -1002,7 +999,7 @@ Template.tournamentRegistrationTemplate.events({
 				pairData.paymentMethod = $('[name=paymentMethod]:checked').val();
 
 				pairData.year = currentYear;
-		        Meteor.call('updatePair', pairData, userID, callback);
+		        Meteor.call('updatePair', pairData, callback);
 			}
 			else {	//The players cheats on the AFT ranking
 

@@ -107,6 +107,16 @@ getOrder = function(size){
   return result;
 }
 
+setPoints = function(pair, round, score){
+  if(pair==undefined) return;
+  if(pair.tournament==undefined){
+    pair.tournament = [];
+  }
+
+  pair.tournament[round] = score;
+  Pairs.update({"_id":pair._id}, {$set: {"tournament":pair.tournament}});
+}
+
 getTournamentDate = function() {
     var currentYear = GlobalValues.findOne({_id:"currentYear"});
     if (currentYear===undefined || currentYear.value === undefined) {

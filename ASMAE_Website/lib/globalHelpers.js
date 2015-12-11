@@ -36,3 +36,7 @@ Template.registerHelper('isSundayRegistered', function(){
 Template.registerHelper('and', function(a, b){
 	return a && b;
 });
+
+Template.registerHelper('getAge', function(birthDate) {
+    return getAge(birthDate);
+});
