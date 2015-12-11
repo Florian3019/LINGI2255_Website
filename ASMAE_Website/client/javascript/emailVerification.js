@@ -22,16 +22,15 @@ Template.emailVerification.events({
             title: "Changer votre adresse mail", 
             text: "Si vous desirez changer d'adresse mail veuillez remplir le champs suivant", 
             type: "input",
-            inputType: "email",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             confirmButtonText: "Confirmer",
             cancelButtonText:"Annuler",
-            closeOnConfirm: false
-        }, function(email) {
-            var userId = Meteor.userId();
-            var email = email.trim();
-
+            closeOnConfirm: false,
+            inputPlaceholder: "Write something"
+        }, 
+        function(email) {
+            
             if (email === "") {
                 swal.showInputError("Veuillez entrer une adresse email !");
                 return false;
@@ -40,11 +39,23 @@ Template.emailVerification.events({
                 swal.showInputError("Veuillez entrer une adresse email valide !");
                 return false;
             }
-            else {
-                var data = {_id: userId, emails : [{"address": email, "verified":false}]};
-                Meteor.call("updateUser", data);
-                Meteor.call('sendNewEmail', userId);
-                swal("Votre adresse mail a bien été mise à jour!", "Un email de confirmation vous a été envoyé", "success");
+            else { // The email format is valid
+                var email = email.trim();
+                Meteor.call('getUserEmail',email, function(error, value) {
+                    if (error) {
+                        console.log(error);
+                    }
+                    if (value) { // Existing user have been found
+                        swal.showInputError("Cette adresse email appartient déjà à un autre utilisateur !");
+                    }
+                    else {   // Everything is fine we update user and send new email.
+                        var userId = Meteor.userId();
+                        var data = {_id: userId, emails : [{"address": email, "verified":false}]};
+                        Meteor.call('updateUser', data);                     
+                        Meteor.call('sendNewEmail', userId);
+                        swal("Votre adresse mail a bien été mise à jour!", "Un email de confirmation vous a été envoyé", "success");
+                    }
+                });
             }
         });
     },

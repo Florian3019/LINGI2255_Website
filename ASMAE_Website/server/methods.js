@@ -26,6 +26,10 @@ Meteor.methods({
 
 	},
 
+	'getUserEmail' : function(email) {
+		return Accounts.findUserByEmail(email);
+	},
+
 	'activateGlobalValuesDB' : function() {
 		if (GlobalValues && !GlobalValues.findOne({_id:"currentYear"})) {
 			GlobalValues.insert({_id:"currentYear", value:""});
