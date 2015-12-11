@@ -1178,7 +1178,7 @@ Meteor.methods({
 		if(paymentAlreadyExists){
 			if(pairData._id){	//If it is an update: update the data
 
-				var userPairs = Pairs.find({$or: [{'player1._id': userID}, {'player2._id': userID}]}).fetch();
+				var userPairs = Pairs.find({$or: [{'player1._id': userID, 'year': currentYear}, {'player2._id': userID, 'year': currentYear}]}).fetch();
 				if(userPairs.length == 2){		// He is already registered to the other day: keep the amount to pay for that day
 					var amountToKeep = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
 					var otherPair;
@@ -2045,7 +2045,7 @@ Meteor.methods({
 
 		// Remove payment
 		var currentYear = GlobalValues.findOne({_id: "currentYear"}).value;
-		if(Pairs.find({$or: [{'player1._id': userID}, {'player2._id': userID}]}).count() == 2){
+		if(Pairs.find({$or: [{'player1._id': userID, 'year': currentYear}, {'player2._id': userID, 'year': currentYear}]}).count() == 2){
 			//Update the payment
 			var amountToReduce = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
 
