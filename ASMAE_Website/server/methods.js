@@ -1218,6 +1218,15 @@ Meteor.methods({
 					}
 
 					paymentData.balance = amountToKeep + amount;
+					if(paymentAlreadyExists.status === "paid"){
+						if(paymentAlreadyExists.balance >= paymentData.balance){		// He paid to much
+							paymentData.status = "paid";
+						}
+						else{		// He didn't paid enough
+							paymentData.balance = paymentData.balance - paymentAlreadyExists.balance;
+						}
+					}
+
 				}
 				else{ //He has only one registration: update it
 					if(paymentAlreadyExists.status === "paid"){
