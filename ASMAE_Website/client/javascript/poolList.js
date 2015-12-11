@@ -1478,6 +1478,10 @@ Template.modalItem.helpers({
 
 	'getModalInfo':function(){
 		return Session.get("PoolList/ModalData");
+	},
+
+	'hasAWish':function(player){
+		return player.playerWish!==undefined || player.courtWish!==undefined || player.otherWish!==undefined;
 	}
 });
 
@@ -1538,7 +1542,6 @@ Template.modalItem.events({
 		}
 	}
 });
-
 
 /******************************************************************************************************************
 											reponsablesTemplate
