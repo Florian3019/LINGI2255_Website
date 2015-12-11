@@ -481,6 +481,22 @@ Template.playerInfoTemplate.events({
 			Router.go('tournamentRegistrationSunday', {_id:id});
 		}
 	},
+
+    'click .goToPartner':function(event){
+		var id = this._id;
+		if(document.getElementById("pairModal")!==null){
+			var modalId = '#pairModal';
+			Session.set("closeModal", undefined);
+			$(modalId).modal('hide');
+			$(modalId).on('hidden.bs.modal', function() {
+            	Router.go('playerInfoTemplate', {_id: id});
+        	}).modal('hide');
+		}
+		else{
+			Router.go('playerInfoTemplate', {_id: id});
+		}
+	},
+
 });
 
 

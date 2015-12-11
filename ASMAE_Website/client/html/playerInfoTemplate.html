@@ -66,7 +66,7 @@
 
                       {{#with getInscriptions id}}
                         <tr>
-                          <td> Inscription samedi {{#if showOption ../id}} ({{tournamentPrice}} euros) {{/if}}</td>
+                          <td> Inscription samedi {{#if showOption ../id}} ({{tournamentPrice}}&euro;) {{/if}}</td>
                           <td>
                             {{displayRegistration saturday}}
                             {{#if showOption ../id}}
@@ -80,8 +80,23 @@
                               {{/if}}
                           </td>
                         </tr>
+                        {{#if isRegistered saturday}}
+                           {{#if hasPartner saturday}}
+                               {{#with dayPartner saturday}}
+                               <tr>
+                                   <td>Partenaire samedi</td>
+                                   <td><a style="cursor:pointer" class="goToPartner">{{showPartnerEmail}}</a></td>
+                               </tr>
+                               {{/with}}
+                           {{else}}
+                               <tr>
+                                   <td>Partenaire samedi</td>
+                                   <td>Aucun</td>
+                               </tr>
+                           {{/if}}
+                        {{/if}}
                         <tr>
-                          <td> Inscription dimanche {{#if showOption ../id}} ({{tournamentPrice}} euros) {{/if}}</td>
+                          <td> Inscription dimanche {{#if showOption ../id}} ({{tournamentPrice}}&euro;) {{/if}}</td>
 
                           <td>
                             {{displayRegistration sunday}}
@@ -97,13 +112,30 @@
                           </td>
                         </tr>
 
+                        {{#if isRegistered sunday}}
+                            {{#if hasPartner sunday}}
+                                {{#with dayPartner sunday}}
+                                <tr>
+                                    <td>Partenaire dimanche</td>
+                                    <td><a style="cursor:pointer" class="goToPartner">{{showPartnerEmail}}</a></td>
+                                </tr>
+                                {{/with}}
+                            {{else}}
+                                <tr>
+                                    <td>Partenaire dimanche</td>
+                                    <td>Aucun</td>
+                                </tr>
+                            {{/if}}
+
+                        {{/if}}
+
                         {{/with}}
 
                         {{#if showOption id}}
                         {{#with getPayment id}}
                         {{#each playerExtras ../id}}
                         <tr>
-                            <td>{{extraDay}} : {{extraName}} ({{extraPrice}} euros)</td>
+                            <td>{{extraDay}} : {{extraName}} ({{extraPrice}}&euro;)</td>
                             <td>{{extraQuantity}}</td>
                         </tr>
                         {{/each}}
