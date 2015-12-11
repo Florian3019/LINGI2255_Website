@@ -268,5 +268,12 @@ Dans le menu staff, cliquez sur <a href="{{pathFor route='forum'}}">Forum</a>. C
 
 </div>
 
+<div>
+<h6> Here is a button that is used for the tests. Please, don't touch this button</h6>
+{{#if currentUser}}
+                  <button id="popdbtest" class="btn btn-lg btn-default" style="margin-left: 20px" type="button"> populateDB Tests</button>
+                  {{/if}} 
+</div> 
+
 
 </template>

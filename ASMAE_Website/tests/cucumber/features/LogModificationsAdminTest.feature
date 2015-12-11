@@ -5,7 +5,7 @@ Feature: As An admin, I want to be able to see the modifications logs
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @ignore
+    @watch
     Scenario: 
         Given I am logged in
         And The database has been populated

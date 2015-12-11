@@ -14,7 +14,8 @@ module.exports = function () {
             client.waitForVisible('#sub')
             client.click('#sub')
             client.pause(200)
-            client.alertAccept()
+            client.waitForExist('button.confirm')
+            client.click('button.confirm')
         });
 
     this.When(/^I go back to questions asked$/,function(){

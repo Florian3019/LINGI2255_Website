@@ -4,14 +4,29 @@ module.exports = function () {
         
         client.waitForExist('#KnockOff')
         client.click('#KnockOff')
+        var title = '#HeaderKnockOffID';
+        browser.waitForExist(title);
+        expect(browser.getText(title)).toEqual('Knock-offs Hommes en Pré Minimes');
         });
 
 
     this.Then(/^I should see the knockoff page$/,function(){
-        var title = '#startText';
+        /*
+        browser.click('#startText');
+        browser.waitForExist('button.confirm')
+        browser.click('button.confirm')
+        browser.waitForExist('input')
+        browser.pause(5000)
+        //browser.setValue('input',"2")
+        browser.waitForExist('button.confirm')
+        browser.click('button.confirm')                          
+
+        browser.waitForExist('#continueToTournament')
+        browser.click('#continueToTournament')
+    */                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+        var title = '#HeaderKnockOffID';
         browser.waitForExist(title);
-        browser.pause(20000)
-        expect(browser.getText(title)).toEqual('Démarrer ce knock-off');
+        expect(browser.getText(title)).toEqual('Knock-offs Hommes en Pré Minimes');
     });
 
 }

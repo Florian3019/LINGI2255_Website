@@ -8,7 +8,7 @@
 						{{>buildTournament}}
 					{{else}}
 						<div class="page-header">
-							<h2> Knock-offs {{translateType ..}}{{#unless equals this "all"}} en {{translateCategory this}} {{/unless}}
+							<h2 id="HeaderKnockOffID"> Knock-offs {{translateType ..}}{{#unless equals this "all"}} en {{translateCategory this}} {{/unless}}
 							
 							{{#if and isAdminOrStaff isForCurrentYear}}
 								<button type="button" title="Aide" id="helpBrackets" class="btn btn-default btn-info" style="margin-left:15px">

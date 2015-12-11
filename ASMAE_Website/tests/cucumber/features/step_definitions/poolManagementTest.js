@@ -1,12 +1,16 @@
 module.exports = function () {
     this.Given(/^The database has been populated$/, function () {
-        client.waitForExist('#popdbtest')
-        client.click('#popdbtest')
         client.click('#tournamentNavigation');
         this.server.call('addYear2015Tests');
+        client.waitForExist('#StaffFAQButtonMenu')
+        client.click('#StaffFAQButtonMenu')
 
+
+        client.waitForExist('#popdbtest')
+        client.click('#popdbtest')
+        client.click('#popdbtest')
         client.pause(9000);
-	
+	   
 	client.waitForExist('#GestionDuTournoiButtonMenu')
         client.click('#GestionDuTournoiButtonMenu')
         client.waitForVisible('#Year')

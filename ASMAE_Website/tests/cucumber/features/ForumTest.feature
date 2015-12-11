@@ -6,7 +6,7 @@ Feature: Check that the page of the forum is still available
     Background: Tournament registrations launched
         Given An admin has been created
         
-    @ignore
+    @watch
     Scenario: 
         Given I am logged in
         And The database has been populated

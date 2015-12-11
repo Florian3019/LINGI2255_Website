@@ -13,7 +13,7 @@ module.exports = function () {
     this.Then(/^I should see correct informations on the pair$/,function(){
         var title = '#HeaderPairObservation';
         browser.waitForExist(title);
-        expect(browser.getText(title)).toEqual("Information sur la paire");
+        expect(browser.getText(title)).toEqual("Informations sur la paire");
 
 /*
         //PLAYER 1 CORRECTLY SHOWN

@@ -11,7 +11,7 @@ module.exports = function () {
     this.Then(/^I should see the Staff FAQ page$/,function(){
         var title = '#StaffFAQHeaderTests';
         browser.waitForExist(title);
-        expect(browser.getText(title)).toEqual('Staff FAQ');
+        expect(browser.getText(title)).toEqual('FAQ Staff');
     });
 
 }

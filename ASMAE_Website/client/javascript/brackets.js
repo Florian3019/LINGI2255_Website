@@ -872,6 +872,7 @@ Template.brackets.events({
           inputType:"number",
           inputAlign:"middle",
           inputValue:"2",
+      
           confirmButtonText:"Lancer ce knock-off !",
           confirmButtonColor: "#3085d6",
           closeOnConfirm:false,
