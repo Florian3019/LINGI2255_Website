@@ -177,6 +177,23 @@ Template.playerInfoTemplate.helpers({
 		return "Tournoi "+typesTranslate[type] + ", catégorie "+categoriesTranslate[category];
 	},
 
+    'hasPartner': function(dayData){
+        if(typeof dayData.partner === 'undefined'){
+            return false;
+        }
+        else{
+            return true;
+        }
+    },
+
+    'dayPartner': function(dayData){
+        return Meteor.users.findOne({_id: dayData.partner});
+    },
+
+    'showPartnerEmail': function(){
+        return this.emails[0].address;
+    },
+
 	'isRegistered' : function(dayData) {
 		return dayData !== undefined;
 	},
