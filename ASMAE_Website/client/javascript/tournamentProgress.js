@@ -185,12 +185,13 @@ Template.tournamentProgress.events({
                 Meteor.call('restartTournament', function(err, result){
                     if(err){
                         console.error("Error while calling restartTournamentButton");
+                        swal("Erreur !", "Une erreur c'est produite lors de la fermeture du tournois", "error"); 
+                    }
+                    else {
+                        swal("Succès !", "Tournois clôturé", "success"); 
                     }
                 });
-                swal("Succès !", "Tournois clôturé", "success"); 
             });
-
-        
     },
 
     'click #sendRegistrationsEmail': function(){
@@ -215,10 +216,12 @@ Template.tournamentProgress.events({
                 Meteor.call('emailLaunchTournament', function(err, result){
                     if(err){
                         console.error("Error while calling emailLaunchTournament");
-                         swal("Erreur !", "Une erreur c'est produite lors de l'envoie des emails", "error"); 
+                        swal("Erreur !", "Une erreur c'est produite lors de l'envoie des emails", "error"); 
                     }
-                });
-                swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
+                    else {
+                        swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
+                    }
+                });  
             });
     },
 
