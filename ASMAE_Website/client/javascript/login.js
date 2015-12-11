@@ -48,6 +48,34 @@
     }
 });
 
+var beforeUserCreationFunction = function(email){
+    
+    document.getElementById("e-mail-registration").href="mailto:"+email;
+    document.getElementById("e-mail-registration").innerHTML=email;
+    $('#signModal').modal('show');
+}
+
+Accounts.createUser = _.wrap(Accounts.createUser, function(createUser) {
+
+    // Store the original arguments
+    var args = _.toArray(arguments).slice(1),
+        user = args[0];
+        origCallback = args[1];
+
+    var newCallback = function(error) {
+        // do my stuff
+        if(error) {
+            origCallback.call(this, error);
+        }
+        else {
+            beforeUserCreationFunction(user.email);
+            origCallback.call(this, error);
+        }        
+    };
+
+    createUser(user, newCallback);
+});
+
 Template.login.events({
     
     'submit form': function(event) {
@@ -172,11 +200,7 @@ Template.login.events({
                     }
                     
                     // Show pop up.
-                    $('#sign-up-success').show();
-                    document.getElementById("e-mail-registration").href="mailto:"+email;
-                    document.getElementById("e-mail-registration").innerHTML=email;
-                    $('#signModal').modal('show');
-                    
+                    $('#sign-up-success').show();                    
                 }
             });
         }

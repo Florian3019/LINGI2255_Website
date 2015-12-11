@@ -174,7 +174,7 @@ Template.playerInfoTemplate.helpers({
 		}
 		var type = dayData.playerType;
 		var category = dayData.playerCategory;
-		return "Tournoi "+typesTranslate[type] + ", catégorie "+category;
+		return "Tournoi "+typesTranslate[type] + ", catégorie "+categoriesTranslate[category];
 	},
 
 	'isRegistered' : function(dayData) {
@@ -279,7 +279,12 @@ Template.playerInfoTemplate.events({
 			function(){
 				var pair = getDayPairFromPlayerID(userID, "saturday");
 				Meteor.call('unsubscribePairFromTournament', pair._id, userID);
-				swal("Inscription supprimée", "", "success");
+				swal({
+					title: "Inscription supprimée",
+					text: "",
+					type: "success",
+					confirmButtonText:"Ok",
+     				 confirmButtonColor:"#0099ff"});
 			});
 	},
 

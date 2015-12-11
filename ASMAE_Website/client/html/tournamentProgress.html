@@ -13,7 +13,7 @@
 
     <div class="{{stepIsDoneClass 2}}">
         <h5 id="AvailabilitiesPoint2">2. Envoyer un email d'invitation à tous les utilisateurs</h5>
-        <p>Cliquez sur ce bouton pour prévenir tous les utilisateurs du site par email que les inscriptions au tournoi sont lancées.</p>
+        <p>Cliquez sur le bouton envoyer pour prévenir tous les utilisateurs du site par email que les inscriptions au tournoi sont lancées.</p>
         <p>
         Cliquez sur le bouton CSV pour télécharger les addresses sous le format csv.
         </p>
@@ -27,6 +27,8 @@
 
     <div class="{{stepIsDoneClass 3}}">
         <h5 id="AvailabilitiesPoint3">3. Accepter les terrains</h5>
+        <p>Choisissez les terrains à utiliser à dans le menu de <a href="{{pathFor route='courtSearchTemplate'}}">recherche des terrains</a> en cochant "Staff OK".</p>
+        <p>Pour manuellement valider un terrain du coté du propriétaire, cliquez sur "Propriétaire OK" sur la page récapitulative du terrain.</p>
         <center>
             <button id="doneButton3" type="button" class="btn btn-default btn-sm notDone btn-danger"><span class="glyphicon glyphicon-remove" style="margin-right:15px;"></span>Non fait</button>
             <button id="notDoneButton3" type="button" class="btn btn-default btn-sm okDone btn-success"><span class="glyphicon glyphicon-ok" style="margin-right:15px; "></span>Fait</button>
@@ -40,7 +42,7 @@
 
     <div class="{{stepIsDoneClass 5}}">
         <h5 id="AvailabilitiesPoint5">5. Gérer les poules</h5>
-        <p>Utilisez le menu "Gestion du tournoi" pour gérer les poules.</p>
+        <p>Utilisez le menu <a href="{{pathFor route='poolList'}}">gestion du tournoi</a> pour gérer les poules.</p>
         <center>
             <button id="doneButton5" type="button" class="btn btn-default btn-sm notDone btn-danger"><span class="glyphicon glyphicon-remove" style="margin-right:15px; "></span>Non fait</button>
             <button id="notDoneButton5" type="button" class="btn btn-default btn-sm okDone btn-success"><span class="glyphicon glyphicon-ok" style="margin-right:15px; "></span>Fait</button>
@@ -153,23 +155,10 @@
                     </div>
                     <div class="col-sm-5">
                         <div class="input-group">
-                            <select name="AFTranking" id="AFTranking"  class="form-control" style="display: inline">
-                              <option value="" hidden></option>
-                				      <option value="C30.5 ">C30.5</option>
-                				      <option value="C30.4">C30.4</option>
-                				      <option value="C30.3">C30.3</option>
-                				      <option value="C30.2">C30.2</option>
-                				      <option value="C30.1">C30.1</option>
-                				      <option value="C30">C30</option>
-                				      <option value="C15.5">C15.5</option>
-                				      <option value="C15.4">C15.4</option>
-                				      <option value="C15.3">C15.3</option>
-                				      <option value="C15.2">C15.2</option>
-                				      <option value="C15.1">C15.1</option>
-                				      <option value="C15">C15</option>
-                				      <option value="B+4/6">B+4/6</option>
-                				      <option value="B+2/6">B+2/6</option>
-                				      <option value="B0" selected="selected">B0</option>
+                            <select name="AFTranking" id="AFTranking" class="form-control" style="display: inline">
+                                    {{#each okAFTranking}}
+                                    <option value="{{this}}">{{this}}</option>
+                                    {{/each}}
                             </select>
                         </div>
                     </div>

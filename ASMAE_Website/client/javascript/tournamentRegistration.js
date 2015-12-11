@@ -353,7 +353,6 @@ Template.tournamentRegistrationTemplate.helpers({
 				}
 			}
 		}
-		console.table(extras);
 		return extras;
     },
 
@@ -949,6 +948,11 @@ Template.tournamentRegistrationTemplate.events({
 					var callbackInception = function (err, result) {
 						if (userID===Meteor.userId()) {
 							Router.go('myRegistration');
+						}
+						// Add to Modifications logs
+						if(Meteor.user().profile.isAdmin || Meteor.user().profile.isStaff){
+							var details = "L'inscription du joueur a été modifiée";
+							addToLogUser("Modification inscription", details, userID);
 						}
 						Router.go('playerInfoTemplate', {_id:userID});
 					};

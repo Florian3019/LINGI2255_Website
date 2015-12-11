@@ -62,7 +62,11 @@ Template.launchTournament.helpers({
             return undefined;
         }
         return y.tournamentPrice;
-    }
+    },
+
+    'okAFTranking': function(){
+		return AFTrankings;
+	}
 
 });
 
@@ -90,14 +94,14 @@ Template.launchTournament.events({
             dateMsg.style.display = "block";
             return;
         }
- 
+
         if(isNaN(price) || !isValidePrice(price)){
             priceInput.className = "form-group has-error";
             errorMsg.style.display = "block";
             if(!isValidePrice(price)) {
                document.getElementById("priceError-message").innerHTML = "Attention le prix est incorrect, vous ne pouvez pas avoir plus de deux décimales";
             }
-            
+
             return;
         }
 

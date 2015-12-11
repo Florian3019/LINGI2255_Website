@@ -628,3 +628,21 @@ addToLog = function(opType, ownerId, courtId){
       }
     );
 }
+
+/*
+*   Add court to modifications logs
+*/
+addToLogUser = function(opType, details, userId){
+    Meteor.call("addToModificationsLog",
+      {"opType":opType,
+      "details": details
+      },
+      function(err, logId){
+        if(err){
+          console.log(err);
+          return;
+        }
+        Meteor.call('addToUserLog', userId, logId);
+      }
+    );
+}
