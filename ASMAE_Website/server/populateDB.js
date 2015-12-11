@@ -618,10 +618,10 @@ Meteor.methods({
 				var wishes2 = getWishes(dateMatch === 'saturday' ? getOppositeGender(gen2) : gen2);
 				var extra2 = getExtra(day);
 				Meteor.call("updateUser", {_id:userID2, profile:{addressID:addressID2}});
-				pairID = Meteor.call("updatePair", {player1: {_id:userID1, playerWish:wishes1[0], courtWish:wishes1[1], otherWish:wishes1[2], extras:extra1}, player2: {_id:userID2, playerWish:wishes2[0], courtWish:wishes2[1], otherWish:wishes2[2], extras:extra2}, year:tournamentYear.toString(), paymentMethod:getPaymentMethod()}, true);
+				pairID = Meteor.call("updatePair", userID1, {player1: {_id:userID1, playerWish:wishes1[0], courtWish:wishes1[1], otherWish:wishes1[2], extras:extra1}, player2: {_id:userID2, playerWish:wishes2[0], courtWish:wishes2[1], otherWish:wishes2[2], extras:extra2}, year:tournamentYear.toString(), paymentMethod:getPaymentMethod()}, true);
 			}
 			else {
-				pairID = Meteor.call("updatePair", {player1: {_id:userID1, playerWish:wishes1[0], courtWish:wishes1[1], otherWish:wishes1[2], extras:extra1}, year:tournamentYear.toString(), paymentMethod:getPaymentMethod()}, true);
+				pairID = Meteor.call("updatePair", userID1, {player1: {_id:userID1, playerWish:wishes1[0], courtWish:wishes1[1], otherWish:wishes1[2], extras:extra1}, year:tournamentYear.toString(), paymentMethod:getPaymentMethod()}, true);
 			}
 			Meteor.call("addPairToTournament", pairID, tournamentYear.toString(), dateMatch);
         } // End createPair

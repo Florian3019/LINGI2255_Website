@@ -1049,7 +1049,7 @@ Meteor.methods({
 		}
 		@return : the pair id if successful, otherwise returns false
 	*/
-	'updatePair' : function(pairData, silentMail){
+	'updatePair' : function(pairData, updatedUserID, silentMail){
 		if(typeof pairData === undefined){
 			console.error("updatePair : pairData is undefined");
 			return;
@@ -1145,6 +1145,25 @@ Meteor.methods({
 			console.warn("Warning : No data about any player was provided to updatePair. Ignore if intended.");
 		}
 
+		var pairNewID;
+		if(!pairData._id){ 		// New Pair
+			pairNewID = Pairs.insert(data, function(err, res){
+				if(err){
+					console.error("updatePair error");
+					console.error(err);
+				}
+			});
+		}
+		else{
+			pairNewID = pairData['_id'];
+			Pairs.update({_id: pairData['_id']} , {$set: data}, function(err, count, status){
+				if(err){
+					console.error('updatePair error');
+					console.error(err);
+				}
+			});
+		}
+
 
 		/*
 		* 		PAYMENTS
@@ -1154,17 +1173,17 @@ Meteor.methods({
 	    var amount = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
 
 		//Add extras to amount
-		if(check1 && pairData["player1"].extras)
+		if(check1 && updatedUserID===pairData["player1"]._id && pairData["player1"].extras)
 		{
 			amount += extrasAmount["player1"];
 		}
-		else if(check2 && pairData["player2"].extras)
+		else if(check2 && updatedUserID===pairData["player2"]._id && pairData["player2"].extras)
 		{
 			amount += extrasAmount["player2"];
 		}
 
 
-		var paymentUser = Meteor.userId();
+		var paymentUser = updatedUserID;
 		paymentData = {
 			userID : paymentUser,
 			tournamentYear : currentYear,
@@ -1176,10 +1195,19 @@ Meteor.methods({
 		//Check if payment already exists for this player
 		var paymentAlreadyExists = Payments.findOne({'userID': paymentUser, 'tournamentYear': currentYear});
 		if(paymentAlreadyExists){
-			if(pairData._id){	//If it is an update: update the data
 
-				var userPairs = Pairs.find({$or: [{'player1._id': userID, 'year': currentYear}, {'player2._id': userID, 'year': currentYear}]}).fetch();
+			console.log("victor: yes 0");
+			console.log(pairData._id);
+
+			var userPairs = Pairs.find({$or: [{'player1._id': paymentUser, 'year': currentYear}, {'player2._id': paymentUser, 'year': currentYear}]}).fetch();
+			console.log(userPairs.length);
+
+			if(typeof pairData._id !== 'undefined'){	//If it is an update: update the data
+
+				console.log("victor: yes 1");
 				if(userPairs.length == 2){		// He is already registered to the other day: keep the amount to pay for that day
+
+					console.log("Victor: yes 2");
 					var amountToKeep = Years.findOne({_id: currentYear}, {fields: {tournamentPrice: 1}}).tournamentPrice;
 					var otherPair;
 
@@ -1218,6 +1246,7 @@ Meteor.methods({
 					}
 
 					paymentData.balance = amountToKeep + amount;
+					console.log(paymentAlreadyExists.balance);
 					if(paymentAlreadyExists.status === "paid"){
 						if(paymentAlreadyExists.balance >= paymentData.balance){		// He paid to much
 							paymentData.status = "paid";
@@ -1352,22 +1381,7 @@ Meteor.methods({
 		*/
 
 
-		if(!pairData._id){ 		// New Pair
-			return Pairs.insert(data, function(err, res){
-				if(err){
-					console.error("updatePair error");
-					console.error(err);
-				}
-			});
-		}
-		Pairs.update({_id: pairData['_id']} , {$set: data}, function(err, count, status){
-			if(err){
-				console.error('updatePair error');
-				console.error(err);
-			}
-		});
-
-		return pairData['_id'];
+		return pairNewID;
 	},
 
 
@@ -2114,7 +2128,7 @@ Meteor.methods({
 			pair.userPlayer = undefined;
 			// Put the partner in player1 position --> partner can now be matched with another player
 			pair.player1 = pairs.partnerPlayer;
-			Meteor.call("updatePair", pair);
+			Meteor.call("updatePair", pair, pair.player1._id);
 			// The pair stays in the right pool
 
 			var partner = Meteor.users.findOne({_id:pair.player1._id});

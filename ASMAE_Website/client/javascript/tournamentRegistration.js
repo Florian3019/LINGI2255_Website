@@ -177,6 +177,7 @@ Template.tournamentRegistration.helpers({
 	},
 	'getSaturdayData' : function() {
 		var parts = location.href.split('/');
+		console.log(parts);
 		var id = parts.pop();
 		var user = Meteor.users.findOne({_id:id});
 		user["day"] = "saturday";
@@ -346,7 +347,7 @@ Template.tournamentRegistrationTemplate.helpers({
 			return extras;
 		}
 		for (var pExtraName in playerExtras) {
-			var qty = playerExtras[pExtraName]
+			var qty = playerExtras[pExtraName];
 			for(var j=0; j<extras.length; j++) {
 				var ex = extras[j];
 				if (qty !== undefined) {
@@ -357,6 +358,7 @@ Template.tournamentRegistrationTemplate.helpers({
 				}
 			}
 		}
+		console.log(extras);
 		return extras;
     },
 
@@ -829,7 +831,7 @@ Template.tournamentRegistrationTemplate.events({
 			Create the object containing the player specific informations
 		*/
 		var playerData = {
-			_id:Meteor.userId(),
+			_id: userID,
 			extras : {},
 			"playerWish":playerWish,
 			"courtWish":courtWish,
@@ -1000,7 +1002,7 @@ Template.tournamentRegistrationTemplate.events({
 				pairData.paymentMethod = $('[name=paymentMethod]:checked').val();
 
 				pairData.year = currentYear;
-		        Meteor.call('updatePair', pairData, callback);
+		        Meteor.call('updatePair', pairData, userID, callback);
 			}
 			else {	//The players cheats on the AFT ranking
 
