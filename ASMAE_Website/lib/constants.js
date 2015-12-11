@@ -268,7 +268,8 @@ getRegistrationInfoFromPlayerID = function(playerID) {
     var satData;
     var sunData;
     for (var i=0; i<pairs.length; i++) {
-        var pairID = pairs[i]._id;
+        var pair = pairs[i];
+        var pairID = pair._id;
         var data = getTypeAndCategoryFromPairID(pairID);
         if (data === undefined) {
             continue;
@@ -276,11 +277,23 @@ getRegistrationInfoFromPlayerID = function(playerID) {
         var type = data.playerType;
         var category = data.playerCategory;
         var day = getDayFromType(type);
+        var partner;
+        if(pair.player1._id === playerID){
+            if(typeof pair.player2 !== 'undefined'){
+                partner = pair.player2._id;
+            }
+        }
+        else {
+            if(typeof pair.player1 !== 'undefined'){
+                partner = pair.player1._id;
+            }
+        }
+
         if (day == 'saturday') {
-            satData = {playerType:type, playerCategory:category};
+            satData = {playerType:type, playerCategory:category, partner: partner};
         }
         else if (day == 'sunday') {
-            sunData = {playerType:type, playerCategory:category};
+            sunData = {playerType:type, playerCategory:category, partner: partner};
         }
         else {
             console.error("getDayFromType returned something weird : "+day);

@@ -301,26 +301,28 @@
                   {{>playerInfoTemplate ID=PAIR.player1._id MODAL=getModalId HidePic="true" hideDelete="true"}}
                 </div>
                 <br>
-                <div class="panel panel-primary pairInfoBox"  style="padding-bottom:10px">
-                  {{#if PAIR.player1.playerWish}}
-                  <div class="container-fluid">
-                    <h5 id="WishesOnPlayersValue1">Souhaits sur les joueurs</h5>
-                    {{PAIR.player1.playerWish}}
+                {{#if hasAWish PAIR.player1}}
+                  <div class="panel panel-primary pairInfoBox"  style="padding-bottom:10px">
+                    {{#if PAIR.player1.playerWish}}
+                    <div class="container-fluid">
+                      <h5 id="WishesOnPlayersValue1">Souhaits sur les joueurs</h5>
+                      {{PAIR.player1.playerWish}}
+                    </div>
+                    {{/if}}
+                    {{#if PAIR.player1.courtWish}}
+                    <div class="container-fluid">
+                      <h5 id="WishesOnCourtValue1">Souhaits sur un terrain</h5>
+                      {{PAIR.player1.courtWish}}
+                    </div>
+                    {{/if}}
+                    {{#if PAIR.player1.otherWish}}
+                    <div class="container-fluid">
+                      <h5 id="OtherWishesValue1">Autres souhaits</h5>
+                      {{PAIR.player1.otherWish}}
+                    </div>
+                    {{/if}}
                   </div>
-                  {{/if}}
-                  {{#if PAIR.player1.courtWish}}
-                  <div class="container-fluid">
-                    <h5 id="WishesOnCourtValue1">Souhaits sur un terrain</h5>
-                    {{PAIR.player1.courtWish}}
-                  </div>
-                  {{/if}}
-                  {{#if PAIR.player1.otherWish}}
-                  <div class="container-fluid">
-                    <h5 id="OtherWishesValue1">Autres souhaits</h5>
-                    {{PAIR.player1.otherWish}}
-                  </div>
-                  {{/if}}
-                </div>
+                {{/if}}
 
                 {{#if equals PAIR.player2._id undefined}}
                   {{#if SHOWOPTIONS}}
@@ -352,26 +354,28 @@
                     {{>playerInfoTemplate ID=PAIR.player2._id MODAL='pairModal' HidePic="true" hideDelete="true"}}
                   </div>
                   <br>
-                  <div class="panel panel-primary pairInfoBox" style="padding-bottom:10px">
-                      {{#if PAIR.player2.playerWish}}
-                      <div class="container-fluid">
-                        <h5 id="WishesOnPlayersValue2">Souhaits sur les joueurs</h5>
-                        {{PAIR.player2.playerWish}}
-                      </div>
-                      {{/if}}
-                      {{#if PAIR.player2.courtWish}}
-                      <div class="container-fluid">
-                        <h5 id="WishesOnCourtValue2">Souhaits sur un terrain</h5>
-                        {{PAIR.player2.courtWish}}
-                      </div>
-                      {{/if}}
-                      {{#if PAIR.player2.otherWish}}
-                      <div class="container-fluid">
-                        <h5 id="OtherWishesValue2">Autres souhaits</h5>
-                        {{PAIR.player2.otherWish}}
-                      </div>
-                      {{/if}}
-                  </div>
+                  {{#if hasAWish PAIR.player2}}
+                    <div class="panel panel-primary pairInfoBox" style="padding-bottom:10px">
+                        {{#if PAIR.player2.playerWish}}
+                        <div class="container-fluid">
+                          <h5 id="WishesOnPlayersValue2">Souhaits sur les joueurs</h5>
+                          {{PAIR.player2.playerWish}}
+                        </div>
+                        {{/if}}
+                        {{#if PAIR.player2.courtWish}}
+                        <div class="container-fluid">
+                          <h5 id="WishesOnCourtValue2">Souhaits sur un terrain</h5>
+                          {{PAIR.player2.courtWish}}
+                        </div>
+                        {{/if}}
+                        {{#if PAIR.player2.otherWish}}
+                        <div class="container-fluid">
+                          <h5 id="OtherWishesValue2">Autres souhaits</h5>
+                          {{PAIR.player2.otherWish}}
+                        </div>
+                        {{/if}}
+                    </div>
+                  {{/if}}
                 {{/unless}}
               </div>
             </div>

@@ -1,4 +1,6 @@
 /*
+	Draggable plugin : https://github.com/bevacqua/dragula
+
 	This file defines how the pools can be managed.
 	It defines helpers for:
 		-> The pairs to split container
@@ -640,6 +642,7 @@ Template.poolList.events({
 	      		"<li class='list-group-item'>Pour séparer une paire, déplacez la d'une poule vers la boîte 'Séparer une paire'.</li>"+
 	            "<li class='list-group-item'>Pour créer une paire, déplacez deux joueurs compatibles dans la boîte 'Créer une paire'. La paire sera automatiquement assignée à une poule.</li>"+
 	            "<li class='list-group-item'>Pour modifier une poule, déplacez une(des) paire(s) d'une poule à une autre. Cliquez ensuite sur sauver.</li>"+
+	            "<li class='list-group-item'>Pour équilibrer les paires dans toutes les poules, cliquez sur le bouton équilibrer. Vous devez ensuite cliquer sur sauver (ou faire d'autres modifications).</li>"+
 	            "<li class='list-group-item'>Pour afficher la table des scores, cliquez sur le bouton en haut de la poule concernée.</li>"+
 	            "<li class='list-group-item'>Pour changer le chef de poule, cliquez sur sa paire puis ensuite sur le bouton 'Choisir comme chef de poule'.</li>"+
 	            "<li class='list-group-item'>Pour devenir responsable de cette catégorie, cliquez sur 'Devenir responsable'.</li>"+
@@ -1476,6 +1479,10 @@ Template.modalItem.helpers({
 
 	'getModalInfo':function(){
 		return Session.get("PoolList/ModalData");
+	},
+
+	'hasAWish':function(player){
+		return player.playerWish!==undefined || player.courtWish!==undefined || player.otherWish!==undefined;
 	}
 });
 
@@ -1536,7 +1543,6 @@ Template.modalItem.events({
 		}
 	}
 });
-
 
 /******************************************************************************************************************
 											reponsablesTemplate

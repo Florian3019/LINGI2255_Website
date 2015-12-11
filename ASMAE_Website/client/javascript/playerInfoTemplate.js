@@ -177,6 +177,23 @@ Template.playerInfoTemplate.helpers({
 		return "Tournoi "+typesTranslate[type] + ", catégorie "+categoriesTranslate[category];
 	},
 
+    'hasPartner': function(dayData){
+        if(typeof dayData.partner === 'undefined'){
+            return false;
+        }
+        else{
+            return true;
+        }
+    },
+
+    'dayPartner': function(dayData){
+        return Meteor.users.findOne({_id: dayData.partner});
+    },
+
+    'showPartnerEmail': function(){
+        return this.emails[0].address;
+    },
+
 	'isRegistered' : function(dayData) {
 		return dayData !== undefined;
 	},
@@ -433,8 +450,35 @@ Template.playerInfoTemplate.events({
 			});
         }
         );
-	}
+	},
 
+	'click .saturdayRegistrationEdit':function(event){
+		var id =event.currentTarget.dataset.id;
+		if(Session.get('closeModal') !== undefined){
+			var modalId = '#'+Session.get('closeModal');
+			Session.set('closeModal', undefined)
+			$(modalId).on('hidden.bs.modal', function() {
+            	Router.go("tournamentRegistrationSaturday", {"_id":id});
+        	}).modal('hide');
+		}
+		else{
+			Router.go("tournamentRegistrationSaturday", {"_id":id});
+		}
+	},
+
+	'click .sundayRegistrationEdit':function(event){
+		var id =event.currentTarget.dataset.id;
+		if(Session.get('closeModal') !== undefined){
+			var modalId = '#'+Session.get('closeModal');
+			Session.set('closeModal', undefined)
+			$(modalId).on('hidden.bs.modal', function() {
+            	Router.go("tournamentRegistrationSunday", {"_id":id});
+        	}).modal('hide');
+		}
+		else{
+			Router.go("tournamentRegistrationSunday", {"_id":id});
+		}
+	},
 });
 
 
