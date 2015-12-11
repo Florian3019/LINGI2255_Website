@@ -1272,13 +1272,11 @@ Meteor.methods({
 				var paymentAlreadyExists = Payments.findOne({'userID': paymentUserId, 'tournamentYear': currentYear});
 				if(paymentAlreadyExists){	// Update the payment
 					if(paymentAlreadyExists.status === "paid"){
-						console.log("victor: ok");
 						if(paymentAlreadyExists.balance >= paymentData.balance){		// He paid to much
 							paymentData.status = "paid";
 							paymentData.balance = 0;
 						}
 						else{		// He didn't paid enough
-						console.log("victor: on devrait etre ici...");
 							paymentData.balance = paymentData.balance - paymentAlreadyExists.balance;
 						}
 					}
