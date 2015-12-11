@@ -81,7 +81,7 @@ Template.index.events({
 	},
 
 'click #popdbtest' : function(event) {
-		
+		/*
 		 * 2015 data
 		 */
 		var nMen2015 = [60, 0, 0, 0, 0, 0, 0];
