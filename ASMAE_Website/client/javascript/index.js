@@ -80,11 +80,11 @@ Template.index.events({
 			anchorBool = !anchorBool;
 	},
 
-	'click #popdbtest' : function(event) {
+'click #popdbtest' : function(event) {
 		/*
 		 * 2015 data
 		 */
-		var nMen2015 = [3, 0, 0, 0, 0, 0, 0];
+		var nMen2015 = [30, 0, 0, 0, 0, 0, 0];
 		var nWomen2015 = [0, 0, 0, 0, 0, 0, 0];
 		var nMixed2015 = [0, 0, 0, 0, 0, 0, 0];
 		var nFamily2015 = 0;
@@ -98,7 +98,7 @@ Template.index.events({
 		var nCourtSaturday2015 = 5;
 		var nCourtSunday2015 = 5;
 		var nCourtBoth2015 = 0;
-		var fillTab = false;
+		var fill2015 = true;
 
 		/*
 		 * 2014 data
