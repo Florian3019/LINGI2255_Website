@@ -345,7 +345,7 @@ Template.tournamentRegistrationTemplate.helpers({
 			return extras;
 		}
 		for (var pExtraName in playerExtras) {
-			var qty = playerExtras[pExtraName]
+			var qty = playerExtras[pExtraName];
 			for(var j=0; j<extras.length; j++) {
 				var ex = extras[j];
 				if (ex["name"]==pExtraName) {
@@ -353,6 +353,7 @@ Template.tournamentRegistrationTemplate.helpers({
 				}
 			}
 		}
+		console.log(extras);
 		return extras;
     },
 
@@ -825,7 +826,7 @@ Template.tournamentRegistrationTemplate.events({
 			Create the object containing the player specific informations
 		*/
 		var playerData = {
-			_id:userID,
+			_id: userID,
 			extras : {},
 			"playerWish":playerWish,
 			"courtWish":courtWish,
