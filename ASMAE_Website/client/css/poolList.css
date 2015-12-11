@@ -66,10 +66,14 @@
   display: inline-block;
   vertical-align: top;
   height:640px;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.parent:hover {
+  overflow-y: auto;
 }
 
 .leaderStar{

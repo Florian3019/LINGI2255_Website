@@ -19,71 +19,76 @@
     {{> navigation}}
 
     {{#if showNavBar}}
-    <div class="sidebar scrollbar-style">
-      <ul class="nav nav-sidebar">
-        <div class="nav-sidebar-header">
-          Menu
+    
+    <div class="sidebar">
+      <div class="scrollbar-style-nav">
+        <div>
+          <ul class="nav nav-sidebar">
+            <div class="nav-sidebar-header">
+              Menu
+            </div>
+            <hr class="nopadding">
+            <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
+              <i class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></i>
+              Statistiques
+            </a>
+            </li>
+            {{#if isStaffMember}}
+            <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">
+            <i class="fa fa-tasks indexIcon"></i>
+            Déroulement du tournoi</a></li>
+            {{/if}}
+            {{#if isStaffMember}}
+            <li><a href="{{pathFor route='poolList'}}" class="menuItem">
+            <i class="fa fa-wrench indexIcon"></i>
+            Gestion du tournoi</a></li>
+            {{else}}
+            <li><a href="{{pathFor route='poolList'}}" class="menuItem">
+            <i class="fa fa-bar-chart indexIcon"></i>
+            Progression du tournoi</a></li>
+            {{/if}}
+            {{#if isTournamentPage}}
+              {{>poolsSidebarCollapsableMenu MOBILE="desktop"}}
+            {{/if}}
+            {{#if isStaffMember}}
+            <li><a href="{{pathFor route='playersInfo'}}" class="menuItem" id="PlayerSearchButtonMenu">
+            <i class="fa fa-users indexIcon"></i>
+            Rechercher un joueur</a></li>
+            <li><a href="{{pathFor route='playerPayments'}}" class="menuItem" id="PaymentInOrderButtonMenu">
+            <span class="glyphicon glyphicon-euro indexIcon"></span>
+            Paiements pas en ordre</a></li>
+            <li><a href="{{pathFor route='staffManagement'}}" class="menuItem" id="PlayerQuestionsButtonMenu">
+              <i class="fa fa-question indexIcon" style="width:6%"></i>
+            Questions des joueurs
+            </a></li>
+            <li><a href="{{pathFor route='sendEmailToList'}}" class="menuItem" id="SendEmailToListButtonMenu">
+            <span class="glyphicon glyphicon-envelope indexIcon"></span>
+            Envoyer un mail
+            </a></li>
+            <br>
+            <li><a href="{{pathFor route='courtSearchTemplate'}}" class="menuItem" id="CourtSearchButtonMenu">
+            <span class="glyphicon glyphicon-home indexIcon"></span>
+            Rechercher un terrain</a></li>
+            <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem" id="AddCourtButtonMenu">
+            <i class="fa fa-plus indexIcon" style="width:6%"></i>
+            Ajouter un terrain</a></li>
+            <br>
+            <li><a href="{{pathFor route='printSheets'}}" class="menuItem" id="PoolSheetsButtonMenu">
+            <span class="glyphicon glyphicon-print indexIcon"></span>
+            Feuille de poule</a></li>
+            <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem" id="LogModificationsButtonMenu">
+            <span class="glyphicon glyphicon-list-alt indexIcon"></span>
+            Log des modifications</a></li>
+            <li><a href="{{pathFor route='forum'}}" class="menuItem" id="ForumButtonMenu">
+            <i class="fa fa-comments indexIcon"></i>
+            Forum</a></li>
+            <li><a href="{{pathFor route='staffFaq'}}" class="menuItem" id="StaffFAQButtonMenu">
+            <span class="glyphicon glyphicon-question-sign indexIcon"></span>
+            FAQ Staff</a></li>
+            {{/if}}
+          </ul>
         </div>
-        <hr class="nopadding">
-        <li><a href="{{pathFor route='tournamentHistory'}}" class="menuItem" id="DeroulementTournoiButton">
-          <i class="glyphicon glyphicon-stats indexIcon" aria-hidden="true"></i>
-          Statistiques
-        </a>
-        </li>
-        {{#if isStaffMember}}
-        <li><a href="{{pathFor route='tournamentProgress'}}" class="menuItem" id="DeroulementTournoiButton">
-        <i class="fa fa-tasks indexIcon"></i>
-        Déroulement du tournoi</a></li>
-        {{/if}}
-        {{#if isStaffMember}}
-        <li><a href="{{pathFor route='poolList'}}" class="menuItem">
-        <i class="fa fa-wrench indexIcon"></i>
-        Gestion du tournoi</a></li>
-        {{else}}
-        <li><a href="{{pathFor route='poolList'}}" class="menuItem">
-        <i class="fa fa-bar-chart indexIcon"></i>
-        Progression du tournoi</a></li>
-        {{/if}}
-        {{#if isTournamentPage}}
-          {{>poolsSidebarCollapsableMenu MOBILE="desktop"}}
-        {{/if}}
-        {{#if isStaffMember}}
-        <li><a href="{{pathFor route='playersInfo'}}" class="menuItem" id="PlayerSearchButtonMenu">
-        <i class="fa fa-users indexIcon"></i>
-        Rechercher un joueur</a></li>
-        <li><a href="{{pathFor route='playerPayments'}}" class="menuItem" id="PaymentInOrderButtonMenu">
-        <span class="glyphicon glyphicon-euro indexIcon"></span>
-        Paiements pas en ordre</a></li>
-        <li><a href="{{pathFor route='staffManagement'}}" class="menuItem" id="PlayerQuestionsButtonMenu">
-          <i class="fa fa-question indexIcon" style="width:6%"></i>
-        Questions des joueurs
-        </a></li>
-        <li><a href="{{pathFor route='sendEmailToList'}}" class="menuItem" id="SendEmailToListButtonMenu">
-        <span class="glyphicon glyphicon-envelope indexIcon"></span>
-        Envoyer un mail
-        </a></li>
-        <br>
-        <li><a href="{{pathFor route='courtSearchTemplate'}}" class="menuItem" id="CourtSearchButtonMenu">
-        <span class="glyphicon glyphicon-home indexIcon"></span>
-        Rechercher un terrain</a></li>
-        <li><a href="{{pathFor route='adminAddCourt'}}" class="menuItem" id="AddCourtButtonMenu">
-        <i class="fa fa-plus indexIcon" style="width:6%"></i>
-        Ajouter un terrain</a></li>
-        <br>
-        <li><a href="{{pathFor route='printSheets'}}" class="menuItem" id="PoolSheetsButtonMenu">
-        <span class="glyphicon glyphicon-print indexIcon"></span>
-        Feuille de poule</a></li>
-        <li><a href="{{pathFor route='modificationsLog'}}" class="menuItem" id="LogModificationsButtonMenu">
-        <span class="glyphicon glyphicon-list-alt indexIcon"></span>
-        Log des modifications</a></li>
-        <li><a href="{{pathFor route='forum'}}" class="menuItem" id="ForumButtonMenu">
-        <i class="fa fa-comments indexIcon"></i>
-        Forum</a></li>
-        <li><a href="{{pathFor route='staffFaq'}}" class="menuItem" id="StaffFAQButtonMenu">
-        <span class="glyphicon glyphicon-question-sign indexIcon"></span>
-        FAQ Staff</a></li>
-        {{/if}}
-      </ul>
+      </div>
     </div>
     {{/if}}
 

@@ -8,25 +8,25 @@
 </div>
 <div class="jumbotron">
   <div>
-  	<h4 id="Status"> Statut de l'inscription du samedi : {{hasSaturdayPairPlayer "true"}} </h4>
+  	<h4 id="Status"> <span style="text-decoration: underline;">Statut de l'inscription du samedi </span> <i class="glyphicon glyphicon-arrow-right" aria-hidden="true"></i> {{hasSaturdayPairPlayer "true"}} </h4>
   </div>
-  <div>
-  	{{#if hasSaturdayPairPlayer "false"}}
+  <br>
+  {{#if hasSaturdayPairPlayer "false"}}
+    <div>
     		<h4> Votre coéquipier : </h4>
     		{{>playerInfoTemplate ID=setSaturdayPairPlayer}}
-  	{{/if}}
-  </div>
+    </div>
+  <br>
+  {{/if}}
   <div>
-  	<h4 id="Status"> Statut de l'inscription du dimanche : {{hasSundayPairPlayer "true"}} </h4>
+  	<h4 id="Status"> <span style="text-decoration: underline;">Statut de l'inscription du dimanche </span> <i class="glyphicon glyphicon-arrow-right" aria-hidden="true"></i> {{hasSundayPairPlayer "true"}} </h4>
   </div>
-  <div>
-  	{{#if hasSundayPairPlayer "false"}}
+  {{#if hasSundayPairPlayer "false"}}
+    <div>
     		<h4> Votre coéquipier : </h4>
     		{{>playerInfoTemplate ID=setSundayPairPlayer}}
-  	{{/if}}
-  </div>
+    </div>
+    <br>
+  {{/if}}
 </div>
-<br/>
-<br/>
-<br/>
 </template>
