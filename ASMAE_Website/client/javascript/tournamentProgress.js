@@ -172,39 +172,41 @@ Template.tournamentProgress.events({
 
     'click #restartTournamentButton': function(){
          swal({
-                title: "Attention !", 
-                text: "Vous allez terminer de manière définitive le tournois en cours", 
+                title: "Attention !",
+                text: "Vous allez terminer de manière définitive le tournoi en cours", 
                 type:"warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "Terminer",
                 cancelButtonText:"Annuler",
-                closeOnConfirm: false, 
-            }, 
+                closeOnConfirm: false,
+            },
             function() {
                 Meteor.call('restartTournament', function(err, result){
                     if(err){
                         console.error("Error while calling restartTournamentButton");
+                        swal("Erreur !", "Une erreur c'est produite lors de la fermeture du tournois", "error"); 
+                    }
+                    else {
+                        swal("Succès !", "Tournois clôturé", "success"); 
                     }
                 });
-                swal("Succès !", "Tournois clôturé", "success"); 
             });
 
-        
     },
 
     'click #sendRegistrationsEmail': function(){
 
         swal({
-                title: "Attention !", 
-                text: "Vous allez envoyer un email d'invitation à tous les utilisateurs", 
+                title: "Attention !",
+                text: "Vous allez envoyer un email d'invitation à tous les utilisateurs",
                 type:"warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "Envoyer",
                 cancelButtonText:"Annuler",
-                closeOnConfirm: false, 
-            }, 
+                closeOnConfirm: false,
+            },
             function() {
                 Meteor.call('updateDoneYears', 2, true, function(err, result){
                     if(err){
@@ -215,25 +217,27 @@ Template.tournamentProgress.events({
                 Meteor.call('emailLaunchTournament', function(err, result){
                     if(err){
                         console.error("Error while calling emailLaunchTournament");
-                         swal("Erreur !", "Une erreur c'est produite lors de l'envoie des emails", "error"); 
+                        swal("Erreur !", "Une erreur c'est produite lors de l'envoie des emails", "error"); 
                     }
-                });
-                swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
+                    else {
+                        swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
+                    }
+                });  
             });
     },
 
     'click #sendPoolsEmail':function(){
 
         swal({
-                title: "Attention !", 
-                text: "Vous allez envoyer un email aux joueurs et aux chefs de poules", 
+                title: "Attention !",
+                text: "Vous allez envoyer un email aux joueurs et aux chefs de poules",
                 type:"warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "Envoyer",
                 cancelButtonText:"Annuler",
-                closeOnConfirm: false, 
-            }, 
+                closeOnConfirm: false,
+            },
             function() {
                     Meteor.call('updateDoneYears', 7, true, function(err, result){
                         if(err){
@@ -278,12 +282,12 @@ Template.tournamentProgress.events({
                     });
 
                   }
-                  swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
+                  swal("Succès !", "Les terrains ont bien été assignés aux poules", "success");
             });
 
 
 
-        
+
     },
     /*
         Assign courts
@@ -295,18 +299,18 @@ Template.tournamentProgress.events({
             Session.set("rain",false);
             var day = findDay();
             swal({
-                title: "Attention, il n'y a pas assez de terrains pour le "+ day, 
-                text: "Que voulez vous faire ?", 
+                title: "Attention, il n'y a pas assez de terrains pour le "+ day,
+                text: "Que voulez vous faire ?",
                 type:"warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "Assigner quand même",
                 cancelButtonText:"Annuler",
-                closeOnConfirm: false, 
-            }, 
+                closeOnConfirm: false,
+            },
             function() {
                 assignCourts(false);
-                swal("Succès !", "Les terrains ont bien été assignés aux poules", "success"); 
+                swal("Succès !", "Les terrains ont bien été assignés aux poules", "success");
             });
         }
         else{
@@ -319,19 +323,19 @@ Template.tournamentProgress.events({
             Session.set("rain",true);
             var day = findDay();
             swal({
-                title: "Attention, il n'y a pas assez de terrains pour le "+ day, 
-                text: "Que voulez vous faire ?", 
+                title: "Attention, il n'y a pas assez de terrains pour le "+ day,
+                text: "Que voulez vous faire ?",
                 type:"warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "Assigner quand même",
                 cancelButtonText:"Annuler",
-                closeOnConfirm: false, 
-            }, 
-            function() {            
+                closeOnConfirm: false,
+            },
+            function() {
                 assignCourts(true);
                 swal("Succès !", "Les terrains ont bien été assignés aux poules", "success");
-                
+
             });
         }
         else{
