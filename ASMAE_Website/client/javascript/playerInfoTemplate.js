@@ -174,7 +174,7 @@ Template.playerInfoTemplate.helpers({
 		}
 		var type = dayData.playerType;
 		var category = dayData.playerCategory;
-		return "Tournoi "+typesTranslate[type] + ", catégorie "+category;
+		return "Tournoi "+typesTranslate[type] + ", catégorie "+categoriesTranslate[category];
 	},
 
 	'isRegistered' : function(dayData) {
