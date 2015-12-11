@@ -244,10 +244,22 @@ var makeThisYearGraph = function(){
 	    offset: 20
 	  },
 	  height:"200px",
-	  plugins:pluginOptions
+	  plugins:pluginOptions,
+	  chartPadding: {
+			top: 20,
+			right: 20,
+			bottom: 30,
+			left: 40
+  		},
 	}, [
 	  // Options override for media > 400px
 	  ['screen and (min-width: 400px)', {
+	  	chartPadding: {
+			top: 20,
+			right: 20,
+			bottom: 30,
+			left: 30
+  		},
 	    reverseData: true,
 	    horizontalBars: true,
 	    axisX: {
@@ -259,6 +271,12 @@ var makeThisYearGraph = function(){
 	  }],
 	  // Options override for media > 1000px
 	  ['screen and (min-width: 1000px)', {
+	  	chartPadding: {
+			top: 20,
+			right: 20,
+			bottom: 30,
+			left: 20
+  		},
 	  	stackBars: false,
 	    reverseData: false,
 	    horizontalBars: false,
