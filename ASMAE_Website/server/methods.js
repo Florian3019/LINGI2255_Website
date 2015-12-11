@@ -2058,9 +2058,10 @@ Meteor.methods({
 		}
 		else {
 			// Remove only the current player, leaving the other player alone in the pair
-			pair[userPlayer] = undefined;
+			
 			// Put the partner in player1 position --> partner can now be matched with another player
 			pair.player1 = pair[partnerPlayer];
+			pair.player2 = undefined;
 
 			var idToUpdate = pair._id;
 			delete pair._id;
