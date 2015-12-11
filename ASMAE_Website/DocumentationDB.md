@@ -42,41 +42,49 @@ These GlobalValues documents should be initialized when launching the website on
 
 ## Types
 
-    {
-        // Can only $addToSet
-        _id:<typeID>
-        preminimes:<list of poolIDs>
-        minimes:<list of poolIDs>
-        cadets:<list of poolIDs>
-        scolars:<list of poolIDs>
-        juniors:<list of poolIDs>
-        seniors:<list of poolIDs>
-        elites:<list of poolIDs>
-        // Can only $set
-        preminimesBracket:<list of pairId>
-        minimesBracket:<list of pairId>
-        cadetsBracket:<list of pairId>
-        scolarsBracket:<list of pairId>
-        juniorsBracket:<list of pairId>
-        seniorsBracket:<list of pairId>
-        elitesBracket:<list of pairId>
-        listBracket:<list of pairID>
+        A type structure is as follows :
+        {
+            typeString : men | women | mixed | family
+
+            // Can only $addToSet
+            _id:<typeID>
+            preminimes:<list of poolIDs>
+            minimes:<list of poolIDs>
+            cadets:<list of poolIDs>
+            scolars:<list of poolIDs>
+            juniors:<list of poolIDs>
+            seniors:<list of poolIDs>
+            elites:<list of poolIDs>
+            // Can only $set
+            preminimesBracket:<list of pairId>
+            minimesBracket:<list of pairId>
+            cadetsBracket:<list of pairId>
+            scolarsBracket:<list of pairId>
+            juniorsBracket:<list of pairId>
+            seniorsBracket:<list of pairId>
+            elitesBracket:<list of pairId>
+            listBracket:<list of pairID>
 
 
-        // Staff responsables
-            Can only add a single staff for each update to a category.
-        preminimesResp:<list of userId>
-        minimesResp:<list of userId>
-        cadetsResp:<list of userId>
-        scolarsResp:<list of userId>
-        juniorsResp:<list of userId>
-        seniorsResp:<list of userId>
-        elitesResp:<list of userId>
-        listResp:<list of pairID>
+            // Staff responsables
+                Can only add a single staff for each update to a category.
+            preminimesResp:<list of userId>
+            minimesResp:<list of userId>
+            cadetsResp:<list of userId>
+            scolarsResp:<list of userId>
+            juniorsResp:<list of userId>
+            seniorsResp:<list of userId>
+            elitesResp:<list of userId>
+            listResp:<list of pairID>
 
-        NOTE : for the family tournament, only one list of pools :
-        all:<list of poolIDs>
-    }
+            NOTE : for the family tournament, only one list of pools :
+            all:<list of poolIDs>
+
+            completion:{
+                pools: {minimes:<percentage>, ...}  // NOTE: 0 <= <percentage> <= 1
+                brackets: {minimes:<percentage>, ...}
+            }
+        }
 
 
 ## Pools

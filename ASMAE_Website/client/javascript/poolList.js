@@ -1,4 +1,6 @@
 /*
+	Draggable plugin : https://github.com/bevacqua/dragula
+
 	This file defines how the pools can be managed.
 	It defines helpers for:
 		-> The pairs to split container
