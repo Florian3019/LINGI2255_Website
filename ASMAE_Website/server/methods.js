@@ -2515,7 +2515,8 @@ Meteor.methods({
 	    var typesSaturday = ["mixed","family"];
 	    var typesSunday = ["men","women"];
 	    var typesTable = [typesSaturday,typesSunday];
-	    var year = Years.findOne({_id:""+new Date().getFullYear()});
+	    var currentYear = GlobalValues.findOne({_id:"currentYear"});
+	    var year = Years.findOne({_id:currentYear});
 	    var start = 0;
 
 	    ////////// Saturday and Sunday \\\\\\\\\\
