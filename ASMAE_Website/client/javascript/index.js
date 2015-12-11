@@ -95,9 +95,9 @@ Template.index.events({
 		var nAloneFamily2015 = 0;
 		var nAlones2015 = [nAloneMen2015,nAloneWomen2015,nAloneMixed2015,nAloneFamily2015];
 
-		var nCourtSaturday2015 = 5;
-		var nCourtSunday2015 = 5;
-		var nCourtBoth2015 = 0;
+		var nCourtSaturday2015 = 0;
+		var nCourtSunday2015 = 0;
+		var nCourtBoth2015 = 30;
 		var fill2015 = true;
 
 		/*
