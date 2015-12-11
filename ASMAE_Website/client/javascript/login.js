@@ -56,7 +56,7 @@ var beforeUserCreationFunction = function(email){
 }
 
 Accounts.createUser = _.wrap(Accounts.createUser, function(createUser) {
-
+    document.getElementById("login-buttons-password").innerHTML='<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Chargement...';
     // Store the original arguments
     var args = _.toArray(arguments).slice(1),
         user = args[0];
@@ -64,6 +64,7 @@ Accounts.createUser = _.wrap(Accounts.createUser, function(createUser) {
 
     var newCallback = function(error) {
         // do my stuff
+
         if(error) {
             origCallback.call(this, error);
         }
