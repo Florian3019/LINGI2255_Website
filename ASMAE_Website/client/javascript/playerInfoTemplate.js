@@ -453,30 +453,32 @@ Template.playerInfoTemplate.events({
 	},
 
 	'click .saturdayRegistrationEdit':function(event){
-		var id =event.currentTarget.dataset.id;
-		if(Session.get('closeModal') !== undefined){
-			var modalId = '#'+Session.get('closeModal');
-			Session.set('closeModal', undefined)
+		var id = event.currentTarget.dataset.id;
+		if(document.getElementById("pairModal")!==null){
+			var modalId = '#pairModal';
+			Session.set("closeModal", undefined);
+			$(modalId).modal('hide');
 			$(modalId).on('hidden.bs.modal', function() {
-            	Router.go("tournamentRegistrationSaturday", {"_id":id});
+            	Router.go('tournamentRegistrationSaturday', {_id:id});
         	}).modal('hide');
 		}
 		else{
-			Router.go("tournamentRegistrationSaturday", {"_id":id});
+			Router.go('tournamentRegistrationSaturday', {_id:id});
 		}
 	},
 
 	'click .sundayRegistrationEdit':function(event){
-		var id =event.currentTarget.dataset.id;
-		if(Session.get('closeModal') !== undefined){
-			var modalId = '#'+Session.get('closeModal');
-			Session.set('closeModal', undefined)
+		var id = event.currentTarget.dataset.id;
+		if(document.getElementById("pairModal")!==null){
+			var modalId = '#pairModal';
+			Session.set("closeModal", undefined);
+			$(modalId).modal('hide');
 			$(modalId).on('hidden.bs.modal', function() {
-            	Router.go("tournamentRegistrationSunday", {"_id":id});
+            	Router.go('tournamentRegistrationSunday', {_id:id});
         	}).modal('hide');
 		}
 		else{
-			Router.go("tournamentRegistrationSunday", {"_id":id});
+			Router.go('tournamentRegistrationSunday', {_id:id});
 		}
 	},
 });
