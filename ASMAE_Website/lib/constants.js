@@ -277,8 +277,8 @@ getRegistrationInfoFromPlayerID = function(playerID) {
         var type = data.playerType;
         var category = data.playerCategory;
         var day = getDayFromType(type);
-        var partner;
-        if(pair.player1._id === playerID){
+        var partner = undefined;
+        if(typeof pair.player1 !== 'undefined' && pair.player1._id === playerID){
             if(typeof pair.player2 !== 'undefined' && pair.player2 !== null){
                 partner = pair.player2._id;
             }
