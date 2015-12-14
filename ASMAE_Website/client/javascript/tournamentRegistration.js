@@ -61,6 +61,25 @@ function setAlonePlayers(document){
 	});
 }
 
+function set_error(id,errorVisible) {
+		const error = "Error";
+		const OK = "OK";
+		const div = "Div";
+		var e = document.getElementById(id.concat(error));
+		if(!errorVisible){
+			e.style.display = 'none';
+			document.getElementById(id.concat(div)).className = "form-group AFTOK has-success has-feedback";
+		}else{
+			e.style.display = 'block';
+			document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
+		}
+		e = document.getElementById(id.concat(OK));
+		if(errorVisible)
+			e.style.display = 'none';
+		else
+			e.style.display = 'block';
+}
+
 
 function checkAloneErrors(document) {
 	/**
