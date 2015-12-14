@@ -1,7 +1,7 @@
 typeKeys = ["men", "women", "mixed", "family"];
 typesTranslate = {"men":"Hommes", "women":"Dames", "mixed":"Mixtes", "family":"Familles"};
 categoriesKeys = ["preminimes", "minimes", "cadets", "scolars", "juniors", "seniors", "elites", "all"];
-categoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites", "all":"familyCategory"};
+categoriesTranslate = {"preminimes":"Pré Minimes","minimes":"Minimes", "cadets":"Cadet", "scolars":"Scolaire", "juniors":"Junior", "seniors":"Seniors", "elites":"Elites", "all":""};
 paymentTypes = ["CreditCard", "BankTransfer", "Cash"];
 paymentTypesTranslate = {"CreditCard":"Carte de crédit", "BankTransfer":"Virement bancaire", "Cash":"Cash"};
 surfaceTypes = ["Béton","Terre battue","Synthétique","Gazon"];
