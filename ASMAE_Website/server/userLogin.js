@@ -26,8 +26,8 @@ if (isProdEnv()) {
     });
     ServiceConfiguration.configurations.insert({
         service: 'facebook',
-        appId: '1665003880380917',
-        secret: '8df4b4b1612e9792af5fd98066918ef7' // Facebook dev
+        appId: '1659508044263834',
+        secret: '00b1e92517c09f04f9c2a2cadf137638' // Facebook dev
     });
 } else {
     // dev environment, currently set up with guillaume leurquin's secrets. Please change these when using the website
@@ -38,8 +38,8 @@ if (isProdEnv()) {
     });
     ServiceConfiguration.configurations.insert({
         service: 'facebook',
-        appId: '1659508044263834',
-        secret: '00b1e92517c09f04f9c2a2cadf137638'
+        appId: '1665003880380917',
+        secret: '8df4b4b1612e9792af5fd98066918ef7'
     });
 }
 
@@ -52,20 +52,20 @@ if (isProdEnv()) {
 Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false});
 
 Meteor.setInterval(function() {
-    
+
     var three_days_ago = new Date();
     three_days_ago.setDate(three_days_ago.getDate() - 3);
     // three_days_ago.setSeconds(three_days_ago.getSeconds() - 10); // 10 seconds ago
-    
+
     var invalidUsers = Meteor.users.find({
                         createdAt: { $lte: three_days_ago }, // Users created more than 3 days ago
                         'emails.0.verified': false           // Users who still not have valided email
     })
-    
+
     invalidUsers.forEach(function(user) {
         Meteor.users.remove({_id: user._id}) // Remove 'user' that has not verified email for 3 days
     });
-    
+
 }, 3600000); // Check every hours
 
 /*
@@ -131,7 +131,7 @@ addDefaultFields = function(user){
     return user;
 }
 
-/*	
+/*
     Define what happens when the user logs in. Mainly merges the accounts if he logged in via google/facebook
     but already had an account on facebook/google. Also checks if he created an account manually (if so, merges the accounts)
 
@@ -141,7 +141,7 @@ addDefaultFields = function(user){
 Accounts.onCreateUser(function (options, user) {
 	user.profile = {}; // To avoid TypeError : Cannot set 'isStaff' and 'isAdmin' of undefined when invoking function addDefaultFields
     // Check if the user logged in via a service (google or facebook)
-    
+
     if (user.services) {
         if (options.profile) {
             user.profile = options.profile

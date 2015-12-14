@@ -5,10 +5,11 @@
 
 Session.set('paymentFormStatus', null);
 
-function initializeBraintree (clientToken) {
+function initializeBraintree (clientToken, userID) {
 
+    var dropinID = "dropin" + userID;
   braintree.setup(clientToken, 'dropin', {
-    container: 'dropin',
+    container: dropinID,
     paymentMethodNonceReceived: function (event, nonce) {
       Session.set('paymentFormStatus', true);
 
@@ -501,26 +502,25 @@ Template.playerInfoTemplate.events({
 
 
 //For payments
-Template.playerInfoTemplate.onRendered(function () {
+Template.playerInfoTemplate.onRendered(function() {
     var loadBraintree = false;
     if(Router.current().route.getName() == "myRegistration"){
         loadBraintree = true;
     }
     else{
-        var parts = location.href.split('/');
-        var id = parts.pop();
-        if(id === Meteor.userId()){
+        if(this.data.ID === Meteor.userId()){
             loadBraintree = true;
         }
     }
     if(loadBraintree){
+        var userID = this.data.ID;
         Meteor.call('getClientToken', function (err, clientToken) {
           if (err) {
             console.error('There was an error', err);
             return;
           }
 
-          initializeBraintree(clientToken);
+          initializeBraintree(clientToken, userID);
         });
     }
 
