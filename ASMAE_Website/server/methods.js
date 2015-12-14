@@ -1193,7 +1193,7 @@ Meteor.methods({
 				for(var pairI = 0; pairI < userPairs.length; pairI++){
 					var currentPair = userPairs[pairI];
 					var amountOneDay = tournamentPrice;
-					if(currentPair.player1._id === pairData[currentPlayer]._id){ //Player1
+					if(typeof currentPair.player1 !== 'undefined' && currentPair.player1._id === pairData[currentPlayer]._id){ //Player1
 						var userExtras = currentPair.player1.extras;
 					}
 					else{	//Player 2
@@ -2058,7 +2058,7 @@ Meteor.methods({
 		}
 		else {
 			// Remove only the current player, leaving the other player alone in the pair
-			
+
 			// Put the partner in player1 position --> partner can now be matched with another player
 			pair.player1 = pair[partnerPlayer];
 			pair.player2 = undefined;
