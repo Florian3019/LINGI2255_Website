@@ -42,6 +42,10 @@ Template.scorePage.helpers({
       return isForCurrentYear();
     },
 
+    'isFamilyCat':function(){
+        return Session.get('PoolList/Type')==="family";
+    },
+
     'getTranslateType':function(){
       return typesTranslate[Session.get("PoolList/Type")];
     },

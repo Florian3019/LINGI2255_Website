@@ -11,9 +11,9 @@
   {{#with getYear}} <!-- Returns a yearData -->
     {{#with getType this}}
         <div class="page-header">
-          <h2> 
+          <h2>
           <button type="button" id="scoreTableBack" class="btn btn-default btn-lg toHideForPdf pull-left"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>   Retour</button>
-          Matchs de poule {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}
+          Matchs de poule {{getTranslateType}}{{#unless isFamilyCat}} en {{getTranslateCategory}} {{/unless}}
             {{#if isAdminOrStaff}}
               {{#if isForCurrentYear}}
                 <button type="button" title="Aide" id="helpScore" class="btn btn-default btn-info" style="margin-left:15px">
