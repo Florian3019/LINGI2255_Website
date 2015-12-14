@@ -293,7 +293,7 @@ Template.poolsSidebarCollapsableMenu.events({
 		}
 		Session.set('PoolList/Type', type);
 		Session.set("PoolList/ChosenBrackets","");
-		
+
 		resetSessionVar();
 
 		// Hide previous error message, if any
@@ -423,7 +423,7 @@ var addLeaderChangeToLog = function(oldUserId, newUserId){
 
 /*
 	This function takes a poolId and a removedPairId.
-	It attempts to find a new leader for this pool if the removedPairId was the poolLeader. 
+	It attempts to find a new leader for this pool if the removedPairId was the poolLeader.
 	If it can't find a new pool leader (there are no full pairs in the pool),
 	it will remove the existing leader for that pool.
 */
@@ -451,7 +451,7 @@ var findNewPoolLeader = function(poolId, removedPairId){
 	}
 }
 
-/* 
+/*
 	This function applies the moves that have been made to the pairs inside pools.
 	Returns a list of pair moves
 */
@@ -545,7 +545,7 @@ var movePairs = function(document){
 
 /*
 	This function deletes or moves matches depending on that:
-	If more than one pair is moved at the same time to another pool, 
+	If more than one pair is moved at the same time to another pool,
 	the matches these pairs have played together will be transfered to the new
 	pool. Otherwise, the matches will be deleted.
 */
@@ -878,6 +878,10 @@ Template.poolList.helpers({
 		return getYearFunct(document)
 	},
 
+    'isFamilyCat':function(){
+        return Session.get('PoolList/Type')==="family";
+    },
+
 	// Returns a typeData
 	'getType' : function(yearData){
 		var type = Session.get('PoolList/Type');
@@ -928,7 +932,7 @@ Template.poolList.helpers({
 		if(poolIdList){
 			for(var i=0;i<poolIdList.length;i++){
 				var pool = Pools.findOne({_id: poolIdList[i]});
-			
+
 				totalNumberOfPairs += pool.pairs==undefined ? 0 : pool.pairs.length;
 				poolCompletion = pool.completion;
 				totalCompletion += (pool.pairs==undefined ? 0 : pool.pairs.length) * (poolCompletion==undefined ? 0 : poolCompletion);
@@ -1162,7 +1166,7 @@ Template.alonePairsContainerTemplate.helpers({
 	'isForCurrentYear':function(){
 		return isForCurrentYear();
 	},
-	
+
 	'getAlonePairs' : function(typeData){
 		category = Session.get('PoolList/Category');
 		poolIdList = typeData[category];
@@ -1366,9 +1370,9 @@ var typeCompletion = function(type){
 					typeCompletionValue += cBrackets;
 				}
 			}
-		}	
+		}
 	}
-	
+
 
 	completion = (nonEmptyCat==0) ? 0 : typeCompletionValue/nonEmptyCat;
 

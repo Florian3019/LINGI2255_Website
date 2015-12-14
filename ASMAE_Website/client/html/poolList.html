@@ -18,7 +18,7 @@
                   {{resetDrake}} <!-- Resets the draggable objects, so that we can move the ones that are created -->
                   {{#with getType this}}
                   <div class="page-header">
-                    <h2> Poules {{getTranslateType}}{{#unless equals this "all"}} en {{getTranslateCategory}} {{/unless}}
+                    <h2> Poules {{getTranslateType}}{{#unless isFamilyCat}} en {{getTranslateCategory}} {{/unless}}
                       {{#if and isAdminOrStaff isForCurrentYear}}
                         <button type="button" title="Aide" id="helpPool" class="btn btn-default btn-info" style="margin-left:15px">
                             <span class="glyphicon glyphicon-question-sign"></span>
