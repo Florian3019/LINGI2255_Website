@@ -5,60 +5,7 @@
 
 	-->
 
-<script>
-    function forgottenPassword() {
-
-        $('#forgotten').modal('show');
-        document.getElementById('send-email').style.display = "initial";
-
-        var email = $('[name=email]').val().trim();
-        document.getElementById("email-forgotten-password").value = email;
-    }
-</script>
-
 <div id="LoginWrapper">
-    <div class="modal" id="forgotten" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h3 class="modal-title" id="lineModalLabel">Changement de mot de passe</h3>
-                </div>
-                <div class="modal-body">
-                    <p> Un email sera envoyer à l'adresse suivante afin de réinitialiser votre mot de passe:</p>
-                    <label class=" pull-left" for="email-forgotten-password">Addresse mail :</label>
-
-                    <div class="form-group" id="email-forgotten-password-group">
-                        <input  id="email-forgotten-password" name="email-forgotten-password" class="form-control" placeholder="Email" required autofocus>
-                    </div>
-                    <p> </p> <!-- Espace -->
-
-                    <div class="alert alert-success fade in" style="display:none;" id="email-send-success" role="alert">
-                        <span class="glyphicon glyphicon-ok-sign"></span>
-                        <strong>Réussi !</strong> Email envoyé, vérifier votre boite mail.
-                    </div>
-                    <div class="alert alert-danger fade in"  style="display:none;" id="no-existing-email" role="alert">
-                        <span class="glyphicon glyphicon-exclamation-sign"></span>
-                        <strong>Erreur :</strong> Cette adresse mail n'existe pas.
-                    </div>
-                    <div class="alert alert-danger fade in"  style="display:none;" id="no-email-forgotten" role="alert">
-                        <span class="glyphicon glyphicon-exclamation-sign"></span>
-                        <strong>Erreur :</strong> Veuillez entrer une addresse mail.
-                    </div>
-                    <div class="alert alert-danger fade in"  style="display:none;" id="not-valid-email-forgotten" role="alert">
-                        <span class="glyphicon glyphicon-exclamation-sign"></span>
-                        <strong>Erreur :</strong> Veuillez entrer une addresse mail valide.
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                      <button id="send-email" class="btn btn-primary" type="submit" >Envoyer</button>
-                </div>
-            </div>
-        </div>
-    </div> <!-- Pop up forgotten password -->
-
 
     <!-- Body -->
 
@@ -95,7 +42,7 @@
                         </div>
 
                         <div class="forgotten">
-                            <a href="#" onclick="forgottenPassword()">Mot de passe oublié ?</a>
+                            <a href="#" id="forgottenPassword">Mot de passe oublié ?</a>
                         </div>
                     </form>
                 </div>

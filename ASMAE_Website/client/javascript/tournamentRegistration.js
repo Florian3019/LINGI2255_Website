@@ -61,25 +61,6 @@ function setAlonePlayers(document){
 	});
 }
 
-function set_error(id,errorVisible) {
-		const error = "Error";
-		const OK = "OK";
-		const div = "Div";
-		var e = document.getElementById(id.concat(error));
-		if(!errorVisible){
-			e.style.display = 'none';
-			document.getElementById(id.concat(div)).className = "form-group AFTOK has-success has-feedback";
-		}else{
-			e.style.display = 'block';
-			document.getElementById(id.concat(div)).className = "form-group has-error has-feedback";
-		}
-		e = document.getElementById(id.concat(OK));
-		if(errorVisible)
-			e.style.display = 'none';
-		else
-			e.style.display = 'block';
-}
-
 
 function checkAloneErrors(document) {
 	/**
@@ -527,10 +508,10 @@ Template.tournamentRegistrationTemplate.events({
 				}
 				document.getElementById(id.concat(div)).className = "form-group has-success has-feedback";
 			}else{
-				var e = document.getElementById("AFTcheat");
-				e.style.display = 'none';
-				var e = document.getElementById("AFTDiv")
-				e.className = "form-group has-feedback";
+				var aftErr = document.getElementById("AFTcheat");
+				aftErr.style.display = 'none';
+				var aftDiv = document.getElementById("AFTDiv")
+				aftDiv.className = "form-group has-feedback";
 
 				if(id=='emailPlayer'){
 					document.getElementById("emailPlayerErrorMessage").style.display = 'block';

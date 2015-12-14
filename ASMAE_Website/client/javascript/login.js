@@ -150,8 +150,6 @@ Template.login.events({
     
 	'click #sign-up': function(event) { 
 
-        
-
         document.getElementById("inputEmailGroup").className = "form-group";
         document.getElementById("inputPasswordGroup").className = "form-group";
         
@@ -207,38 +205,44 @@ Template.login.events({
         }
 	},
     
-    'click #send-email': function(event) {   
-        
-        $('div[role="alert"]').hide();
-        document.getElementById("email-forgotten-password-group").className = "form-group";
-        
-        var email = $('[name=email-forgotten-password]').val().trim();
-        if(email == "") {
-            $('#no-email-forgotten').show();
-            document.getElementById("email-forgotten-password-group").className = "form-group has-error";
-        }
-        else if(!isValidEmail(email)) {
-            $('#not-valid-email-forgotten').show();
-            document.getElementById("email-forgotten-password-group").className = "form-group has-error";
-        }
-        else {
-            Accounts.forgotPassword({email: email}, function(error) {
-                if (error) {
-                    console.log(error.reason);
-                    if (error.message == 'User not found [403]') 
-                      $('#no-existing-email').show();
-                } 
-                else {
-                    document.getElementById('send-email').style.display = "none";
-                    $('#email-send-success').show();
-                  
-                    setTimeout(function(){
-                        $('#forgotten').modal('hide');  
-                    }, 10000);
-                  
-                }
-            });
-        }
-	},
+    'click #forgottenPassword': function(event) {
+
+        swal({
+            title: "Changement de mot de passe", 
+            text: "Un email sera envoyé a votre adresse email afin de réinitialiser votre mot de passe.\nVeuillez rentrer votre adresse email dans le champ suivant.", 
+            type: "input",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Confirmer",
+            cancelButtonText:"Annuler",
+            closeOnConfirm: false,
+            inputPlaceholder: "Write something"
+        },
+
+        function(email) {
+            if (email === "") {
+                swal.showInputError("Veuillez entrer une adresse email !");
+                return false;
+            }
+            else if(!isValidEmail(email)) {
+                swal.showInputError("Veuillez entrer une adresse email valide !");
+                return false;
+            }
+            else { // The email format is valid
+                var email = email.trim();
+                console.log(email);
+                Accounts.forgotPassword({email: email}, function(error) {
+                    if (error) {
+                        console.log(error.reason);
+                        if (error.message == 'User not found [403]')
+                            swal.showInputError("Cette adresse mail n'existe pas.");
+                    } 
+                    else {
+                        swal("Succès !", "Un email a été envoyé, vérifiez votre boite mail.", "success");  
+                    }
+                });
+            }
+        });
+    },
     
 });	
