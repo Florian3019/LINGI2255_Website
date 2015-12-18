@@ -1,35 +1,35 @@
 SSR.compileTemplate("mailing", Assets.getText("mailing.html"));
 SSR.compileTemplate("verifMail", Assets.getText("verifmail.html"));
 
-Template.verifMail.helpers({
-  intro: function(){
-    return this.dataintro;
-  },
-  link : function(){
-    return this.datalink;
-  }
+if(Meteor.isClient){
+  Template.mailing.helpers({
+    introhtml: function(){
+      return this.intro;
+    },
+    importanthtml: function(){
+      return this.important;
+    },
+    textehtml: function(){
+      return this.texte;
+    },
+    encadrehtml : function(){
+      return this.encadre;
+    },
+    hasEncadre:function(){
+      return this.encadre!==undefined;
+    },
+  });
 
-});
+  Template.verifMail.helpers({
+    intro: function(){
+      return this.dataintro;
+    },
+    link : function(){
+      return this.datalink;
+    }
 
-
-Template.mailing.helpers({
-  introhtml: function(){
-    return this.intro;
-  },
-  importanthtml: function(){
-    return this.important;
-  },
-  textehtml: function(){
-    return this.texte;
-  },
-  encadrehtml : function(){
-    return this.encadre;
-  },
-  hasEncadre:function(){
-    return this.encadre!==undefined;
-  },
-});
-
+  });
+}
 
 
 Accounts.emailTemplates.siteName="Le Charles de Lorraine";
