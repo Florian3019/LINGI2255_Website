@@ -37,15 +37,15 @@ Meteor.methods({
 		/*
 		 * 2015 data
 		 */
-		var nMen2015 = [20, 20, 20, 0, 10, 0, 20];
+		var nMen2015 = [20, 20, 20, 0, 24, 0, 20];
 		var nWomen2015 = [10, 0, 20, 20, 10, 30];
-		var nMixed2015 = [30, 20, 40, 0, 0, 30, 0];
-		var nFamily2015 = 30;
+		var nMixed2015 = [17, 20, 12, 0, 0, 30, 0];
+		var nFamily2015 = 13;
 		var nPairs2015 = [nMen2015,nWomen2015,nMixed2015,nFamily2015];
-		var nAloneMen2015 = [10, 10, 5, 0, 2, 9, 0];
+		var nAloneMen2015 = [10, 10, 5, 0, 0, 9, 0];
 		var nAloneWomen2015 = [10, 10, 5, 0, 2, 9, 0];
-		var nAloneMixed2015 = [10, 10, 5, 0, 2, 9, 0];
-		var nAloneFamily2015 = 10;
+		var nAloneMixed2015 = [0, 10, 0, 0, 2, 9, 0];
+		var nAloneFamily2015 = 0;
 		var nAlones2015 = [nAloneMen2015,nAloneWomen2015,nAloneMixed2015,nAloneFamily2015];
 
 		var nCourtSaturday2015 = 40;
