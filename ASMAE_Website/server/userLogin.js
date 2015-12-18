@@ -53,12 +53,12 @@ Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false
 
 Meteor.setInterval(function() {
 
-    var three_days_ago = new Date();
-    three_days_ago.setDate(three_days_ago.getDate() - 3);
-    // three_days_ago.setSeconds(three_days_ago.getSeconds() - 10); // 10 seconds ago
+    var days_ago = new Date();
+    days_ago.setDate(days_ago.getDate() - 15); // 15 days ago
+    // days_ago.setSeconds(days_ago.getSeconds() - 10); // 10 seconds ago
 
     var invalidUsers = Meteor.users.find({
-                        createdAt: { $lte: three_days_ago }, // Users created more than 3 days ago
+                        createdAt: { $lte: days_ago }, // Users created more than 3 days ago
                         'emails.0.verified': false           // Users who still not have valided email
     })
 
@@ -114,7 +114,7 @@ useServiceInfo = function(user){
     // Emails
     if(!user.profile.emails)
         if(services.google){
-            user.emails = [{"address":services.google.email, "verified":services.google.verified_email}];
+            user.emails = [{"address":services.google.email, "verified":services.google.email_verified}];
         }
         else if(services.facebook){
             user.emails = [{"address":services.facebook.email, "verified":true}];
